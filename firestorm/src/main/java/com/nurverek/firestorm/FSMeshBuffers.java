@@ -1,0 +1,37 @@
+package com.nurverek.firestorm;
+
+import com.nurverek.vanguard.VLListType;
+
+public class FSMeshBuffers{
+
+    protected VLListType<FSBufferAddress>[] addresses;
+
+    protected FSMeshBuffers(){
+        addresses = new VLListType[FSLoader.ELEMENT_TOTAL_COUNT];
+
+        for(int i = 0; i < addresses.length; i++){
+            addresses[i] = new VLListType<>(1, 2);
+        }
+    }
+
+
+    public void add(int element, FSBufferAddress e){
+        addresses[element].add(e);
+    }
+
+    public void set(int element, int index, FSBufferAddress e){
+        addresses[element].set(index, e);
+    }
+
+    public VLListType<FSBufferAddress> get(int element){
+        return addresses[element];
+    }
+
+    public FSBufferAddress get(int element, int index){
+        return addresses[element].get(index);
+    }
+
+    public int size(int element){
+        return addresses[element].size();
+    }
+}

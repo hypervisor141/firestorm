@@ -1,0 +1,4 @@
+include ':vanguard'
+include ':firestorm'
+include ':app'
+rootProject.name = "firestorm"
