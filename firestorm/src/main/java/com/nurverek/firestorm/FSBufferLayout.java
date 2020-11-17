@@ -301,8 +301,8 @@ public class FSBufferLayout{
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.address.add(element, new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                        entry.unitsize, stride, array.size() / entry.unitsize, FSLoader.ELEMENT_GLDATA_TYPES[element], FSLoader.ELEMENT_BYTES[element]));
+                instance.buffers.add(element, new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
+                        entry.unitsize, stride, array.size() / entry.unitsize));
 
                 step.process(buffer, bufferindex, array);
             }
@@ -333,8 +333,8 @@ public class FSBufferLayout{
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.address.add(element, new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                        entry.unitsize, stride, array.size() / entry.unitsize, FSLoader.ELEMENT_GLDATA_TYPES[element], FSLoader.ELEMENT_BYTES[element]));
+                instance.buffers.add(element, new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
+                        entry.unitsize, stride, array.size() / entry.unitsize));
 
                 step.process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSLoader.UNIT_SIZES[element], entry.unitsize, stride);
             }
@@ -363,12 +363,12 @@ public class FSBufferLayout{
             array = instance.element(element);
 
             FSBufferAddress address = new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                    entry.unitsize, stride, array.size() / entry.unitsize, FSLoader.ELEMENT_GLDATA_TYPES[element], FSLoader.ELEMENT_BYTES[element]);
+                    entry.unitsize, stride, array.size() / entry.unitsize);
 
             assembler.bufferFunc(element).process(buffer, bufferindex, array);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).address.add(element, address);
+                instances.get(i).buffers.add(element, address);
             }
 
             return buffer.position(bufferindex);
@@ -395,12 +395,12 @@ public class FSBufferLayout{
             array = instance.element(element);
 
             FSBufferAddress address = new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                    entry.unitsize, stride, array.size() / entry.unitsize, FSLoader.ELEMENT_GLDATA_TYPES[element], FSLoader.ELEMENT_BYTES[element]);
+                    entry.unitsize, stride, array.size() / entry.unitsize);
 
             assembler.bufferFunc(element).process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSLoader.UNIT_SIZES[element], entry.unitsize, stride);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).address.add(element, address);
+                instances.get(i).buffers.add(element, address);
             }
 
             return mainoffset + entry.unitsize;
@@ -419,12 +419,12 @@ public class FSBufferLayout{
             int element = entry.element;
 
             FSBufferAddress indicesaddress = new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                    unitsize, stride, mesh.indices.size() / unitsize, FSLoader.ELEMENT_GLDATA_TYPES[element], FSLoader.ELEMENT_BYTES[element]);
+                    unitsize, stride, mesh.indices.size() / unitsize);
 
             int size = mesh.size();
 
             for(int i = 0; i < size; i++){
-                mesh.get(i).bufferAddress().add(element, indicesaddress);
+                mesh.get(i).bufferTracker().add(element, indicesaddress);
             }
 
             assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0, mesh.indices.size(),
