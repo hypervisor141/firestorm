@@ -62,7 +62,7 @@ public abstract class FSLoader{
     public static final int ELEMENT_NORMAL = 4;
     public static final int ELEMENT_INDEX = 5;
 
-    public static final int ELEMENT_TOTAL_COUNT = 7;
+    public static final int ELEMENT_TOTAL_COUNT = 6;
 
     public static final int[] ELEMENT_BYTES = new int[]{
             ELEMENT_BYTES_MODEL, ELEMENT_BYTES_POSITION, ELEMENT_BYTES_COLOR, ELEMENT_BYTES_TEXCOORD, ELEMENT_BYTES_NORMAL, ELEMENT_BYTES_INDEX
