@@ -153,16 +153,22 @@ public final class FSInput{
         }
     }
 
+    public static void clear(Type type){
+        synchronized(FSRenderer.RENDERLOCK){
+            type.get().clear();
+        }
+    }
+
     public static void checkInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
         synchronized(FSRenderer.RENDERLOCK){
             CURRENT_ME1 = e1;
             CURRENT_ME2 = e2;
             CURRENT_F1 = f1;
             CURRENT_F2 = f2;
-            
+
             FSViewConfig config = FSControl.getViewConfig();
             config.unProject2DPoint(e1.getX(), e1.getY(), NEARCACHE, 0, FARCACHE, 0);
-            
+
             ArrayList<Entry> entries = type.get();
             int size = entries.size();
 
@@ -180,7 +186,7 @@ public final class FSInput{
             LISTENER_MAIN.postProcess();
         }
     }
-    
+
     protected static boolean signalCollision(FSBounds.Collision results, int boundsindex){
         CURRENT_STATUS = CURRENT_ENTRY.listener.activated(results, CURRENT_ENTRY, boundsindex, CURRENT_ME1, CURRENT_ME2, CURRENT_F1, CURRENT_F2, NEARCACHE, FARCACHE);
         return CURRENT_STATUS == INPUT_CHECK_STOP;
