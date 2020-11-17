@@ -2,9 +2,11 @@ package com.nurverek.firestorm;
 
 import android.view.MotionEvent;
 
+import com.nurverek.vanguard.VLListType;
+
 import java.util.ArrayList;
 
-public final class FSInput {
+public final class FSInput{
 
     private static ArrayList<Entry> LISTENRER_TOUCH;
     private static ArrayList<Entry> LISTENRER_DOWN;
@@ -119,9 +121,35 @@ public final class FSInput {
         }
     }
 
-    public static void remove(Type type, Entry listener){
+    public static void removeAllMatching(Type type, long id){
         synchronized(FSRenderer.RENDERLOCK){
-            type.get().remove(listener);
+            ArrayList<Entry> entries = type.get();
+            int size = entries.size();
+
+            for(int i = 0; i < size; i++){
+                if(entries.get(i).mesh.id() == id){
+                    entries.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public static Entry get(Type type, int index){
+        synchronized(FSRenderer.RENDERLOCK){
+            return type.get().get(index);
+        }
+    }
+
+    public static ArrayList<Entry> get(Type type){
+        synchronized(FSRenderer.RENDERLOCK){
+            return type.get();
+        }
+    }
+
+    public static int size(Type type){
+        synchronized(FSRenderer.RENDERLOCK){
+            return type.get().size();
         }
     }
 
@@ -193,8 +221,12 @@ public final class FSInput {
         int activated(FSBounds.Collision results, Entry entry, int boundindex, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     }
 
-    protected static interface Type{
+    protected static abstract class Type{
+
+        public Type(){
+
+        }
         
-        ArrayList<Entry> get();
+        protected abstract ArrayList<Entry> get();
     }
 }
