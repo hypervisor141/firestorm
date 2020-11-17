@@ -1,7 +1,6 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
-import android.view.inspector.PropertyReader;
 
 import androidx.annotation.Nullable;
 
@@ -478,18 +477,11 @@ public abstract class FSLoader{
         protected FSLightMaterial material;
         protected FSLightMap map;
 
-        protected int customdatasize;
-        protected int customdataresizer;
-
-        public DataPack(VLArrayFloat replacementcolor, FSTexture colortexture, FSLightMaterial material, FSLightMap map,
-                        int customdatasize, int customdataresizer){
-
+        public DataPack(VLArrayFloat replacementcolor, FSTexture colortexture, FSLightMaterial material, FSLightMap map){
             this.replacementcolor = replacementcolor;
             this.colortexture = colortexture;
             this.material = material;
             this.map = map;
-            this.customdatasize = customdatasize;
-            this.customdataresizer = customdataresizer;
         }
     }
 
@@ -1074,7 +1066,7 @@ public abstract class FSLoader{
 
             DataPack datapack = scanner.datagroup.get(newindex);
 
-            FSInstance instance = new FSInstance(datapack.customdatasize, datapack.customdataresizer);
+            FSInstance instance = new FSInstance();
             FSInstance.Data data = instance.data;
 
             mesh.add(instance);

@@ -18,7 +18,7 @@ public class FSInstance{
     protected FSMesh mesh;
     protected FSSchematics schematics;
     protected FSModelCluster modelcluster;
-    protected FSMeshBuffers address;
+    protected FSBufferTracker buffers;
 
     protected FSTexture colortexture;
     protected FSLightMaterial lightmaterial;
@@ -29,13 +29,13 @@ public class FSInstance{
 
     protected long id;
 
-    public FSInstance(int customssize, int customsresizer){
+    public FSInstance(){
         id = FSControl.getNextID();
 
-        data = new Data(customssize, customsresizer);
+        data = new Data();
         states = new States();
         schematics = new FSSchematics(this);
-        address = new FSMeshBuffers();
+        buffers = new FSBufferTracker();
     }
 
 
@@ -92,8 +92,8 @@ public class FSInstance{
         return schematics;
     }
 
-    public FSMeshBuffers bufferAddress(){
-        return address;
+    public FSBufferTracker bufferTracker(){
+        return buffers;
     }
 
     public FSModelCluster modelCluster(){
@@ -138,11 +138,9 @@ public class FSInstance{
         public static final int DEFAULT_SIZE = FSLoader.ELEMENT_TOTAL_COUNT - 1;
 
         protected VLArrayFloat[] elements;
-        protected VLListType<CustomData> customs;
 
-        public Data(int customssize, int customsresizer){
+        public Data(){
             elements = new VLArrayFloat[DEFAULT_SIZE];
-            customs = new VLListType<>(customssize, customsresizer);
         }
 
 
@@ -192,95 +190,6 @@ public class FSInstance{
         }
 
         public VLArrayFloat normals(){ return elements[FSLoader.ELEMENT_NORMAL]; }
-
-
-
-        public void set(int index, CustomData data){
-            customs.set(index, data);
-        }
-
-        public void add(CustomData data){
-            customs.add(data);
-        }
-
-        public CustomData get(int index){
-            return customs.get(index);
-        }
-
-        public VLListType<CustomData> get(){
-            return customs;
-        }
-
-        public int sizeCustoms(){
-            return customs.size();
-        }
-    }
-
-    public static final class CustomData{
-
-        private Object data;
-
-        public CustomData(Object data){
-            this.data = data;
-        }
-
-
-        public void set(Object data){
-            this.data = data;
-        }
-
-
-        public Object get(){
-            return data;
-        }
-
-        public VLShort asShort(){
-            return (VLShort)data;
-        }
-
-        public VLInt asInt(){
-            return (VLInt)data;
-        }
-
-        public VLFloat asFloat(){
-            return (VLFloat)data;
-        }
-
-        public VLArrayShort asArrayShort(){
-            return (VLArrayShort)data;
-        }
-
-        public VLArrayInt asArrayInt(){
-            return (VLArrayInt)data;
-        }
-
-        public VLArrayFloat asArrayFloat(){
-            return (VLArrayFloat)data;
-        }
-
-        public VLListType asList(){
-            return (VLListType)data;
-        }
-
-        public VLListShort asListShort(){
-            return (VLListShort)data;
-        }
-
-        public VLListInt asListInt(){
-            return (VLListInt)data;
-        }
-
-        public VLListLong asListLong(){
-            return (VLListLong)data;
-        }
-
-        public VLListFloat asListFloat(){
-            return (VLListFloat)data;
-        }
-
-        public VLListDouble asListDouble(){
-            return (VLListDouble)data;
-        }
     }
 
     public final class States{
