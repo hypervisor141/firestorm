@@ -195,23 +195,23 @@ public class FSInstance{
 
 
 
-        public void customize(int index, CustomData data){
+        public void set(int index, CustomData data){
             customs.set(index, data);
         }
 
-        public void customize(CustomData data){
+        public void add(CustomData data){
             customs.add(data);
         }
 
-        public CustomData customize(int index){
+        public CustomData get(int index){
             return customs.get(index);
         }
 
-        public VLListType<CustomData> customs(){
+        public VLListType<CustomData> get(){
             return customs;
         }
 
-        public int customsSize(){
+        public int sizeCustoms(){
             return customs.size();
         }
     }
