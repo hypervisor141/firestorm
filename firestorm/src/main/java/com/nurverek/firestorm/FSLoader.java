@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
+import android.view.inspector.PropertyReader;
 
 import androidx.annotation.Nullable;
 
@@ -477,11 +478,18 @@ public abstract class FSLoader{
         protected FSLightMaterial material;
         protected FSLightMap map;
 
-        public DataPack(VLArrayFloat replacementcolor, FSTexture colortexture, FSLightMaterial material, FSLightMap map){
+        protected int customdatasize;
+        protected int customdataresizer;
+
+        public DataPack(VLArrayFloat replacementcolor, FSTexture colortexture, FSLightMaterial material, FSLightMap map,
+                        int customdatasize, int customdataresizer){
+
             this.replacementcolor = replacementcolor;
             this.colortexture = colortexture;
             this.material = material;
             this.map = map;
+            this.customdatasize = customdatasize;
+            this.customdataresizer = customdataresizer;
         }
     }
 
@@ -1057,21 +1065,22 @@ public abstract class FSLoader{
         }
 
         private final void operate(VLListType<BuildStep> funcs, Scanner scanner, FSM.Data fsm){
-            FSInstance instance = new FSInstance();
-
-            DataGroup datagroup = scanner.datagroup;
             FSMesh mesh = scanner.mesh;
-            FSInstance.Data data = instance.data;
             FSBufferLayout layout = scanner.layout;
             VLArrayShort indices = mesh.indices;
 
+            int newindex = mesh.size();
+            int funcsize = funcs.size();
+
+            DataPack datapack = scanner.datagroup.get(newindex);
+
+            FSInstance instance = new FSInstance(datapack.customdatasize, datapack.customdataresizer);
+            FSInstance.Data data = instance.data;
+
             mesh.add(instance);
 
-            int size = funcs.size();
-            int index = mesh.size() - 1;
-
-            for(int i = 0; i < size; i++){
-                funcs.get(i).process(this, datagroup.get(index), mesh, indices, instance, data, fsm, layout);
+            for(int i = 0; i < funcsize; i++){
+                funcs.get(i).process(this, datapack, mesh, indices, instance, data, fsm, layout);
             }
         }
 
