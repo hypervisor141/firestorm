@@ -12,10 +12,8 @@ public final class FSBufferAddress implements VLStringify {
     protected int unitsize;
     protected int stride;
     protected int count;
-    protected int gldatatype;
-    protected int databytesize;
 
-    public FSBufferAddress(FSBufferManager manager, int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count, int gldatatype, int databytesize){
+    public FSBufferAddress(FSBufferManager manager, int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count){
         this.manager = manager;
         this.bufferindex = bufferindex;
         this.offset = offset;
@@ -23,8 +21,6 @@ public final class FSBufferAddress implements VLStringify {
         this.unitsize = unitsize;
         this.stride = stride;
         this.count = count;
-        this.gldatatype = gldatatype;
-        this.databytesize = databytesize;
     }
 
 
@@ -38,10 +34,6 @@ public final class FSBufferAddress implements VLStringify {
 
     public int bufferIndex(){
         return bufferindex;
-    }
-
-    public int glDataType(){
-        return gldatatype;
     }
 
     public int unitSize(){
@@ -62,42 +54,18 @@ public final class FSBufferAddress implements VLStringify {
 
     public int stride(){return stride;}
 
-    public int unitSizeBytes(){
-        return unitsize * databytesize;
-    }
-
-    public int unitOffsetBytes(){
-        return unitoffset * databytesize;
-    }
-
-    public int countBytes(){
-        return count * databytesize;
-    }
-
-    public int offsetBytes(){
-        return offset * databytesize;
-    }
-
-    public int strideBytes(){return stride * databytesize;}
-
-    public int dataByteSize(){return databytesize;}
-
     @Override
     public void stringify(StringBuilder src, Object hint){
         src.append("[BufferAddress] offset[");
         src.append(offset);
-        src.append("] unitsize[");
+        src.append("] unitSize[");
         src.append(unitsize);
-        src.append("] unitoffset[");
+        src.append("] unitOffset[");
         src.append(unitoffset);
         src.append("] stride[");
         src.append(stride);
         src.append("] count[");
         src.append(count);
-        src.append("] gldatatype[");
-        src.append(gldatatype);
-        src.append("] databytesize[");
-        src.append(databytesize);
         src.append("] content[ ");
 
         target().stringify(src, hint);
