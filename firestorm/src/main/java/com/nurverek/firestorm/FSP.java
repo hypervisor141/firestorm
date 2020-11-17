@@ -641,7 +641,7 @@ public final class FSP{
         protected abstract void modify(FSP program, FSConfig.Policy policy);
     }
 
-    public static class MaterialDynamic extends FSConfigLocated {
+    public static class MaterialDynamic extends FSConfigLocated{
 
         private int glslsize;
 

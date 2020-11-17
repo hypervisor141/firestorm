@@ -2,8 +2,6 @@ package com.nurverek.firestorm;
 
 import android.view.MotionEvent;
 
-import com.nurverek.vanguard.VLListType;
-
 import java.util.ArrayList;
 
 public final class FSInput{

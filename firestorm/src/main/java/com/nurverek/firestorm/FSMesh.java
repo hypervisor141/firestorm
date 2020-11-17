@@ -9,6 +9,7 @@ public class FSMesh extends VLSyncer.Syncable{
     protected String name;
 
     protected VLListType<FSInstance> instances;
+    protected VLListType<Attachment> attachments;
     protected VLArrayShort indices;
 
     protected long id;
@@ -23,9 +24,17 @@ public class FSMesh extends VLSyncer.Syncable{
     }
 
 
+    public void initializeAttachments(int size, int resizer){
+        attachments = new VLListType<>(size, resizer);
+    }
+
     public void add(FSInstance instance){
         instances.add(instance);
         instance.mesh = this;
+    }
+
+    public void add(Attachment attachment){
+        attachments.add(attachment);
     }
 
     public void drawMode(int mode){
@@ -44,12 +53,12 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances.get(0);
     }
 
-    public FSBufferTracker firstAddress(){
-        return instances.get(0).buffers;
-    }
-
     public FSInstance get(int index){
         return instances.get(index);
+    }
+
+    public Attachment getAttachment(int index){
+        return attachments.get(index);
     }
 
     public FSInstance remove(int index){
@@ -59,6 +68,9 @@ public class FSMesh extends VLSyncer.Syncable{
         return instance;
     }
 
+    public Attachment removeAttachment(int index){
+        return attachments.remove(index);
+    }
 
     public int drawMode(){
         return drawmode;
@@ -82,5 +94,27 @@ public class FSMesh extends VLSyncer.Syncable{
 
     public int size(){
         return instances.size();
+    }
+
+    public int sizeAttachments(){
+        return attachments.size();
+    }
+
+    public static final class Attachment<TYPE>{
+
+        public TYPE attachment;
+        public FSConfig config;
+        public FSBufferAddress address;
+
+        public Attachment(TYPE attachment, FSConfig config, FSBufferAddress address){
+            this.attachment = attachment;
+            this.config = config;
+            this.address = address;
+        }
+
+        public Attachment(TYPE attachment, FSConfig config){
+            this.attachment = attachment;
+            this.config = config;
+        }
     }
 }
