@@ -2,12 +2,12 @@ package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
 
-public class FSMeshBuffers{
+public class FSBufferTracker{
 
     protected VLListType<FSBufferAddress>[] addresses;
 
-    protected FSMeshBuffers(){
-        addresses = new VLListType[FSLoader.ELEMENT_TOTAL_COUNT];
+    protected FSBufferTracker(){
+        addresses = new VLListType[FSGenerator.ELEMENT_TOTAL_COUNT];
 
         for(int i = 0; i < addresses.length; i++){
             addresses[i] = new VLListType<>(1, 2);

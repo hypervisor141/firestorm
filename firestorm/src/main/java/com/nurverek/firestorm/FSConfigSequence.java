@@ -132,7 +132,7 @@ public class FSConfigSequence extends FSConfigLocated{
             data.append("] [");
             data.append(c.getClass().getSimpleName());
 
-            if(debug >= FSLoader.DEBUG_FULL){
+            if(debug >= FSGenerator.DEBUG_FULL){
                 data.append("] [");
                 c.debugInfo(program, mesh, debug);
                 data.append("]");

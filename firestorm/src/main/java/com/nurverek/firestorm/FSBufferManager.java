@@ -64,20 +64,40 @@ public class FSBufferManager{
         entries.get(entries.size() - 1).initialize();
     }
 
-    public int buffer(int index, VLArray array){
-        return entries.get(index).put(array);
+    public FSBufferAddress buffer(int index, VLArray array, int unitsize, int stride){
+        Entry e = entries.get(index);
+        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), 0, unitsize, stride, array.size());
+
+        e.put(array);
+
+        return address;
     }
 
-    public int buffer(int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-        return entries.get(index).put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+    public FSBufferAddress buffer(int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
+        Entry e = entries.get(index);
+        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), unitoffset, unitsize, stride, arraycount / unitsize);
+
+        e.put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+
+        return address;
     }
 
-    public int bufferSync(int index, VLArray array){
-        return entries.get(index).putSync(array);
+    public FSBufferAddress bufferSync(int index, VLArray array, int unitsize, int stride){
+        Entry e = entries.get(index);
+        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), 0, unitsize, stride, array.size());
+
+        e.putSync(array);
+
+        return address;
     }
 
-    public int bufferSync(int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-        return entries.get(index).putSync(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+    public FSBufferAddress bufferSync(int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
+        Entry e = entries.get(index);
+        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), unitoffset, unitsize, stride, arraycount / unitsize);
+
+        e.putSync(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+
+        return address;
     }
 
     public void upload(){

@@ -56,7 +56,7 @@ public final class FSRenderPass{
 
         for(int i = 0; i < entries.size(); i++){
             e = entries.get(i);
-            FSLoader c = e.c;
+            FSGenerator c = e.c;
 
             if(c.id() == id){
                 return e;
@@ -70,7 +70,7 @@ public final class FSRenderPass{
         return entries.size();
     }
 
-    public void remove(FSLoader c){
+    public void remove(FSGenerator c){
         for(int i = 0; i < entries.size(); i++){
             if(entries.get(i).c.id() == c.id()){
                 entries.remove(i);
@@ -323,15 +323,15 @@ public final class FSRenderPass{
 
     public static final class Entry{
 
-        protected FSLoader c;
+        protected FSGenerator c;
         protected int programsetindex;
 
-        public Entry(FSLoader c, int programsetindex){
+        public Entry(FSGenerator c, int programsetindex){
             this.c = c;
             this.programsetindex = programsetindex;
         }
 
-        public FSLoader constructor(){
+        public FSGenerator constructor(){
             return c;
         }
 

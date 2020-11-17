@@ -92,7 +92,7 @@ public abstract class FSConfig{
         VLDebug.append(classname == "" ? "Anonymous" : classname);
         VLDebug.append("] [");
 
-        if(program.debug >= FSLoader.DEBUG_FULL){
+        if(program.debug >= FSGenerator.DEBUG_FULL){
             debugInfo(program, mesh, program.debug);
             VLDebug.append("]\n");
 

@@ -18,14 +18,14 @@ public class FSBufferLayout{
     public static final Mechanism MECHANISM_INDICES_SINGULAR = new IndicesSingularMechanism();
 
     protected VLListType<Layout> layouts;
-    protected FSLoader.Assembler assembler;
+    protected FSGenerator.Assembler assembler;
     protected FSMesh targetmesh;
 
-    public FSBufferLayout(FSMesh mesh, FSLoader.Assembler assembler){
+    public FSBufferLayout(FSMesh mesh, FSGenerator.Assembler assembler){
         this.targetmesh = mesh;
         this.assembler = assembler;
 
-        layouts = new VLListType<>(FSLoader.ELEMENT_TOTAL_COUNT, FSLoader.ELEMENT_TOTAL_COUNT);
+        layouts = new VLListType<>(FSGenerator.ELEMENT_TOTAL_COUNT, FSGenerator.ELEMENT_TOTAL_COUNT);
     }
     
 
@@ -38,7 +38,7 @@ public class FSBufferLayout{
 
     public void increaseTargetCapacities(int element, int totalsize){
         int size = layouts.size();
-        int unitcount = totalsize / FSLoader.UNIT_SIZES[element];
+        int unitcount = totalsize / FSGenerator.UNIT_SIZES[element];
 
         for(int i = 0; i < size; i++){
             layouts.get(i).increaseTargetCapacities(element, unitcount);
@@ -53,7 +53,7 @@ public class FSBufferLayout{
         }
     }
 
-    public void bufferDebug(FSLoader.Scanner scanner){
+    public void bufferDebug(FSGenerator.Scanner scanner){
         int size = layouts.size();
 
         VLDebug.append("BufferLayout[");
@@ -86,20 +86,20 @@ public class FSBufferLayout{
 
         protected int element;
         protected int unitoffset;
-        protected int unitsize;
+        protected int unitsubcount;
 
-        public Entry(int element, int unitoffset, int unitsize){
+        public Entry(int element, int unitoffset, int unitsubcount){
             this.element = element;
             this.unitoffset = unitoffset;
-            this.unitsize = unitsize;
+            this.unitsubcount = unitsubcount;
         }
 
         public void debugInfo(){
-            VLDebug.append(FSLoader.ELEMENT_NAMES[element]);
+            VLDebug.append(FSGenerator.ELEMENT_NAMES[element]);
             VLDebug.append("[unitOffset[");
             VLDebug.append(unitoffset);
             VLDebug.append("] unitsize[");
-            VLDebug.append(unitsize);
+            VLDebug.append(unitsubcount);
             VLDebug.append("]]");
         }
     }
@@ -119,12 +119,12 @@ public class FSBufferLayout{
             this.buffer = buffer;
             this.bufferindex = bufferindex;
 
-            entries = new VLListType<>(FSLoader.ELEMENT_TOTAL_COUNT, FSLoader.ELEMENT_TOTAL_COUNT);
+            entries = new VLListType<>(FSGenerator.ELEMENT_TOTAL_COUNT, FSGenerator.ELEMENT_TOTAL_COUNT);
         }
 
 
         public Layout add(int element){
-            return add(element, 0, FSLoader.UNIT_SIZES[element]);
+            return add(element, 0, FSGenerator.UNIT_SIZES[element]);
         }
 
         public Layout add(int element, int unitoffset, int unitsize){
@@ -144,7 +144,7 @@ public class FSBufferLayout{
                 e = entries.get(i);
 
                 if(e.element == element){
-                    total += unitcount * e.unitsize;
+                    total += unitcount * e.unitsubcount;
                 }
             }
 
@@ -162,12 +162,12 @@ public class FSBufferLayout{
             mechanism.buffer(assembler, targetmesh, entries.get(entries.size() - 1), buffer, bufferindex, stride);
         }
 
-        protected void bufferDebug(FSLoader.Scanner scanner){
-            if(scanner instanceof FSLoader.ScannerSingular && mechanism instanceof MechanismInstancedBase){
+        protected void bufferDebug(FSGenerator.Scanner scanner){
+            if(scanner instanceof FSGenerator.ScannerSingular && mechanism instanceof MechanismInstancedBase){
                 VLDebug.append("[WARNING] [USING INSTANCED BUFFER MECHANISM FOR A SINGULAR SCANNER]");
                 VLDebug.printE();
 
-            }else if(scanner instanceof FSLoader.ScannerInstanced && mechanism instanceof MechanismSingularBase){
+            }else if(scanner instanceof FSGenerator.ScannerInstanced && mechanism instanceof MechanismSingularBase){
                 VLDebug.append("[WARNING] [USING SINGULAR BUFFER MECHANISM FOR AN INSTANCED SCANNER]");
                 VLDebug.printE();
             }
@@ -180,13 +180,13 @@ public class FSBufferLayout{
             for(int i = 0; i < size; i++){
                 e = entries.get(i);
 
-                if((e.unitoffset + e.unitsize) > FSLoader.UNIT_SIZES[e.element]){
+                if((e.unitoffset + e.unitsubcount) > FSGenerator.UNIT_SIZES[e.element]){
                     VLDebug.append("Invalid unitoffset[");
                     VLDebug.append(e.unitoffset);
                     VLDebug.append("] and/or unitsize[");
-                    VLDebug.append(e.unitsize);
+                    VLDebug.append(e.unitsubcount);
                     VLDebug.append("] for [");
-                    VLDebug.append(FSLoader.ELEMENT_NAMES[e.element]);
+                    VLDebug.append(FSGenerator.ELEMENT_NAMES[e.element]);
                     VLDebug.append("]");
 
                     throw new RuntimeException();
@@ -197,7 +197,7 @@ public class FSBufferLayout{
 
                 }else{
                     VLDebug.append("Duplicate entry for [");
-                    VLDebug.append(FSLoader.ELEMENT_NAMES[e.element]);
+                    VLDebug.append(FSGenerator.ELEMENT_NAMES[e.element]);
                     VLDebug.append("]");
 
                     throw new RuntimeException();
@@ -223,23 +223,23 @@ public class FSBufferLayout{
 
                         for(int i2 = 0; i2 < size2; i2++){
                             e = entries.get(i);
-                            sizes[i] += targetmesh.get(i2).element(e.element).size() / e.unitsize;
+                            sizes[i] += targetmesh.get(i2).element(e.element).size() / e.unitsubcount;
                         }
                     }
 
                 }else{
                     for(int i = 0; i < size; i++){
                         e = entries.get(i);
-                        sizes[i] += targetmesh.first().element(e.element).size() / e.unitsize;
+                        sizes[i] += targetmesh.first().element(e.element).size() / e.unitsubcount;
                     }
                 }
 
                 for(int i = 1; i < size; i++){
                     if(sizes[i] != sizes[i - 1]){
                         VLDebug.append("Using a ComplexMechanism type but target mesh element vertex sizes do not match for [");
-                        VLDebug.append(FSLoader.ELEMENT_NAMES[entries.get(i).element]);
+                        VLDebug.append(FSGenerator.ELEMENT_NAMES[entries.get(i).element]);
                         VLDebug.append("] and [");
-                        VLDebug.append(FSLoader.ELEMENT_NAMES[entries.get(i - 1).element]);
+                        VLDebug.append(FSGenerator.ELEMENT_NAMES[entries.get(i - 1).element]);
                         VLDebug.append("]");
 
                         throw new RuntimeException();
@@ -272,7 +272,7 @@ public class FSBufferLayout{
 
     public abstract static class Mechanism{
 
-        protected abstract int buffer(FSLoader.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride);
+        protected abstract int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride);
     }
 
     public abstract static class MechanismSingularBase extends Mechanism{}
@@ -286,7 +286,7 @@ public class FSBufferLayout{
         }
 
         @Override
-        protected int buffer(FSLoader.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -295,16 +295,13 @@ public class FSBufferLayout{
             FSInstance instance;
             VLArrayFloat array;
 
-            FSLoader.Assembler.BufferStep step = assembler.bufferFunc(element);
+            FSGenerator.Assembler.BufferStep step = assembler.bufferFunc(element);
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.buffers.add(element, new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                        entry.unitsize, stride, array.size() / entry.unitsize));
-
-                step.process(buffer, bufferindex, array);
+                instance.buffers.add(element, step.process(buffer, bufferindex, array, FSGenerator.UNIT_SIZES[element], stride));
             }
 
             return buffer.position(bufferindex);
@@ -318,7 +315,7 @@ public class FSBufferLayout{
         }
 
         @Override
-        protected int buffer(FSLoader.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -327,19 +324,16 @@ public class FSBufferLayout{
             int element = entry.element;
             int mainoffset = buffer.position(bufferindex);
 
-            FSLoader.Assembler.BufferStep step = assembler.bufferFunc(element);
+            FSGenerator.Assembler.BufferStep step = assembler.bufferFunc(element);
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.buffers.add(element, new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                        entry.unitsize, stride, array.size() / entry.unitsize));
-
-                step.process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSLoader.UNIT_SIZES[element], entry.unitsize, stride);
+                instance.buffers.add(element, step.process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSGenerator.UNIT_SIZES[element], entry.unitsubcount, stride));
             }
 
-            return mainoffset + entry.unitsize;
+            return mainoffset + entry.unitsubcount;
         }
     }
 
@@ -350,7 +344,7 @@ public class FSBufferLayout{
         }
 
         @Override
-        protected int buffer(FSLoader.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -362,13 +356,8 @@ public class FSBufferLayout{
             instance = instances.get(0);
             array = instance.element(element);
 
-            FSBufferAddress address = new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                    entry.unitsize, stride, array.size() / entry.unitsize);
-
-            assembler.bufferFunc(element).process(buffer, bufferindex, array);
-
             for(int i = 0; i < size; i++){
-                instances.get(i).buffers.add(element, address);
+                instances.get(i).buffers.add(element, assembler.bufferFunc(element).process(buffer, bufferindex, array, FSGenerator.UNIT_SIZES[element], stride));
             }
 
             return buffer.position(bufferindex);
@@ -382,7 +371,7 @@ public class FSBufferLayout{
         }
 
         @Override
-        protected int buffer(FSLoader.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -394,16 +383,14 @@ public class FSBufferLayout{
             instance = instances.get(0);
             array = instance.element(element);
 
-            FSBufferAddress address = new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                    entry.unitsize, stride, array.size() / entry.unitsize);
-
-            assembler.bufferFunc(element).process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSLoader.UNIT_SIZES[element], entry.unitsize, stride);
+            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, array, 0, array.size(),
+                    entry.unitoffset, FSGenerator.UNIT_SIZES[element], entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
                 instances.get(i).buffers.add(element, address);
             }
 
-            return mainoffset + entry.unitsize;
+            return mainoffset + entry.unitsubcount;
         }
     }
 
@@ -414,21 +401,18 @@ public class FSBufferLayout{
         }
 
         @Override
-        protected int buffer(FSLoader.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-            int unitsize = entry.unitsize;
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
+            int unitsize = entry.unitsubcount;
             int element = entry.element;
 
-            FSBufferAddress indicesaddress = new FSBufferAddress(buffer, bufferindex, buffer.position(bufferindex), entry.unitoffset,
-                    unitsize, stride, mesh.indices.size() / unitsize);
+            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0, mesh.indices.size(),
+                    entry.unitoffset, FSGenerator.UNIT_SIZES[FSGenerator.ELEMENT_INDEX], unitsize, stride);
 
             int size = mesh.size();
 
             for(int i = 0; i < size; i++){
-                mesh.get(i).bufferTracker().add(element, indicesaddress);
+                mesh.get(i).bufferTracker().add(element, address);
             }
-
-            assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0, mesh.indices.size(),
-                    entry.unitoffset, FSLoader.UNIT_SIZES[FSLoader.ELEMENT_INDEX], unitsize, stride);
 
             return buffer.position(bufferindex);
         }

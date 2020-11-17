@@ -1,17 +1,8 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayInt;
 import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLFloat;
-import com.nurverek.vanguard.VLInt;
-import com.nurverek.vanguard.VLListDouble;
-import com.nurverek.vanguard.VLListFloat;
-import com.nurverek.vanguard.VLListInt;
-import com.nurverek.vanguard.VLListLong;
-import com.nurverek.vanguard.VLListShort;
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLShort;
 
 public class FSInstance{
 
@@ -48,7 +39,7 @@ public class FSInstance{
     }
 
     public int elementVertexCount(int element){
-        return element(element).size() / FSLoader.UNIT_SIZES[element];
+        return element(element).size() / FSGenerator.UNIT_SIZES[element];
     }
 
     public void colorTexture(FSTexture texture){
@@ -69,7 +60,7 @@ public class FSInstance{
     }
 
     public int vertexSize(){
-        return data.positions().size() / FSLoader.UNIT_SIZE_POSITION;
+        return data.positions().size() / FSGenerator.UNIT_SIZE_POSITION;
     }
 
     public FSMesh mesh(){
@@ -135,7 +126,7 @@ public class FSInstance{
 
     public static final class Data{
 
-        public static final int DEFAULT_SIZE = FSLoader.ELEMENT_TOTAL_COUNT - 1;
+        public static final int DEFAULT_SIZE = FSGenerator.ELEMENT_TOTAL_COUNT - 1;
 
         protected VLArrayFloat[] elements;
 
@@ -149,23 +140,23 @@ public class FSInstance{
         }
 
         public void model(FSModelArray array){
-            elements[FSLoader.ELEMENT_MODEL] = array;
+            elements[FSGenerator.ELEMENT_MODEL] = array;
         }
 
         public void positions(VLArrayFloat array){
-            elements[FSLoader.ELEMENT_POSITION] = array;
+            elements[FSGenerator.ELEMENT_POSITION] = array;
         }
 
         public void colors(VLArrayFloat array){
-            elements[FSLoader.ELEMENT_COLOR] = array;
+            elements[FSGenerator.ELEMENT_COLOR] = array;
         }
 
         public void texCoords(VLArrayFloat array){
-            elements[FSLoader.ELEMENT_TEXCOORD] = array;
+            elements[FSGenerator.ELEMENT_TEXCOORD] = array;
         }
 
         public void normals(VLArrayFloat array){
-            elements[FSLoader.ELEMENT_NORMAL] = array;
+            elements[FSGenerator.ELEMENT_NORMAL] = array;
         }
 
 
@@ -174,22 +165,22 @@ public class FSInstance{
         }
 
         public FSModelArray model(){
-            return (FSModelArray)elements[FSLoader.ELEMENT_MODEL];
+            return (FSModelArray)elements[FSGenerator.ELEMENT_MODEL];
         }
 
         public VLArrayFloat positions(){
-            return elements[FSLoader.ELEMENT_POSITION];
+            return elements[FSGenerator.ELEMENT_POSITION];
         }
 
         public VLArrayFloat colors(){
-            return elements[FSLoader.ELEMENT_COLOR];
+            return elements[FSGenerator.ELEMENT_COLOR];
         }
 
         public VLArrayFloat texCoords(){
-            return elements[FSLoader.ELEMENT_TEXCOORD];
+            return elements[FSGenerator.ELEMENT_TEXCOORD];
         }
 
-        public VLArrayFloat normals(){ return elements[FSLoader.ELEMENT_NORMAL]; }
+        public VLArrayFloat normals(){ return elements[FSGenerator.ELEMENT_NORMAL]; }
     }
 
     public final class States{

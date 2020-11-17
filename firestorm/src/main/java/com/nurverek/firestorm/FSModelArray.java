@@ -24,7 +24,7 @@ public class FSModelArray extends VLArrayFloat {
     }
 
     public FSModelArray(){
-        super(new float[FSLoader.UNIT_SIZE_MODEL]);
+        super(new float[FSGenerator.UNIT_SIZE_MODEL]);
         identity();
     }
 

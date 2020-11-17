@@ -44,8 +44,8 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances.get(0);
     }
 
-    public FSMeshBuffers firstAddress(){
-        return instances.get(0).address;
+    public FSBufferTracker firstAddress(){
+        return instances.get(0).buffers;
     }
 
     public FSInstance get(int index){

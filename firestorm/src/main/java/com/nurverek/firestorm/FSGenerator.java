@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 
-public abstract class FSLoader{
+public abstract class FSGenerator {
 
     public static final int DEBUG_DISABLED = 0;
     public static final int DEBUG_NORMAL = 1;
@@ -96,7 +96,7 @@ public abstract class FSLoader{
     protected long ID;
     protected boolean isTouchable;
 
-    public FSLoader(int programsetsize){
+    public FSGenerator(int programsetsize){
         isTouchable = true;
 
         ID = FSControl.getNextID();
@@ -1334,24 +1334,24 @@ public abstract class FSLoader{
 
         private static final BufferStep BUFFER_NO_SYNC = new BufferStep(){
             @Override
-            protected void process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-                manager.buffer(index, array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+            protected FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride){
+                return manager.buffer(index, array, unitsize, stride);
             }
 
             @Override
-            protected void process(FSBufferManager manager, int index, VLArray array){
-                manager.buffer(index, array);
+            protected FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
+                return manager.buffer(index, array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
             }
         };
         private static final BufferStep BUFFER_SYNC = new BufferStep(){
             @Override
-            protected void process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-                manager.bufferSync(index, array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+            protected FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride){
+                return manager.bufferSync(index, array, unitsize, stride);
             }
 
             @Override
-            protected void process(FSBufferManager manager, int index, VLArray array){
-                manager.bufferSync(index, array);
+            protected FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
+                return manager.bufferSync(index, array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
             }
         };
 
@@ -1362,9 +1362,8 @@ public abstract class FSLoader{
         }
         protected abstract static class BufferStep{
 
-            protected abstract void process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
-
-            protected abstract void process(FSBufferManager manager, int index, VLArray array);
+            protected abstract FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride);
+            protected abstract FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
         }
         private abstract static class PostProcessStep{
             
