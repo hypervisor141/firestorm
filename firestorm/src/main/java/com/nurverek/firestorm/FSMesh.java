@@ -23,7 +23,7 @@ public class FSMesh extends VLSyncer.Syncable{
     }
 
 
-    public void initializeAttachments(int size, int resizer){
+    public void initAttachments(int size, int resizer){
         attachments = new VLListType<>(size, resizer);
     }
 
