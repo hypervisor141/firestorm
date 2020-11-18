@@ -174,7 +174,7 @@ public final class FSInput{
 
             for(int i = 0; i < size; i++){
                 CURRENT_ENTRY = entries.get(i);
-                CURRENT_ENTRY.mesh.get(CURRENT_ENTRY.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
+                CURRENT_ENTRY.mesh.instance(CURRENT_ENTRY.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
 
                 if(CURRENT_STATUS == INPUT_CHECK_STOP){
                     break;

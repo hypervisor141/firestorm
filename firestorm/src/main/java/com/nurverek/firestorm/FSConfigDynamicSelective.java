@@ -10,7 +10,7 @@ public class FSConfigDynamicSelective extends FSConfigLocated {
     public FSConfigDynamicSelective(FSConfigSelective config, int targetindex){
         this.config = config;
         this.targetindex = targetindex;
-
+    
         config.activate(targetindex);
     }
 

@@ -223,7 +223,7 @@ public class FSBufferLayout{
 
                         for(int i2 = 0; i2 < size2; i2++){
                             e = entries.get(i);
-                            sizes[i] += targetmesh.get(i2).element(e.element).size() / e.unitsubcount;
+                            sizes[i] += targetmesh.instance(i2).element(e.element).size() / e.unitsubcount;
                         }
                     }
 
@@ -411,7 +411,7 @@ public class FSBufferLayout{
             int size = mesh.size();
 
             for(int i = 0; i < size; i++){
-                mesh.get(i).bufferTracker().add(element, address);
+                mesh.instance(i).bufferTracker().add(element, address);
             }
 
             return buffer.position(bufferindex);

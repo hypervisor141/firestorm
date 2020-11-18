@@ -326,7 +326,7 @@ public abstract class FSGenerator {
                                 found = true;
                             }
 
-                            if(found && mesh.size() > 1 && mesh.get(mesh.size() - 1).positions().size() != mesh.first().positions().size()){
+                            if(found && mesh.size() > 1 && mesh.instance(mesh.size() - 1).positions().size() != mesh.first().positions().size()){
                                 VLDebug.printD();
                                 VLDebug.append("[WARNING] ");
                                 VLDebug.append("[Attempting to do instancing on meshes with different vertex characteristics]");
@@ -543,7 +543,7 @@ public abstract class FSGenerator {
             }
 
             for(int i = 0; i < size; i++){
-                data = mesh.get(i).data.elements;
+                data = mesh.instance(i).data.elements;
 
                 for(int i2 = 0; i2 < data.length; i2++){
                     array = data[i2];
@@ -1257,7 +1257,7 @@ public abstract class FSGenerator {
         private static final BuildStep COLOR_SHARE = new BuildStep(){
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                data.colors(new VLArrayFloat(mesh.get(0).colors().provider()));
+                data.colors(new VLArrayFloat(mesh.instance(0).colors().provider()));
             }
         };
         private static final BuildStep COLOR_ADJUST_BUFFER_CAPACITY = new BuildStep(){
@@ -1284,7 +1284,7 @@ public abstract class FSGenerator {
         private static final BuildStep TEXTURE_SHARE = new BuildStep(){
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                data.texCoords(new VLArrayFloat(mesh.get(0).texCoords().provider()));
+                data.texCoords(new VLArrayFloat(mesh.instance(0).texCoords().provider()));
             }
         };
         private static final BuildStep TEXTURE_ADJUST_BUFFER_CAPACITY = new BuildStep(){
@@ -1311,7 +1311,7 @@ public abstract class FSGenerator {
         private static final BuildStep NORMAL_SHARE = new BuildStep(){
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                data.normals(new VLArrayFloat(mesh.get(0).normals().provider()));
+                data.normals(new VLArrayFloat(mesh.instance(0).normals().provider()));
             }
         };
         private static final BuildStep NORMAL_ADJUST_BUFFER_CAPACITY = new BuildStep(){

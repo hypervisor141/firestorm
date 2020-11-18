@@ -15,7 +15,6 @@ public class FSMesh extends VLSyncer.Syncable{
     protected long id;
     protected int drawmode;
 
-    
     public FSMesh(int drawmode, int initialcapacity, int resizer){
         this.drawmode = drawmode;
 
@@ -53,11 +52,11 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances.get(0);
     }
 
-    public FSInstance get(int index){
+    public FSInstance instance(int index){
         return instances.get(index);
     }
 
-    public Attachment getAttachment(int index){
+    public Attachment attachment(int index){
         return attachments.get(index);
     }
 

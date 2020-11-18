@@ -751,7 +751,7 @@ public final class FSP{
             FSLightMaterial mat;
 
             for(int i = 0; i < size; i++){
-                mat = mesh.get(i).lightmaterial;
+                mat = mesh.instance(i).lightmaterial;
                 mat.location(location);
                 mat.configure(program, mesh, meshindex, passindex);
             }
@@ -765,7 +765,7 @@ public final class FSP{
             FSLightMaterial mat;
 
             for(int i = 0; i < size; i++){
-                mat = mesh.get(i).lightmaterial;
+                mat = mesh.instance(i).lightmaterial;
                 mat.location(location);
                 mat.configureDebug(program, mesh, meshindex, passindex);
             }
@@ -784,7 +784,7 @@ public final class FSP{
 
             for(int i = 0; i < size; i++){
                 VLDebug.append("Instance[i] [LightMaterial] ");
-                mesh.get(i).lightmaterial.debugInfo(program, mesh, debug);
+                mesh.instance(i).lightmaterial.debugInfo(program, mesh, debug);
             }
         }
     }
@@ -812,7 +812,7 @@ public final class FSP{
             FSLightMap map;
 
             for(int i = 0; i < size; i++){
-                map = mesh.get(i).lightmap;
+                map = mesh.instance(i).lightmap;
                 map.location(location);
                 map.configure(program, mesh, meshindex, passindex);
             }
@@ -826,7 +826,7 @@ public final class FSP{
             FSLightMap map;
 
             for(int i = 0; i < size; i++){
-                map = mesh.get(i).lightmap;
+                map = mesh.instance(i).lightmap;
                 map.location(location);
                 map.configureDebug(program, mesh, meshindex, passindex);
             }
@@ -845,7 +845,7 @@ public final class FSP{
 
             for(int i = 0; i < size; i++){
                 VLDebug.append("Instance[i] [LightMap] ");
-                mesh.get(i).lightMap().debugInfo(program, mesh, debug);
+                mesh.instance(i).lightMap().debugInfo(program, mesh, debug);
             }
         }
     }

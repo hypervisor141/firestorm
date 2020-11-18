@@ -37,7 +37,7 @@ public abstract class FSConfigArrayElement <TYPE extends VLArray> extends FSConf
 
     @Override
     public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-        array = (TYPE)mesh.get(instance).element(element);
+        array = (TYPE)mesh.instance(instance).element(element);
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class FSConfigArrayElement <TYPE extends VLArray> extends FSConf
         VLDebug.append("] array[");
 
         if(array == null){
-            mesh.get(instance).element(element).stringify(VLDebug.get(), null);
+            mesh.instance(instance).element(element).stringify(VLDebug.get(), null);
 
         }else{
             array.stringify(VLDebug.get(), null);
