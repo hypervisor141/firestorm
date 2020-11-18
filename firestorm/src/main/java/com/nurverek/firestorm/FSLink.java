@@ -1,21 +1,35 @@
 package com.nurverek.firestorm;
 
-public abstract class FSAttachment<ATTACHMENT, CONFIG extends FSConfig>{
+import com.nurverek.vanguard.VLBuffer;
+import com.nurverek.vanguard.VLBufferable;
 
-    public ATTACHMENT attachment;
-    public CONFIG config;
+public class FSLink<LINK, BUFFERTYPE extends VLBuffer> implements VLBufferable<BUFFERTYPE>{
+
+    public LINK link;
+    public FSConfig config;
     public FSBufferAddress address;
 
-    public FSAttachment(ATTACHMENT attachment, CONFIG config, FSBufferAddress address){
-        this.attachment = attachment;
-        this.config = config;
-        this.address = address;
-    }
-
-    public FSAttachment(ATTACHMENT attachment, CONFIG config){
-        this.attachment = attachment;
+    public FSLink(LINK link, FSConfig config){
+        this.link = link;
         this.config = config;
     }
 
-    public abstract void buffer(FSBufferManager buffer, int index);
+    public FSLink(LINK link){
+        this.link = link;
+    }
+
+    @Override
+    public void buffer(BUFFERTYPE buffertype){
+
+    }
+
+    @Override
+    public void buffer(BUFFERTYPE buffertype, int i, int i1){
+
+    }
+
+    @Override
+    public void buffer(BUFFERTYPE buffertype, int i, int i1, int i2, int i3, int i4, int i5){
+
+    }
 }

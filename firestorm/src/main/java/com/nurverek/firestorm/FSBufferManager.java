@@ -1,213 +1,70 @@
 package com.nurverek.firestorm;
 
-import android.opengl.GLES32;
-
-import com.nurverek.vanguard.VLArray;
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayInt;
 import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLBufferDirect;
 import com.nurverek.vanguard.VLBufferFloat;
 import com.nurverek.vanguard.VLBufferInt;
+import com.nurverek.vanguard.VLBufferManagerBase;
 import com.nurverek.vanguard.VLBufferShort;
-import com.nurverek.vanguard.VLListType;
 
-public class FSBufferManager{
+public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer, FSBufferManager, FSBufferAddress>{
 
-    protected VLListType<Entry> entries;
-
-    public FSBufferManager(int capacity){
-        entries = new VLListType<>(capacity, capacity);
+    public FSBufferManager(int capacity, int resizer){
+        super(capacity, resizer);
     }
 
-    public int addShortBuffer(int target, int accessmode, int bindpoint){
-        FSVertexBuffer vbuffer = new FSVertexBuffer(target, accessmode, bindpoint);
-        vbuffer.provider(new VLBufferShort());
-        entries.add(new EntryShort(vbuffer));
-
-        return entries.size() - 1;
-    }
-    
-    public int addIntBuffer(int target, int accessmode, int bindpoint){
-        FSVertexBuffer vbuffer = new FSVertexBuffer(target, accessmode, bindpoint);
-        vbuffer.provider(new VLBufferInt());
-        entries.add(new EntryInt(vbuffer));
-
-        return entries.size() - 1;
+    @Override
+    public FSEntryTypeVertexBuffer get(int index){
+        return entries.get(index);
     }
 
-    public int addFloatBuffer(int target, int accessmode, int bindpoint){
-        FSVertexBuffer vbuffer = new FSVertexBuffer(target, accessmode, bindpoint);
-        vbuffer.provider(new VLBufferFloat());
-        entries.add(new EntryFloat(vbuffer));
-
-        return entries.size() - 1;
+    @Override
+    public FSEntryTypeVertexBuffer remove(int index){
+        return entries.remove(index);
     }
 
-    public void increaseTargetCapacity(int index, int count){
-        entries.get(index).increaseTargetCapacity(count);
-    }
-
-    public void initialize(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).initialize();
-        }
-    }
-
-    public void initialize(int index){
-        entries.get(index).initialize();
-    }
-
-    public void initializeLast(){
-        entries.get(entries.size() - 1).initialize();
-    }
-
-    public FSBufferAddress buffer(int index, VLArray array, int unitsize, int stride){
-        Entry e = entries.get(index);
-        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), 0, unitsize, stride, array.size());
-
-        e.put(array);
-
-        return address;
-    }
-
-    public FSBufferAddress buffer(int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-        Entry e = entries.get(index);
-        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), unitoffset, unitsize, stride, arraycount / unitsize);
-
-        e.put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
-
-        return address;
-    }
-
-    public FSBufferAddress bufferSync(int index, VLArray array, int unitsize, int stride){
-        Entry e = entries.get(index);
-        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), 0, unitsize, stride, array.size());
-
-        e.putSync(array);
-
-        return address;
-    }
-
-    public FSBufferAddress bufferSync(int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-        Entry e = entries.get(index);
-        FSBufferAddress address = new FSBufferAddress(this, index, e.directbuffer.position(), unitoffset, unitsize, stride, arraycount / unitsize);
-
-        e.putSync(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
-
-        return address;
+    @Override
+    public FSBufferAddress generateAddress(int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count){
+        return new FSBufferAddress(this, bufferindex, offset, unitoffset, unitsize, stride, count);
     }
 
     public void upload(){
-        for(int i = 0; i < entries.size(); i++){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
             entries.get(i).vertexbuffer.upload();
         }
     }
 
-    public void update(){
-        for(int i = 0; i < entries.size(); i++){
-            entries.get(i).vertexbuffer.update();
-        }
-    }
-
     public void updateIfNeeded(){
-        for(int i = 0; i < entries.size(); i++){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
             entries.get(i).vertexbuffer.updateIfNeeded();
         }
     }
 
-    public void releaseClients(){
-        for(int i = 0; i < entries.size(); i++){
-            entries.get(i).vertexbuffer.releaseClientBuffer();
-        }
-    }
+    public static class EntryShort extends FSEntryTypeVertexBuffer<VLArrayShort>{
 
-    public void bind(int index){
-        entries.get(index).vertexbuffer.bind();
-    }
-
-    public void unbindArrayBuffer(){
-        GLES32.glBindBuffer(GLES32.GL_ARRAY_BUFFER, 0);
-    }
-
-    public void unbindElementBuffer(){
-        GLES32.glBindBuffer(GLES32.GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-
-    public int position(int index){
-        return entries.get(index).directbuffer.position();
-    }
-
-    public int size(int index){
-        return entries.get(index).directbuffer.size();
-    }
-
-    public FSVertexBuffer get(int index){
-        return entries.get(index).vertexbuffer;
-    }
-
-    public FSVertexBuffer remove(int index){
-        return entries.remove(index).vertexbuffer;
-    }
-
-    public int size(){
-        return entries.size();
-    }
-
-
-
-    public static abstract class Entry<ARRAYTYPE extends VLArray>{
-
-        public FSVertexBuffer vertexbuffer;
-
-        protected VLBufferDirect directbuffer;
-        protected int targetcapacity;
-
-        protected Entry(FSVertexBuffer vertexbuffer){
-            this.vertexbuffer = vertexbuffer;
-            directbuffer = vertexbuffer.provider();
-        }
-
-        public void increaseTargetCapacity(int count){
-            targetcapacity += count;
-        }
-
-        protected void initialize(){
-            directbuffer.initialize(targetcapacity);
-            vertexbuffer.initialize();
-        }
-
-        protected abstract int put(ARRAYTYPE array);
-
-        protected abstract int put(ARRAYTYPE array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
-
-        protected abstract int putSync(ARRAYTYPE array);
-
-        protected abstract int putSync(ARRAYTYPE array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
-    }
-
-    protected static final class EntryShort extends Entry<VLArrayShort>{
-
-        protected EntryShort(FSVertexBuffer vbuffer){
-            super(vbuffer);
+        public EntryShort(FSVertexBuffer buffer){
+            super(buffer);
         }
 
         @Override
         protected int put(VLArrayShort array){
-            directbuffer.put(array.provider());
-            return directbuffer.position();
+            buffer.put(array.provider());
+            return buffer.position();
         }
 
         @Override
         protected int put(VLArrayShort array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            return directbuffer.putInterleaved(array.provider(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+            return buffer.putInterleaved(array.provider(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
 
         @Override
         protected int putSync(VLArrayShort array){
-            array.SYNCER.add(new VLBufferShort.DefinitionArray(directbuffer, directbuffer.position()));
+            array.SYNCER.add(new VLBufferShort.DefinitionArray(buffer, buffer.position()));
             array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array);
@@ -215,33 +72,39 @@ public class FSBufferManager{
 
         @Override
         protected int putSync(VLArrayShort array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            array.SYNCER.add(new VLBufferShort.DefinitionArrayInterleaved(directbuffer, directbuffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
+            array.SYNCER.add(new VLBufferShort.DefinitionArrayInterleaved(buffer, buffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
             array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
+
+        @Override
+        public void release(){
+            super.release();
+            vertexbuffer.destroy();
+        }
     }
 
-    protected static final class EntryInt extends Entry<VLArrayInt>{
+    public static class EntryInt extends FSEntryTypeVertexBuffer<VLArrayInt> {
 
-        protected EntryInt(FSVertexBuffer vbuffer){
-            super(vbuffer);
+        public EntryInt(FSVertexBuffer buffer){
+            super(buffer);
         }
 
         @Override
         protected int put(VLArrayInt array){
-            directbuffer.put(array.provider());
-            return directbuffer.position();
+            buffer.put(array.provider());
+            return buffer.position();
         }
 
         @Override
         protected int put(VLArrayInt array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            return directbuffer.putInterleaved(array.provider(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+            return buffer.putInterleaved(array.provider(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
 
         @Override
         protected int putSync(VLArrayInt array){
-            array.SYNCER.add(new VLBufferInt.DefinitionArray(directbuffer, directbuffer.position()));
+            array.SYNCER.add(new VLBufferInt.DefinitionArray(buffer, buffer.position()));
             array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array);
@@ -249,34 +112,39 @@ public class FSBufferManager{
 
         @Override
         protected int putSync(VLArrayInt array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            array.SYNCER.add(new VLBufferInt.DefinitionArrayInterleaved(directbuffer, directbuffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
+            array.SYNCER.add(new VLBufferInt.DefinitionArrayInterleaved(buffer, buffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
             array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
 
+        @Override
+        public void release(){
+            super.release();
+            vertexbuffer.destroy();
+        }
     }
 
-    protected static final class EntryFloat extends Entry<VLArrayFloat>{
+    public static class EntryFloat extends FSEntryTypeVertexBuffer<VLArrayFloat> {
 
-        protected EntryFloat(FSVertexBuffer vbuffer){
-            super(vbuffer);
+        public EntryFloat(FSVertexBuffer buffer){
+            super(buffer);
         }
 
         @Override
         protected int put(VLArrayFloat array){
-            directbuffer.put(array.provider());
-            return directbuffer.position();
+            buffer.put(array.provider());
+            return buffer.position();
         }
 
         @Override
         protected int put(VLArrayFloat array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            return directbuffer.putInterleaved(array.provider(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
+            return buffer.putInterleaved(array.provider(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
 
         @Override
         protected int putSync(VLArrayFloat array){
-            array.SYNCER.add(new VLBufferFloat.DefinitionArray(directbuffer, directbuffer.position()));
+            array.SYNCER.add(new VLBufferFloat.DefinitionArray(buffer, buffer.position()));
             array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array);
@@ -284,11 +152,16 @@ public class FSBufferManager{
 
         @Override
         protected int putSync(VLArrayFloat array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            array.SYNCER.add(new VLBufferFloat.DefinitionArrayInterleaved(directbuffer, directbuffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
+            array.SYNCER.add(new VLBufferFloat.DefinitionArrayInterleaved(buffer, buffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
             array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
 
+        @Override
+        public void release(){
+            super.release();
+            vertexbuffer.destroy();
+        }
     }
 }

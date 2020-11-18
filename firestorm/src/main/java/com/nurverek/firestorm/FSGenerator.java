@@ -96,11 +96,11 @@ public abstract class FSGenerator {
     protected long ID;
     protected boolean isTouchable;
 
-    public FSGenerator(int programsetsize){
+    public FSGenerator(int programsetsize, int buffercapacity, int bufferresizer){
         isTouchable = true;
 
         ID = FSControl.getNextID();
-        BUFFERMANAGER = new FSBufferManager(ELEMENT_TOTAL_COUNT);
+        BUFFERMANAGER = new FSBufferManager(buffercapacity, bufferresizer);
 
         PROGRAMSETS = new VLListType<>(5, 20);
         PROCESSORS = new VLListType<>(5, 20);
@@ -229,7 +229,7 @@ public abstract class FSGenerator {
         }
 
         for(int i = 0; i < BUFFERMANAGER.size(); i++){
-            BUFFERMANAGER.get(i).destroy();
+            BUFFERMANAGER.get(i).release();
         }
 
         PROGRAMSETS = null;
@@ -258,15 +258,15 @@ public abstract class FSGenerator {
         }
 
 
-        public Registration addScannerSingle(Assembler assembler, DataPack pack, String name, int drawmode){
-            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), name, drawmode);
+        public Registration addScannerSingle(Assembler assembler, DataPack pack, String name, int drawmode, int linkcapacity, int linkresizer){
+            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), name, drawmode, linkcapacity, linkresizer);
             scanners.add(s);
 
             return new Registration(s);
         }
 
-        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize){
-            Scanner s = new ScannerInstanced(assembler, datagroup, prefixname, drawmode, estimatedsize);
+        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize, int linkcapacity, int linkresizer){
+            Scanner s = new ScannerInstanced(assembler, datagroup, prefixname, drawmode, estimatedsize, linkcapacity, linkresizer);
             scanners.add(s);
 
             return new Registration(s);
@@ -587,8 +587,8 @@ public abstract class FSGenerator {
 
     protected class ScannerSingular extends Scanner{
 
-        protected ScannerSingular(Assembler assembler, DataGroup datagroup, String name, int drawmode){
-            super(assembler, datagroup, new FSMesh(drawmode, 1, 1), name);
+        protected ScannerSingular(Assembler assembler, DataGroup datagroup, String name, int drawmode, int linkcapacity, int linkresizer){
+            super(assembler, datagroup, new FSMesh(drawmode, 1, 0, linkcapacity, linkresizer), name);
         }
 
         @Override
@@ -621,8 +621,8 @@ public abstract class FSGenerator {
 
     protected class ScannerInstanced extends Scanner{
 
-        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize){
-            super(assembler, datagroup, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
+        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize, int linkcapacity, int linkresizer){
+            super(assembler, datagroup, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f), linkcapacity, linkresizer), prefixname);
         }
 
         @Override

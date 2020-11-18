@@ -356,6 +356,19 @@ public final class FSP{
                     VLDebug.append("Complete.\n");
                 }
 
+                size = meshes.size();
+                VLDebug.append("Running programBuilt() for Mesh Links\n");
+
+                for(int i = 0; i < size; i++){
+                    VLDebug.append("Mesh(");
+                    VLDebug.append(i);
+                    VLDebug.append(") : ");
+
+                    meshes.get(i).programBuilt(this);
+
+                    VLDebug.append("Complete.\n");
+                }
+
                 size = postdrawconfigs.size();
                 VLDebug.append("Running programBuilt() for PostDrawConfigs\n");
 
@@ -392,6 +405,12 @@ public final class FSP{
 
             for(int i = 0; i < size; i++){
                 meshconfigs.get(i).programBuilt(this);
+            }
+
+            size = meshes.size();
+
+            for(int i = 0; i < size; i++){
+                meshes.get(i).programBuilt(this);
             }
 
             size = postdrawconfigs.size();
@@ -439,6 +458,7 @@ public final class FSP{
         int postdrawconfigsize = postdrawconfigs.size();
 
         FSMesh mesh;
+        FSConfig config;
 
         if(FSControl.DEBUG_MODE && debug > FSGenerator.DEBUG_DISABLED){
             VLDebug.recreate();
@@ -457,7 +477,8 @@ public final class FSP{
                 VLDebug.append(setupconfigsize);
                 VLDebug.append("] ");
 
-                directRunDebug(setupconfigs.get(i), null, -1, passindex);
+                config = setupconfigs.get(i);
+                config.policy().configureDebug(config, this, null, -1, passindex);
             }
 
             for(int i = 0; i < meshsize; i++){
@@ -476,6 +497,13 @@ public final class FSP{
                 VLDebug.append("]");
                 VLDebug.printD();
 
+                VLDebug.append("configuringMeshLinks[");
+                VLDebug.append(mesh.sizeLinks());
+                VLDebug.append("]");
+                VLDebug.printD();
+
+                mesh.configureDebugLinks(this, i, passindex);
+
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
                     VLDebug.append("[");
                     VLDebug.append(i2 + 1);
@@ -483,7 +511,8 @@ public final class FSP{
                     VLDebug.append(meshconfigsize);
                     VLDebug.append("] ");
 
-                    directRunDebug(meshconfigs.get(i2), mesh, i, passindex);
+                    config = meshconfigs.get(i);
+                    config.policy().configureDebug(config, this, mesh, i, passindex);
                 }
             }
 
@@ -501,36 +530,33 @@ public final class FSP{
                 VLDebug.append(postdrawconfigsize);
                 VLDebug.append("] ");
 
-                directRunDebug(postdrawconfigs.get(i), null, -1, passindex);
+                config = postdrawconfigs.get(i);
+                config.policy().configureDebug(config, this, null, -1, passindex);
             }
 
             VLDebug.printD();
 
         }else{
             for(int i = 0; i < setupconfigsize; i++){
-                directRun(setupconfigs.get(i), null, -1, passindex);
+                config = setupconfigs.get(i);
+                config.policy().configure(config, this, null, -1, passindex);
             }
 
             for(int i = 0; i < meshsize; i++){
                 mesh = meshes.get(i);
+                mesh.configureLinks(this, i, passindex);
 
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
-                    directRun(meshconfigs.get(i2), mesh, i, passindex);
+                    config = meshconfigs.get(i);
+                    config.policy().configure(config, this, mesh, i, passindex);
                 }
             }
 
             for(int i = 0; i < postdrawconfigsize; i++){
-                directRun(postdrawconfigs.get(i), null, -1, passindex);
+                config = postdrawconfigs.get(i);
+                config.policy().configure(config, this, null, -1, passindex);
             }
         }
-    }
-
-    private final void directRun(FSConfig config, FSMesh mesh, int meshindex, int passindex){
-        config.policy().configure(config, this, mesh, meshindex, passindex);
-    }
-
-    private void directRunDebug(FSConfig config, FSMesh mesh, int meshindex, int passindex){
-        config.policy().configureDebug(config, this, mesh, meshindex, passindex);
     }
 
     public void use(){
@@ -1097,9 +1123,9 @@ public final class FSP{
 
             int databytesize = FSGenerator.ELEMENT_BYTES[element];
 
-            o.target().bind();
-            GLES32.glVertexAttribPointer(location, o.unitsize, FSGenerator.ELEMENT_GLDATA_TYPES[element], false,
-                    o.stride * databytesize, o.offset * databytesize);
+            o.bind();
+            GLES32.glVertexAttribPointer(location, o.unitSize(), FSGenerator.ELEMENT_GLDATA_TYPES[element], false,
+                    o.stride() * databytesize, o.offset() * databytesize);
         }
 
         @Override
@@ -1141,9 +1167,9 @@ public final class FSP{
 
             int databytesize = FSGenerator.ELEMENT_BYTES[element];
 
-            o.target().bind();
-            GLES32.glVertexAttribIPointer(location, o.unitsize, FSGenerator.ELEMENT_GLDATA_TYPES[element],
-                    o.stride * databytesize, o.offset * databytesize);
+            o.bind();
+            GLES32.glVertexAttribIPointer(location, o.unitSize(), FSGenerator.ELEMENT_GLDATA_TYPES[element],
+                    o.stride() * databytesize, o.offset() * databytesize);
         }
 
         @Override
@@ -2219,7 +2245,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer buffer = mesh.first().bufferTracker().get(element, bufferaddressindex).target();
+            FSVertexBuffer buffer = mesh.first().bufferTracker().get(element, bufferaddressindex).target().vertexBuffer();
             
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
@@ -2269,7 +2295,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer buffer = address.target();
+            FSVertexBuffer buffer = address.target().vertexBuffer();
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
         }
@@ -2458,9 +2484,9 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             FSBufferAddress address = mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex);
 
-            address.target().bind();
-            GLES32.glDrawElements(mesh.drawmode, address.count, FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
-                    address.offset * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX]);
+            address.bind();
+            GLES32.glDrawElements(mesh.drawmode, address.count(), FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
+                    address.offset() * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2499,9 +2525,9 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             FSBufferAddress address = mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex);
 
-            address.target().bind();
-            GLES32.glDrawElementsInstanced(mesh.drawmode, address.count, FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
-                    address.offset * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX], mesh.size());
+            address.bind();
+            GLES32.glDrawElementsInstanced(mesh.drawmode, address.count(), FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
+                    address.offset() * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX], mesh.size());
         }
 
         @Override
@@ -2554,9 +2580,9 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             FSBufferAddress address = mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex);
 
-            address.target().bind();
+            address.bind();
             GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
-                    address.offset * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX]);
+                    address.offset() * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX]);
         }
 
         @Override

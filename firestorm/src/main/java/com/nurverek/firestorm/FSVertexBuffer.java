@@ -2,13 +2,13 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLBufferDirect;
+import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLStringify;
 import com.nurverek.vanguard.VLSyncer;
 
 public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
 
-    private VLBufferDirect buffer;
+    private VLBuffer buffer;
 
     private int target;
     private int accessmode;
@@ -114,7 +114,7 @@ public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
         }
     }
 
-    public VLBufferDirect unMap(){
+    public VLBuffer unMap(){
         FSRenderer.unMapBuffer(target);
 
         mapped = false;
@@ -135,7 +135,7 @@ public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
         buffer.release();
     }
 
-    public void provider(VLBufferDirect buffer){
+    public void provider(VLBuffer buffer){
         this.buffer = buffer;
     }
 
@@ -151,7 +151,7 @@ public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
         accessmode = s;
     }
 
-    public VLBufferDirect provider(){
+    public VLBuffer provider(){
         return buffer;
     }
 

@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLBufferDirect;
+import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLDebug;
 import com.nurverek.vanguard.VLListInt;
 import com.nurverek.vanguard.VLListType;
@@ -153,7 +153,7 @@ public class FSBufferLayout{
 
         protected void buffer(){
             int size = entries.size();
-            VLBufferDirect b = buffer.get(bufferindex).provider();
+            VLBuffer b = buffer.get(bufferindex).buffer();
 
             for(int i = 0; i < size - 1; i++){
                 b.position(mechanism.buffer(assembler, targetmesh, entries.get(i), buffer, bufferindex, stride));
@@ -264,7 +264,7 @@ public class FSBufferLayout{
 
             VLDebug.append("] ");
 
-            buffer.get(bufferindex).provider().stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            buffer.get(bufferindex).buffer().stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             buffer();
         }
@@ -397,6 +397,30 @@ public class FSBufferLayout{
     private static final class IndicesSingularMechanism extends MechanismSingularBase{
 
         private IndicesSingularMechanism(){
+
+        }
+
+        @Override
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
+            int unitsize = entry.unitsubcount;
+            int element = entry.element;
+
+            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0, mesh.indices.size(),
+                    entry.unitoffset, FSGenerator.UNIT_SIZES[FSGenerator.ELEMENT_INDEX], unitsize, stride);
+
+            int size = mesh.size();
+
+            for(int i = 0; i < size; i++){
+                mesh.instance(i).bufferTracker().add(element, address);
+            }
+
+            return buffer.position(bufferindex);
+        }
+    }
+
+    private static final class LinksMechanism extends MechanismSingularBase{
+
+        private LinksMechanism(){
 
         }
 

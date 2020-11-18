@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLArrayShort;
+import com.nurverek.vanguard.VLDebug;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLSyncer;
 
@@ -9,22 +10,49 @@ public class FSMesh extends VLSyncer.Syncable{
     protected String name;
 
     protected VLListType<FSInstance> instances;
-    protected VLListType<Attachment> attachments;
+    protected VLListType<FSLink> links;
     protected VLArrayShort indices;
 
     protected long id;
     protected int drawmode;
 
-    public FSMesh(int drawmode, int initialcapacity, int resizer){
+    public FSMesh(int drawmode, int instancecapacity, int instanceresizer, int linkcapacity, int linkresizer){
         this.drawmode = drawmode;
 
-        instances = new VLListType<>(initialcapacity, resizer);
+        instances = new VLListType<>(instancecapacity, instanceresizer);
+        links = new VLListType<>(linkcapacity, linkresizer);
+
         id = FSControl.getNextID();
     }
 
+    public void programBuilt(FSP program){
+        int size = links.size();
 
-    public void initAttachments(int size, int resizer){
-        attachments = new VLListType<>(size, resizer);
+        for(int i = 0; i < size; i++){
+            links.get(i).config.programBuilt(program);
+        }
+    }
+
+    public void configureLinks(FSP program, int meshindex, int passindex){
+        int size = links.size();
+
+        for(int i = 0; i < size; i++){
+            links.get(i).config.configure(program, this, meshindex, passindex);
+        }
+    }
+
+    public void configureDebugLinks(FSP program, int meshindex, int passindex){
+        int size = links.size();
+
+        for(int i = 0; i < size; i++){
+            VLDebug.append("[");
+            VLDebug.append(i);
+            VLDebug.append("/");
+            VLDebug.append(size);
+            VLDebug.append("]");
+
+            links.get(i).config.configureDebug(program, this, meshindex, passindex);
+        }
     }
 
     public void add(FSInstance instance){
@@ -32,8 +60,8 @@ public class FSMesh extends VLSyncer.Syncable{
         instance.mesh = this;
     }
 
-    public void add(Attachment attachment){
-        attachments.add(attachment);
+    public void add(FSLink link){
+        links.add(link);
     }
 
     public void drawMode(int mode){
@@ -56,8 +84,8 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances.get(index);
     }
 
-    public Attachment attachment(int index){
-        return attachments.get(index);
+    public FSLink link(int index){
+        return links.get(index);
     }
 
     public FSInstance remove(int index){
@@ -67,8 +95,8 @@ public class FSMesh extends VLSyncer.Syncable{
         return instance;
     }
 
-    public Attachment removeAttachment(int index){
-        return attachments.remove(index);
+    public FSLink removeLink(int index){
+        return links.remove(index);
     }
 
     public int drawMode(){
@@ -83,6 +111,10 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances;
     }
 
+    public VLListType<FSLink> links(){
+        return links;
+    }
+
     public VLArrayShort indices(){
         return indices;
     }
@@ -95,25 +127,8 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances.size();
     }
 
-    public int sizeAttachments(){
-        return attachments.size();
+    public int sizeLinks(){
+        return links.size();
     }
 
-    public static final class Attachment<TYPE>{
-
-        public TYPE attachment;
-        public FSConfig config;
-        public FSBufferAddress address;
-
-        public Attachment(TYPE attachment, FSConfig config, FSBufferAddress address){
-            this.attachment = attachment;
-            this.config = config;
-            this.address = address;
-        }
-
-        public Attachment(TYPE attachment, FSConfig config){
-            this.attachment = attachment;
-            this.config = config;
-        }
-    }
 }
