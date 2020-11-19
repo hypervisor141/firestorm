@@ -9,6 +9,13 @@ public abstract class FSEntryTypeVertexBuffer<TYPE extends VLArray> extends VLBu
 
     protected FSEntryTypeVertexBuffer(FSVertexBuffer buffer){
         super(buffer.provider());
+        this.vertexbuffer = buffer;
+    }
+
+    @Override
+    protected void initialize(){
+        super.initialize();
+        vertexbuffer.initialize();
     }
 
     public FSVertexBuffer vertexBuffer(){
