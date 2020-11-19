@@ -339,7 +339,7 @@ public class FSBufferLayout{
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.buffers.add(element, step.process(buffer, bufferindex, array, entry.unitsubcount, stride));
+                instance.bufferTracker().add(element, step.process(buffer, bufferindex, array, entry.unitsubcount, stride));
             }
 
             return buffer.position(bufferindex);
@@ -366,7 +366,7 @@ public class FSBufferLayout{
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.buffers.add(element, step.process(buffer, bufferindex, array, 0,
+                instance.bufferTracker().add(element, step.process(buffer, bufferindex, array, 0,
                         array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride));
             }
 
@@ -392,7 +392,7 @@ public class FSBufferLayout{
             array = instance.element(element);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).buffers.add(element, assembler.bufferFunc(element).process(buffer, bufferindex, array, entry.unitsubcount, stride));
+                instances.get(i).bufferTracker().add(element, assembler.bufferFunc(element).process(buffer, bufferindex, array, entry.unitsubcount, stride));
             }
 
             return buffer.position(bufferindex);
@@ -420,7 +420,7 @@ public class FSBufferLayout{
                     0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).buffers.add(element, address);
+                instances.get(i).bufferTracker().add(element, address);
             }
 
             return mainoffset + entry.unitsubcount;
