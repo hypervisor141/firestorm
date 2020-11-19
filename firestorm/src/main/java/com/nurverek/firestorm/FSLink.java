@@ -14,13 +14,13 @@ public abstract class FSLink<LINK, CONFIG extends FSConfig, ENTRYTYPE extends VL
     public FSBufferAddress address;
 
     public FSLink(LINK link, CONFIG config){
-
         this.link = link;
         this.config = config;
     }
 
     public FSLink(LINK link){
-
         this.link = link;
     }
+
+    public abstract int size();
 }

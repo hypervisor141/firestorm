@@ -11,18 +11,19 @@ public class FSBufferLayout{
     private static final int BUFFER_PRINT_LIMIT = 20;
     private static final VLListInt DEBUG_CACHE = new VLListInt(0, 5);
 
-    public static final Mechanism MECHANISM_SEQUENTIAL_INSTANCED = new SequentialMechanism();
-    public static final Mechanism MECHANISM_COMPLEX_INSTANCED = new ComplexMechanism();
-    public static final Mechanism MECHANISM_SEQUENTIAL_SINGULAR = new SequentialSingularMechanism();
-    public static final Mechanism MECHANISM_COMPLEX_SINGULAR = new ComplexSingularMechanism();
-    public static final Mechanism MECHANISM_INDICES_SINGULAR = new IndicesSingularMechanism();
+    public static final Mechanism MECHANISM_ELEMENTS_INSTANCED_SEQUENTIAL = new SequentialMechanism();
+    public static final Mechanism MECHANISM_ELEMENTS_INSTANCED_COMPLEX = new ComplexMechanism();
+    public static final Mechanism MECHANISM_ELEMENTS_SINGULAR_SEQUENTIAL = new SequentialSingularMechanism();
+    public static final Mechanism MECHANISM_ELEMENTS_SINGULAR_COMPLEX = new ComplexSingularMechanism();
+    public static final Mechanism MECHANISM_ELEMENTS_SINGULAR_INDICES = new IndicesSingularMechanism();
+    public static final Mechanism MECHANISM_LINKS_SINGULAR_SEQUENTIAL = new LinksSequentialMechanism();
+    public static final Mechanism MECHANISM_LINKS_SINGULAR_COMPLEX = new LinksComplexMechanism();
 
     protected VLListType<Layout> layouts;
     protected FSGenerator.Assembler assembler;
     protected FSMesh targetmesh;
 
     public FSBufferLayout(FSMesh mesh, FSGenerator.Assembler assembler){
-
         this.targetmesh = mesh;
         this.assembler = assembler;
 
@@ -31,7 +32,6 @@ public class FSBufferLayout{
 
 
     public Layout add(FSBufferManager buffer, int bufferindex, Mechanism mechanism){
-
         Layout layout = new Layout(buffer, bufferindex, mechanism);
         layouts.add(layout);
 
@@ -39,7 +39,6 @@ public class FSBufferLayout{
     }
 
     public void increaseTargetCapacities(int element, int totalsize){
-
         int size = layouts.size();
         int unitcount = totalsize / FSGenerator.UNIT_SIZES[element];
 
@@ -49,7 +48,6 @@ public class FSBufferLayout{
     }
 
     public void buffer(){
-
         int size = layouts.size();
 
         for(int i = 0; i < size; i++){
@@ -58,7 +56,6 @@ public class FSBufferLayout{
     }
 
     public void bufferDebug(FSGenerator.Scanner scanner){
-
         int size = layouts.size();
 
         VLDebug.append("BufferLayout[");
@@ -86,33 +83,46 @@ public class FSBufferLayout{
     }
 
 
-    protected static final class Entry{
+    public static abstract class EntryType{
 
-        protected int element;
-        protected int unitoffset;
-        protected int unitsubcount;
+        public int element;
+        public int unitoffset;
+        public int unitsize;
+        public int unitsubcount;
 
-        public Entry(int element, int unitoffset, int unitsubcount){
-
+        public EntryType(int element, int unitoffset, int unitsize, int unitsubcount){
             this.element = element;
             this.unitoffset = unitoffset;
+            this.unitsize = unitsize;
             this.unitsubcount = unitsubcount;
         }
 
-        public void debugInfo(){
+        public int strideAdjustment(){
+            return unitsubcount;
+        }
 
+        public void debugInfo(){
             VLDebug.append(FSGenerator.ELEMENT_NAMES[element]);
             VLDebug.append("[unitOffset[");
             VLDebug.append(unitoffset);
-            VLDebug.append("] unitsize[");
+            VLDebug.append("] unitSize[");
+            VLDebug.append(unitsize);
+            VLDebug.append("] unitSubCount[");
             VLDebug.append(unitsubcount);
             VLDebug.append("]]");
         }
     }
 
+    public static class EntryBasic extends EntryType{
+
+        public EntryBasic(int element, int unitoffset, int unitsize, int unitsubcount){
+            super(element, unitoffset, unitsize, unitsubcount);
+        }
+    }
+
     public final class Layout{
 
-        protected VLListType<Entry> entries;
+        protected VLListType<EntryType> entries;
 
         protected FSBufferManager buffer;
         protected Mechanism mechanism;
@@ -121,7 +131,6 @@ public class FSBufferLayout{
         protected int stride;
 
         protected Layout(FSBufferManager buffer, int bufferindex, Mechanism mechanism){
-
             this.mechanism = mechanism;
             this.buffer = buffer;
             this.bufferindex = bufferindex;
@@ -130,25 +139,38 @@ public class FSBufferLayout{
         }
 
 
-        public Layout add(int element){
-
-            return add(element, 0, FSGenerator.UNIT_SIZES[element]);
+        public Layout addElement(int element){
+            return addElement(element, 0, FSGenerator.UNIT_SIZES[element]);
         }
 
-        public Layout add(int element, int unitoffset, int unitsize){
+        public Layout addElement(int element, int unitoffset, int unitsubcount){
+            EntryType e = new EntryBasic(element, unitoffset, FSGenerator.UNIT_SIZES[element], unitsubcount);
+            stride += e.strideAdjustment();
+            entries.add(e);
 
-            stride += unitsize;
-            entries.add(new Entry(element, unitoffset, unitsize));
+            return this;
+        }
+
+        public Layout addLink(int linkindex, int unitoffset, int unitsize, int unitsubcount){
+            EntryType e = new EntryBasic(linkindex, unitoffset, unitsize, unitsubcount);
+            stride += e.strideAdjustment();
+            entries.add(e);
+
+            return this;
+        }
+
+        public Layout addCustom(EntryType entry){
+            stride += entry.strideAdjustment();
+            entries.add(entry);
 
             return this;
         }
 
         protected void increaseTargetCapacities(int element, int unitcount){
-
             int size = entries.size();
             int total = 0;
 
-            Entry e;
+            EntryType e;
 
             for(int i = 0; i < size; i++){
                 e = entries.get(i);
@@ -162,7 +184,6 @@ public class FSBufferLayout{
         }
 
         protected void buffer(){
-
             int size = entries.size();
             VLBuffer b = buffer.get(bufferindex).buffer();
 
@@ -174,7 +195,6 @@ public class FSBufferLayout{
         }
 
         protected void bufferDebug(FSGenerator.Scanner scanner){
-
             if(scanner instanceof FSGenerator.ScannerSingular && mechanism instanceof MechanismInstancedBase){
                 VLDebug.append("[WARNING] [USING INSTANCED BUFFER MECHANISM FOR A SINGULAR SCANNER]");
                 VLDebug.printE();
@@ -185,7 +205,7 @@ public class FSBufferLayout{
             }
 
             int size = entries.size();
-            Entry e;
+            EntryType e;
 
             DEBUG_CACHE.virtualSize(0);
 
@@ -282,24 +302,29 @@ public class FSBufferLayout{
         }
     }
 
-    public abstract static class Mechanism{
+    public abstract static class Mechanism<ENTRY extends EntryType>{
 
-        protected abstract int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride);
+        private Mechanism(){}
+
+        protected abstract int buffer(FSGenerator.Assembler assembler, FSMesh mesh, ENTRY entry, FSBufferManager buffer, int bufferindex, int stride);
     }
 
-    public abstract static class MechanismSingularBase extends Mechanism{}
+    public abstract static class MechanismSingularBase<ENTRY extends EntryType> extends Mechanism<ENTRY>{
 
-    public abstract static class MechanismInstancedBase extends Mechanism{}
+        private MechanismSingularBase(){}
+    }
 
-    private static final class SequentialMechanism extends MechanismInstancedBase{
+    public abstract static class MechanismInstancedBase<ENTRY extends EntryType> extends Mechanism<ENTRY>{
 
-        private SequentialMechanism(){
+        private MechanismInstancedBase(){}
+    }
 
-        }
+    private static final class SequentialMechanism extends MechanismInstancedBase<EntryBasic>{
+
+        private SequentialMechanism(){}
 
         @Override
-        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -314,22 +339,19 @@ public class FSBufferLayout{
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.buffers.add(element, step.process(buffer, bufferindex, array, FSGenerator.UNIT_SIZES[element], stride));
+                instance.buffers.add(element, step.process(buffer, bufferindex, array, entry.unitsubcount, stride));
             }
 
             return buffer.position(bufferindex);
         }
     }
 
-    private static final class ComplexMechanism extends MechanismInstancedBase{
+    private static final class ComplexMechanism extends MechanismInstancedBase<EntryBasic>{
 
-        private ComplexMechanism(){
-
-        }
+        private ComplexMechanism(){}
 
         @Override
-        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -344,22 +366,20 @@ public class FSBufferLayout{
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                instance.buffers.add(element, step.process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSGenerator.UNIT_SIZES[element], entry.unitsubcount, stride));
+                instance.buffers.add(element, step.process(buffer, bufferindex, array, 0,
+                        array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride));
             }
 
             return mainoffset + entry.unitsubcount;
         }
     }
 
-    private static final class SequentialSingularMechanism extends MechanismSingularBase{
+    private static final class SequentialSingularMechanism extends MechanismSingularBase<EntryBasic>{
 
-        private SequentialSingularMechanism(){
-
-        }
+        private SequentialSingularMechanism(){}
 
         @Override
-        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -372,22 +392,19 @@ public class FSBufferLayout{
             array = instance.element(element);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).buffers.add(element, assembler.bufferFunc(element).process(buffer, bufferindex, array, FSGenerator.UNIT_SIZES[element], stride));
+                instances.get(i).buffers.add(element, assembler.bufferFunc(element).process(buffer, bufferindex, array, entry.unitsubcount, stride));
             }
 
             return buffer.position(bufferindex);
         }
     }
 
-    private static final class ComplexSingularMechanism extends MechanismSingularBase{
+    private static final class ComplexSingularMechanism extends MechanismSingularBase<EntryBasic>{
 
-        private ComplexSingularMechanism(){
-
-        }
+        private ComplexSingularMechanism(){}
 
         @Override
-        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -399,7 +416,8 @@ public class FSBufferLayout{
             instance = instances.get(0);
             array = instance.element(element);
 
-            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, array, 0, array.size(), entry.unitoffset, FSGenerator.UNIT_SIZES[element], entry.unitsubcount, stride);
+            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, array,
+                    0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
                 instances.get(i).buffers.add(element, address);
@@ -409,19 +427,15 @@ public class FSBufferLayout{
         }
     }
 
-    private static final class IndicesSingularMechanism extends MechanismSingularBase{
+    private static final class IndicesSingularMechanism extends MechanismSingularBase<EntryBasic>{
 
-        private IndicesSingularMechanism(){
-
-        }
+        private IndicesSingularMechanism(){}
 
         @Override
-        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-
-            int unitsize = entry.unitsubcount;
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
             int element = entry.element;
-
-            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0, mesh.indices.size(), entry.unitoffset, FSGenerator.UNIT_SIZES[FSGenerator.ELEMENT_INDEX], unitsize, stride);
+            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0,
+                    mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             int size = mesh.size();
 
@@ -433,27 +447,28 @@ public class FSBufferLayout{
         }
     }
 
-    private static final class LinksMechanism extends MechanismSingularBase{
+    private static final class LinksSequentialMechanism extends MechanismSingularBase<EntryBasic>{
 
-        private LinksMechanism(){
-
-        }
+        private LinksSequentialMechanism(){}
 
         @Override
-        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, Entry entry, FSBufferManager buffer, int bufferindex, int stride){
-
-            int unitsize = entry.unitsubcount;
-            int element = entry.element;
-
-            FSBufferAddress address = assembler.bufferFunc(element).process(buffer, bufferindex, mesh.indices, 0, mesh.indices.size(), entry.unitoffset, FSGenerator.UNIT_SIZES[FSGenerator.ELEMENT_INDEX], unitsize, stride);
-
-            int size = mesh.size();
-
-            for(int i = 0; i < size; i++){
-                mesh.instance(i).bufferTracker().add(element, address);
-            }
-
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
+            mesh.link(entry.element).buffer(buffer, bufferindex, entry.unitoffset, entry.unitsubcount);
             return buffer.position(bufferindex);
+        }
+    }
+
+    private static final class LinksComplexMechanism extends MechanismSingularBase<EntryBasic>{
+
+        private LinksComplexMechanism(){}
+
+        @Override
+        protected int buffer(FSGenerator.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
+            int firstpos = buffer.position(bufferindex);
+            FSLink link = mesh.link(entry.element);
+            link.buffer(buffer, bufferindex, 0, link.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+
+            return firstpos + entry.unitsubcount;
         }
     }
 }

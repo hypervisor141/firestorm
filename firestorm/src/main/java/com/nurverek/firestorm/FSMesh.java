@@ -16,12 +16,10 @@ public class FSMesh extends VLSyncer.Syncable{
     protected long id;
     protected int drawmode;
 
-    public FSMesh(int drawmode, int instancecapacity, int instanceresizer, int linkcapacity, int linkresizer){
+    public FSMesh(int drawmode, int instancecapacity, int instanceresizer){
         this.drawmode = drawmode;
 
         instances = new VLListType<>(instancecapacity, instanceresizer);
-        links = new VLListType<>(linkcapacity, linkresizer);
-
         id = FSControl.getNextID();
     }
 
@@ -82,6 +80,10 @@ public class FSMesh extends VLSyncer.Syncable{
 
     public FSInstance instance(int index){
         return instances.get(index);
+    }
+
+    public void links(VLListType<FSLink> links){
+        this.links = links;
     }
 
     public FSLink link(int index){

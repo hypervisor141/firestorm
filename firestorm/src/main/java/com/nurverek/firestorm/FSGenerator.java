@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 
-public abstract class FSGenerator {
+public abstract class FSGenerator{
 
     public static final int DEBUG_DISABLED = 0;
     public static final int DEBUG_NORMAL = 1;
@@ -63,27 +63,11 @@ public abstract class FSGenerator {
 
     public static final int ELEMENT_TOTAL_COUNT = 6;
 
-    public static final int[] ELEMENT_BYTES = new int[]{
-            ELEMENT_BYTES_MODEL, ELEMENT_BYTES_POSITION, ELEMENT_BYTES_COLOR, ELEMENT_BYTES_TEXCOORD, ELEMENT_BYTES_NORMAL, ELEMENT_BYTES_INDEX
-    };
-    public static final int[] UNIT_SIZES = new int[]{
-            UNIT_SIZE_MODEL, UNIT_SIZE_POSITION, UNIT_SIZE_COLOR, UNIT_SIZE_TEXCOORD, UNIT_SIZE_NORMAL, UNIT_SIZE_INDEX
-    };
-    public static final int[] UNIT_BYTES = new int[]{
-            UNIT_BYTES_MODEL, UNIT_BYTES_POSITION, UNIT_BYTES_COLOR, UNIT_BYTES_TEXCOORD, UNIT_BYTES_NORMAL, UNIT_BYTES_INDEX
-    };
-    public static final int[] ELEMENT_GLDATA_TYPES = new int[]{
-            ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD,
-            ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX
-    };
-    public static final String[] ELEMENT_NAMES = new String[]{
-            "MODEL",
-            "POSITION",
-            "COLOR",
-            "TEXCOORD",
-            "NORMAL",
-            "INDEX"
-    };
+    public static final int[] ELEMENT_BYTES = new int[]{ ELEMENT_BYTES_MODEL, ELEMENT_BYTES_POSITION, ELEMENT_BYTES_COLOR, ELEMENT_BYTES_TEXCOORD, ELEMENT_BYTES_NORMAL, ELEMENT_BYTES_INDEX };
+    public static final int[] UNIT_SIZES = new int[]{ UNIT_SIZE_MODEL, UNIT_SIZE_POSITION, UNIT_SIZE_COLOR, UNIT_SIZE_TEXCOORD, UNIT_SIZE_NORMAL, UNIT_SIZE_INDEX };
+    public static final int[] UNIT_BYTES = new int[]{ UNIT_BYTES_MODEL, UNIT_BYTES_POSITION, UNIT_BYTES_COLOR, UNIT_BYTES_TEXCOORD, UNIT_BYTES_NORMAL, UNIT_BYTES_INDEX };
+    public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
+    public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
     protected static VLVProcessor CONTROLPROCESSOR = new VLVProcessor(1, 10);
 
@@ -244,7 +228,6 @@ public abstract class FSGenerator {
     protected abstract void destroyAssets();
 
 
-
     public final class Automator{
 
         protected FSM fsm;
@@ -258,15 +241,15 @@ public abstract class FSGenerator {
         }
 
 
-        public Registration addScannerSingle(Assembler assembler, DataPack pack, String name, int drawmode, int linkcapacity, int linkresizer){
-            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), name, drawmode, linkcapacity, linkresizer);
+        public Registration addScannerSingle(Assembler assembler, DataPack pack, Links links, String name, int drawmode){
+            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), links, name, drawmode);
             scanners.add(s);
 
             return new Registration(s);
         }
 
-        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize, int linkcapacity, int linkresizer){
-            Scanner s = new ScannerInstanced(assembler, datagroup, prefixname, drawmode, estimatedsize, linkcapacity, linkresizer);
+        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, Links links, String prefixname, int drawmode, int estimatedsize){
+            Scanner s = new ScannerInstanced(assembler, datagroup, links, prefixname, drawmode, estimatedsize);
             scanners.add(s);
 
             return new Registration(s);
@@ -281,7 +264,7 @@ public abstract class FSGenerator {
 
             if(debug > DEBUG_DISABLED){
                 VLDebug.recreate();
-                
+
                 Scanner s;
                 boolean found;
 
@@ -400,7 +383,7 @@ public abstract class FSGenerator {
 
                         s.assembler.stringify(VLDebug.get(), null);
                         VLDebug.printE();
-                        
+
                         throw new RuntimeException(ex);
                     }
 
@@ -470,6 +453,19 @@ public abstract class FSGenerator {
         }
     }
 
+    public static final class Links{
+
+        protected VLListType<FSLink> links;
+
+        public Links(VLListType<FSLink> links){
+            this.links = links;
+        }
+
+        protected FSLink get(int index){
+            return links.get(index);
+        }
+    }
+
     public static final class DataPack{
 
         protected VLArrayFloat replacementcolor;
@@ -496,7 +492,7 @@ public abstract class FSGenerator {
 
         private VLListType<FSP> programs;
 
-        private Scanner(Assembler assembler, DataGroup datagroup, FSMesh mesh, String name){
+        private Scanner(Assembler assembler, DataGroup datagroup, Links links, FSMesh mesh, String name){
             this.mesh = mesh;
             this.datagroup = datagroup;
             this.assembler = assembler;
@@ -507,6 +503,7 @@ public abstract class FSGenerator {
             layout = new FSBufferLayout(mesh, assembler);
 
             mesh.name(name);
+            mesh.links = links.links;
         }
 
         protected abstract boolean scan(Automator automator, FSM.Data data);
@@ -587,8 +584,8 @@ public abstract class FSGenerator {
 
     protected class ScannerSingular extends Scanner{
 
-        protected ScannerSingular(Assembler assembler, DataGroup datagroup, String name, int drawmode, int linkcapacity, int linkresizer){
-            super(assembler, datagroup, new FSMesh(drawmode, 1, 0, linkcapacity, linkresizer), name);
+        protected ScannerSingular(Assembler assembler, DataGroup datagroup, Links links, String name, int drawmode){
+            super(assembler, datagroup, links, new FSMesh(drawmode, 1, 0), name);
         }
 
         @Override
@@ -621,8 +618,8 @@ public abstract class FSGenerator {
 
     protected class ScannerInstanced extends Scanner{
 
-        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize, int linkcapacity, int linkresizer){
-            super(assembler, datagroup, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f), linkcapacity, linkresizer), prefixname);
+        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, Links links, String prefixname, int drawmode, int estimatedsize){
+            super(assembler, datagroup, links, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
         }
 
         @Override
@@ -653,7 +650,7 @@ public abstract class FSGenerator {
         }
     }
 
-    public static final class Assembler implements VLStringify {
+    public static final class Assembler implements VLStringify{
 
         public boolean SYNC_MODELCLUSTER_AND_MODELARRAY = false;
         public boolean SYNC_MODELARRAY_AND_BUFFER = false;
@@ -664,7 +661,7 @@ public abstract class FSGenerator {
         public boolean SYNC_TEXCOORD_AND_BUFFER = false;
         public boolean SYNC_NORMAL_AND_BUFFER = false;
         public boolean SYNC_INDICES_AND_BUFFER = false;
-        
+
         public boolean ENABLE_COLOR_FILL = false;
         public boolean ENABLE_DATA_PACK = false;
 
@@ -719,7 +716,7 @@ public abstract class FSGenerator {
             SYNC_TEXCOORD_AND_BUFFER = true;
             SYNC_NORMAL_AND_BUFFER = true;
             SYNC_INDICES_AND_BUFFER = true;
-            
+
             ENABLE_COLOR_FILL = false;
 
             LOAD_MODELS = true;
@@ -728,7 +725,7 @@ public abstract class FSGenerator {
             LOAD_TEXCOORDS = true;
             LOAD_NORMALS = true;
             LOAD_INDICES = true;
-            
+
             BUFFER_MODELS = true;
             BUFFER_POSITIONS = true;
             BUFFER_COLORS = true;
@@ -837,7 +834,7 @@ public abstract class FSGenerator {
         private void configureColors(){
             if(LOAD_COLORS){
                 BuildStep step;
-                
+
                 if(ENABLE_COLOR_FILL){
                     if(DRAW_MODE_INDEXED){
                         step = COLOR_AUTOFILL_INDEXED;
@@ -854,7 +851,7 @@ public abstract class FSGenerator {
                         step = COLOR_FILE_LOADED_NONE_INDEXED;
                     }
                 }
-                
+
                 firstfuncs.add(step);
 
                 if(BUFFER_COLORS){
@@ -1139,9 +1136,10 @@ public abstract class FSGenerator {
             info.append(DRAW_MODE_INDEXED);
             info.append("]\n");
         }
-        
+
 
         private static final BuildStep MODEL_INITIALIZE = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.data.model(new FSModelArray());
@@ -1149,18 +1147,21 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep MODEL_SYNC_MODELCLUSTER_AND_MODELARRAY = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.modelCluster().SYNCER.add(new FSModelArray.Definition(instance.model(), true));
             }
         };
         private static final BuildStep MODEL_SYNC_MODELARRAY_AND_SCHEMATICS = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.model().SYNCER.add(new FSSchematics.DefinitionModel(instance.schematics));
             }
         };
         private static final BuildStep MODEL_ADJUST_BUFFER_CAPACITY = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 layout.increaseTargetCapacities(ELEMENT_MODEL, data.model().size());
@@ -1169,30 +1170,35 @@ public abstract class FSGenerator {
 
 
         private static final BuildStep POSITION_SET_DEFAULT = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.positions(new VLArrayFloat(fsm.positions.array()));
             }
         };
         private static final BuildStep POSITION_SET_SHARED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.positions(new VLArrayFloat(fsm.positions.array()));
             }
         };
         private static final BuildStep POSITION_UNINDEX = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 assembler.unIndexPositions(data, indices.provider());
             }
         };
         private static final BuildStep POSITION_BUILD_MODELSET = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 assembler.buildModelSetFromSchematics(instance);
             }
         };
         private static final BuildStep POSITION_BUILD_MODELSET_AND_ALL_ELSE = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 assembler.buildModelSetFromSchematics(instance);
@@ -1201,6 +1207,7 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep POSITION_INIT_SCHEMATICS = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 FSSchematics schematics = instance.schematics;
@@ -1209,18 +1216,21 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep POSITION_SHARE_SCHEMATICS = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.schematics.updateBoundaries(mesh.first().schematics);
             }
         };
         private static final BuildStep POSITION_SYNC_WITH_SCHEMATICS = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.positions().SYNCER.add(new FSSchematics.DefinitionPosition(instance.schematics));
             }
         };
         private static final BuildStep POSITION_ADJUST_BUFFER_CAPACITY = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 layout.increaseTargetCapacities(ELEMENT_POSITION, data.positions().size());
@@ -1229,12 +1239,14 @@ public abstract class FSGenerator {
 
 
         private static final BuildStep COLOR_AUTOFILL_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.data.colors(new VLArrayFloat(pack.replacementcolor.provider().clone()));
             }
         };
         private static final BuildStep COLOR_AUTOFILL_NONE_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.data.colors(new VLArrayFloat(pack.replacementcolor.provider().clone()));
@@ -1242,12 +1254,14 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep COLOR_FILE_LOADED_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.colors(new VLArrayFloat(fsm.colors.array()));
             }
         };
         private static final BuildStep COLOR_FILE_LOADED_NONE_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.colors(new VLArrayFloat(fsm.colors.array()));
@@ -1255,12 +1269,14 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep COLOR_SHARE = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.colors(new VLArrayFloat(mesh.instance(0).colors().provider()));
             }
         };
         private static final BuildStep COLOR_ADJUST_BUFFER_CAPACITY = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 layout.increaseTargetCapacities(ELEMENT_COLOR, data.colors().size());
@@ -1269,12 +1285,14 @@ public abstract class FSGenerator {
 
 
         private static final BuildStep TEXTURE_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.texCoords(new VLArrayFloat(fsm.texcoords.array()));
             }
         };
         private static final BuildStep TEXTURE_NONE_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.texCoords(new VLArrayFloat(fsm.texcoords.array()));
@@ -1282,12 +1300,14 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep TEXTURE_SHARE = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.texCoords(new VLArrayFloat(mesh.instance(0).texCoords().provider()));
             }
         };
         private static final BuildStep TEXTURE_ADJUST_BUFFER_CAPACITY = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 layout.increaseTargetCapacities(ELEMENT_TEXCOORD, data.texCoords().size());
@@ -1296,12 +1316,14 @@ public abstract class FSGenerator {
 
 
         private static final BuildStep NORMAL_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.normals(new VLArrayFloat(fsm.normals.array()));
             }
         };
         private static final BuildStep NORMAL_NONE_INDEXED = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.normals(new VLArrayFloat(fsm.normals.array()));
@@ -1309,12 +1331,14 @@ public abstract class FSGenerator {
             }
         };
         private static final BuildStep NORMAL_SHARE = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.normals(new VLArrayFloat(mesh.instance(0).normals().provider()));
             }
         };
         private static final BuildStep NORMAL_ADJUST_BUFFER_CAPACITY = new BuildStep(){
+
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 layout.increaseTargetCapacities(ELEMENT_NORMAL, data.normals().size());
@@ -1323,8 +1347,9 @@ public abstract class FSGenerator {
 
 
         private static final BuildStep MISC_USE_DATA_PACK = new BuildStep(){
+
             @Override
-            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout) {
+            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.colorTexture(pack.colortexture);
                 instance.lightMaterial(pack.material);
                 instance.lightMap(pack.map);
@@ -1333,6 +1358,7 @@ public abstract class FSGenerator {
 
 
         private static final BufferStep BUFFER_NO_SYNC = new BufferStep(){
+
             @Override
             protected FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride){
                 return manager.buffer(index, array, unitsize, stride);
@@ -1344,6 +1370,7 @@ public abstract class FSGenerator {
             }
         };
         private static final BufferStep BUFFER_SYNC = new BufferStep(){
+
             @Override
             protected FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride){
                 return manager.bufferSync(index, array, unitsize, stride);
@@ -1360,13 +1387,15 @@ public abstract class FSGenerator {
 
             protected abstract void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout);
         }
+
         protected abstract static class BufferStep{
 
             protected abstract FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride);
             protected abstract FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
         }
+
         private abstract static class PostProcessStep{
-            
+
             protected abstract void process(Assembler assembler, FSMesh mesh, DataGroup data);
         }
     }
