@@ -3,6 +3,7 @@ package com.nurverek.firestorm;
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayInt;
 import com.nurverek.vanguard.VLArrayShort;
+import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLBufferFloat;
 import com.nurverek.vanguard.VLBufferInt;
 import com.nurverek.vanguard.VLBufferManagerBase;
@@ -47,8 +48,8 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
 
     public static class EntryShort extends FSEntryTypeVertexBuffer<VLArrayShort>{
 
-        public EntryShort(FSVertexBuffer buffer){
-            super(buffer);
+        public EntryShort(FSVertexBuffer vbuffer, VLBuffer buffer){
+            super(vbuffer, buffer);
         }
 
         @Override
@@ -87,8 +88,8 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
 
     public static class EntryInt extends FSEntryTypeVertexBuffer<VLArrayInt> {
 
-        public EntryInt(FSVertexBuffer buffer){
-            super(buffer);
+        public EntryInt(FSVertexBuffer vbuffer, VLBuffer buffer){
+            super(vbuffer, buffer);
         }
 
         @Override
@@ -127,8 +128,8 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
 
     public static class EntryFloat extends FSEntryTypeVertexBuffer<VLArrayFloat> {
 
-        public EntryFloat(FSVertexBuffer buffer){
-            super(buffer);
+        public EntryFloat(FSVertexBuffer vbuffer, VLBuffer buffer){
+            super(vbuffer, buffer);
         }
 
         @Override
