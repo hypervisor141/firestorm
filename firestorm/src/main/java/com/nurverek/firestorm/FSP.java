@@ -14,7 +14,7 @@ import com.nurverek.vanguard.VLStringify;
 import java.io.UnsupportedEncodingException;
 
 public final class FSP{
-    
+
     private static final int BUFFER_PRINT_LIMIT = 50;
 
     private VLListType<FSShader> shaders;
@@ -51,7 +51,6 @@ public final class FSP{
         initializeVertexShader();
         initializeFragmentShader();
     }
-
 
 
     public void addMesh(FSMesh mesh){
@@ -101,7 +100,6 @@ public final class FSP{
     public int id(){
         return program;
     }
-
 
 
     public void initializeVertexShader(FSShader shader){
@@ -230,7 +228,6 @@ public final class FSP{
     }
 
 
-
     public void registerAttributeLocation(FSShader shader, FSConfig config){
         checkRegistration(config);
         config.location(shader.nextAttribLocation(config.getGLSLSize()));
@@ -273,7 +270,7 @@ public final class FSP{
             s.compile();
             s.attach(this);
 
-            if(FSControl.DEBUG_MODE && debug > FSGenerator.DEBUG_DISABLED){
+            if(FSControl.DEBUG_MODE && debug > FSG.DEBUG_DISABLED){
                 VLDebug.append("Compiling and attaching shader type ");
                 VLDebug.append(s.type);
                 VLDebug.append(" for program id ");
@@ -328,7 +325,7 @@ public final class FSP{
             throw new RuntimeException();
         }
 
-        if(FSControl.DEBUG_MODE && debug > FSGenerator.DEBUG_DISABLED){
+        if(FSControl.DEBUG_MODE && debug > FSG.DEBUG_DISABLED){
             try{
                 size = setupconfigs.size();
                 VLDebug.append("Running programBuilt() for SetupConfigs\n");
@@ -385,7 +382,7 @@ public final class FSP{
             }catch(Exception ex){
                 VLDebug.append("Failed.\n");
                 VLDebug.printE();
-                
+
                 throw new RuntimeException("Error during program configuration setup", ex);
             }
 
@@ -441,7 +438,7 @@ public final class FSP{
     }
 
     public void draw(int passindex){
-        if(FSControl.DEBUG_MODE && debug >= FSGenerator.DEBUG_NORMAL){
+        if(FSControl.DEBUG_MODE && debug >= FSG.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
 
@@ -460,7 +457,7 @@ public final class FSP{
         FSMesh mesh;
         FSConfig config;
 
-        if(FSControl.DEBUG_MODE && debug > FSGenerator.DEBUG_DISABLED){
+        if(FSControl.DEBUG_MODE && debug > FSG.DEBUG_DISABLED){
             VLDebug.recreate();
 
             VLDebug.append("PROGRAM[");
@@ -511,7 +508,7 @@ public final class FSP{
                     VLDebug.append(meshconfigsize);
                     VLDebug.append("] ");
 
-                    config = meshconfigs.get(i);
+                    config = meshconfigs.get(i2);
                     config.policy().configureDebug(config, this, mesh, i, passindex);
                 }
             }
@@ -547,7 +544,7 @@ public final class FSP{
                 mesh.configureLinks(this, i, passindex);
 
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
-                    config = meshconfigs.get(i);
+                    config = meshconfigs.get(i2);
                     config.policy().configure(config, this, mesh, i, passindex);
                 }
             }
@@ -562,7 +559,7 @@ public final class FSP{
     public void use(){
         GLES32.glUseProgram(program);
 
-        if(FSControl.DEBUG_MODE && debug >= FSGenerator.DEBUG_NORMAL){
+        if(FSControl.DEBUG_MODE && debug >= FSG.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
             }catch(Exception ex){
@@ -624,8 +621,7 @@ public final class FSP{
         for(int i = 0; i < count; i++){
             data[i] = new QueryResults();
 
-            GLES32.glGetActiveAttrib(program, i, QueryResults.BUFFER_SIZE, data[i].length, 0, data[i].size,
-                    0, data[i].type, 0, data[i].name, 0);
+            GLES32.glGetActiveAttrib(program, i, QueryResults.BUFFER_SIZE, data[i].length, 0, data[i].size, 0, data[i].type, 0, data[i].name, 0);
         }
 
         return data;
@@ -638,8 +634,7 @@ public final class FSP{
         QueryResults[] data = new QueryResults[count];
 
         for(int i = 0; i < count; i++){
-            GLES32.glGetActiveUniform(program, i, QueryResults.BUFFER_SIZE, data[i].length, 0, data[i].size,
-                    0, data[i].type, 0, data[i].name, 0);
+            GLES32.glGetActiveUniform(program, i, QueryResults.BUFFER_SIZE, data[i].length, 0, data[i].size, 0, data[i].type, 0, data[i].name, 0);
         }
 
         return data;
@@ -655,7 +650,6 @@ public final class FSP{
         postdrawconfigs.clear();
         meshes.clear();
     }
-
 
 
     public static abstract class Modifier{
@@ -710,7 +704,7 @@ public final class FSP{
         }
     }
 
-    public static class LightMapDynamic extends FSConfigLocated {
+    public static class LightMapDynamic extends FSConfigLocated{
 
         private int glslsize;
 
@@ -754,7 +748,7 @@ public final class FSP{
 
     }
 
-    public static class MaterialDynamicInstanced extends FSConfigLocated {
+    public static class MaterialDynamicInstanced extends FSConfigLocated{
 
         private int glslsize;
         private int instancecount;
@@ -815,7 +809,7 @@ public final class FSP{
         }
     }
 
-    public static class LightMapDynamicInstanced extends FSConfigLocated {
+    public static class LightMapDynamicInstanced extends FSConfigLocated{
 
         private int glslsize;
         private int instancecount;
@@ -876,7 +870,7 @@ public final class FSP{
         }
     }
 
-    public static class ViewPort extends FSConfig {
+    public static class ViewPort extends FSConfig{
 
         public FSViewConfig config;
         public int x;
@@ -928,7 +922,7 @@ public final class FSP{
         }
     }
 
-    public static class DepthMask extends FSConfig {
+    public static class DepthMask extends FSConfig{
 
         public boolean mask;
 
@@ -962,8 +956,8 @@ public final class FSP{
         }
     }
 
-    public static class CullFace extends FSConfig {
-        
+    public static class CullFace extends FSConfig{
+
         public int mode;
 
         public CullFace(Policy policy, int mode){
@@ -995,8 +989,8 @@ public final class FSP{
         }
     }
 
-    public static class AttribDivisor extends FSConfigLocated {
-        
+    public static class AttribDivisor extends FSConfigLocated{
+
         public int divisor;
 
         public AttribDivisor(Policy policy, int divisor){
@@ -1028,8 +1022,8 @@ public final class FSP{
         }
     }
 
-    public static class ReadBuffer extends FSConfig {
-        
+    public static class ReadBuffer extends FSConfig{
+
         public int mode;
 
         public ReadBuffer(Policy policy, int mode){
@@ -1061,8 +1055,8 @@ public final class FSP{
         }
     }
 
-    public static class AttribEnable extends FSConfigLocated {
-        
+    public static class AttribEnable extends FSConfigLocated{
+
         public AttribEnable(Policy policy, int location){
             super(policy, location);
         }
@@ -1082,7 +1076,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribDisable extends FSConfigLocated {
+    public static class AttribDisable extends FSConfigLocated{
 
         public AttribDisable(Policy policy, int location){
             super(policy, location);
@@ -1103,7 +1097,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribPointer extends FSConfigLocated {
+    public static class AttribPointer extends FSConfigLocated{
 
         public int element;
         public int bufferaddressindex;
@@ -1121,11 +1115,10 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             FSBufferAddress o = mesh.first().bufferTracker().get(element, bufferaddressindex);
 
-            int databytesize = FSGenerator.ELEMENT_BYTES[element];
+            int databytesize = FSG.ELEMENT_BYTES[element];
 
             o.bind();
-            GLES32.glVertexAttribPointer(location, o.unitSize(), FSGenerator.ELEMENT_GLDATA_TYPES[element], false,
-                    o.stride() * databytesize, o.offset() * databytesize);
+            GLES32.glVertexAttribPointer(location, o.unitSize(), FSG.ELEMENT_GLDATA_TYPES[element], false, o.stride() * databytesize, o.offset() * databytesize);
         }
 
         @Override
@@ -1138,16 +1131,16 @@ public final class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append(" element[");
-            VLDebug.append(FSGenerator.ELEMENT_NAMES[element]);
+            VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
-            
+
             mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
         }
     }
 
-    public static class AttribIPointer extends FSConfigLocated {
+    public static class AttribIPointer extends FSConfigLocated{
 
         public int element;
         public int bufferaddressindex;
@@ -1160,16 +1153,15 @@ public final class FSP{
         public AttribIPointer(int element){
             this.element = element;
         }
-        
+
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             FSBufferAddress o = mesh.first().bufferTracker().get(element, bufferaddressindex);
 
-            int databytesize = FSGenerator.ELEMENT_BYTES[element];
+            int databytesize = FSG.ELEMENT_BYTES[element];
 
             o.bind();
-            GLES32.glVertexAttribIPointer(location, o.unitSize(), FSGenerator.ELEMENT_GLDATA_TYPES[element],
-                    o.stride() * databytesize, o.offset() * databytesize);
+            GLES32.glVertexAttribIPointer(location, o.unitSize(), FSG.ELEMENT_GLDATA_TYPES[element], o.stride() * databytesize, o.offset() * databytesize);
         }
 
         @Override
@@ -1182,16 +1174,16 @@ public final class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append(" element[");
-            VLDebug.append(FSGenerator.ELEMENT_NAMES[element]);
+            VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
-            
+
             mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
         }
     }
 
-    public static class UniformMatrix4fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class UniformMatrix4fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public UniformMatrix4fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1212,7 +1204,7 @@ public final class FSP{
         }
     }
 
-    public static class UniformMatrix4fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class UniformMatrix4fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public UniformMatrix4fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1234,7 +1226,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform4fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Uniform4fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Uniform4fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1255,7 +1247,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform4fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Uniform4fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Uniform4fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1278,7 +1270,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform3fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Uniform3fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Uniform3fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1299,7 +1291,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform3fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Uniform3fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Uniform3fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1321,7 +1313,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform2fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Uniform2fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Uniform2fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1342,7 +1334,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform2fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Uniform2fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Uniform2fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1364,7 +1356,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform1fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Uniform1fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Uniform1fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1385,7 +1377,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform1fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Uniform1fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Uniform1fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1407,7 +1399,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform4f extends FSConfigLocated {
+    public static class Uniform4f extends FSConfigLocated{
 
         public VLFloat x;
         public VLFloat y;
@@ -1456,7 +1448,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform3f extends FSConfigLocated {
+    public static class Uniform3f extends FSConfigLocated{
 
         public VLFloat x;
         public VLFloat y;
@@ -1500,7 +1492,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform2f extends FSConfigLocated {
+    public static class Uniform2f extends FSConfigLocated{
 
         public VLFloat x;
         public VLFloat y;
@@ -1539,7 +1531,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform1f extends FSConfigLocated {
+    public static class Uniform1f extends FSConfigLocated{
 
         public VLFloat x;
 
@@ -1572,7 +1564,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform4ivd extends FSConfigArrayDirect<VLArrayInt> {
+    public static class Uniform4ivd extends FSConfigArrayDirect<VLArrayInt>{
 
         public Uniform4ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1593,7 +1585,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform4ive extends FSConfigArrayElement<VLArrayInt> {
+    public static class Uniform4ive extends FSConfigArrayElement<VLArrayInt>{
 
         public Uniform4ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1615,7 +1607,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform3ivd extends FSConfigArrayDirect<VLArrayInt> {
+    public static class Uniform3ivd extends FSConfigArrayDirect<VLArrayInt>{
 
         public Uniform3ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1636,7 +1628,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform3ive extends FSConfigArrayElement<VLArrayInt> {
+    public static class Uniform3ive extends FSConfigArrayElement<VLArrayInt>{
 
         public Uniform3ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1658,7 +1650,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform2ivd extends FSConfigArrayDirect<VLArrayInt> {
+    public static class Uniform2ivd extends FSConfigArrayDirect<VLArrayInt>{
 
         public Uniform2ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1679,7 +1671,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform2ive extends FSConfigArrayElement<VLArrayInt> {
+    public static class Uniform2ive extends FSConfigArrayElement<VLArrayInt>{
 
         public Uniform2ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1701,7 +1693,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform1ivd extends FSConfigArrayDirect<VLArrayInt> {
+    public static class Uniform1ivd extends FSConfigArrayDirect<VLArrayInt>{
 
         public Uniform1ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1722,7 +1714,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform1ive extends FSConfigArrayElement<VLArrayInt> {
+    public static class Uniform1ive extends FSConfigArrayElement<VLArrayInt>{
 
         public Uniform1ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1744,7 +1736,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform4i extends FSConfigLocated {
+    public static class Uniform4i extends FSConfigLocated{
 
         public VLInt x;
         public VLInt y;
@@ -1793,7 +1785,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform3i extends FSConfigLocated {
+    public static class Uniform3i extends FSConfigLocated{
 
         public VLInt x;
         public VLInt y;
@@ -1837,7 +1829,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform2i extends FSConfigLocated {
+    public static class Uniform2i extends FSConfigLocated{
 
         public VLInt x;
         public VLInt y;
@@ -1876,7 +1868,7 @@ public final class FSP{
         }
     }
 
-    public static class Uniform1i extends FSConfigLocated {
+    public static class Uniform1i extends FSConfigLocated{
 
         public VLInt x;
 
@@ -1909,7 +1901,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib4fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Attrib4fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Attrib4fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 4);
@@ -1930,7 +1922,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib4fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Attrib4fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Attrib4fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 4);
@@ -1952,7 +1944,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib3fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Attrib3fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Attrib3fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 3);
@@ -1973,7 +1965,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib3fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Attrib3fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Attrib3fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 3);
@@ -1995,7 +1987,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib2fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Attrib2fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Attrib2fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 2);
@@ -2016,7 +2008,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib2fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Attrib2fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Attrib2fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 2);
@@ -2038,7 +2030,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib1fvd extends FSConfigArrayDirect<VLArrayFloat> {
+    public static class Attrib1fvd extends FSConfigArrayDirect<VLArrayFloat>{
 
         public Attrib1fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 1);
@@ -2059,7 +2051,7 @@ public final class FSP{
         }
     }
 
-    public static class Attrib1fve extends FSConfigArrayElement<VLArrayFloat> {
+    public static class Attrib1fve extends FSConfigArrayElement<VLArrayFloat>{
 
         public Attrib1fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 1);
@@ -2081,7 +2073,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribI4i extends FSConfigLocated {
+    public static class AttribI4i extends FSConfigLocated{
 
         public VLInt x;
         public VLInt y;
@@ -2090,7 +2082,7 @@ public final class FSP{
 
         public AttribI4i(Policy policy, VLInt x, VLInt y, VLInt z, VLInt w){
             super(policy);
-            
+
             this.x = x;
             this.y = y;
             this.z = z;
@@ -2130,7 +2122,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribI4ivd extends FSConfigArrayDirect<VLArrayInt> {
+    public static class AttribI4ivd extends FSConfigArrayDirect<VLArrayInt>{
 
         public AttribI4ivd(Policy policy, VLArrayInt array, int offset){
             super(policy, array, offset, 4);
@@ -2151,7 +2143,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribI4ive extends FSConfigArrayElement<VLArrayInt> {
+    public static class AttribI4ive extends FSConfigArrayElement<VLArrayInt>{
 
         public AttribI4ive(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 4);
@@ -2173,7 +2165,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribI4uivd extends FSConfigArrayDirect<VLArrayInt> {
+    public static class AttribI4uivd extends FSConfigArrayDirect<VLArrayInt>{
 
         public AttribI4uivd(Policy policy, VLArrayInt array, int offset){
             super(policy, array, offset, 4);
@@ -2194,7 +2186,7 @@ public final class FSP{
         }
     }
 
-    public static class AttribI4uive extends FSConfigArrayElement<VLArrayInt> {
+    public static class AttribI4uive extends FSConfigArrayElement<VLArrayInt>{
 
         public AttribI4uive(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 4);
@@ -2216,16 +2208,16 @@ public final class FSP{
         }
     }
 
-    public static class UniformBlockElement extends FSConfigLocated {
+    public static class UniformBlockElement extends FSConfigLocated{
 
         public int element;
         public int bufferaddressindex;
-        
+
         protected String name;
 
         public UniformBlockElement(Policy policy, int element, String name, int bufferaddressindex){
             super(policy);
-            
+
             this.element = element;
             this.bufferaddressindex = bufferaddressindex;
             this.name = name;
@@ -2246,7 +2238,7 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             FSVertexBuffer buffer = mesh.first().bufferTracker().get(element, bufferaddressindex).target().vertexBuffer();
-            
+
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
         }
@@ -2261,7 +2253,7 @@ public final class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append(" element[");
-            VLDebug.append(FSGenerator.ELEMENT_NAMES[element]);
+            VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
@@ -2270,14 +2262,14 @@ public final class FSP{
         }
     }
 
-    public static class UniformBlockData extends FSConfigLocated {
+    public static class UniformBlockData extends FSConfigLocated{
 
         public FSBufferAddress address;
         protected String name;
 
         public UniformBlockData(Policy policy, FSBufferAddress address, String name){
             super(policy);
-            
+
             this.address = address;
             this.name = name;
         }
@@ -2314,7 +2306,7 @@ public final class FSP{
         }
     }
 
-    public static class TextureBind extends FSConfig {
+    public static class TextureBind extends FSConfig{
 
         public FSTexture texture;
 
@@ -2345,7 +2337,7 @@ public final class FSP{
         }
     }
 
-    public static class TextureColorBind extends FSConfig {
+    public static class TextureColorBind extends FSConfig{
 
         public TextureColorBind(Policy policy){
             super(policy);
@@ -2374,7 +2366,7 @@ public final class FSP{
         }
     }
 
-    public static class TextureColorUnit extends FSConfigLocated {
+    public static class TextureColorUnit extends FSConfigLocated{
 
         public TextureColorUnit(Policy policy){
             super(policy);
@@ -2401,7 +2393,7 @@ public final class FSP{
         }
     }
 
-    public static class DrawArrays extends FSConfig {
+    public static class DrawArrays extends FSConfig{
 
         public DrawArrays(Policy policy){
             super(policy);
@@ -2433,7 +2425,7 @@ public final class FSP{
         }
     }
 
-    public static class DrawArraysInstanced extends FSConfig {
+    public static class DrawArraysInstanced extends FSConfig{
 
         public DrawArraysInstanced(Policy policy){
             super(policy);
@@ -2482,11 +2474,10 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress address = mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex);
+            FSBufferAddress address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
 
             address.bind();
-            GLES32.glDrawElements(mesh.drawmode, address.count(), FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
-                    address.offset() * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX]);
+            GLES32.glDrawElements(mesh.drawmode, address.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2499,17 +2490,17 @@ public final class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append(" element[");
-            VLDebug.append(FSGenerator.ELEMENT_NAMES[FSGenerator.ELEMENT_INDEX]);
+            VLDebug.append(FSG.ELEMENT_NAMES[FSG.ELEMENT_INDEX]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
-            
-            mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
         }
     }
 
-    public static class DrawElementsInstanced extends FSConfig {
-        
+    public static class DrawElementsInstanced extends FSConfig{
+
         public int bufferaddressindex;
 
         public DrawElementsInstanced(Policy policy, int bufferaddressindex){
@@ -2523,11 +2514,10 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress address = mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex);
+            FSBufferAddress address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
 
             address.bind();
-            GLES32.glDrawElementsInstanced(mesh.drawmode, address.count(), FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
-                    address.offset() * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX], mesh.size());
+            GLES32.glDrawElementsInstanced(mesh.drawmode, address.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX], mesh.size());
         }
 
         @Override
@@ -2546,14 +2536,14 @@ public final class FSP{
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
-            
-            mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
-            
+
+            mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
             VLDebug.append("]");
         }
     }
 
-    public static class DrawRangeElements extends FSConfig {
+    public static class DrawRangeElements extends FSConfig{
 
         public int start;
         public int end;
@@ -2562,7 +2552,7 @@ public final class FSP{
 
         public DrawRangeElements(Policy policy, int start, int end, int count, int bufferaddressindex){
             super(policy);
-            
+
             this.start = start;
             this.end = end;
             this.count = count;
@@ -2578,11 +2568,10 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress address = mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex);
+            FSBufferAddress address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
 
             address.bind();
-            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSGenerator.ELEMENT_GLDATA_TYPES[FSGenerator.ELEMENT_INDEX],
-                    address.offset() * FSGenerator.ELEMENT_BYTES[FSGenerator.ELEMENT_INDEX]);
+            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2606,13 +2595,13 @@ public final class FSP{
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(FSGenerator.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("]");
         }
     }
 
-    public static class QueryResults implements VLStringify {
+    public static class QueryResults implements VLStringify{
 
         public static int BUFFER_SIZE = 30;
 
@@ -2635,7 +2624,7 @@ public final class FSP{
                 src.append(" type : ");
                 src.append(type[0]);
                 src.append(" name : ");
-                src.append(new String(VLArrayUtils.slice(name, 0, length[0]),"UTF-8"));
+                src.append(new String(VLArrayUtils.slice(name, 0, length[0]), "UTF-8"));
                 src.append(" ]");
 
             }catch(UnsupportedEncodingException ex){

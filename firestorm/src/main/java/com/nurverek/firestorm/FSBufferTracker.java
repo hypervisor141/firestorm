@@ -7,7 +7,7 @@ public class FSBufferTracker{
     protected VLListType<FSBufferAddress>[] addresses;
 
     protected FSBufferTracker(){
-        addresses = new VLListType[FSGenerator.ELEMENT_TOTAL_COUNT];
+        addresses = new VLListType[FSG.ELEMENT_TOTAL_COUNT];
 
         for(int i = 0; i < addresses.length; i++){
             addresses[i] = new VLListType<>(1, 2);

@@ -45,7 +45,7 @@ public abstract class FSConfigArrayElement <TYPE extends VLArray> extends FSConf
         VLDebug.append("] instance[");
         VLDebug.append(instance);
         VLDebug.append("] element[");
-        VLDebug.append(FSGenerator.ELEMENT_NAMES[element]);
+        VLDebug.append(FSG.ELEMENT_NAMES[element]);
         VLDebug.append("] array[");
 
         if(array == null){

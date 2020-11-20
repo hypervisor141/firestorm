@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.util.Log;
+
 import com.nurverek.vanguard.VLDebug;
 
 public abstract class FSConfig{
@@ -92,7 +94,7 @@ public abstract class FSConfig{
         VLDebug.append(classname == "" ? "Anonymous" : classname);
         VLDebug.append("] [");
 
-        if(program.debug >= FSGenerator.DEBUG_FULL){
+        if(program.debug >= FSG.DEBUG_FULL){
             debugInfo(program, mesh, program.debug);
             VLDebug.append("]\n");
 

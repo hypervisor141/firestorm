@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 
-public abstract class FSGenerator{
+public abstract class FSG{
 
     public static final int DEBUG_DISABLED = 0;
     public static final int DEBUG_NORMAL = 1;
@@ -80,7 +80,7 @@ public abstract class FSGenerator{
     protected long ID;
     protected boolean isTouchable;
 
-    public FSGenerator(int programsetsize, int buffercapacity, int bufferresizer){
+    public FSG(int programsetsize, int buffercapacity, int bufferresizer){
         isTouchable = true;
 
         ID = FSControl.getNextID();
@@ -481,7 +481,7 @@ public abstract class FSGenerator{
         }
     }
 
-    protected abstract class Scanner{
+    public abstract class Scanner{
 
         protected Assembler assembler;
         protected FSBufferLayout layout;
@@ -504,6 +504,8 @@ public abstract class FSGenerator{
 
             mesh.name(name);
             mesh.links = links.links;
+
+            layout.adjustCapacityForLinks();
         }
 
         protected abstract boolean scan(Automator automator, FSM.Data data);
@@ -596,7 +598,7 @@ public abstract class FSGenerator{
                     assembler.buildFirst(this, fsm);
 
                     if(assembler.BUFFER_INDICES){
-                        layout.increaseTargetCapacities(ELEMENT_INDEX, mesh.indices.size());
+                        layout.adjustCapacity(ELEMENT_INDEX, mesh.indices.size());
 
                         if(assembler.SYNC_INDICES_AND_BUFFER){
                             assembler.buffersteps[ELEMENT_INDEX] = Assembler.BUFFER_SYNC;
@@ -632,7 +634,7 @@ public abstract class FSGenerator{
                     addMeshToPrograms();
 
                     if(assembler.BUFFER_INDICES){
-                        layout.increaseTargetCapacities(ELEMENT_INDEX, mesh.indices.size());
+                        layout.adjustCapacity(ELEMENT_INDEX, mesh.indices.size());
 
                         if(assembler.SYNC_INDICES_AND_BUFFER){
                             assembler.buffersteps[ELEMENT_INDEX] = Assembler.BUFFER_SYNC;
@@ -1164,7 +1166,7 @@ public abstract class FSGenerator{
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.increaseTargetCapacities(ELEMENT_MODEL, data.model().size());
+                layout.adjustCapacity(ELEMENT_MODEL, data.model().size());
             }
         };
 
@@ -1233,7 +1235,7 @@ public abstract class FSGenerator{
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.increaseTargetCapacities(ELEMENT_POSITION, data.positions().size());
+                layout.adjustCapacity(ELEMENT_POSITION, data.positions().size());
             }
         };
 
@@ -1279,7 +1281,7 @@ public abstract class FSGenerator{
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.increaseTargetCapacities(ELEMENT_COLOR, data.colors().size());
+                layout.adjustCapacity(ELEMENT_COLOR, data.colors().size());
             }
         };
 
@@ -1310,7 +1312,7 @@ public abstract class FSGenerator{
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.increaseTargetCapacities(ELEMENT_TEXCOORD, data.texCoords().size());
+                layout.adjustCapacity(ELEMENT_TEXCOORD, data.texCoords().size());
             }
         };
 
@@ -1341,7 +1343,7 @@ public abstract class FSGenerator{
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.increaseTargetCapacities(ELEMENT_NORMAL, data.normals().size());
+                layout.adjustCapacity(ELEMENT_NORMAL, data.normals().size());
             }
         };
 
@@ -1392,11 +1394,6 @@ public abstract class FSGenerator{
 
             protected abstract FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int unitsize, int stride);
             protected abstract FSBufferAddress process(FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
-        }
-
-        private abstract static class PostProcessStep{
-
-            protected abstract void process(Assembler assembler, FSMesh mesh, DataGroup data);
         }
     }
 }

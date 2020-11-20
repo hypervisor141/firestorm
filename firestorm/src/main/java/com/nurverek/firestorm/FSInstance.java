@@ -39,7 +39,7 @@ public class FSInstance{
     }
 
     public int elementVertexCount(int element){
-        return element(element).size() / FSGenerator.UNIT_SIZES[element];
+        return element(element).size() / FSG.UNIT_SIZES[element];
     }
 
     public void colorTexture(FSTexture texture){
@@ -60,7 +60,7 @@ public class FSInstance{
     }
 
     public int vertexSize(){
-        return data.positions().size() / FSGenerator.UNIT_SIZE_POSITION;
+        return data.positions().size() / FSG.UNIT_SIZE_POSITION;
     }
 
     public FSMesh mesh(){
@@ -126,7 +126,7 @@ public class FSInstance{
 
     public static final class Data{
 
-        public static final int DEFAULT_SIZE = FSGenerator.ELEMENT_TOTAL_COUNT - 1;
+        public static final int DEFAULT_SIZE = FSG.ELEMENT_TOTAL_COUNT - 1;
 
         protected VLArrayFloat[] elements;
 
@@ -140,23 +140,23 @@ public class FSInstance{
         }
 
         public void model(FSModelArray array){
-            elements[FSGenerator.ELEMENT_MODEL] = array;
+            elements[FSG.ELEMENT_MODEL] = array;
         }
 
         public void positions(VLArrayFloat array){
-            elements[FSGenerator.ELEMENT_POSITION] = array;
+            elements[FSG.ELEMENT_POSITION] = array;
         }
 
         public void colors(VLArrayFloat array){
-            elements[FSGenerator.ELEMENT_COLOR] = array;
+            elements[FSG.ELEMENT_COLOR] = array;
         }
 
         public void texCoords(VLArrayFloat array){
-            elements[FSGenerator.ELEMENT_TEXCOORD] = array;
+            elements[FSG.ELEMENT_TEXCOORD] = array;
         }
 
         public void normals(VLArrayFloat array){
-            elements[FSGenerator.ELEMENT_NORMAL] = array;
+            elements[FSG.ELEMENT_NORMAL] = array;
         }
 
 
@@ -165,22 +165,22 @@ public class FSInstance{
         }
 
         public FSModelArray model(){
-            return (FSModelArray)elements[FSGenerator.ELEMENT_MODEL];
+            return (FSModelArray)elements[FSG.ELEMENT_MODEL];
         }
 
         public VLArrayFloat positions(){
-            return elements[FSGenerator.ELEMENT_POSITION];
+            return elements[FSG.ELEMENT_POSITION];
         }
 
         public VLArrayFloat colors(){
-            return elements[FSGenerator.ELEMENT_COLOR];
+            return elements[FSG.ELEMENT_COLOR];
         }
 
         public VLArrayFloat texCoords(){
-            return elements[FSGenerator.ELEMENT_TEXCOORD];
+            return elements[FSG.ELEMENT_TEXCOORD];
         }
 
-        public VLArrayFloat normals(){ return elements[FSGenerator.ELEMENT_NORMAL]; }
+        public VLArrayFloat normals(){ return elements[FSG.ELEMENT_NORMAL]; }
     }
 
     public final class States{

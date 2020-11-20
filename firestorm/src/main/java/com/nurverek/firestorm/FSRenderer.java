@@ -99,7 +99,7 @@ public final class FSRenderer{
     protected static void advanceProcessors(){
         FSControl.EVENTS.GLPreAdvancement();
 
-        int changes = FSGenerator.CONTROLPROCESSOR.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
+        int changes = FSG.CONTROLPROCESSOR.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
         int size = passes.size();
 
         for(int i = 0; i < size; i++){
@@ -132,7 +132,7 @@ public final class FSRenderer{
     public static void addTask(Runnable task){
         synchronized(tasks){
             tasks.add(task);
-            FSControl.setRenderContinuously(true);
+            FSControl.signalFrameRender(true);
         }
     }
 
@@ -197,7 +197,7 @@ public final class FSRenderer{
     }
 
     public static VLVProcessor getControllersProcessor(){
-        return FSGenerator.CONTROLPROCESSOR;
+        return FSG.CONTROLPROCESSOR;
     }
 
     public static boolean getHandlerReady(){
@@ -218,7 +218,7 @@ public final class FSRenderer{
         INTERNAL_CHANGES = 0;
 
         passes = null;
-        FSGenerator.CONTROLPROCESSOR = null;
+        FSG.CONTROLPROCESSOR = null;
         tasks = null;
         threadhosts = null;
     }

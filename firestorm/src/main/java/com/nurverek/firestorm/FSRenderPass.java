@@ -39,12 +39,12 @@ public final class FSRenderPass{
 
     public void add(Entry e){
         entries.add(e);
-        FSControl.setRenderContinuously(true);
+        FSControl.signalFrameRender(true);
     }
 
     public void add(int index, Entry e){
         entries.add(index, e);
-        FSControl.setRenderContinuously(true);
+        FSControl.signalFrameRender(true);
     }
 
     public Entry get(int index){
@@ -56,7 +56,7 @@ public final class FSRenderPass{
 
         for(int i = 0; i < entries.size(); i++){
             e = entries.get(i);
-            FSGenerator c = e.c;
+            FSG c = e.c;
 
             if(c.id() == id){
                 return e;
@@ -70,7 +70,7 @@ public final class FSRenderPass{
         return entries.size();
     }
 
-    public void remove(FSGenerator c){
+    public void remove(FSG c){
         for(int i = 0; i < entries.size(); i++){
             if(entries.get(i).c.id() == c.id()){
                 entries.remove(i);
@@ -323,15 +323,15 @@ public final class FSRenderPass{
 
     public static final class Entry{
 
-        protected FSGenerator c;
+        protected FSG c;
         protected int programsetindex;
 
-        public Entry(FSGenerator c, int programsetindex){
+        public Entry(FSG c, int programsetindex){
             this.c = c;
             this.programsetindex = programsetindex;
         }
 
-        public FSGenerator constructor(){
+        public FSG constructor(){
             return c;
         }
 

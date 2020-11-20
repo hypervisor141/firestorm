@@ -78,7 +78,7 @@ public final class FSSchematics extends VLSyncer.Syncable{
 
 
     public void initialize(){
-        bounds = new float[FSGenerator.UNIT_SIZE_POSITION * 2];
+        bounds = new float[FSG.UNIT_SIZE_POSITION * 2];
         centroid = new float[4];
         centroidmodel = new float[4];
         centroidmvp = new float[4];
@@ -114,7 +114,7 @@ public final class FSSchematics extends VLSyncer.Syncable{
         centroid[1] = 0;
         centroid[2] = 0;
 
-        for(int index = 0; index < size; index += FSGenerator.UNIT_SIZE_POSITION){
+        for(int index = 0; index < size; index += FSG.UNIT_SIZE_POSITION){
             x = vertices[index];
             y = vertices[index + 1];
             z = vertices[index + 2];
@@ -150,7 +150,7 @@ public final class FSSchematics extends VLSyncer.Syncable{
             }
         }
 
-        int pointcount = size / FSGenerator.UNIT_SIZE_POSITION;
+        int pointcount = size / FSG.UNIT_SIZE_POSITION;
 
         centroid[0] /= pointcount;
         centroid[1] /= pointcount;

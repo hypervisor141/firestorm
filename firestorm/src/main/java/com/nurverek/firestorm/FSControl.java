@@ -174,7 +174,7 @@ public final class FSControl {
         SURFACE = s;
     }
 
-    public static void setEfficientRenderControl(boolean enable){
+    public static void setRenderLimitControl(boolean enable){
         synchronized(FSRenderer.RENDERLOCK){
             EFFICIENT_RENDERING = enable;
         }
@@ -186,7 +186,7 @@ public final class FSControl {
         }
     }
 
-    public static void setRenderContinuously(boolean continuous){
+    public static void signalFrameRender(boolean continuous){
         SCONFIG.setRenderContinuously(continuous);
 
         if(continuous){
@@ -298,7 +298,7 @@ public final class FSControl {
             if(changes == 0){
                 if(UNCHANGED_FRAMES >= GL_UNCHANGED_FRAME_LIMIT && !SCONFIG.getNoLimitRenderControl()){
                     UNCHANGED_FRAMES = 0;
-                    setRenderContinuously(false);
+                    signalFrameRender(false);
 
                 }else{
                     UNCHANGED_FRAMES++;
