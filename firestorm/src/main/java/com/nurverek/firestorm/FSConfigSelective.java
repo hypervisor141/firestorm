@@ -19,7 +19,6 @@ public class FSConfigSelective extends FSConfigLocated{
         glslsize = 0;
     }
 
-
     @Override
     public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
         active.location(location());
@@ -48,12 +47,12 @@ public class FSConfigSelective extends FSConfigLocated{
         glslsize = active.getGLSLSize();
     }
 
-    public FSConfig active(){
-        return active;
-    }
-
     public VLListType<FSConfig> configs(){
         return configs;
+    }
+
+    public FSConfig active(){
+        return active;
     }
 
     @Override

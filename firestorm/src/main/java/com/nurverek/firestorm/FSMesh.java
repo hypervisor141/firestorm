@@ -23,36 +23,6 @@ public class FSMesh extends VLSyncer.Syncable{
         id = FSControl.getNextID();
     }
 
-    public void programBuilt(FSP program){
-        int size = links.size();
-
-        for(int i = 0; i < size; i++){
-            links.get(i).config.programBuilt(program);
-        }
-    }
-
-    public void configureLinks(FSP program, int meshindex, int passindex){
-        int size = links.size();
-
-        for(int i = 0; i < size; i++){
-            links.get(i).config.configure(program, this, meshindex, passindex);
-        }
-    }
-
-    public void configureDebugLinks(FSP program, int meshindex, int passindex){
-        int size = links.size();
-
-        for(int i = 0; i < size; i++){
-            VLDebug.append("[");
-            VLDebug.append(i);
-            VLDebug.append("/");
-            VLDebug.append(size);
-            VLDebug.append("]");
-
-            links.get(i).config.configureDebug(program, this, meshindex, passindex);
-        }
-    }
-
     public void add(FSInstance instance){
         instances.add(instance);
         instance.mesh = this;
@@ -60,6 +30,14 @@ public class FSMesh extends VLSyncer.Syncable{
 
     public void add(FSLink link){
         links.add(link);
+    }
+
+    public void attachLinksToHosts(){
+        int size = links.size();
+
+        for(int i = 0; i < size; i++){
+            links.get(i).attach();
+        }
     }
 
     public void drawMode(int mode){

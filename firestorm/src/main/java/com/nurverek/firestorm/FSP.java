@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
+import android.util.Log;
 
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayInt;
@@ -353,19 +354,6 @@ public final class FSP{
                     VLDebug.append("Complete.\n");
                 }
 
-                size = meshes.size();
-                VLDebug.append("Running programBuilt() for Mesh Links\n");
-
-                for(int i = 0; i < size; i++){
-                    VLDebug.append("Mesh(");
-                    VLDebug.append(i);
-                    VLDebug.append(") : ");
-
-                    meshes.get(i).programBuilt(this);
-
-                    VLDebug.append("Complete.\n");
-                }
-
                 size = postdrawconfigs.size();
                 VLDebug.append("Running programBuilt() for PostDrawConfigs\n");
 
@@ -402,12 +390,6 @@ public final class FSP{
 
             for(int i = 0; i < size; i++){
                 meshconfigs.get(i).programBuilt(this);
-            }
-
-            size = meshes.size();
-
-            for(int i = 0; i < size; i++){
-                meshes.get(i).programBuilt(this);
             }
 
             size = postdrawconfigs.size();
@@ -494,12 +476,12 @@ public final class FSP{
                 VLDebug.append("]");
                 VLDebug.printD();
 
-                VLDebug.append("configuringMeshLinks[");
-                VLDebug.append(mesh.sizeLinks());
-                VLDebug.append("]");
-                VLDebug.printD();
+                VLDebug.append("[AttachingLinks] ... ");
 
-                mesh.configureDebugLinks(this, i, passindex);
+                mesh.attachLinksToHosts();
+
+                VLDebug.append("[DONE]");
+                VLDebug.printD();
 
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
                     VLDebug.append("[");
@@ -541,7 +523,7 @@ public final class FSP{
 
             for(int i = 0; i < meshsize; i++){
                 mesh = meshes.get(i);
-                mesh.configureLinks(this, i, passindex);
+                mesh.attachLinksToHosts();
 
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
                     config = meshconfigs.get(i2);

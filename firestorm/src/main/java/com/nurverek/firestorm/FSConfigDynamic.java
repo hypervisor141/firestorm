@@ -15,7 +15,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
         this.config = config;
     }
 
-    protected FSConfigDynamic(){
+    public FSConfigDynamic(){
 
     }
 

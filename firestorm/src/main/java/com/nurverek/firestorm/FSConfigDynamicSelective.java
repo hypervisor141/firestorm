@@ -14,6 +14,27 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
         config.activate(targetindex);
     }
 
+    public FSConfigDynamicSelective(){
+
+    }
+
+    public void config(FSConfigSelective config){
+        this.config = config;
+    }
+
+    public void targetIndex(int index){
+        targetindex = index;
+        config.activate(targetindex);
+    }
+
+    public FSConfigSelective config(){
+        return config;
+    }
+
+    public int targetIndex(){
+        return targetindex;
+    }
+
     @Override
     protected void programBuilt(FSP program){
         super.programBuilt(program);

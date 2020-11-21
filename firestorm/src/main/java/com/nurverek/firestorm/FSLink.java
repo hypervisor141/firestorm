@@ -11,6 +11,7 @@ public abstract class FSLink<LINK, CONFIG extends FSConfig, ENTRYTYPE extends VL
 
     public LINK link;
     public CONFIG config;
+    public FSConfigDynamic<CONFIG> host;
     public FSBufferAddress address;
 
     public FSLink(LINK link, CONFIG config){
@@ -20,6 +21,14 @@ public abstract class FSLink<LINK, CONFIG extends FSConfig, ENTRYTYPE extends VL
 
     public FSLink(LINK link){
         this.link = link;
+    }
+
+    public void host(FSConfigDynamic<CONFIG> target){
+        this.host = target;
+    }
+
+    public void attach(){
+        host.config(config);
     }
 
     public abstract int size();
