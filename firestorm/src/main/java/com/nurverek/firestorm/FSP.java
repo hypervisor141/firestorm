@@ -1178,11 +1178,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniformMatrix4fv(location, count(), false, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class UniformMatrix4fve extends FSConfigArrayElement<VLArrayFloat>{
@@ -1200,11 +1195,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniformMatrix4fv(location, count(), false, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform4fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -1220,11 +1210,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4fv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1244,11 +1229,6 @@ public final class FSP{
 
             GLES32.glUniform4fv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform3fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -1264,11 +1244,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform3fv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1287,11 +1262,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform3fv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform2fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -1307,11 +1277,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform2fv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1330,11 +1295,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform2fv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform1fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -1350,11 +1310,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1fv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1372,11 +1327,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform1fv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1559,11 +1509,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform4ive extends FSConfigArrayElement<VLArrayInt>{
@@ -1581,11 +1526,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform3ivd extends FSConfigArrayDirect<VLArrayInt>{
@@ -1601,11 +1541,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1624,11 +1559,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform2ivd extends FSConfigArrayDirect<VLArrayInt>{
@@ -1644,11 +1574,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1667,11 +1592,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Uniform1ivd extends FSConfigArrayDirect<VLArrayInt>{
@@ -1687,11 +1607,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1iv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1709,11 +1624,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glUniform1iv(location, count(), array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1896,11 +1806,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib4fv(location, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Attrib4fve extends FSConfigArrayElement<VLArrayFloat>{
@@ -1918,11 +1823,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib4fv(location, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Attrib3fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -1938,11 +1838,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib3fv(location, array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1961,11 +1856,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib3fv(location, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Attrib2fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -1981,11 +1871,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib2fv(location, array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -2004,11 +1889,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib2fv(location, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class Attrib1fvd extends FSConfigArrayDirect<VLArrayFloat>{
@@ -2024,11 +1904,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib1fv(location, array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -2046,11 +1921,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib1fv(location, array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -2117,11 +1987,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4iv(location, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class AttribI4ive extends FSConfigArrayElement<VLArrayInt>{
@@ -2139,11 +2004,6 @@ public final class FSP{
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glVertexAttribI4iv(location, array().provider(), offset());
         }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
     }
 
     public static class AttribI4uivd extends FSConfigArrayDirect<VLArrayInt>{
@@ -2159,11 +2019,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4uiv(location, array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -2181,11 +2036,6 @@ public final class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(program, mesh, meshindex, passindex);
             GLES32.glVertexAttribI4uiv(location, array().provider(), offset());
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 

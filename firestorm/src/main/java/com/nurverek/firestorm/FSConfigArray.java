@@ -57,4 +57,9 @@ public abstract class FSConfigArray<TYPE extends VLArray> extends FSConfigLocate
 
     @Override
     public abstract void debugInfo(FSP program, FSMesh mesh, int debug);
+
+    @Override
+    public int getGLSLSize(){
+        return count;
+    }
 }

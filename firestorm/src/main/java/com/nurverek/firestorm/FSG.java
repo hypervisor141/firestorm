@@ -241,21 +241,27 @@ public abstract class FSG{
         }
 
 
-        public Registration addScannerSingle(Assembler assembler, DataPack pack, VLListType<FSLink> links, String name, int drawmode){
-            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), links, name, drawmode);
+        public Registration addScannerSingle(Assembler assembler, DataPack pack, String name, int drawmode){
+            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), name, drawmode);
             scanners.add(s);
 
             return new Registration(s);
         }
 
-        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, String prefixname, int drawmode, int estimatedsize){
-            Scanner s = new ScannerInstanced(assembler, datagroup, links, prefixname, drawmode, estimatedsize);
+        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize){
+            Scanner s = new ScannerInstanced(assembler, datagroup, prefixname, drawmode, estimatedsize);
             scanners.add(s);
 
             return new Registration(s);
         }
 
-        public void execute(int debug){
+        public Registration addScannerCustom(Scanner scanner){
+            scanners.add(scanner);
+
+            return new Registration(scanner);
+        }
+
+        public void build(int debug){
             VLListType<FSM.Data> data = fsm.data;
             FSM.Data d;
 
@@ -355,17 +361,36 @@ public abstract class FSG{
 
                 VLDebug.printDirect("[DONE]\n");
                 VLDebug.printD();
+
+            }else{
+                for(int i = 0; i < size; i++){
+                    d = data.get(i);
+
+                    for(int i2 = 0; i2 < size2; i2++){
+                        scanners.get(i2).scan(this, d);
+                    }
+                }
+            }
+        }
+
+        public void buffer(int debug){
+            int size = scanners.size();
+
+            if(debug > DEBUG_DISABLED){
+                VLDebug.recreate();
+                Scanner s;
+
                 VLDebug.printDirect("[Buffering Stage]\n");
 
                 BUFFERMANAGER.initialize();
 
-                for(int i = 0; i < size2; i++){
+                for(int i = 0; i < size; i++){
                     s = scanners.get(i);
 
                     VLDebug.append("Buffering[");
                     VLDebug.append(i + 1);
                     VLDebug.append("/");
-                    VLDebug.append(size2);
+                    VLDebug.append(size);
                     VLDebug.append("]\n");
 
                     if(debug >= DEBUG_FULL){
@@ -396,21 +421,61 @@ public abstract class FSG{
                 VLDebug.printD();
 
             }else{
-                for(int i = 0; i < size; i++){
-                    d = data.get(i);
-
-                    for(int i2 = 0; i2 < size2; i2++){
-                        scanners.get(i2).scan(this, d);
-                    }
-                }
-
                 BUFFERMANAGER.initialize();
 
-                for(int i = 0; i < size2; i++){
+                for(int i = 0; i < size; i++){
                     scanners.get(i).buffer();
                 }
 
                 BUFFERMANAGER.upload();
+            }
+        }
+
+        public void program(int debug){
+            int size = scanners.size();
+
+            if(debug > DEBUG_DISABLED){
+                VLDebug.recreate();
+                Scanner s;
+
+                VLDebug.printDirect("[Initialization Stage]\n");
+
+                BUFFERMANAGER.initialize();
+
+                for(int i = 0; i < size; i++){
+                    s = scanners.get(i);
+
+                    VLDebug.append("AddingMeshToPrograms[");
+                    VLDebug.append(i + 1);
+                    VLDebug.append("/");
+                    VLDebug.append(size);
+                    VLDebug.append("]\n");
+
+                    try{
+                        s.populatePrograms();
+
+                    }catch(Exception ex){
+                        VLDebug.append("Error adding mesh to programs\"");
+                        VLDebug.append(s.name);
+                        VLDebug.append("\"\n");
+                        VLDebug.append("[Assembler Configuration]\n");
+
+                        s.assembler.stringify(VLDebug.get(), null);
+                        VLDebug.printE();
+
+                        throw new RuntimeException(ex);
+                    }
+
+                    VLDebug.printD();
+                }
+
+                VLDebug.printDirect("[DONE]\n");
+                VLDebug.printD();
+
+            }else{
+                for(int i = 0; i < size; i++){
+                    scanners.get(i).populatePrograms();
+                }
             }
         }
     }
@@ -479,7 +544,7 @@ public abstract class FSG{
 
         private VLListType<FSP> programs;
 
-        private Scanner(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, FSMesh mesh, String name){
+        private Scanner(Assembler assembler, DataGroup datagroup, FSMesh mesh, String name){
             this.mesh = mesh;
             this.datagroup = datagroup;
             this.assembler = assembler;
@@ -490,22 +555,21 @@ public abstract class FSG{
             layout = new FSBufferLayout(mesh, assembler);
 
             mesh.name(name);
-            mesh.links = links;
-
-            layout.adjustCapacityForLinks();
         }
 
         protected abstract boolean scan(Automator automator, FSM.Data data);
 
         private void buffer(){
+            layout.adjustCapacityForLinks();
             layout.buffer();
         }
 
         private void bufferDebug(){
+            layout.adjustCapacityForLinks();
             layout.bufferDebug(this);
         }
 
-        protected void addMeshToPrograms(){
+        protected void populatePrograms(){
             int size = programs.size();
 
             for(int i = 0; i < size; i++){
@@ -573,8 +637,8 @@ public abstract class FSG{
 
     protected class ScannerSingular extends Scanner{
 
-        protected ScannerSingular(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, String name, int drawmode){
-            super(assembler, datagroup, links, new FSMesh(drawmode, 1, 0), name);
+        protected ScannerSingular(Assembler assembler, DataGroup datagroup, String name, int drawmode){
+            super(assembler, datagroup, new FSMesh(drawmode, 1, 0), name);
         }
 
         @Override
@@ -596,8 +660,6 @@ public abstract class FSG{
                     assembler.buildFirst(this, fsm);
                 }
 
-                addMeshToPrograms();
-
                 return true;
             }
 
@@ -607,8 +669,8 @@ public abstract class FSG{
 
     protected class ScannerInstanced extends Scanner{
 
-        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, String prefixname, int drawmode, int estimatedsize){
-            super(assembler, datagroup, links, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
+        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize){
+            super(assembler, datagroup, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
         }
 
         @Override
@@ -617,8 +679,6 @@ public abstract class FSG{
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
                     assembler.buildFirst(this, fsm);
-
-                    addMeshToPrograms();
 
                     if(assembler.BUFFER_INDICES){
                         layout.adjustCapacity(ELEMENT_INDEX, mesh.indices.size());
