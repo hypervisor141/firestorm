@@ -26,8 +26,8 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
     }
 
     @Override
-    public FSBufferAddress generateAddress(int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count){
-        return new FSBufferAddress(this, bufferindex, offset, unitoffset, unitsize, stride, count);
+    public void fillBufferAddress(FSBufferAddress results, int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count){
+        results.fill(this, bufferindex, offset, unitoffset, unitsize, stride, count);
     }
 
     public void upload(){
