@@ -20,6 +20,8 @@ public abstract class FSLink<CONFIG extends FSConfig, ENTRYTYPE extends VLBuffer
         this.host = host;
         this.indexonhost = indexonhost;
         this.programid = programid;
+
+        address = new FSBufferAddress();
     }
 
     public FSLink(){
