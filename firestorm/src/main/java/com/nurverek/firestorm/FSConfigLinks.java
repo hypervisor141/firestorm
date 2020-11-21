@@ -2,15 +2,15 @@ package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
 
-public class FSConfigLinks extends FSConfigDynamic{
+public class FSConfigLinks<LINK extends FSLink> extends FSConfigDynamic{
 
-    private final VLListType<FSLink> links;
+    private final VLListType<LINK> links;
 
     public FSConfigLinks(int size, int resizer){
         links = new VLListType<>(size, resizer);
     }
 
-    public VLListType<FSLink> links(){
+    public VLListType<LINK> links(){
         return links;
     }
 
