@@ -1,22 +1,18 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLBufferAddress;
 import com.nurverek.vanguard.VLBufferManagerBase;
 import com.nurverek.vanguard.VLBufferable;
 
-public abstract class FSLink<CONFIG extends FSConfig, ENTRYTYPE extends VLBufferManagerBase.EntryType,
-        MANAGERTYPE extends VLBufferManagerBase, ADDRESSTYPE extends VLBufferAddress<MANAGERTYPE>>
-        implements VLBufferable<ENTRYTYPE, MANAGERTYPE, ADDRESSTYPE>{
+public abstract class FSConfigLink<ENTRYTYPE extends VLBufferManagerBase.EntryType> extends FSConfig
+        implements VLBufferable<ENTRYTYPE, FSBufferManager, FSBufferAddress>, FSBufferable<FSBufferAddress>{
 
-    public CONFIG config;
     public int programid;
-    public FSConfigLinks host;
+    public FSConfigLinkHost host;
     public FSBufferAddress address;
 
     public int indexonhost;
 
-    public FSLink(CONFIG config, FSConfigLinks host, int indexonhost, int programid){
-        this.config = config;
+    public FSConfigLink(FSConfigLinkHost host, int indexonhost, int programid){
         this.host = host;
         this.indexonhost = indexonhost;
         this.programid = programid;
@@ -24,11 +20,16 @@ public abstract class FSLink<CONFIG extends FSConfig, ENTRYTYPE extends VLBuffer
         address = new FSBufferAddress();
     }
 
-    public FSLink(){
+    public FSConfigLink(){
 
     }
 
-    public FSLink<CONFIG, ENTRYTYPE, MANAGERTYPE, ADDRESSTYPE> attach(FSConfigLinks host, int programid){
+    @Override
+    public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+        bind(address);
+    }
+
+    public FSConfigLink<ENTRYTYPE> attach(FSConfigLinkHost host, int programid){
         this.programid = programid;
 
         indexonhost = host.links().size();

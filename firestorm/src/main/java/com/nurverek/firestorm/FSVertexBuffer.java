@@ -19,7 +19,6 @@ public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
     private boolean mapped;
     private boolean needsupdate;
 
-
     public FSVertexBuffer(int target, int accessmode){
         this.target = target;
         this.accessmode = accessmode;

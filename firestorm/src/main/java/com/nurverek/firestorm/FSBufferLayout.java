@@ -397,7 +397,7 @@ public final class FSBufferLayout{
         @Override
         public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryBasic entry, FSBufferManager buffer, int bufferindex, int stride){
             int firstpos = buffer.position(bufferindex);
-            FSLink link = mesh.link(entry.element);
+            FSConfigLink link = mesh.link(entry.element);
             link.buffer(buffer, bufferindex, 0, link.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return firstpos + entry.unitsubcount;

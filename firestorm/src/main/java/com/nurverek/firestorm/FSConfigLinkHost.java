@@ -2,11 +2,11 @@ package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
 
-public class FSConfigLinks<LINK extends FSLink> extends FSConfigDynamic{
+public class FSConfigLinkHost<LINK extends FSConfigLink> extends FSConfigDynamic{
 
     private final VLListType<LINK> links;
 
-    public FSConfigLinks(int glslsize, int capacity, int resizer){
+    public FSConfigLinkHost(int glslsize, int capacity, int resizer){
         super(glslsize);
 
         links = new VLListType<>(capacity, resizer);
@@ -17,7 +17,7 @@ public class FSConfigLinks<LINK extends FSLink> extends FSConfigDynamic{
     }
 
     public void activate(int index){
-        config(links.get(index).config);
+        config(links.get(index));
     }
 
     public int size(){
