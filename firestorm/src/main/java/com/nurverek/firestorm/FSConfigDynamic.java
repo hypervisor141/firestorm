@@ -5,18 +5,22 @@ import com.nurverek.vanguard.VLDebug;
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
     private TYPE config;
+    private int glslsize;
 
     public FSConfigDynamic(Policy policy, TYPE config){
         super(policy);
+
         this.config = config;
+        glslsize = config.getGLSLSize();
     }
 
     public FSConfigDynamic(TYPE config){
         this.config = config;
+        glslsize = config.getGLSLSize();
     }
 
-    public FSConfigDynamic(){
-
+    public FSConfigDynamic(int glslsize){
+        this.glslsize = glslsize;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
     @Override
     public int getGLSLSize(){
-        return config.getGLSLSize();
+        return glslsize;
     }
 
     @Override

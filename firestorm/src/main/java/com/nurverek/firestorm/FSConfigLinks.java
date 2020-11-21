@@ -6,8 +6,10 @@ public class FSConfigLinks<LINK extends FSLink> extends FSConfigDynamic{
 
     private final VLListType<LINK> links;
 
-    public FSConfigLinks(int size, int resizer){
-        links = new VLListType<>(size, resizer);
+    public FSConfigLinks(int glslsize, int capacity, int resizer){
+        super(glslsize);
+
+        links = new VLListType<>(capacity, resizer);
     }
 
     public VLListType<LINK> links(){
