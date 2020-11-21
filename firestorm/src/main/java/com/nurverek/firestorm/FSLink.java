@@ -19,6 +19,10 @@ public abstract class FSLink<LINK, CONFIG extends FSConfig, ENTRYTYPE extends VL
         this.host = host;
     }
 
+    public FSLink(){
+        
+    }
+
     public FSLink(LINK link){
         this.link = link;
     }
