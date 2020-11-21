@@ -1,7 +1,6 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
-import android.util.Log;
 
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayInt;
@@ -476,9 +475,9 @@ public final class FSP{
                 VLDebug.append("]");
                 VLDebug.printD();
 
-                VLDebug.append("[AttachingLinks] ... ");
+                VLDebug.append("[ActivatingLinks] ... ");
 
-                mesh.attachLinksToHosts();
+                mesh.activateLinks(program);
 
                 VLDebug.append("[DONE]");
                 VLDebug.printD();
@@ -523,7 +522,7 @@ public final class FSP{
 
             for(int i = 0; i < meshsize; i++){
                 mesh = meshes.get(i);
-                mesh.attachLinksToHosts();
+                mesh.activateLinks(program);
 
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
                     config = meshconfigs.get(i2);

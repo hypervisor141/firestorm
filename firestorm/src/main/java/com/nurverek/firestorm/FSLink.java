@@ -9,20 +9,36 @@ public abstract class FSLink<CONFIG extends FSConfig, ENTRYTYPE extends VLBuffer
         implements VLBufferable<ENTRYTYPE, MANAGERTYPE, ADDRESSTYPE>{
 
     public CONFIG config;
-    public FSConfigDynamic<CONFIG> host;
+    public int programid;
+    public FSConfigLinks host;
     public FSBufferAddress address;
 
-    public FSLink(CONFIG config, FSConfigDynamic host){
+    public int indexonhost;
+
+    public FSLink(CONFIG config, FSConfigLinks host, int indexonhost, int programid){
         this.config = config;
         this.host = host;
+        this.indexonhost = indexonhost;
+        this.programid = programid;
     }
 
     public FSLink(){
 
     }
 
-    public void attach(){
-        host.config(config);
+    public FSLink<CONFIG, ENTRYTYPE, MANAGERTYPE, ADDRESSTYPE> attach(FSConfigLinks host, int programid){
+        this.programid = programid;
+
+        indexonhost = host.links().size();
+        host.links().add(this);
+
+        return this;
+    }
+
+    public void activate(int programID){
+        if(programID == programid){
+            host.activate(indexonhost);
+        }
     }
 
     public abstract int size();

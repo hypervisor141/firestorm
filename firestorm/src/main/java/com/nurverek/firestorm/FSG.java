@@ -241,14 +241,14 @@ public abstract class FSG{
         }
 
 
-        public Registration addScannerSingle(Assembler assembler, DataPack pack, Links links, String name, int drawmode){
+        public Registration addScannerSingle(Assembler assembler, DataPack pack, VLListType<FSLink> links, String name, int drawmode){
             Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), links, name, drawmode);
             scanners.add(s);
 
             return new Registration(s);
         }
 
-        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, Links links, String prefixname, int drawmode, int estimatedsize){
+        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, String prefixname, int drawmode, int estimatedsize){
             Scanner s = new ScannerInstanced(assembler, datagroup, links, prefixname, drawmode, estimatedsize);
             scanners.add(s);
 
@@ -453,19 +453,6 @@ public abstract class FSG{
         }
     }
 
-    public static final class Links{
-
-        protected VLListType<FSLink> links;
-
-        public Links(VLListType<FSLink> links){
-            this.links = links;
-        }
-
-        protected FSLink get(int index){
-            return links.get(index);
-        }
-    }
-
     public static final class DataPack{
 
         protected VLArrayFloat replacementcolor;
@@ -492,7 +479,7 @@ public abstract class FSG{
 
         private VLListType<FSP> programs;
 
-        private Scanner(Assembler assembler, DataGroup datagroup, Links links, FSMesh mesh, String name){
+        private Scanner(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, FSMesh mesh, String name){
             this.mesh = mesh;
             this.datagroup = datagroup;
             this.assembler = assembler;
@@ -503,7 +490,7 @@ public abstract class FSG{
             layout = new FSBufferLayout(mesh, assembler);
 
             mesh.name(name);
-            mesh.links = links.links;
+            mesh.links = links;
 
             layout.adjustCapacityForLinks();
         }
@@ -586,7 +573,7 @@ public abstract class FSG{
 
     protected class ScannerSingular extends Scanner{
 
-        protected ScannerSingular(Assembler assembler, DataGroup datagroup, Links links, String name, int drawmode){
+        protected ScannerSingular(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, String name, int drawmode){
             super(assembler, datagroup, links, new FSMesh(drawmode, 1, 0), name);
         }
 
@@ -620,7 +607,7 @@ public abstract class FSG{
 
     protected class ScannerInstanced extends Scanner{
 
-        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, Links links, String prefixname, int drawmode, int estimatedsize){
+        protected ScannerInstanced(Assembler assembler, DataGroup datagroup, VLListType<FSLink> links, String prefixname, int drawmode, int estimatedsize){
             super(assembler, datagroup, links, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
         }
 
@@ -1068,7 +1055,7 @@ public abstract class FSG{
             FSInstance instance = new FSInstance();
             FSInstance.Data data = instance.data;
 
-            mesh.add(instance);
+            mesh.addInstance(instance);
 
             for(int i = 0; i < funcsize; i++){
                 funcs.get(i).process(this, datapack, mesh, indices, instance, data, fsm, layout);

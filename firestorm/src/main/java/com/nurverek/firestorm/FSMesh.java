@@ -1,7 +1,6 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLDebug;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLSyncer;
 
@@ -23,21 +22,25 @@ public class FSMesh extends VLSyncer.Syncable{
         id = FSControl.getNextID();
     }
 
-    public void add(FSInstance instance){
-        instances.add(instance);
-        instance.mesh = this;
+    public void initLinks(VLListType<FSLink> links){
+        this.links = links;
     }
 
-    public void add(FSLink link){
+    public void addLink(FSLink link){
         links.add(link);
     }
 
-    public void attachLinksToHosts(){
+    public void activateLinks(int programID){
         int size = links.size();
 
         for(int i = 0; i < size; i++){
-            links.get(i).attach();
+            links.get(i).activate(programID);
         }
+    }
+
+    public void addInstance(FSInstance instance){
+        instances.add(instance);
+        instance.mesh = this;
     }
 
     public void drawMode(int mode){
@@ -58,10 +61,6 @@ public class FSMesh extends VLSyncer.Syncable{
 
     public FSInstance instance(int index){
         return instances.get(index);
-    }
-
-    public void links(VLListType<FSLink> links){
-        this.links = links;
     }
 
     public FSLink link(int index){
@@ -110,5 +109,4 @@ public class FSMesh extends VLSyncer.Syncable{
     public int sizeLinks(){
         return links.size();
     }
-
 }
