@@ -1,6 +1,5 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLBufferAddress;
 import com.nurverek.vanguard.VLBufferManagerBase;
 import com.nurverek.vanguard.VLBufferable;
@@ -14,17 +13,14 @@ public abstract class FSLink<LINK, CONFIG extends FSConfig, ENTRYTYPE extends VL
     public FSConfigDynamic<CONFIG> host;
     public FSBufferAddress address;
 
-    public FSLink(LINK link, CONFIG config){
+    public FSLink(LINK link, CONFIG config, FSConfigDynamic host){
         this.link = link;
         this.config = config;
+        this.host = host;
     }
 
     public FSLink(LINK link){
         this.link = link;
-    }
-
-    public void host(FSConfigDynamic<CONFIG> target){
-        this.host = target;
     }
 
     public void attach(){
