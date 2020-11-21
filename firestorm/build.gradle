@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 543
+        versionCode 544
         versionName "10.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
