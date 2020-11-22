@@ -92,13 +92,9 @@ public abstract class FSG{
         addProgramSets(programsetsize);
     }
 
-    public void initialize(@Nullable FSActivity act){
-        assemble(act);
-    }
+    public abstract void assemble(FSActivity act);
 
-    protected abstract void assemble(FSActivity act);
-
-    public void update(int passindex, int programsetindex){}
+    protected abstract void update(int passindex, int programsetindex);
 
     public void draw(int passindex, int programsetindex){
         VLListType<FSP> p = PROGRAMSETS.get(programsetindex);
@@ -445,7 +441,7 @@ public abstract class FSG{
                 for(int i = 0; i < size; i++){
                     s = scanners.get(i);
 
-                    VLDebug.append("AddingMeshToPrograms[");
+                    VLDebug.append("Adding Mesh To Programs [");
                     VLDebug.append(i + 1);
                     VLDebug.append("/");
                     VLDebug.append(size);
@@ -560,12 +556,10 @@ public abstract class FSG{
         protected abstract boolean scan(Automator automator, FSM.Data data);
 
         private void buffer(){
-            layout.adjustCapacityForLinks();
             layout.buffer();
         }
 
         private void bufferDebug(){
-            layout.adjustCapacityForLinks();
             layout.bufferDebug(this);
         }
 
@@ -648,12 +642,8 @@ public abstract class FSG{
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
                     assembler.buildFirst(this, fsm);
 
-                    if(assembler.BUFFER_INDICES){
-                        layout.adjustCapacity(ELEMENT_INDEX, mesh.indices.size());
-
-                        if(assembler.SYNC_INDICES_AND_BUFFER){
-                            assembler.buffersteps[ELEMENT_INDEX] = Assembler.BUFFER_SYNC;
-                        }
+                    if(assembler.SYNC_INDICES_AND_BUFFER){
+                        assembler.buffersteps[ELEMENT_INDEX] = Assembler.BUFFER_SYNC;
                     }
 
                 }else{
@@ -680,12 +670,8 @@ public abstract class FSG{
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
                     assembler.buildFirst(this, fsm);
 
-                    if(assembler.BUFFER_INDICES){
-                        layout.adjustCapacity(ELEMENT_INDEX, mesh.indices.size());
-
-                        if(assembler.SYNC_INDICES_AND_BUFFER){
-                            assembler.buffersteps[ELEMENT_INDEX] = Assembler.BUFFER_SYNC;
-                        }
+                    if(assembler.SYNC_INDICES_AND_BUFFER){
+                        assembler.buffersteps[ELEMENT_INDEX] = Assembler.BUFFER_SYNC;
                     }
 
                 }else{
@@ -713,13 +699,6 @@ public abstract class FSG{
 
         public boolean ENABLE_COLOR_FILL = false;
         public boolean ENABLE_DATA_PACK = false;
-
-        public boolean BUFFER_MODELS = false;
-        public boolean BUFFER_POSITIONS = false;
-        public boolean BUFFER_TEXCOORDS = false;
-        public boolean BUFFER_COLORS = false;
-        public boolean BUFFER_NORMALS = false;
-        public boolean BUFFER_INDICES = false;
 
         public boolean LOAD_MODELS = false;
         public boolean LOAD_POSITIONS = false;
@@ -775,13 +754,6 @@ public abstract class FSG{
             LOAD_NORMALS = true;
             LOAD_INDICES = true;
 
-            BUFFER_MODELS = true;
-            BUFFER_POSITIONS = true;
-            BUFFER_COLORS = true;
-            BUFFER_TEXCOORDS = true;
-            BUFFER_NORMALS = true;
-            BUFFER_INDICES = true;
-
             INSTANCE_SHARE_POSITIONS = false;
             INSTANCE_SHARE_COLORS = false;
             INSTANCE_SHARE_TEXCOORDS = false;
@@ -809,11 +781,6 @@ public abstract class FSG{
                 firstfuncs.add(MODEL_INITIALIZE);
                 restfuncs.add(MODEL_INITIALIZE);
 
-                if(BUFFER_MODELS){
-                    firstfuncs.add(MODEL_ADJUST_BUFFER_CAPACITY);
-                    restfuncs.add(MODEL_ADJUST_BUFFER_CAPACITY);
-                }
-
                 if(SYNC_MODELCLUSTER_AND_MODELARRAY){
                     firstfuncs.add(MODEL_SYNC_MODELCLUSTER_AND_MODELARRAY);
                     restfuncs.add(MODEL_SYNC_MODELCLUSTER_AND_MODELARRAY);
@@ -835,9 +802,6 @@ public abstract class FSG{
 
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
                     firstfuncs.add(POSITION_BUILD_MODELSET_AND_ALL_ELSE);
-                }
-                if(BUFFER_POSITIONS){
-                    firstfuncs.add(POSITION_ADJUST_BUFFER_CAPACITY);
                 }
 
                 if(INSTANCE_SHARE_POSITIONS){
@@ -864,9 +828,6 @@ public abstract class FSG{
                     }
                     if(CONVERT_POSITIONS_TO_MODELARRAYS){
                         restfuncs.add(POSITION_BUILD_MODELSET_AND_ALL_ELSE);
-                    }
-                    if(BUFFER_POSITIONS){
-                        restfuncs.add(POSITION_ADJUST_BUFFER_CAPACITY);
                     }
                 }
 
@@ -903,19 +864,11 @@ public abstract class FSG{
 
                 firstfuncs.add(step);
 
-                if(BUFFER_COLORS){
-                    firstfuncs.add(COLOR_ADJUST_BUFFER_CAPACITY);
-                }
-
                 if(INSTANCE_SHARE_COLORS){
                     restfuncs.add(COLOR_SHARE);
 
                 }else{
                     restfuncs.add(step);
-
-                    if(BUFFER_COLORS){
-                        restfuncs.add(COLOR_ADJUST_BUFFER_CAPACITY);
-                    }
                 }
 
                 if(SYNC_COLOR_AND_BUFFER){
@@ -937,19 +890,11 @@ public abstract class FSG{
 
                 firstfuncs.add(step);
 
-                if(BUFFER_TEXCOORDS){
-                    firstfuncs.add(TEXTURE_ADJUST_BUFFER_CAPACITY);
-                }
-
                 if(INSTANCE_SHARE_TEXCOORDS){
                     restfuncs.add(TEXTURE_SHARE);
 
                 }else{
                     restfuncs.add(step);
-
-                    if(BUFFER_TEXCOORDS){
-                        restfuncs.add(TEXTURE_ADJUST_BUFFER_CAPACITY);
-                    }
                 }
 
                 if(SYNC_TEXCOORD_AND_BUFFER){
@@ -971,19 +916,11 @@ public abstract class FSG{
 
                 firstfuncs.add(step);
 
-                if(BUFFER_NORMALS){
-                    firstfuncs.add(NORMAL_ADJUST_BUFFER_CAPACITY);
-                }
-
                 if(INSTANCE_SHARE_NORMALS){
                     restfuncs.add(NORMAL_SHARE);
 
                 }else{
                     restfuncs.add(step);
-
-                    if(BUFFER_NORMALS){
-                        restfuncs.add(NORMAL_ADJUST_BUFFER_CAPACITY);
-                    }
                 }
 
                 if(SYNC_NORMAL_AND_BUFFER){
@@ -1159,18 +1096,6 @@ public abstract class FSG{
             info.append(LOAD_NORMALS);
             info.append("]\nLOAD_INDICES[");
             info.append(LOAD_INDICES);
-            info.append("]\nBUFFER_MODELS[");
-            info.append(BUFFER_MODELS);
-            info.append("]\nBUFFER_POSITIONS[");
-            info.append(BUFFER_POSITIONS);
-            info.append("]\nBUFFER_TEXCOORDS[");
-            info.append(BUFFER_TEXCOORDS);
-            info.append("]\nBUFFER_COLORS[");
-            info.append(BUFFER_COLORS);
-            info.append("]\nBUFFER_NORMALS[");
-            info.append(BUFFER_NORMALS);
-            info.append("]\nBUFFER_INDICES[");
-            info.append(BUFFER_INDICES);
             info.append("]\nINSTANCE_SHARE_POSITIONS[");
             info.append(INSTANCE_SHARE_POSITIONS);
             info.append("]\nINSTANCE_SHARE_TEXCOORDS[");
@@ -1207,13 +1132,6 @@ public abstract class FSG{
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.model().SYNCER.add(new FSSchematics.DefinitionModel(instance.schematics));
-            }
-        };
-        private static final BuildStep MODEL_ADJUST_BUFFER_CAPACITY = new BuildStep(){
-
-            @Override
-            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.adjustCapacity(ELEMENT_MODEL, data.model().size());
             }
         };
 
@@ -1278,13 +1196,6 @@ public abstract class FSG{
                 instance.positions().SYNCER.add(new FSSchematics.DefinitionPosition(instance.schematics));
             }
         };
-        private static final BuildStep POSITION_ADJUST_BUFFER_CAPACITY = new BuildStep(){
-
-            @Override
-            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.adjustCapacity(ELEMENT_POSITION, data.positions().size());
-            }
-        };
 
 
         private static final BuildStep COLOR_AUTOFILL_INDEXED = new BuildStep(){
@@ -1324,13 +1235,6 @@ public abstract class FSG{
                 data.colors(new VLArrayFloat(mesh.instance(0).colors().provider()));
             }
         };
-        private static final BuildStep COLOR_ADJUST_BUFFER_CAPACITY = new BuildStep(){
-
-            @Override
-            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.adjustCapacity(ELEMENT_COLOR, data.colors().size());
-            }
-        };
 
 
         private static final BuildStep TEXTURE_INDEXED = new BuildStep(){
@@ -1355,13 +1259,6 @@ public abstract class FSG{
                 data.texCoords(new VLArrayFloat(mesh.instance(0).texCoords().provider()));
             }
         };
-        private static final BuildStep TEXTURE_ADJUST_BUFFER_CAPACITY = new BuildStep(){
-
-            @Override
-            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.adjustCapacity(ELEMENT_TEXCOORD, data.texCoords().size());
-            }
-        };
 
 
         private static final BuildStep NORMAL_INDEXED = new BuildStep(){
@@ -1384,13 +1281,6 @@ public abstract class FSG{
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.normals(new VLArrayFloat(mesh.instance(0).normals().provider()));
-            }
-        };
-        private static final BuildStep NORMAL_ADJUST_BUFFER_CAPACITY = new BuildStep(){
-
-            @Override
-            protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                layout.adjustCapacity(ELEMENT_NORMAL, data.normals().size());
             }
         };
 

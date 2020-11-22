@@ -9,7 +9,7 @@ public class FSMesh extends VLSyncer.Syncable{
     protected String name;
 
     protected VLListType<FSInstance> instances;
-    protected VLListType<FSConfigLink> links;
+    protected VLListType<FSLinkType> links;
     protected VLArrayShort indices;
 
     protected long id;
@@ -22,20 +22,12 @@ public class FSMesh extends VLSyncer.Syncable{
         id = FSControl.getNextID();
     }
 
-    public void initLinks(VLListType<FSConfigLink> links){
+    public void initLinks(VLListType<FSLinkType> links){
         this.links = links;
     }
 
-    public void addLink(FSConfigLink link){
+    public void addLink(FSLinkType link){
         links.add(link);
-    }
-
-    public void activateLinks(int programID){
-        int size = links.size();
-
-        for(int i = 0; i < size; i++){
-            links.get(i).activate(programID);
-        }
     }
 
     public void addInstance(FSInstance instance){
@@ -63,7 +55,7 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances.get(index);
     }
 
-    public FSConfigLink link(int index){
+    public FSLinkType link(int index){
         return links.get(index);
     }
 
@@ -74,7 +66,7 @@ public class FSMesh extends VLSyncer.Syncable{
         return instance;
     }
 
-    public FSConfigLink removeLink(int index){
+    public FSLinkType removeLink(int index){
         return links.remove(index);
     }
 
@@ -90,7 +82,7 @@ public class FSMesh extends VLSyncer.Syncable{
         return instances;
     }
 
-    public VLListType<FSConfigLink> links(){
+    public VLListType<FSLinkType> links(){
         return links;
     }
 

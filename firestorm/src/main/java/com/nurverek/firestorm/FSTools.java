@@ -43,7 +43,6 @@ public final class FSTools{
     private static final Typeface TYPEFACE_NORMAL = Typeface.create("sans-serif", Typeface.NORMAL);
     private static final Typeface TYPEFACE_BOLD = Typeface.create("sans-serif", Typeface.BOLD);
 
-
     public static Bitmap generateTextedBitmap(Context cxt, String text, int dpisize, int color, int textcolor,
                                               boolean bold, int width, int height, int location, Bitmap.Config config){
         DisplayMetrics metrics = cxt.getResources().getDisplayMetrics();

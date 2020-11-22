@@ -475,13 +475,6 @@ public final class FSP{
                 VLDebug.append("]");
                 VLDebug.printD();
 
-                VLDebug.append("[ActivatingLinks] ... ");
-
-                mesh.activateLinks(program);
-
-                VLDebug.append("[DONE]");
-                VLDebug.printD();
-
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
                     VLDebug.append("[");
                     VLDebug.append(i2 + 1);
@@ -522,7 +515,6 @@ public final class FSP{
 
             for(int i = 0; i < meshsize; i++){
                 mesh = meshes.get(i);
-                mesh.activateLinks(program);
 
                 for(int i2 = 0; i2 < meshconfigsize; i2++){
                     config = meshconfigs.get(i2);
