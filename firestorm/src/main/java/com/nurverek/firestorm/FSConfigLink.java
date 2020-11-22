@@ -12,8 +12,7 @@ public abstract class FSConfigLink<ENTRYTYPE extends VLBufferManagerBase.EntryTy
 
     public int indexonhost;
 
-    public FSConfigLink(FSConfigLinkHost host, int indexonhost, int programid){
-        this.host = host;
+    public FSConfigLink(int indexonhost, int programid){
         this.indexonhost = indexonhost;
         this.programid = programid;
 
@@ -27,15 +26,6 @@ public abstract class FSConfigLink<ENTRYTYPE extends VLBufferManagerBase.EntryTy
     @Override
     public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
         bind(address);
-    }
-
-    public FSConfigLink<ENTRYTYPE> attach(FSConfigLinkHost host, int programid){
-        this.programid = programid;
-
-        indexonhost = host.links().size();
-        host.links().add(this);
-
-        return this;
     }
 
     public void activate(int programID){
