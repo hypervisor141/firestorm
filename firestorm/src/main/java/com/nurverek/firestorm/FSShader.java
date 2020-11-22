@@ -43,7 +43,7 @@ public final class FSShader implements VLStringify {
 
         attriblocation = 0;
 
-        if(FSControl.DEBUG_MODE){
+        if(FSControl.DEBUG_GLOBALLY){
             shadername = resolveShaderName(type);
         }
     }

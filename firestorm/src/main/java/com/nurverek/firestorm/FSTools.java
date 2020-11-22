@@ -312,7 +312,7 @@ public final class FSTools{
     }
 
     public static void checkGLError(){
-        if(FSControl.DEBUG_MODE){
+        if(FSControl.DEBUG_GLOBALLY){
             int error;
 
             while((error = GLES32.glGetError()) != GLES32.GL_NO_ERROR){
@@ -322,7 +322,7 @@ public final class FSTools{
     }
 
     public static void checkEGLError(String name){
-        if(FSControl.DEBUG_MODE){
+        if(FSControl.DEBUG_GLOBALLY){
             int error;
 
             while((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS){

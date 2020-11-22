@@ -25,7 +25,7 @@ public final class FSRenderer{
     protected static boolean isInitialized;
 
     protected static int CURRENT_RENDER_PASS_INDEX;
-    protected static int CURRENT_LOADER_INDEX;
+    protected static int CURRENT_FSG_INDEX;
     protected static int CURRENT_PROGRAM_SET_INDEX;
     private static int EXTERNAL_CHANGES;
     private static int INTERNAL_CHANGES;
@@ -40,7 +40,7 @@ public final class FSRenderer{
         EXTERNAL_CHANGES = 0;
         INTERNAL_CHANGES = 0;
         CURRENT_RENDER_PASS_INDEX = 0;
-        CURRENT_LOADER_INDEX = 0;
+        CURRENT_FSG_INDEX = 0;
         CURRENT_PROGRAM_SET_INDEX = 0;
     }
 
@@ -70,7 +70,7 @@ public final class FSRenderer{
             for(int i = 0; i < size; i++){
                 CURRENT_RENDER_PASS_INDEX = i;
                 CURRENT_PROGRAM_SET_INDEX = -1;
-                CURRENT_LOADER_INDEX = -1;
+                CURRENT_FSG_INDEX = -1;
 
                 passes.get(i).execute();
             }

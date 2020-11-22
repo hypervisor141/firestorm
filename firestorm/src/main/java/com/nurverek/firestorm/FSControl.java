@@ -16,6 +16,11 @@ public final class FSControl {
 
     public static final String LOGTAG = "FIRESTORM";
 
+    public static boolean DEBUG_GLOBALLY = true;
+    public static final int DEBUG_FULL = 2;
+    public static final int DEBUG_NORMAL = 1;
+    public static final int DEBUG_DISABLED = 0;
+
     protected static FSViewConfig CONFIG;
     protected static FSSurface SURFACE;
     protected static FSEvents EVENTS;
@@ -37,8 +42,6 @@ public final class FSControl {
     private static int REALWIDTH;
     private static int REALHEIGHT;
     private static float REALASPECTRATIO;
-
-    public static boolean DEBUG_MODE = true;
 
     public static final int GL_UNCHANGED_FRAME_LIMIT = 5;
     private static long GLOBAL_ID = 1000;

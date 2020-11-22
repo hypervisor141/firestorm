@@ -2,8 +2,6 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import androidx.annotation.Nullable;
-
 import com.nurverek.vanguard.VLArray;
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayShort;
@@ -21,10 +19,6 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 
 public abstract class FSG{
-
-    public static final int DEBUG_DISABLED = 0;
-    public static final int DEBUG_NORMAL = 1;
-    public static final int DEBUG_FULL = 2;
 
     public static final int ELEMENT_BYTES_MODEL = Float.SIZE / 8;
     public static final int ELEMENT_BYTES_POSITION = Float.SIZE / 8;
@@ -264,7 +258,7 @@ public abstract class FSG{
             int size = data.size();
             int size2 = scanners.size();
 
-            if(debug > DEBUG_DISABLED){
+            if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
 
                 Scanner s;
@@ -299,7 +293,7 @@ public abstract class FSG{
                         found = false;
 
                         try{
-                            if(s.scan(this, d) && debug >= DEBUG_FULL){
+                            if(s.scan(this, d) && debug >= FSControl.DEBUG_FULL){
                                 VLDebug.append("Built[");
                                 VLDebug.append(i);
                                 VLDebug.append("] keyword[");
@@ -372,7 +366,7 @@ public abstract class FSG{
         public void buffer(int debug){
             int size = scanners.size();
 
-            if(debug > DEBUG_DISABLED){
+            if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
                 Scanner s;
 
@@ -389,7 +383,7 @@ public abstract class FSG{
                     VLDebug.append(size);
                     VLDebug.append("]\n");
 
-                    if(debug >= DEBUG_FULL){
+                    if(debug >= FSControl.DEBUG_FULL){
                         s.debugInfo();
                     }
 
@@ -430,7 +424,7 @@ public abstract class FSG{
         public void program(int debug){
             int size = scanners.size();
 
-            if(debug > DEBUG_DISABLED){
+            if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
                 Scanner s;
 

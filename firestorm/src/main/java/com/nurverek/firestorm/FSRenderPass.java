@@ -19,8 +19,9 @@ public final class FSRenderPass{
     private long id;
 
     protected final ArrayList<Order> orders = new ArrayList<>(15);
+    protected int debug;
     
-    public FSRenderPass(){
+    public FSRenderPass(int debug){
         entries = new ArrayList<>();
 
         advanceprocessors = true;
@@ -32,6 +33,8 @@ public final class FSRenderPass{
         draw = true;
         
         id = FSControl.getNextID();
+
+        this.debug = debug;
     }
 
 
@@ -181,16 +184,34 @@ public final class FSRenderPass{
                     @Override
                     public void execute(int orderindex, int passindex){
                         FSRenderer.clear(clearbitf);
+
+                        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                            try{
+                                FSTools.checkGLError();
+
+                            }catch(Exception ex){
+                                throw new RuntimeException("Error running glClear() for bits[" + clearbitf + "] renderPass[" + passindex + "]", ex);
+                            }
+                        }
                     }
                 });
             }
-            
+
             if(clearcolor){
                 orders.add(new Order(){
-                    
+
                     @Override
                     public void execute(int orderindex, int passindex){
                         FSRenderer.clearColor();
+
+                        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                            try{
+                                FSTools.checkGLError();
+
+                            }catch(Exception ex){
+                                throw new RuntimeException("Error clearing color with glClear() on renderPass[" + passindex + "]", ex);
+                            }
+                        }
                     }
                 });
             }
@@ -201,6 +222,15 @@ public final class FSRenderPass{
                 @Override
                 public void execute(int orderindex, int passindex){
                     FSRenderer.runTasks();
+
+                    if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                        try{
+                            FSTools.checkGLError();
+
+                        }catch(Exception ex){
+                            throw new RuntimeException("Error running tasks on renderPass[" + passindex + "]", ex);
+                        }
+                    }
                 }
             });
         }
@@ -262,10 +292,20 @@ public final class FSRenderPass{
         for(int index = 0; index < entries.size(); index++){
             e = entries.get(index);
 
-            FSRenderer.CURRENT_LOADER_INDEX = index;
+            FSRenderer.CURRENT_FSG_INDEX = index;
             FSRenderer.CURRENT_PROGRAM_SET_INDEX = e.programsetindex;
 
             entries.get(index).c.update(FSRenderer.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
+
+            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                try{
+                    FSTools.checkGLError();
+
+                }catch(Exception ex){
+                    throw new RuntimeException("Error running update() for FSG[" + index
+                            + "] programSet[" + e.programsetindex + "] renderPass[" + FSRenderer.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                }
+            }
         }
 
         FSControl.EVENTS.GLPostDraw();
@@ -279,10 +319,20 @@ public final class FSRenderPass{
         for(int index = 0; index < entries.size(); index++){
             e = entries.get(index);
 
-            FSRenderer.CURRENT_LOADER_INDEX = index;
+            FSRenderer.CURRENT_FSG_INDEX = index;
             FSRenderer.CURRENT_PROGRAM_SET_INDEX = e.programsetindex;
 
             e.c.draw(FSRenderer.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
+
+            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                try{
+                    FSTools.checkGLError();
+
+                }catch(Exception ex){
+                    throw new RuntimeException("Error running draw() for FSG[" + index
+                            + "] programSet[" + e.programsetindex + "] renderPass[" + FSRenderer.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                }
+            }
         }
 
         FSControl.EVENTS.GLPostDraw();
@@ -291,6 +341,16 @@ public final class FSRenderPass{
     protected void noitifyPostFrameSwap(){
         for(int i = 0; i < entries.size(); i++){
             entries.get(i).c.postFramSwap(FSRenderer.CURRENT_RENDER_PASS_INDEX);
+
+            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                try{
+                    FSTools.checkGLError();
+
+                }catch(Exception ex){
+                    throw new RuntimeException("Error running postFrameSwap() for entry[" + i + "] FSG[" + i
+                            + "] programSet[" + entries.get(i).programsetindex + "] renderPass[" + FSRenderer.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                }
+            }
         }
     }
 
@@ -311,6 +371,16 @@ public final class FSRenderPass{
     public void destroy(){
         for(int i = 0; i < entries.size(); i++){
             entries.get(i).c.destroy();
+
+            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                try{
+                    FSTools.checkGLError();
+
+                }catch(Exception ex){
+                    throw new RuntimeException("Error running destroy() for FSG[" + i
+                            + "] programSet[" + entries.get(i).programsetindex + "] renderPass[" + FSRenderer.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                }
+            }
         }
 
         entries = null;

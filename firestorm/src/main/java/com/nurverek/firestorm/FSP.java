@@ -270,7 +270,7 @@ public final class FSP{
             s.compile();
             s.attach(this);
 
-            if(FSControl.DEBUG_MODE && debug > FSG.DEBUG_DISABLED){
+            if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
                 VLDebug.append("Compiling and attaching shader type ");
                 VLDebug.append(s.type);
                 VLDebug.append(" for program id ");
@@ -325,7 +325,7 @@ public final class FSP{
             throw new RuntimeException();
         }
 
-        if(FSControl.DEBUG_MODE && debug > FSG.DEBUG_DISABLED){
+        if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
             try{
                 size = setupconfigs.size();
                 VLDebug.append("Running programBuilt() for SetupConfigs\n");
@@ -419,7 +419,7 @@ public final class FSP{
     }
 
     public void draw(int passindex){
-        if(FSControl.DEBUG_MODE && debug >= FSG.DEBUG_NORMAL){
+        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
 
@@ -438,7 +438,7 @@ public final class FSP{
         FSMesh mesh;
         FSConfig config;
 
-        if(FSControl.DEBUG_MODE && debug > FSG.DEBUG_DISABLED){
+        if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
 
             VLDebug.append("PROGRAM[");
@@ -532,7 +532,7 @@ public final class FSP{
     public void use(){
         GLES32.glUseProgram(program);
 
-        if(FSControl.DEBUG_MODE && debug >= FSG.DEBUG_NORMAL){
+        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
             }catch(Exception ex){
