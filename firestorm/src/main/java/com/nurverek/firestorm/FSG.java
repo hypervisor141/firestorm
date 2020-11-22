@@ -372,7 +372,13 @@ public abstract class FSG{
 
                 VLDebug.printDirect("[Buffering Stage]\n");
 
-                BUFFERMANAGER.initialize();
+                try{
+                    BUFFERMANAGER.initialize();
+
+                }catch(Exception ex){
+                    VLDebug.printE();
+                    throw new RuntimeException("Failed to initialize buffers", ex);
+                }
 
                 for(int i = 0; i < size; i++){
                     s = scanners.get(i);
@@ -405,7 +411,13 @@ public abstract class FSG{
                     VLDebug.printD();
                 }
 
-                BUFFERMANAGER.upload();
+                try{
+                    BUFFERMANAGER.upload();
+
+                }catch(Exception ex){
+                    VLDebug.printE();
+                    throw new RuntimeException("Failed to upload buffers", ex);
+                }
 
                 VLDebug.printDirect("[DONE]\n");
                 VLDebug.printD();
@@ -429,8 +441,6 @@ public abstract class FSG{
                 Scanner s;
 
                 VLDebug.printDirect("[Program Stage]\n");
-
-                BUFFERMANAGER.initialize();
 
                 for(int i = 0; i < size; i++){
                     s = scanners.get(i);

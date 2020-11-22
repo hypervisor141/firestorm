@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
+import android.util.Log;
 
 import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLStringify;
@@ -49,10 +50,10 @@ public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
 
     public void upload(){
         sizebytes = buffer.sizeBytes();
-        buffer.position(0);
-
         bind();
-        FSRenderer.vertexBufferData(target, sizebytes, (java.nio.Buffer)buffer.provider(), accessmode);
+
+        buffer.position(0);
+        FSRenderer.vertexBufferData(target, sizebytes, buffer.provider(), accessmode);
 
         needsupdate = false;
     }
@@ -62,15 +63,17 @@ public class FSVertexBuffer extends VLSyncer.Syncable implements VLStringify {
 
         int bytes = buffer.getTypeBytes();
         buffer.position(offset);
-        FSRenderer.vertexBufferSubData(target, offset * bytes, size * bytes, (java.nio.Buffer)buffer.provider());
+        FSRenderer.vertexBufferSubData(target, offset * bytes, size * bytes, buffer.provider());
 
         needsupdate = false;
     }
 
     public void update(){
         bind();
+        FSTools.checkGLError();
+
         buffer.position(0);
-        FSRenderer.vertexBufferSubData(target, 0, buffer.sizeBytes(), (java.nio.Buffer)buffer.provider());
+        FSRenderer.vertexBufferSubData(target, 0, sizebytes, buffer.provider());
 
         needsupdate = false;
     }

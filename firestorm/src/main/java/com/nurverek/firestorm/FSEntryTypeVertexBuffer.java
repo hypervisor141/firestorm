@@ -4,7 +4,7 @@ import com.nurverek.vanguard.VLArray;
 import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLBufferManagerBase;
 
-public abstract class FSEntryTypeVertexBuffer<TYPE extends VLArray> extends VLBufferManagerBase.EntryType<TYPE> {
+public abstract class FSEntryTypeVertexBuffer<TYPE extends VLArray> extends VLBufferManagerBase.EntryType<TYPE>{
 
     protected FSVertexBuffer vertexbuffer;
 

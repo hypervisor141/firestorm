@@ -86,7 +86,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         }
     }
 
-    public static class EntryInt extends FSEntryTypeVertexBuffer<VLArrayInt> {
+    public static class EntryInt extends FSEntryTypeVertexBuffer<VLArrayInt>{
 
         public EntryInt(FSVertexBuffer vbuffer, VLBuffer buffer){
             super(vbuffer, buffer);
@@ -126,7 +126,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         }
     }
 
-    public static class EntryFloat extends FSEntryTypeVertexBuffer<VLArrayFloat> {
+    public static class EntryFloat extends FSEntryTypeVertexBuffer<VLArrayFloat>{
 
         public EntryFloat(FSVertexBuffer vbuffer, VLBuffer buffer){
             super(vbuffer, buffer);
