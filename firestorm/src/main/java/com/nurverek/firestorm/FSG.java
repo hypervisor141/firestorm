@@ -428,7 +428,7 @@ public abstract class FSG{
                 VLDebug.recreate();
                 Scanner s;
 
-                VLDebug.printDirect("[Initialization Stage]\n");
+                VLDebug.printDirect("[Program Stage]\n");
 
                 BUFFERMANAGER.initialize();
 
