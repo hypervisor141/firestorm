@@ -82,17 +82,19 @@ public final class FSBufferLayout{
         public int unitoffset;
         public int unitsize;
         public int unitsubcount;
+        public int stride;
 
-        public EntryType(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
+        public EntryType(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
             this.mechanism = mechanism;
             this.element = element;
             this.unitoffset = unitoffset;
             this.unitsize = unitsize;
             this.unitsubcount = unitsubcount;
+            this.stride = stride;
         }
 
         public int strideAdjustment(){
-            return unitsubcount;
+            return stride;
         }
 
         public int bufferSizeAdjustment(FSMesh mesh){
@@ -117,20 +119,24 @@ public final class FSBufferLayout{
     }
 
     public static class EntryElement extends EntryType{
-        
+
+        public EntryElement(Mechanism<EntryElement> mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
+            super(mechanism, element, unitoffset, unitsize, unitsubcount, stride);
+        }
+
         public EntryElement(Mechanism<EntryElement> mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
-            super(mechanism, element, unitoffset, unitsize, unitsubcount);
+            super(mechanism, element, unitoffset, unitsize, unitsubcount, unitsubcount);
         }
 
         public EntryElement(Mechanism<EntryElement> mechanism, int element){
-            super(mechanism, element, 0, FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element]);
+            super(mechanism, element, 0, FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element]);
         }
     }
 
     public static class EntryLink extends EntryType{
 
-        public EntryLink(Mechanism<EntryElement> mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount){
-            super(mechanism, linkindex, unitoffset, unitsize, unitsubcount);
+        public EntryLink(Mechanism<EntryElement> mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount, int stride){
+            super(mechanism, linkindex, unitoffset, unitsize, unitsubcount, stride);
         }
     }
 
