@@ -1303,8 +1303,8 @@ public abstract class FSG{
         private static final BufferStep BUFFER_NO_SYNC = new BufferStep(){
 
             @Override
-            protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int unitsize, int stride){
-                manager.buffer(results, index, array, unitsize, stride);
+            protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array){
+                manager.buffer(results, index, array);
             }
 
             @Override
@@ -1315,8 +1315,8 @@ public abstract class FSG{
         private static final BufferStep BUFFER_SYNC = new BufferStep(){
 
             @Override
-            protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int unitsize, int stride){
-                manager.bufferSync(results, index, array, unitsize, stride);
+            protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array){
+                manager.bufferSync(results, index, array);
             }
 
             @Override
@@ -1333,7 +1333,7 @@ public abstract class FSG{
 
         protected abstract static class BufferStep{
 
-            protected abstract void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int unitsize, int stride);
+            protected abstract void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array);
             protected abstract void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
         }
     }

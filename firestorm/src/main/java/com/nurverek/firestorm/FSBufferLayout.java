@@ -98,7 +98,7 @@ public final class FSBufferLayout{
         }
 
         public int bufferSizeAdjustment(FSMesh mesh){
-            return (mechanism.getSizeAdjustment(this, mesh) / unitsize) * unitsubcount;
+            return (mechanism.getTargetSize(this, mesh) / unitsize) * stride;
         }
 
         public void debugInfo(){
@@ -146,7 +146,7 @@ public final class FSBufferLayout{
         protected FSBufferManager buffer;
 
         protected int bufferindex;
-        protected int stride;
+        protected int totalstride;
 
         private Layout(FSBufferManager buffer, int bufferindex, int capacity){
             this.buffer = buffer;
@@ -156,7 +156,7 @@ public final class FSBufferLayout{
         }
 
         public Layout addElement(EntryElement entry){
-            stride += entry.strideAdjustment();
+            totalstride += entry.strideAdjustment();
             entries.add(entry);
 
             buffer.adjustCapacity(bufferindex, entry.bufferSizeAdjustment(targetmesh));
@@ -165,7 +165,7 @@ public final class FSBufferLayout{
         }
 
         public Layout addLink(EntryLink entry){
-            stride += entry.strideAdjustment();
+            totalstride += entry.strideAdjustment();
             entries.add(entry);
 
             buffer.adjustCapacity(bufferindex, entry.bufferSizeAdjustment(targetmesh));
@@ -180,20 +180,20 @@ public final class FSBufferLayout{
 
             for(int i = 0; i < size - 1; i++){
                 entry = entries.get(i);
-                b.position(entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, stride));
+                b.position(entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, totalstride));
             }
 
             entry = entries.get(entries.size() - 1);
-            entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, stride);
+            entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, totalstride);
         }
 
         protected void bufferDebug(FSG.Scanner scanner){
             int size = entries.size();
             EntryType e;
 
-            if(stride <= 0){
+            if(totalstride <= 0){
                 VLDebug.append("Invalid stride[");
-                VLDebug.append(stride);
+                VLDebug.append(totalstride);
                 VLDebug.append("]");
 
                 throw new RuntimeException();
@@ -202,7 +202,7 @@ public final class FSBufferLayout{
             VLDebug.append("bufferIndex[");
             VLDebug.append(bufferindex);
             VLDebug.append("] stride[");
-            VLDebug.append(stride);
+            VLDebug.append(totalstride);
             VLDebug.append("] entries[");
 
             for(int i = 0; i < size; i++){
@@ -226,7 +226,7 @@ public final class FSBufferLayout{
 
         public abstract int buffer(FSG.Assembler assembler, FSMesh mesh, ENTRY entry, FSBufferManager buffer, int bufferindex, int stride);
 
-        public abstract int getSizeAdjustment(ENTRY entry, FSMesh mesh);
+        public abstract int getTargetSize(ENTRY entry, FSMesh mesh);
     }
 
     private static final class ElementSequentialInstanced implements Mechanism<EntryType>{
@@ -251,7 +251,7 @@ public final class FSBufferLayout{
                 array = instance.element(element);
 
                 address = new FSBufferAddress();
-                step.process(address, buffer, bufferindex, array, entry.unitsubcount, stride);
+                step.process(address, buffer, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
                 instance.bufferTracker().add(element, address);
             }
@@ -259,7 +259,7 @@ public final class FSBufferLayout{
             return buffer.position(bufferindex);
         }
 
-        public int getSizeAdjustment(EntryType entry, FSMesh mesh){
+        public int getTargetSize(EntryType entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -300,7 +300,7 @@ public final class FSBufferLayout{
             return mainoffset + entry.unitsubcount;
         }
 
-        public int getSizeAdjustment(EntryType entry, FSMesh mesh){
+        public int getTargetSize(EntryType entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -332,14 +332,14 @@ public final class FSBufferLayout{
 
             for(int i = 0; i < size; i++){
                 address = new FSBufferAddress();
-                assembler.bufferFunc(element).process(address, buffer, bufferindex, array, entry.unitsubcount, stride);
+                assembler.bufferFunc(element).process(address, buffer, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
                 instances.get(i).bufferTracker().add(element, address);
             }
 
             return buffer.position(bufferindex);
         }
 
-        public int getSizeAdjustment(EntryType entry, FSMesh mesh){
+        public int getTargetSize(EntryType entry, FSMesh mesh){
             return mesh.instance(0).element(entry.element).size();
         }
     }
@@ -372,7 +372,7 @@ public final class FSBufferLayout{
             return mainoffset + entry.unitsubcount;
         }
 
-        public int getSizeAdjustment(EntryType entry, FSMesh mesh){
+        public int getTargetSize(EntryType entry, FSMesh mesh){
             return mesh.instance(0).element(entry.element).size();
         }
     }
@@ -398,7 +398,7 @@ public final class FSBufferLayout{
             return buffer.position(bufferindex);
         }
 
-        public int getSizeAdjustment(EntryType entry, FSMesh mesh){
+        public int getTargetSize(EntryType entry, FSMesh mesh){
             return mesh.indices().size();
         }
     }
@@ -409,12 +409,14 @@ public final class FSBufferLayout{
 
         @Override
         public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
-            ((FSLinkBufferedType)mesh.link(entry.element)).buffer(buffer, bufferindex, entry.unitoffset, entry.unitsubcount);
+            FSLinkBufferedType link = (FSLinkBufferedType)mesh.link(entry.element);
+            link.buffer(buffer, bufferindex, 0, link.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+
             return buffer.position(bufferindex);
         }
 
         @Override
-        public int getSizeAdjustment(EntryType entry, FSMesh mesh){
+        public int getTargetSize(EntryType entry, FSMesh mesh){
             return (((FSLinkBufferedType)mesh.link(entry.element)).size() / entry.unitsize) * entry.unitsubcount;
         }
     }
@@ -434,7 +436,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public int getSizeAdjustment(EntryLink entry, FSMesh mesh){
+        public int getTargetSize(EntryLink entry, FSMesh mesh){
             return ((FSLinkBufferedType)mesh.link(entry.element)).size();
         }
     }
