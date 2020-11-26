@@ -884,7 +884,7 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x);
             VLDebug.append("], y[");
             VLDebug.append(y);
@@ -923,9 +923,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" mask[");
+            VLDebug.append("mask[");
             VLDebug.append(mask);
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -956,9 +956,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" mode[");
+            VLDebug.append("mode[");
             VLDebug.append(mode);
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -989,9 +989,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" divisor[");
+            VLDebug.append("divisor[");
             VLDebug.append(divisor);
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1022,9 +1022,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" mode[");
+            VLDebug.append("mode[");
             VLDebug.append(mode);
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1103,13 +1103,15 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" element[");
+            VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
 
             mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
         }
     }
 
@@ -1146,13 +1148,15 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" element[");
+            VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
 
             mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
         }
     }
 
@@ -1354,7 +1358,7 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
@@ -1362,7 +1366,7 @@ public final class FSP{
             VLDebug.append(z.get());
             VLDebug.append("], w[");
             VLDebug.append(w.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
 
         @Override
@@ -1405,13 +1409,13 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
             VLDebug.append("], z[");
             VLDebug.append(z.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1446,11 +1450,11 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1481,9 +1485,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1656,7 +1660,7 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
@@ -1664,7 +1668,7 @@ public final class FSP{
             VLDebug.append(z.get());
             VLDebug.append("], w[");
             VLDebug.append(w.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1702,13 +1706,13 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
             VLDebug.append("], z[");
             VLDebug.append(z.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1743,11 +1747,11 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1778,9 +1782,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -1953,7 +1957,7 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" x[");
+            VLDebug.append("x[");
             VLDebug.append(x.get());
             VLDebug.append("], y[");
             VLDebug.append(y.get());
@@ -1961,7 +1965,7 @@ public final class FSP{
             VLDebug.append(z.get());
             VLDebug.append("], w[");
             VLDebug.append(w.get());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -2075,13 +2079,15 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" element[");
+            VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
 
             mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
         }
     }
 
@@ -2124,8 +2130,9 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" element[NONE] ");
+            VLDebug.append("element[NONE] ");
             address.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            VLDebug.append("] ");
         }
     }
 
@@ -2156,7 +2163,7 @@ public final class FSP{
         @Override
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
-            VLDebug.append(" [DYNAMIC]");
+            VLDebug.append("[DYNAMIC]");
         }
     }
 
@@ -2185,7 +2192,7 @@ public final class FSP{
         @Override
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
-            VLDebug.append(" [DYNAMIC]");
+            VLDebug.append("[DYNAMIC]");
         }
     }
 
@@ -2212,7 +2219,7 @@ public final class FSP{
         @Override
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
-            VLDebug.append(" [DYNAMIC]");
+            VLDebug.append("[DYNAMIC]");
         }
     }
 
@@ -2244,7 +2251,7 @@ public final class FSP{
             VLDebug.append(mesh.drawmode);
             VLDebug.append("] indexCount[");
             VLDebug.append(mesh.first().vertexSize());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -2272,13 +2279,13 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" drawMode[");
+            VLDebug.append("drawMode[");
             VLDebug.append(mesh.drawmode);
             VLDebug.append("] indexCount[");
             VLDebug.append(mesh.first().vertexSize());
             VLDebug.append("] instanceCount[");
             VLDebug.append(mesh.size());
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -2312,13 +2319,15 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" element[");
+            VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[FSG.ELEMENT_INDEX]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferaddressindex);
             VLDebug.append("] bufferAddress[");
 
             mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
         }
     }
 
@@ -2352,7 +2361,7 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" drawMode[");
+            VLDebug.append("drawMode[");
             VLDebug.append(mesh.drawmode);
             VLDebug.append("] instanceCount[");
             VLDebug.append(mesh.size());
@@ -2362,7 +2371,7 @@ public final class FSP{
 
             mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 
@@ -2406,7 +2415,7 @@ public final class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
 
-            VLDebug.append(" drawMode[");
+            VLDebug.append("drawMode[");
             VLDebug.append(mesh.drawmode);
             VLDebug.append("] start[");
             VLDebug.append(start);
@@ -2420,7 +2429,7 @@ public final class FSP{
 
             mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("]");
+            VLDebug.append("] ");
         }
     }
 

@@ -66,10 +66,10 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
     public void debugInfo(FSP program, FSMesh mesh, int debug){
         super.debugInfo(program, mesh, debug);
 
-        VLDebug.append(" [");
+        VLDebug.append("[");
         VLDebug.append(config.getClass().getSimpleName());
         VLDebug.append("] targetIndex[");
         VLDebug.append(targetindex);
-        VLDebug.append("]");
+        VLDebug.append("] ");
     }
 }

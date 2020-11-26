@@ -138,7 +138,7 @@ public class FSConfigSequence extends FSConfigLocated{
                 data.append("]");
             }
 
-            data.append("]");
+            data.append("] ");
         }
     }
 }

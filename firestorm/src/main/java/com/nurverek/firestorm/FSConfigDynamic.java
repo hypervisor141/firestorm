@@ -60,10 +60,10 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     public void debugInfo(FSP program, FSMesh mesh, int debug){
         super.debugInfo(program, mesh, debug);
 
-        VLDebug.append(" config[");
+        VLDebug.append("config[");
         VLDebug.append(config.getClass().getSimpleName());
         VLDebug.append("] [ ");
         config.debugInfo(program, mesh, debug);
-        VLDebug.append(" ]");
+        VLDebug.append(" ] ");
     }
 }

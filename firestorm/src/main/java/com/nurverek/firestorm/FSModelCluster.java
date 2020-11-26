@@ -22,6 +22,17 @@ public class FSModelCluster extends VLVCluster {
         cluster.get(setindex).add(row);
     }
 
+    public void addRowTranslation(int setindex, int rowindex, VLV x, VLV y, VLV z){
+        VLListType<VLV> row = new VLListType<>(4, 10);
+
+        row.add(FSModelArray.TRANSLATE_FLAG);
+        row.add(x);
+        row.add(y);
+        row.add(z);
+
+        cluster.get(setindex).add(rowindex, row);
+    }
+
     public void addRowScale(int setindex, VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(4, 10);
 
@@ -31,6 +42,17 @@ public class FSModelCluster extends VLVCluster {
         row.add(z);
 
         cluster.get(setindex).add(row);
+    }
+
+    public void addRowScale(int setindex, int rowindex, VLV x, VLV y, VLV z){
+        VLListType<VLV> row = new VLListType<>(4, 10);
+
+        row.add(FSModelArray.SCALE_FLAG);
+        row.add(x);
+        row.add(y);
+        row.add(z);
+
+        cluster.get(setindex).add(rowindex, row);
     }
 
     public void addRowRotate(int setindex, VLV a, VLV x, VLV y, VLV z){
@@ -43,6 +65,18 @@ public class FSModelCluster extends VLVCluster {
         row.add(a);
 
         cluster.get(setindex).add(row);
+    }
+
+    public void addRowRotate(int setindex, int rowindex, VLV a, VLV x, VLV y, VLV z){
+        VLListType<VLV> row = new VLListType<>(4, 10);
+
+        row.add(FSModelArray.ROTATE_FLAG);
+        row.add(x);
+        row.add(y);
+        row.add(z);
+        row.add(a);
+
+        cluster.get(setindex).add(rowindex, row);
     }
 
     public void setTranslateType(int setindex, int rowindex){

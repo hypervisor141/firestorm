@@ -90,9 +90,10 @@ public abstract class FSConfig{
 
         VLDebug.append("[");
         VLDebug.append(classname == "" ? "Anonymous" : classname);
-        VLDebug.append("] [");
+        VLDebug.append("]");
 
         if(program.debug >= FSControl.DEBUG_FULL){
+            VLDebug.append(" [");
             debugInfo(program, mesh, program.debug);
             VLDebug.append("]\n");
 
@@ -104,7 +105,7 @@ public abstract class FSConfig{
     public void debugInfo(FSP program, FSMesh mesh, int debug){
         VLDebug.append("GLSLSize[");
         VLDebug.append(getGLSLSize());
-        VLDebug.append("]");
+        VLDebug.append("] ");
     }
 
     public abstract static class Policy{
