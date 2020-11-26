@@ -8,7 +8,7 @@ public class FSInstance{
 
     protected FSMesh mesh;
     protected FSSchematics schematics;
-    protected FSModelCluster modelcluster;
+    protected FSModelMatrix modelmatrix;
     protected FSBufferTracker buffers;
 
     protected FSTexture colortexture;
@@ -30,8 +30,8 @@ public class FSInstance{
     }
 
 
-    public void modelCluster(FSModelCluster set){
-        modelcluster = set;
+    public void modelMatrix(FSModelMatrix set){
+        modelmatrix = set;
     }
 
     public VLArrayFloat element(int element){
@@ -87,8 +87,8 @@ public class FSInstance{
         return buffers;
     }
 
-    public FSModelCluster modelCluster(){
-        return modelcluster;
+    public FSModelMatrix modelMatrix(){
+        return modelmatrix;
     }
 
     public States states(){

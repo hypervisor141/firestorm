@@ -6,10 +6,10 @@ import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLSyncer;
 import com.nurverek.vanguard.VLV;
-import com.nurverek.vanguard.VLVCluster;
 import com.nurverek.vanguard.VLVConst;
+import com.nurverek.vanguard.VLVMatrix;
 
-public class FSModelArray extends VLArrayFloat {
+public class FSModelArray extends VLArrayFloat{
 
     private static final int TRANSLATE = 8941;
     private static final int ROTATE = 8942;
@@ -30,34 +30,34 @@ public class FSModelArray extends VLArrayFloat {
 
 
     @Override
-    public void transform(int index, VLVCluster sets, boolean replace){
+    public void transform(int index, VLVMatrix matrix, boolean replace){
         if(replace){
             identity();
         }
 
-        for(int i = sets.sizeArray() - 1; i >= 0; i--){
-            for(int i2 = sets.sizeSet(i) - 1; i2 >= 0; i2--){
-                VLListType<VLV> row = sets.getRow(i, i2);
+        VLListType<VLV> row;
 
-                if(row != null){
-                    int flag = (int)row.get(0).get();
+        for(int i = matrix.sizeRows() - 1; i >= 0; i--){
+            row = matrix.getRow(i);
 
-                    switch(flag){
-                        case TRANSLATE:
-                            translate(row.get(1).get(), row.get(2).get(), row.get(3).get());
-                            break;
+            if(row != null){
+                int flag = (int)row.get(0).get();
 
-                        case ROTATE:
-                            rotate(row.get(1).get(), row.get(2).get(), row.get(3).get(), row.get(4).get());
-                            break;
+                switch(flag){
+                    case TRANSLATE:
+                        translate(row.get(1).get(), row.get(2).get(), row.get(3).get());
+                        break;
 
-                        case SCALE:
-                            scale(row.get(1).get(), row.get(2).get(), row.get(3).get());
-                            break;
+                    case ROTATE:
+                        rotate(row.get(1).get(), row.get(2).get(), row.get(3).get(), row.get(4).get());
+                        break;
 
-                        default:
-                            throw new RuntimeException("Invalid model transform flag[" + flag + "]");
-                    }
+                    case SCALE:
+                        scale(row.get(1).get(), row.get(2).get(), row.get(3).get());
+                        break;
+
+                    default:
+                        throw new RuntimeException("Invalid model transform flag[" + flag + "]");
                 }
             }
         }
@@ -93,7 +93,7 @@ public class FSModelArray extends VLArrayFloat {
         results[offset + 2] /= w;
     }
 
-    public static class Definition extends VLSyncer.Definition<FSModelCluster, FSModelArray>{
+    public static class Definition extends VLSyncer.Definition<FSModelMatrix, FSModelArray>{
 
         public boolean replace;
 
@@ -103,7 +103,7 @@ public class FSModelArray extends VLArrayFloat {
         }
 
         @Override
-        protected void sync(FSModelCluster source, FSModelArray target){
+        protected void sync(FSModelMatrix source, FSModelArray target){
             target.transform(0, source, replace);
         }
     }

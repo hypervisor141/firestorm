@@ -691,7 +691,7 @@ public abstract class FSG{
 
     public static final class Assembler implements VLStringify{
 
-        public boolean SYNC_MODELCLUSTER_AND_MODELARRAY = false;
+        public boolean SYNC_MODELMATRIX_AND_MODELARRAY = false;
         public boolean SYNC_MODELARRAY_AND_BUFFER = false;
         public boolean SYNC_MODELARRAY_AND_SCHEMATICS = false;
         public boolean SYNC_POSITION_AND_BUFFER = false;
@@ -739,7 +739,7 @@ public abstract class FSG{
 
             ENABLE_DATA_PACK = true;
 
-            SYNC_MODELCLUSTER_AND_MODELARRAY = false;
+            SYNC_MODELMATRIX_AND_MODELARRAY = false;
             SYNC_MODELARRAY_AND_BUFFER = true;
             SYNC_MODELARRAY_AND_SCHEMATICS = true;
             SYNC_POSITION_AND_SCHEMATICS = true;
@@ -785,9 +785,9 @@ public abstract class FSG{
                 firstfuncs.add(MODEL_INITIALIZE);
                 restfuncs.add(MODEL_INITIALIZE);
 
-                if(SYNC_MODELCLUSTER_AND_MODELARRAY){
-                    firstfuncs.add(MODEL_SYNC_MODELCLUSTER_AND_MODELARRAY);
-                    restfuncs.add(MODEL_SYNC_MODELCLUSTER_AND_MODELARRAY);
+                if(SYNC_MODELMATRIX_AND_MODELARRAY){
+                    firstfuncs.add(MODEL_SYNC_MODELMATRIX_AND_MODELARRAY);
+                    restfuncs.add(MODEL_SYNC_MODELMATRIX_AND_MODELARRAY);
                 }
                 if(SYNC_MODELARRAY_AND_BUFFER){
                     buffersteps[ELEMENT_MODEL] = BUFFER_SYNC;
@@ -801,37 +801,37 @@ public abstract class FSG{
 
         private void configurePositions(){
             if(LOAD_POSITIONS){
-                firstfuncs.add(POSITION_SET_DEFAULT);
+                firstfuncs.add(POSITION_MATRIX_DEFAULT);
                 firstfuncs.add(POSITION_INIT_SCHEMATICS);
 
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                    firstfuncs.add(POSITION_BUILD_MODELSET_AND_ALL_ELSE);
+                    firstfuncs.add(POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE);
                 }
 
                 if(INSTANCE_SHARE_POSITIONS){
                     if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                        restfuncs.add(POSITION_SET_DEFAULT);
+                        restfuncs.add(POSITION_MATRIX_DEFAULT);
 
                         if(!DRAW_MODE_INDEXED){
                             restfuncs.add(POSITION_UNINDEX);
                         }
 
                         restfuncs.add(POSITION_INIT_SCHEMATICS);
-                        restfuncs.add(POSITION_BUILD_MODELSET);
+                        restfuncs.add(POSITION_BUILD_MODELMATRIX);
                     }
 
-                    restfuncs.add(POSITION_SET_SHARED);
+                    restfuncs.add(POSITION_MATRIX_SHARED);
                     restfuncs.add(POSITION_SHARE_SCHEMATICS);
 
                 }else{
-                    restfuncs.add(POSITION_SET_DEFAULT);
+                    restfuncs.add(POSITION_MATRIX_DEFAULT);
                     restfuncs.add(POSITION_INIT_SCHEMATICS);
 
                     if(!DRAW_MODE_INDEXED){
                         restfuncs.add(POSITION_UNINDEX);
                     }
                     if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                        restfuncs.add(POSITION_BUILD_MODELSET_AND_ALL_ELSE);
+                        restfuncs.add(POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE);
                     }
                 }
 
@@ -940,11 +940,10 @@ public abstract class FSG{
             }
         }
 
-        private void buildModelSetFromSchematics(FSInstance instance){
+        private void buildmodelClusterFromSchematics(FSInstance instance){
             FSSchematics schematics = instance.schematics;
-            FSModelCluster set = instance.modelCluster();
-
-            set.addSet(4, 1);
+            FSModelMatrix set = instance.modelMatrix();
+            
             set.addRowTranslation(0, new VLVConst(schematics.rawCentroidX()), new VLVConst(schematics.rawCentroidY()), new VLVConst(schematics.rawCentroidZ()));
             set.sync();
         }
@@ -1068,8 +1067,8 @@ public abstract class FSG{
         }
 
         public final void stringify(StringBuilder info, Object hint){
-            info.append("SYNC_MODELSET_TO_MODELARRAY[");
-            info.append(SYNC_MODELCLUSTER_AND_MODELARRAY);
+            info.append("SYNC_MODELMATRIX_TO_MODELARRAY[");
+            info.append(SYNC_MODELMATRIX_AND_MODELARRAY);
             info.append("]\nSYNC_MODELARRAY_AND_BUFFER[");
             info.append(SYNC_MODELARRAY_AND_BUFFER);
             info.append("]\nSYNC_MODELARRAY_AND_SCHEMATICS[");
@@ -1121,14 +1120,14 @@ public abstract class FSG{
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 instance.data.model(new FSModelArray());
-                instance.modelCluster(new FSModelCluster(2, 2));
+                instance.modelMatrix(new FSModelMatrix(2, 10));
             }
         };
-        private static final BuildStep MODEL_SYNC_MODELCLUSTER_AND_MODELARRAY = new BuildStep(){
+        private static final BuildStep MODEL_SYNC_MODELMATRIX_AND_MODELARRAY = new BuildStep(){
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                instance.modelCluster().SYNCER.add(new FSModelArray.Definition(instance.model(), true));
+                instance.modelMatrix().SYNCER.add(new FSModelArray.Definition(instance.model(), true));
             }
         };
         private static final BuildStep MODEL_SYNC_MODELARRAY_AND_SCHEMATICS = new BuildStep(){
@@ -1140,14 +1139,14 @@ public abstract class FSG{
         };
 
 
-        private static final BuildStep POSITION_SET_DEFAULT = new BuildStep(){
+        private static final BuildStep POSITION_MATRIX_DEFAULT = new BuildStep(){
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
                 data.positions(new VLArrayFloat(fsm.positions.array()));
             }
         };
-        private static final BuildStep POSITION_SET_SHARED = new BuildStep(){
+        private static final BuildStep POSITION_MATRIX_SHARED = new BuildStep(){
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
@@ -1161,18 +1160,18 @@ public abstract class FSG{
                 assembler.unIndexPositions(data, indices.provider());
             }
         };
-        private static final BuildStep POSITION_BUILD_MODELSET = new BuildStep(){
+        private static final BuildStep POSITION_BUILD_MODELMATRIX = new BuildStep(){
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                assembler.buildModelSetFromSchematics(instance);
+                assembler.buildmodelClusterFromSchematics(instance);
             }
         };
-        private static final BuildStep POSITION_BUILD_MODELSET_AND_ALL_ELSE = new BuildStep(){
+        private static final BuildStep POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE = new BuildStep(){
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                assembler.buildModelSetFromSchematics(instance);
+                assembler.buildmodelClusterFromSchematics(instance);
                 assembler.centralizePositions(instance);
                 instance.schematics.updateBoundaries();
             }
