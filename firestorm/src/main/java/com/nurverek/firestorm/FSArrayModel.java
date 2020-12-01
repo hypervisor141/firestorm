@@ -9,7 +9,7 @@ import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVConst;
 import com.nurverek.vanguard.VLVMatrix;
 
-public class FSModelArray extends VLArrayFloat{
+public class FSArrayModel extends VLArrayFloat{
 
     private static final int TRANSLATE = 8941;
     private static final int ROTATE = 8942;
@@ -19,11 +19,11 @@ public class FSModelArray extends VLArrayFloat{
     public static final VLV ROTATE_FLAG = new VLVConst(ROTATE);
     public static final VLV SCALE_FLAG = new VLVConst(SCALE);
 
-    public FSModelArray(float[] s){
+    public FSArrayModel(float[] s){
         super(s);
     }
 
-    public FSModelArray(){
+    public FSArrayModel(){
         super(new float[FSG.UNIT_SIZE_MODEL]);
         identity();
     }
@@ -93,17 +93,17 @@ public class FSModelArray extends VLArrayFloat{
         results[offset + 2] /= w;
     }
 
-    public static class Definition extends VLSyncer.Definition<FSModelMatrix, FSModelArray>{
+    public static class Definition extends VLSyncer.Definition<FSMatrixModel, FSArrayModel>{
 
         public boolean replace;
 
-        public Definition(FSModelArray target, boolean replace){
+        public Definition(FSArrayModel target, boolean replace){
             super(target);
             this.replace = replace;
         }
 
         @Override
-        protected void sync(FSModelMatrix source, FSModelArray target){
+        protected void sync(FSMatrixModel source, FSArrayModel target){
             target.transform(0, source, replace);
         }
     }

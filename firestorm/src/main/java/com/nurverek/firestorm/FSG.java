@@ -942,7 +942,7 @@ public abstract class FSG{
 
         private void buildmodelClusterFromSchematics(FSInstance instance){
             FSSchematics schematics = instance.schematics;
-            FSModelMatrix set = instance.modelMatrix();
+            FSMatrixModel set = instance.modelMatrix();
             
             set.addRowTranslation(0, new VLVConst(schematics.rawCentroidX()), new VLVConst(schematics.rawCentroidY()), new VLVConst(schematics.rawCentroidZ()));
             set.sync();
@@ -1119,15 +1119,15 @@ public abstract class FSG{
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                instance.data.model(new FSModelArray());
-                instance.modelMatrix(new FSModelMatrix(2, 10));
+                instance.data.model(new FSArrayModel());
+                instance.modelMatrix(new FSMatrixModel(2, 10));
             }
         };
         private static final BuildStep MODEL_SYNC_MODELMATRIX_AND_MODELARRAY = new BuildStep(){
 
             @Override
             protected void process(Assembler assembler, DataPack pack, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-                instance.modelMatrix().SYNCER.add(new FSModelArray.Definition(instance.model(), true));
+                instance.modelMatrix().SYNCER.add(new FSArrayModel.Definition(instance.model(), true));
             }
         };
         private static final BuildStep MODEL_SYNC_MODELARRAY_AND_SCHEMATICS = new BuildStep(){

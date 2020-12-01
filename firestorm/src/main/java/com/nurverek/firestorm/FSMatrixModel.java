@@ -4,9 +4,9 @@ import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVMatrix;
 
-public class FSModelMatrix extends VLVMatrix{
+public class FSMatrixModel extends VLVMatrix{
 
-    public FSModelMatrix(int initialcapacity, int resizercount){
+    public FSMatrixModel(int initialcapacity, int resizercount){
         super(initialcapacity, resizercount);
     }
 
@@ -14,7 +14,7 @@ public class FSModelMatrix extends VLVMatrix{
     public void addRowTranslation(VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(4, 0);
 
-        row.add(FSModelArray.TRANSLATE_FLAG);
+        row.add(FSArrayModel.TRANSLATE_FLAG);
         row.add(x);
         row.add(y);
         row.add(z);
@@ -25,7 +25,7 @@ public class FSModelMatrix extends VLVMatrix{
     public void addRowTranslation(int rowindex, VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(4, 0);
 
-        row.add(FSModelArray.TRANSLATE_FLAG);
+        row.add(FSArrayModel.TRANSLATE_FLAG);
         row.add(x);
         row.add(y);
         row.add(z);
@@ -36,7 +36,7 @@ public class FSModelMatrix extends VLVMatrix{
     public void addRowScale(VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(4, 0);
 
-        row.add(FSModelArray.SCALE_FLAG);
+        row.add(FSArrayModel.SCALE_FLAG);
         row.add(x);
         row.add(y);
         row.add(z);
@@ -47,7 +47,7 @@ public class FSModelMatrix extends VLVMatrix{
     public void addRowScale(int rowindex, VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(4, 0);
 
-        row.add(FSModelArray.SCALE_FLAG);
+        row.add(FSArrayModel.SCALE_FLAG);
         row.add(x);
         row.add(y);
         row.add(z);
@@ -58,7 +58,7 @@ public class FSModelMatrix extends VLVMatrix{
     public void addRowRotate(VLV a, VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(5, 0);
 
-        row.add(FSModelArray.ROTATE_FLAG);
+        row.add(FSArrayModel.ROTATE_FLAG);
         row.add(x);
         row.add(y);
         row.add(z);
@@ -70,7 +70,7 @@ public class FSModelMatrix extends VLVMatrix{
     public void addRowRotate(int rowindex, VLV a, VLV x, VLV y, VLV z){
         VLListType<VLV> row = new VLListType<>(5, 0);
 
-        row.add(FSModelArray.ROTATE_FLAG);
+        row.add(FSArrayModel.ROTATE_FLAG);
         row.add(x);
         row.add(y);
         row.add(z);
@@ -80,15 +80,15 @@ public class FSModelMatrix extends VLVMatrix{
     }
 
     public void setTranslateType(int rowindex){
-        matrix.get(rowindex).set(0, FSModelArray.TRANSLATE_FLAG);
+        matrix.get(rowindex).set(0, FSArrayModel.TRANSLATE_FLAG);
     }
 
     public void setScaleType(int rowindex){
-        matrix.get(rowindex).set(0, FSModelArray.SCALE_FLAG);
+        matrix.get(rowindex).set(0, FSArrayModel.SCALE_FLAG);
     }
 
     public void setRotateType(int rowindex){
-        matrix.get(rowindex).set(0, FSModelArray.ROTATE_FLAG);
+        matrix.get(rowindex).set(0, FSArrayModel.ROTATE_FLAG);
     }
 
     public void setX(int rowindex, VLV x){

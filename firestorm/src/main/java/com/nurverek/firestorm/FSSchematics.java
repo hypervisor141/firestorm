@@ -174,7 +174,7 @@ public final class FSSchematics extends VLSyncer.Syncable{
     }
 
     private void updateModels(){
-        FSModelArray model = instance.data.model();
+        FSArrayModel model = instance.data.model();
 
         model.transformPoint(boundsmodel, 0, bounds, 0);
         model.transformPoint(boundsmodel, 4, bounds, 4);

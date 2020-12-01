@@ -8,7 +8,7 @@ public class FSInstance{
 
     protected FSMesh mesh;
     protected FSSchematics schematics;
-    protected FSModelMatrix modelmatrix;
+    protected FSMatrixModel modelmatrix;
     protected FSBufferTracker buffers;
 
     protected FSTexture colortexture;
@@ -30,7 +30,7 @@ public class FSInstance{
     }
 
 
-    public void modelMatrix(FSModelMatrix set){
+    public void modelMatrix(FSMatrixModel set){
         modelmatrix = set;
     }
 
@@ -87,7 +87,7 @@ public class FSInstance{
         return buffers;
     }
 
-    public FSModelMatrix modelMatrix(){
+    public FSMatrixModel modelMatrix(){
         return modelmatrix;
     }
 
@@ -99,7 +99,7 @@ public class FSInstance{
         return data;
     }
 
-    public FSModelArray model(){
+    public FSArrayModel model(){
         return data.model();
     }
 
@@ -139,7 +139,7 @@ public class FSInstance{
             elements[element] = array;
         }
 
-        public void model(FSModelArray array){
+        public void model(FSArrayModel array){
             elements[FSG.ELEMENT_MODEL] = array;
         }
 
@@ -164,8 +164,8 @@ public class FSInstance{
             return elements[element];
         }
 
-        public FSModelArray model(){
-            return (FSModelArray)elements[FSG.ELEMENT_MODEL];
+        public FSArrayModel model(){
+            return (FSArrayModel)elements[FSG.ELEMENT_MODEL];
         }
 
         public VLArrayFloat positions(){
