@@ -10,7 +10,7 @@ import com.nurverek.vanguard.VLListFloat;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLStringify;
 import com.nurverek.vanguard.VLVConst;
-import com.nurverek.vanguard.VLVProcessor;
+import com.nurverek.vanguard.VLVRunner;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -63,10 +63,10 @@ public abstract class FSG{
     public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
-    protected static VLVProcessor CONTROLPROCESSOR = new VLVProcessor(1, 10);
+    protected static VLVRunner CONTROLRUNNERS = new VLVRunner(1, 10);
 
     protected VLListType<VLListType<FSP>> PROGRAMSETS;
-    protected VLListType<VLVProcessor> PROCESSORS;
+    protected VLListType<VLVRunner> VRUNNERS;
 
     protected Automator AUTOMATOR;
     protected FSBufferManager BUFFERMANAGER;
@@ -81,7 +81,7 @@ public abstract class FSG{
         BUFFERMANAGER = new FSBufferManager(buffercapacity, bufferresizer);
 
         PROGRAMSETS = new VLListType<>(5, 20);
-        PROCESSORS = new VLListType<>(5, 20);
+        VRUNNERS = new VLListType<>(5, 20);
 
         addProgramSets(programsetsize);
     }
@@ -101,11 +101,11 @@ public abstract class FSG{
 
     protected void postFramSwap(int passindex){}
 
-    public int runProcessors(){
+    public int runVRunners(){
         int changes = 0;
 
-        for(int i = 0; i < PROCESSORS.size(); i++){
-            changes += PROCESSORS.get(i).next();
+        for(int i = 0; i < VRUNNERS.size(); i++){
+            changes += VRUNNERS.get(i).next();
         }
 
         return changes;
@@ -165,12 +165,12 @@ public abstract class FSG{
         return PROGRAMSETS;
     }
 
-    public VLVProcessor processor(int index){
-        return PROCESSORS.get(index);
+    public VLVRunner runner(int index){
+        return VRUNNERS.get(index);
     }
 
-    public VLListType<VLVProcessor> processors(){
-        return PROCESSORS;
+    public VLListType<VLVRunner> runners(){
+        return VRUNNERS;
     }
 
     public long id(){
@@ -181,8 +181,8 @@ public abstract class FSG{
         return PROGRAMSETS.size();
     }
 
-    public int processorsSize(){
-        return PROCESSORS.size();
+    public int runnersSize(){
+        return VRUNNERS.size();
     }
 
     public boolean touchable(){
@@ -208,7 +208,7 @@ public abstract class FSG{
 
         PROGRAMSETS = null;
         BUFFERMANAGER = null;
-        PROCESSORS = null;
+        VRUNNERS = null;
         AUTOMATOR = null;
 
         isTouchable = false;

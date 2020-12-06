@@ -4,7 +4,7 @@ import android.opengl.GLES32;
 import android.os.Looper;
 
 import com.nurverek.vanguard.VLThreadHost;
-import com.nurverek.vanguard.VLVProcessor;
+import com.nurverek.vanguard.VLVRunner;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -99,7 +99,7 @@ public final class FSRenderer{
     protected static void advanceProcessors(){
         FSControl.EVENTS.GLPreAdvancement();
 
-        int changes = FSG.CONTROLPROCESSOR.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
+        int changes = FSG.CONTROLRUNNERS.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
         int size = passes.size();
 
         for(int i = 0; i < size; i++){
@@ -196,8 +196,8 @@ public final class FSRenderer{
         return threadhosts.size();
     }
 
-    public static VLVProcessor getControllersProcessor(){
-        return FSG.CONTROLPROCESSOR;
+    public static VLVRunner getControllersProcessor(){
+        return FSG.CONTROLRUNNERS;
     }
 
     public static boolean getHandlerReady(){
@@ -218,7 +218,7 @@ public final class FSRenderer{
         INTERNAL_CHANGES = 0;
 
         passes = null;
-        FSG.CONTROLPROCESSOR = null;
+        FSG.CONTROLRUNNERS = null;
         tasks = null;
         threadhosts = null;
     }
