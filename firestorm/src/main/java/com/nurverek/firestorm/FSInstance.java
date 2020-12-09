@@ -222,8 +222,8 @@ public class FSInstance{
             vault.set(index, data);
         }
 
-        public Data remove(int index){
-            return vault.remove(index);
+        public void remove(int index){
+            vault.remove(index);
         }
 
         public VLListType<Data> get(){

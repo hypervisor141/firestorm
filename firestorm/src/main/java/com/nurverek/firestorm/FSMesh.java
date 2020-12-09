@@ -60,14 +60,15 @@ public class FSMesh extends VLSyncer.Syncable{
     }
 
     public FSInstance remove(int index){
-        FSInstance instance = instances.remove(index);
+        FSInstance instance = instances.get(index);
+        instances.remove(index);
         instance.mesh = null;
 
         return instance;
     }
 
-    public FSLinkType removeLink(int index){
-        return links.remove(index);
+    public void removeLink(int index){
+        links.remove(index);
     }
 
     public int drawMode(){

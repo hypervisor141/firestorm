@@ -21,8 +21,8 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
     }
 
     @Override
-    public FSEntryTypeVertexBuffer remove(int index){
-        return entries.remove(index);
+    public void remove(int index){
+        entries.remove(index);
     }
 
     @Override
