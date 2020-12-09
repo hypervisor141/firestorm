@@ -96,14 +96,14 @@ public final class FSRenderer{
         }
     }
 
-    protected static void advanceProcessors(){
+    protected static void advanceRunners(){
         FSControl.EVENTS.GLPreAdvancement();
 
         int changes = FSG.CONTROLRUNNERS.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
         int size = passes.size();
 
         for(int i = 0; i < size; i++){
-            changes += passes.get(i).advanceProcessors();
+            changes += passes.get(i).advanceRunners();
         }
 
         EXTERNAL_CHANGES = 0;
@@ -196,7 +196,7 @@ public final class FSRenderer{
         return threadhosts.size();
     }
 
-    public static VLVRunner getControllersProcessor(){
+    public static VLVRunner getControllerRunners(){
         return FSG.CONTROLRUNNERS;
     }
 

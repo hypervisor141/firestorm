@@ -258,7 +258,7 @@ public final class FSRenderPass{
 
                 @Override
                 public void execute(int orderindex, int passindex){
-                    FSRenderer.advanceProcessors();
+                    FSRenderer.advanceRunners();
                 }
             });
         }
@@ -274,7 +274,7 @@ public final class FSRenderPass{
         }
     }
 
-    public int advanceProcessors(){
+    public int advanceRunners(){
         int changes = 0;
 
         for(int i = 0; i < entries.size(); i++){
