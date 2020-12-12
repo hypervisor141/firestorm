@@ -3,6 +3,7 @@ package com.nurverek.firestorm;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVMatrix;
+import com.nurverek.vanguard.VLVTypeVariable;
 
 public class FSMatrixModel extends VLVMatrix{
 
@@ -10,9 +11,8 @@ public class FSMatrixModel extends VLVMatrix{
         super(initialcapacity, resizercount);
     }
 
-
     public void addRowTranslation(VLV x, VLV y, VLV z){
-        VLListType<VLV> row = new VLListType<>(4, 0);
+        VLListType<VLVTypeVariable> row = new VLListType<>(4, 0);
 
         row.add(FSArrayModel.TRANSLATE_FLAG);
         row.add(x);
@@ -23,7 +23,7 @@ public class FSMatrixModel extends VLVMatrix{
     }
 
     public void addRowTranslation(int rowindex, VLV x, VLV y, VLV z){
-        VLListType<VLV> row = new VLListType<>(4, 0);
+        VLListType<VLVTypeVariable> row = new VLListType<>(4, 0);
 
         row.add(FSArrayModel.TRANSLATE_FLAG);
         row.add(x);
@@ -34,7 +34,7 @@ public class FSMatrixModel extends VLVMatrix{
     }
 
     public void addRowScale(VLV x, VLV y, VLV z){
-        VLListType<VLV> row = new VLListType<>(4, 0);
+        VLListType<VLVTypeVariable> row = new VLListType<>(4, 0);
 
         row.add(FSArrayModel.SCALE_FLAG);
         row.add(x);
@@ -45,7 +45,7 @@ public class FSMatrixModel extends VLVMatrix{
     }
 
     public void addRowScale(int rowindex, VLV x, VLV y, VLV z){
-        VLListType<VLV> row = new VLListType<>(4, 0);
+        VLListType<VLVTypeVariable> row = new VLListType<>(4, 0);
 
         row.add(FSArrayModel.SCALE_FLAG);
         row.add(x);
@@ -56,7 +56,7 @@ public class FSMatrixModel extends VLVMatrix{
     }
 
     public void addRowRotate(VLV a, VLV x, VLV y, VLV z){
-        VLListType<VLV> row = new VLListType<>(5, 0);
+        VLListType<VLVTypeVariable> row = new VLListType<>(5, 0);
 
         row.add(FSArrayModel.ROTATE_FLAG);
         row.add(x);
@@ -68,7 +68,7 @@ public class FSMatrixModel extends VLVMatrix{
     }
 
     public void addRowRotate(int rowindex, VLV a, VLV x, VLV y, VLV z){
-        VLListType<VLV> row = new VLListType<>(5, 0);
+        VLListType<VLVTypeVariable> row = new VLListType<>(5, 0);
 
         row.add(FSArrayModel.ROTATE_FLAG);
         row.add(x);
@@ -107,19 +107,19 @@ public class FSMatrixModel extends VLVMatrix{
         matrix.get(rowindex).set(4, a);
     }
 
-    public VLV getX(int rowindex){
+    public VLVTypeVariable getX(int rowindex){
         return matrix.get(rowindex).get(1);
     }
 
-    public VLV getY(int rowindex){
+    public VLVTypeVariable getY(int rowindex){
         return matrix.get(rowindex).get(2);
     }
 
-    public VLV getZ(int rowindex){
+    public VLVTypeVariable getZ(int rowindex){
         return matrix.get(rowindex).get(3);
     }
 
-    public VLV getAngle(int rowindex){
+    public VLVTypeVariable getAngle(int rowindex){
         return matrix.get(rowindex).get(4);
     }
 

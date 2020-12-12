@@ -11,9 +11,7 @@ import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLStringify;
 import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVManager;
-import com.nurverek.vanguard.VLVRunner;
-import com.nurverek.vanguard.VLVTypeRunner;
-import com.nurverek.vanguard.VLVTypeRunnerEntry;
+import com.nurverek.vanguard.VLVTypeRunnerBase;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,10 +64,8 @@ public abstract class FSG{
     public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
-    protected static VLVManager CONTROLRUNNERS = new VLVManager(1, 10);
-
     protected VLListType<VLListType<FSP>> PROGRAMSETS;
-    protected VLListType<VLVRunner> VRUNNERS;
+    protected VLVManager VMANAGER;
 
     protected Automator AUTOMATOR;
     protected FSBufferManager BUFFERMANAGER;
@@ -84,7 +80,7 @@ public abstract class FSG{
         BUFFERMANAGER = new FSBufferManager(buffercapacity, bufferresizer);
 
         PROGRAMSETS = new VLListType<>(5, 20);
-        VRUNNERS = new VLListType<>(5, 20);
+        VMANAGER = new VLVManager(10, 10);
 
         addProgramSets(programsetsize);
     }
@@ -104,14 +100,8 @@ public abstract class FSG{
 
     protected void postFramSwap(int passindex){}
 
-    public int runVRunners(){
-        int changes = 0;
-
-        for(int i = 0; i < VRUNNERS.size(); i++){
-            changes += VRUNNERS.get(i).next();
-        }
-
-        return changes;
+    public int next(){
+        return VMANAGER.next();
     }
 
     public VLArrayFloat createColorArray(float[] basecolor, int count){
@@ -168,12 +158,8 @@ public abstract class FSG{
         return PROGRAMSETS;
     }
 
-    public VLVRunner runner(int index){
-        return VRUNNERS.get(index);
-    }
-
-    public VLListType<VLVRunner> runners(){
-        return VRUNNERS;
+    public VLVManager vManager(){
+        return VMANAGER;
     }
 
     public long id(){
@@ -182,10 +168,6 @@ public abstract class FSG{
 
     public int programsSize(){
         return PROGRAMSETS.size();
-    }
-
-    public int runnersSize(){
-        return VRUNNERS.size();
     }
 
     public boolean touchable(){
@@ -211,7 +193,7 @@ public abstract class FSG{
 
         PROGRAMSETS = null;
         BUFFERMANAGER = null;
-        VRUNNERS = null;
+        VMANAGER = null;
         AUTOMATOR = null;
 
         isTouchable = false;

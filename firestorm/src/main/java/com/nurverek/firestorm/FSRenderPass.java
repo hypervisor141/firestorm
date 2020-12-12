@@ -278,7 +278,7 @@ public final class FSRenderPass{
         int changes = 0;
 
         for(int i = 0; i < entries.size(); i++){
-            changes += entries.get(i).c.runVRunners();
+            changes += entries.get(i).c.next();
         }
 
         return changes;

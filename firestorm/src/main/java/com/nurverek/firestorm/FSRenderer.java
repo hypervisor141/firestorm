@@ -5,8 +5,6 @@ import android.os.Looper;
 
 import com.nurverek.vanguard.VLThreadHost;
 import com.nurverek.vanguard.VLVManager;
-import com.nurverek.vanguard.VLVRunner;
-import com.nurverek.vanguard.VLVTypeRunner;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -31,6 +29,8 @@ public final class FSRenderer{
     protected static int CURRENT_PROGRAM_SET_INDEX;
     private static int EXTERNAL_CHANGES;
     private static int INTERNAL_CHANGES;
+
+    protected static VLVManager CONTROLMANAGER = new VLVManager(1, 10);
 
     public static void initialize(){
         passes = new ArrayList<>();
@@ -101,7 +101,7 @@ public final class FSRenderer{
     protected static void advanceRunners(){
         FSControl.EVENTS.GLPreAdvancement();
 
-        int changes = FSG.CONTROLRUNNERS.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
+        int changes = CONTROLMANAGER.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
         int size = passes.size();
 
         for(int i = 0; i < size; i++){
@@ -198,8 +198,8 @@ public final class FSRenderer{
         return threadhosts.size();
     }
 
-    public static VLVManager getControlRunners(){
-        return FSG.CONTROLRUNNERS;
+    public static VLVManager getControlManager(){
+        return CONTROLMANAGER;
     }
 
     public static boolean getHandlerReady(){
@@ -220,7 +220,7 @@ public final class FSRenderer{
         INTERNAL_CHANGES = 0;
 
         passes = null;
-        FSG.CONTROLRUNNERS = null;
+        CONTROLMANAGER = null;
         tasks = null;
         threadhosts = null;
     }

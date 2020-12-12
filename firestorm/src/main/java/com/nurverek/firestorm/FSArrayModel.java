@@ -7,6 +7,7 @@ import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLSyncable;
 import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVMatrix;
+import com.nurverek.vanguard.VLVTypeVariable;
 
 public class FSArrayModel extends VLArrayFloat{
 
@@ -34,7 +35,7 @@ public class FSArrayModel extends VLArrayFloat{
             identity();
         }
 
-        VLListType<VLV> row;
+        VLListType<VLVTypeVariable> row;
 
         for(int i = matrix.sizeRows() - 1; i >= 0; i--){
             row = matrix.getRow(i);
