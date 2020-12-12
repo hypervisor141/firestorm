@@ -66,7 +66,7 @@ public abstract class FSG{
     public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
-    protected static VLVManager<VLVTypeRunner<?, ?>> CONTROLRUNNERS = new VLVManager<VLVTypeRunner<?, ?>>(1, 10);
+    protected static VLVManager CONTROLRUNNERS = new VLVManager(1, 10);
 
     protected VLListType<VLListType<FSP>> PROGRAMSETS;
     protected VLListType<VLVRunner> VRUNNERS;

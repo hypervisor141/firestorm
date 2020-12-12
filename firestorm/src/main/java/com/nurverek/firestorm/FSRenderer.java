@@ -198,7 +198,7 @@ public final class FSRenderer{
         return threadhosts.size();
     }
 
-    public static VLVManager<VLVTypeRunner<?, ?>> getControlRunners(){
+    public static VLVManager getControlRunners(){
         return FSG.CONTROLRUNNERS;
     }
 
