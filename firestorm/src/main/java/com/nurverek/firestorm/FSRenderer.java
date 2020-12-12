@@ -4,7 +4,9 @@ import android.opengl.GLES32;
 import android.os.Looper;
 
 import com.nurverek.vanguard.VLThreadHost;
+import com.nurverek.vanguard.VLVManager;
 import com.nurverek.vanguard.VLVRunner;
+import com.nurverek.vanguard.VLVTypeRunner;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -196,7 +198,7 @@ public final class FSRenderer{
         return threadhosts.size();
     }
 
-    public static VLVRunner getControlRunners(){
+    public static VLVManager<VLVTypeRunner<?, ?>> getControlRunners(){
         return FSG.CONTROLRUNNERS;
     }
 

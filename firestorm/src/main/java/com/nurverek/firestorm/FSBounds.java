@@ -1,10 +1,10 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncer;
+import com.nurverek.vanguard.VLSyncable;
 import com.nurverek.vanguard.VLUpdater;
 
-public abstract class FSBounds extends VLSyncer.Syncable{
+public abstract class FSBounds extends VLSyncable{
 
     protected static final float[] CACHE1 = new float[4];
     protected static final float[] CACHE2 = new float[4];
@@ -231,14 +231,14 @@ public abstract class FSBounds extends VLSyncer.Syncable{
     }
 
 
-    public static final class Definition extends VLSyncer.Definition<VLSyncer.Syncable, FSBounds>{
+    public static final class Definition extends VLSyncable.Definition<VLSyncable, FSBounds>{
 
         public Definition(FSBounds target){
             super(target);
         }
 
         @Override
-        protected void sync(VLSyncer.Syncable source, FSBounds target){
+        protected void sync(VLSyncable source, FSBounds target){
             target.markForUpdate();
         }
     }

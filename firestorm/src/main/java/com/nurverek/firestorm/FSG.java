@@ -9,8 +9,11 @@ import com.nurverek.vanguard.VLDebug;
 import com.nurverek.vanguard.VLListFloat;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLStringify;
-import com.nurverek.vanguard.VLVConst;
+import com.nurverek.vanguard.VLV;
+import com.nurverek.vanguard.VLVManager;
 import com.nurverek.vanguard.VLVRunner;
+import com.nurverek.vanguard.VLVTypeRunner;
+import com.nurverek.vanguard.VLVTypeRunnerEntry;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -63,7 +66,7 @@ public abstract class FSG{
     public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
-    protected static VLVRunner CONTROLRUNNERS = new VLVRunner(1, 10);
+    protected static VLVManager<VLVTypeRunner<?, ?>> CONTROLRUNNERS = new VLVManager<VLVTypeRunner<?, ?>>(1, 10);
 
     protected VLListType<VLListType<FSP>> PROGRAMSETS;
     protected VLListType<VLVRunner> VRUNNERS;
@@ -943,8 +946,8 @@ public abstract class FSG{
         private void buildmodelClusterFromSchematics(FSInstance instance){
             FSSchematics schematics = instance.schematics;
             FSMatrixModel set = instance.modelMatrix();
-            
-            set.addRowTranslation(0, new VLVConst(schematics.rawCentroidX()), new VLVConst(schematics.rawCentroidY()), new VLVConst(schematics.rawCentroidZ()));
+
+            set.addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
             set.sync();
         }
 

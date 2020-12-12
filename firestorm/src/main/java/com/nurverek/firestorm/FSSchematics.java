@@ -1,10 +1,10 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncer;
+import com.nurverek.vanguard.VLSyncable;
 import com.nurverek.vanguard.VLUpdater;
 
-public final class FSSchematics extends VLSyncer.Syncable{
+public final class FSSchematics extends VLSyncable{
 
     private static final VLUpdater<FSSchematics> UPDATE_CENTROID = new VLUpdater<FSSchematics>(){
 
@@ -76,7 +76,6 @@ public final class FSSchematics extends VLSyncer.Syncable{
     }
 
 
-
     public void initialize(){
         bounds = new float[FSG.UNIT_SIZE_POSITION * 2];
         centroid = new float[4];
@@ -98,11 +97,11 @@ public final class FSSchematics extends VLSyncer.Syncable{
     }
 
     public void updateBoundaries(){
-        float maxx  = -Float.MAX_VALUE;
+        float maxx = -Float.MAX_VALUE;
         float minx = Float.MAX_VALUE;
-        float maxy  = -Float.MAX_VALUE;
+        float maxy = -Float.MAX_VALUE;
         float miny = Float.MAX_VALUE;
-        float maxz  = -Float.MAX_VALUE;
+        float maxz = -Float.MAX_VALUE;
         float minz = Float.MAX_VALUE;
 
         float[] vertices = instance.data.positions().provider();
@@ -581,32 +580,31 @@ public final class FSSchematics extends VLSyncer.Syncable{
     }
 
 
-
-    public static final class DefinitionPosition extends VLSyncer.Definition<VLSyncer.Syncable, FSSchematics>{
+    public static final class DefinitionPosition extends VLSyncable.Definition<VLSyncable, FSSchematics>{
 
         public DefinitionPosition(FSSchematics schematics){
             super(schematics);
         }
 
         @Override
-        protected void sync(VLSyncer.Syncable source, FSSchematics target){
+        protected void sync(VLSyncable source, FSSchematics target){
             target.updateBoundaries();
         }
     }
 
-    public static final class DefinitionModel extends VLSyncer.Definition<VLSyncer.Syncable, FSSchematics>{
+    public static final class DefinitionModel extends VLSyncable.Definition<VLSyncable, FSSchematics>{
 
         public DefinitionModel(FSSchematics schematics){
             super(schematics);
         }
 
         @Override
-        protected void sync(VLSyncer.Syncable source, FSSchematics target){
+        protected void sync(VLSyncable source, FSSchematics target){
             target.markForNewUpdates();
         }
     }
 
-    public static final class InstanceCollision {
+    public static final class InstanceCollision{
 
         public int sourceindex;
         public int targetindex;
