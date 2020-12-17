@@ -1077,11 +1077,14 @@ public final class FSP{
 
         public AttribPointer(Policy policy, int element, int bufferaddressindex){
             super(policy);
+
             this.element = element;
+            this.bufferaddressindex = bufferaddressindex;
         }
 
         public AttribPointer(int element, int bufferaddressindex){
             this.element = element;
+            this.bufferaddressindex = bufferaddressindex;
         }
 
         @Override
@@ -1122,11 +1125,14 @@ public final class FSP{
 
         public AttribIPointer(Policy policy, int element){
             super(policy);
+
             this.element = element;
+            this.bufferaddressindex = bufferaddressindex;
         }
 
         public AttribIPointer(int element){
             this.element = element;
+            this.bufferaddressindex = bufferaddressindex;
         }
 
         @Override
