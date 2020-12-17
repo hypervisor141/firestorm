@@ -66,7 +66,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         @Override
         protected int putSync(VLArrayShort array){
             array.SYNCER.add(new VLBufferShort.DefinitionArray(buffer, buffer.position()));
-            array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
+            buffer.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array);
         }
@@ -74,7 +74,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         @Override
         protected int putSync(VLArrayShort array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
             array.SYNCER.add(new VLBufferShort.DefinitionArrayInterleaved(buffer, buffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
-            array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
+            buffer.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
@@ -106,7 +106,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         @Override
         protected int putSync(VLArrayInt array){
             array.SYNCER.add(new VLBufferInt.DefinitionArray(buffer, buffer.position()));
-            array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
+            buffer.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array);
         }
@@ -114,7 +114,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         @Override
         protected int putSync(VLArrayInt array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
             array.SYNCER.add(new VLBufferInt.DefinitionArrayInterleaved(buffer, buffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
-            array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
+            buffer.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
@@ -146,7 +146,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         @Override
         protected int putSync(VLArrayFloat array){
             array.SYNCER.add(new VLBufferFloat.DefinitionArray(buffer, buffer.position()));
-            array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
+            buffer.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array);
         }
@@ -154,7 +154,7 @@ public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer
         @Override
         protected int putSync(VLArrayFloat array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
             array.SYNCER.add(new VLBufferFloat.DefinitionArrayInterleaved(buffer, buffer.position(), arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride));
-            array.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
+            buffer.SYNCER.add(new FSVertexBuffer.Definition(vertexbuffer));
 
             return put(array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
         }
