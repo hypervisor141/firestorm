@@ -16,7 +16,7 @@ public abstract class FSGScanner{
 
     private VLListType<FSP> programs;
 
-    private FSGScanner(FSGAssembler assembler, FSGData datagroup, FSMesh mesh, String name){
+    protected FSGScanner(FSGAssembler assembler, FSGData datagroup, FSMesh mesh, String name){
         this.mesh = mesh;
         this.datagroup = datagroup;
         this.assembler = assembler;
@@ -106,7 +106,7 @@ public abstract class FSGScanner{
 
     public static class Singular extends FSGScanner{
 
-        protected Singular(FSGAssembler assembler, FSGData datagroup, String name, int drawmode){
+        public Singular(FSGAssembler assembler, FSGData datagroup, String name, int drawmode){
             super(assembler, datagroup, new FSMesh(drawmode, 1, 0), name);
         }
 
@@ -134,7 +134,7 @@ public abstract class FSGScanner{
 
     public static class Instanced extends FSGScanner{
 
-        protected Instanced(FSGAssembler assembler, FSGData data, String prefixname, int drawmode, int estimatedsize){
+        public Instanced(FSGAssembler assembler, FSGData data, String prefixname, int drawmode, int estimatedsize){
             super(assembler, data, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
         }
 
