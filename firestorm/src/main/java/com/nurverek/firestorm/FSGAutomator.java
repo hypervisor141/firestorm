@@ -230,7 +230,7 @@ public final class FSGAutomator{
                 scanners.get(i).buffer();
             }
 
-            gen.BUFFERMANAGER.upload();
+            gen.bufferManager().upload();
         }
     }
 
