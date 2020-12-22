@@ -20,7 +20,6 @@ public abstract class FSGScanner{
         this.name = name;
 
         mesh = new FSMesh();
-        mesh.name(name);
     }
 
     protected abstract boolean scan(FSGAutomator automator, FSM.Data data);
@@ -100,6 +99,8 @@ public abstract class FSGScanner{
         @Override
         protected boolean scan(FSGAutomator automator, FSM.Data fsm){
             if(fsm.name.equalsIgnoreCase(name)){
+                mesh.name(name);
+
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
@@ -134,6 +135,8 @@ public abstract class FSGScanner{
         @Override
         protected boolean scan(FSGAutomator automator, FSM.Data fsm){
             if(fsm.name.contains(name)){
+                mesh.name(name);
+
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
