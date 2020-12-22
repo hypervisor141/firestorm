@@ -145,14 +145,14 @@ public class FSGAssembler implements VLStringify{
                     restfuncs.add(POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE);
                 }
             }
+        }
 
-            if(SYNC_POSITION_AND_BUFFER){
-                buffersteps[FSG.ELEMENT_POSITION] = BUFFER_SYNC;
-            }
-            if(SYNC_POSITION_AND_SCHEMATICS){
-                firstfuncs.add(POSITION_SYNC_WITH_SCHEMATICS);
-                restfuncs.add(POSITION_SYNC_WITH_SCHEMATICS);
-            }
+        if(SYNC_POSITION_AND_BUFFER){
+            buffersteps[FSG.ELEMENT_POSITION] = BUFFER_SYNC;
+        }
+        if(SYNC_POSITION_AND_SCHEMATICS){
+            firstfuncs.add(POSITION_SYNC_WITH_SCHEMATICS);
+            restfuncs.add(POSITION_SYNC_WITH_SCHEMATICS);
         }
     }
 
@@ -175,10 +175,10 @@ public class FSGAssembler implements VLStringify{
             }else{
                 restfuncs.add(step);
             }
+        }
 
-            if(SYNC_COLOR_AND_BUFFER){
-                buffersteps[FSG.ELEMENT_COLOR] = BUFFER_SYNC;
-            }
+        if(SYNC_COLOR_AND_BUFFER){
+            buffersteps[FSG.ELEMENT_COLOR] = BUFFER_SYNC;
         }
     }
 
@@ -201,10 +201,10 @@ public class FSGAssembler implements VLStringify{
             }else{
                 restfuncs.add(step);
             }
+        }
 
-            if(SYNC_TEXCOORD_AND_BUFFER){
-                buffersteps[FSG.ELEMENT_TEXCOORD] = BUFFER_SYNC;
-            }
+        if(SYNC_TEXCOORD_AND_BUFFER){
+            buffersteps[FSG.ELEMENT_TEXCOORD] = BUFFER_SYNC;
         }
     }
 
@@ -227,10 +227,10 @@ public class FSGAssembler implements VLStringify{
             }else{
                 restfuncs.add(step);
             }
+        }
 
-            if(SYNC_NORMAL_AND_BUFFER){
-                buffersteps[FSG.ELEMENT_NORMAL] = BUFFER_SYNC;
-            }
+        if(SYNC_NORMAL_AND_BUFFER){
+            buffersteps[FSG.ELEMENT_NORMAL] = BUFFER_SYNC;
         }
     }
 
