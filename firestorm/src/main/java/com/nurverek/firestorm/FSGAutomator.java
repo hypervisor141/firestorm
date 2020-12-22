@@ -5,12 +5,13 @@ import com.nurverek.vanguard.VLListType;
 
 public final class FSGAutomator{
 
-    private final FSG fsg;
+    private final FSG gen;
+
     protected FSM fsm;
     protected VLListType<FSG.BluePrint> blueprints;
 
-    protected FSGAutomator(FSG fsg, FSM fsm){
-        this.fsg = fsg;
+    protected FSGAutomator(FSG gen, FSM fsm){
+        this.gen = gen;
         this.fsm = fsm;
 
         int size = fsm.data.size();
@@ -26,7 +27,7 @@ public final class FSGAutomator{
         VLListType<FSGScanner> scanners = new VLListType<>(size, 0);
 
         for(int i = 0; i < size; i++){
-            scanners.add(blueprints.get(i).register(fsg));
+            scanners.add(blueprints.get(i).register(gen));
         }
 
         build(scanners, debug);
@@ -173,7 +174,7 @@ public final class FSGAutomator{
             VLDebug.printDirect("[Buffering Stage]\n");
 
             try{
-                fsg.BUFFERMANAGER.initialize();
+                gen.BUFFERMANAGER.initialize();
 
             }catch(Exception ex){
                 VLDebug.printE();
@@ -212,7 +213,7 @@ public final class FSGAutomator{
             }
 
             try{
-                fsg.BUFFERMANAGER.upload();
+                gen.BUFFERMANAGER.upload();
 
             }catch(Exception ex){
                 VLDebug.printE();
@@ -223,13 +224,13 @@ public final class FSGAutomator{
             VLDebug.printD();
 
         }else{
-            fsg.BUFFERMANAGER.initialize();
+            gen.BUFFERMANAGER.initialize();
 
             for(int i = 0; i < size; i++){
                 scanners.get(i).buffer();
             }
 
-            fsg.BUFFERMANAGER.upload();
+            gen.BUFFERMANAGER.upload();
         }
     }
 

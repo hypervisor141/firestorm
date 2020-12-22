@@ -2,13 +2,8 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLArray;
 import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLListFloat;
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLStringify;
-import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVManager;
 
 import java.io.FileInputStream;
@@ -62,23 +57,23 @@ public abstract class FSG{
     public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
-    protected VLListType<VLListType<FSP>> PROGRAMSETS;
-    protected VLVManager VMANAGER;
+    private VLListType<VLListType<FSP>> programsets;
+    private VLVManager vmanager;
 
-    protected FSGAutomator AUTOMATOR;
-    protected FSBufferManager BUFFERMANAGER;
+    private FSGAutomator automator;
+    private FSBufferManager buffermanager;
 
-    protected long ID;
-    protected boolean isTouchable;
+    private long id;
+    private boolean touchable;
 
     public FSG(int programsetsize, int buffercapacity, int bufferresizer){
-        isTouchable = true;
+        touchable = true;
 
-        ID = FSControl.getNextID();
-        BUFFERMANAGER = new FSBufferManager(buffercapacity, bufferresizer);
+        id = FSControl.getNextID();
+        buffermanager = new FSBufferManager(buffercapacity, bufferresizer);
 
-        PROGRAMSETS = new VLListType<>(5, 20);
-        VMANAGER = new VLVManager(10, 10);
+        programsets = new VLListType<>(5, 20);
+        vmanager = new VLVManager(10, 10);
 
         addProgramSets(programsetsize);
     }
@@ -88,7 +83,7 @@ public abstract class FSG{
     protected abstract void update(int passindex, int programsetindex);
 
     public void draw(int passindex, int programsetindex){
-        VLListType<FSP> p = PROGRAMSETS.get(programsetindex);
+        VLListType<FSP> p = programsets.get(programsetindex);
         int size = p.size();
 
         for(int i = 0; i < size; i++){
@@ -99,7 +94,7 @@ public abstract class FSG{
     protected void postFramSwap(int passindex){}
 
     public int next(){
-        return VMANAGER.next();
+        return vmanager.next();
     }
 
     public VLArrayFloat createColorArray(float[] basecolor, int count){
@@ -117,19 +112,19 @@ public abstract class FSG{
 
     public void addProgramSets(int count){
         for(int i = 0; i < count; i++){
-            PROGRAMSETS.add(new VLListType<FSP>(5, 10));
+            programsets.add(new VLListType<FSP>(5, 10));
         }
     }
 
     public void constructAutomator(FSM fsm){
-        AUTOMATOR = new FSGAutomator(this, fsm);
+        automator = new FSGAutomator(this, fsm);
     }
 
     public void constructAutomator(InputStream is, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
         FSM data = new FSM();
         data.loadFromFile(is, order, fullsizedposition, estimatedsize);
 
-        AUTOMATOR = new FSGAutomator(this, data);
+        automator = new FSGAutomator(this, data);
     }
 
     public void constructAutomator(String path, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws FileNotFoundException, SecurityException, IOException{
@@ -137,43 +132,43 @@ public abstract class FSG{
     }
 
     public void releaseAutomator(){
-        AUTOMATOR = null;
+        automator = null;
     }
 
     public void touchable(boolean t){
-        isTouchable = t;
+        touchable = t;
     }
 
     public FSBufferManager bufferManager(){
-        return BUFFERMANAGER;
+        return buffermanager;
     }
 
     public VLListType<FSP> programSet(int passindex){
-        return PROGRAMSETS.get(passindex);
+        return programsets.get(passindex);
     }
 
     public VLListType<VLListType<FSP>> programSets(){
-        return PROGRAMSETS;
+        return programsets;
     }
 
     public VLVManager vManager(){
-        return VMANAGER;
+        return vmanager;
     }
 
     public FSGAutomator automator(){
-        return AUTOMATOR;
+        return automator;
     }
 
     public long id(){
-        return ID;
+        return id;
     }
 
     public int programsSize(){
-        return PROGRAMSETS.size();
+        return programsets.size();
     }
 
     public boolean touchable(){
-        return isTouchable;
+        return touchable;
     }
 
     public void destroy(){
@@ -181,25 +176,25 @@ public abstract class FSG{
 
         VLListType<FSP> programs;
 
-        for(int i = 0; i < PROGRAMSETS.size(); i++){
-            programs = PROGRAMSETS.get(i);
+        for(int i = 0; i < programsets.size(); i++){
+            programs = programsets.get(i);
 
             for(int i2 = 0; i2 < programs.size(); i2++){
                 programs.get(i2).destroy();
             }
         }
 
-        for(int i = 0; i < BUFFERMANAGER.size(); i++){
-            BUFFERMANAGER.get(i).release();
+        for(int i = 0; i < buffermanager.size(); i++){
+            buffermanager.get(i).release();
         }
 
-        PROGRAMSETS = null;
-        BUFFERMANAGER = null;
-        VMANAGER = null;
-        AUTOMATOR = null;
+        programsets = null;
+        buffermanager = null;
+        vmanager = null;
+        automator = null;
 
-        isTouchable = false;
-        ID = -1;
+        touchable = false;
+        id = -1;
     }
 
     protected abstract void destroyAssets();
