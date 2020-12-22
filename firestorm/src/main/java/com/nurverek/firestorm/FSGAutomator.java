@@ -8,7 +8,7 @@ public final class FSGAutomator{
     private final FSG gen;
 
     protected FSM fsm;
-    protected VLListType<FSG.BluePrint> blueprints;
+    protected VLListType<FSGBluePrint> blueprints;
 
     protected FSGAutomator(FSG gen, FSM fsm){
         this.gen = gen;
@@ -18,7 +18,7 @@ public final class FSGAutomator{
         blueprints = new VLListType<>(size, size);
     }
 
-    public void register(FSG.BluePrint blueprint){
+    public void register(FSGBluePrint blueprint){
         blueprints.add(blueprint);
     }
 
@@ -33,13 +33,15 @@ public final class FSGAutomator{
         build(scanners, debug);
 
         FSGScanner s;
-        FSG.BluePrint bp;
+        FSGBluePrint bp;
+
+        FSBufferManager buffermanager = gen.bufferManager();
 
         for(int i = 0; i < size; i++){
             s = scanners.get(i);
             bp = blueprints.get(i);
 
-            bp.buffer(s.mesh, s.layout);
+            bp.buffer(s.mesh, s.layout, buffermanager);
             bp.makeLinks(s.mesh);
         }
 

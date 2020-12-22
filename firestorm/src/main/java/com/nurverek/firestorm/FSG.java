@@ -199,11 +199,4 @@ public abstract class FSG{
 
     protected abstract void destroyAssets();
 
-    public static interface BluePrint{
-
-        FSGScanner register(FSG gen);
-        void buffer(FSMesh mesh, FSBufferLayout layout);
-        void makeLinks(FSMesh mesh);
-        void program(FSMesh mesh);
-    }
 }
