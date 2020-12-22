@@ -26,33 +26,40 @@ public final class FSGAutomator{
         int size = blueprints.size();
         VLListType<FSGScanner> scanners = new VLListType<>(size, 0);
 
+        FSGScanner s;
+        FSGBluePrint bp;
+
         for(int i = 0; i < size; i++){
-            scanners.add(blueprints.get(i).register(gen));
+            bp = blueprints.get(i);
+            s = bp.register(gen);
+            bp.adjustPreScan(s.mesh);
+
+            scanners.add(s);
         }
 
         build(scanners, debug);
 
-        FSGScanner s;
-        FSGBluePrint bp;
-
         FSBufferManager buffermanager = gen.bufferManager();
 
         for(int i = 0; i < size; i++){
-            s = scanners.get(i);
             bp = blueprints.get(i);
 
-            s.layout = bp.layout(s.mesh, buffermanager);
+            s = scanners.get(i);
+            bp.mesh = s.mesh;
 
-            bp.makeLinks(s.mesh);
+            bp.adjustPostScan(bp.mesh);
+            bp.makeLinks(bp.mesh);
+
+            s.layout = bp.layout(bp.mesh, buffermanager);
         }
 
         buffer(scanners, debug);
 
         for(int i = 0; i < size; i++){
-            blueprints.get(i).program(gen, scanners.get(i).mesh);
+            bp = blueprints.get(i);
+            bp.adjustPostScan(bp.mesh);
+            bp.program(gen, bp.mesh);
         }
-
-        program(scanners, debug);
     }
 
     private void build(VLListType<FSGScanner> scanners, int debug){
@@ -168,7 +175,7 @@ public final class FSGAutomator{
     }
 
     private void buffer(VLListType<FSGScanner> scanners, int debug){
-        int size = blueprints.size();
+        int size = scanners.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
@@ -234,52 +241,6 @@ public final class FSGAutomator{
             }
 
             gen.bufferManager().upload();
-        }
-    }
-
-    private void program(VLListType<FSGScanner> scanners, int debug){
-        int size = blueprints.size();
-
-        if(debug > FSControl.DEBUG_DISABLED){
-            VLDebug.recreate();
-            FSGScanner s;
-
-            VLDebug.printDirect("[Program Stage]\n");
-
-            for(int i = 0; i < size; i++){
-                s = scanners.get(i);
-
-                VLDebug.append("Adding Mesh To Programs [");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(size);
-                VLDebug.append("]\n");
-
-                try{
-                    s.populatePrograms();
-
-                }catch(Exception ex){
-                    VLDebug.append("Error adding mesh to programs\"");
-                    VLDebug.append(s.name);
-                    VLDebug.append("\"\n");
-                    VLDebug.append("[Assembler Configuration]\n");
-
-                    s.assembler.stringify(VLDebug.get(), null);
-                    VLDebug.printE();
-
-                    throw new RuntimeException(ex);
-                }
-
-                VLDebug.printD();
-            }
-
-            VLDebug.printDirect("[DONE]\n");
-            VLDebug.printD();
-
-        }else{
-            for(int i = 0; i < size; i++){
-                scanners.get(i).populatePrograms();
-            }
         }
     }
 }

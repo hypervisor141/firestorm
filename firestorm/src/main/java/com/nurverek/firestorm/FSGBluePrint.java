@@ -1,9 +1,22 @@
 package com.nurverek.firestorm;
 
-public interface FSGBluePrint{
+public abstract class FSGBluePrint{
 
-    FSGScanner register(FSG gen);
-    FSBufferLayout layout(FSMesh mesh, FSBufferManager manager);
-    void makeLinks(FSMesh mesh);
-    void program(FSG gen, FSMesh mesh);
+    protected FSMesh mesh;
+
+    protected FSGBluePrint(){
+
+    }
+
+    public FSMesh mesh(){
+        return mesh;
+    }
+
+    protected abstract FSGScanner register(FSG gen);
+    protected abstract void adjustPreScan(FSMesh mesh);
+    protected abstract void adjustPostScan(FSMesh mesh);
+    protected abstract void makeLinks(FSMesh mesh);
+    protected abstract FSBufferLayout layout(FSMesh mesh, FSBufferManager manager);
+    protected abstract void adjustPostBuffer(FSMesh mesh);
+    protected abstract void program(FSG gen, FSMesh mesh);
 }

@@ -8,21 +8,15 @@ import com.nurverek.vanguard.VLListType;
 public abstract class FSGScanner{
 
     protected FSGAssembler assembler;
-    protected FSGData datagroup;
     protected FSBufferLayout layout;
 
     protected FSMesh mesh;
     protected String name;
 
-    private VLListType<FSP> programs;
-
-    protected FSGScanner(FSGAssembler assembler, FSGData datagroup, FSMesh mesh, String name){
+    protected FSGScanner(FSGAssembler assembler, FSMesh mesh, String name){
         this.mesh = mesh;
-        this.datagroup = datagroup;
         this.assembler = assembler;
         this.name = name;
-
-        programs = new VLListType<>(10, 20);
 
         mesh.name(name);
     }
@@ -35,14 +29,6 @@ public abstract class FSGScanner{
 
     protected void bufferDebug(){
         layout.bufferDebug(assembler);
-    }
-
-    protected final void populatePrograms(){
-        int size = programs.size();
-
-        for(int i = 0; i < size; i++){
-            programs.get(i).addMesh(mesh);
-        }
     }
 
     protected void debugInfo(){
@@ -104,8 +90,8 @@ public abstract class FSGScanner{
 
     public static class Singular extends FSGScanner{
 
-        public Singular(FSGAssembler assembler, FSGData datagroup, String name, int drawmode){
-            super(assembler, datagroup, new FSMesh(drawmode, 1, 0), name);
+        public Singular(FSGAssembler assembler, String name, int drawmode){
+            super(assembler, new FSMesh(drawmode, 1, 0), name);
         }
 
         @Override
@@ -132,8 +118,8 @@ public abstract class FSGScanner{
 
     public static class Instanced extends FSGScanner{
 
-        public Instanced(FSGAssembler assembler, FSGData data, String prefixname, int drawmode, int estimatedsize){
-            super(assembler, data, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
+        public Instanced(FSGAssembler assembler, String prefixname, int drawmode, int estimatedsize){
+            super(assembler, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
         }
 
         @Override
