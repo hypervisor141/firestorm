@@ -41,14 +41,15 @@ public final class FSGAutomator{
             s = scanners.get(i);
             bp = blueprints.get(i);
 
-            bp.buffer(s.mesh, s.layout, buffermanager);
+            s.layout = bp.layout(s.mesh, buffermanager);
+
             bp.makeLinks(s.mesh);
         }
 
         buffer(scanners, debug);
 
         for(int i = 0; i < size; i++){
-            blueprints.get(i).program(scanners.get(i).mesh);
+            blueprints.get(i).program(gen, scanners.get(i).mesh);
         }
 
         program(scanners, debug);

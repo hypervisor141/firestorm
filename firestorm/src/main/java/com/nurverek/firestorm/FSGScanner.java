@@ -8,8 +8,8 @@ import com.nurverek.vanguard.VLListType;
 public abstract class FSGScanner{
 
     protected FSGAssembler assembler;
-    protected FSBufferLayout layout;
     protected FSGData datagroup;
+    protected FSBufferLayout layout;
 
     protected FSMesh mesh;
     protected String name;
@@ -21,10 +21,8 @@ public abstract class FSGScanner{
         this.datagroup = datagroup;
         this.assembler = assembler;
         this.name = name;
-        this.layout = layout;
 
         programs = new VLListType<>(10, 20);
-        layout = new FSBufferLayout(mesh, assembler);
 
         mesh.name(name);
     }
@@ -32,14 +30,14 @@ public abstract class FSGScanner{
     protected abstract boolean scan(FSGAutomator automator, FSM.Data data);
 
     protected void buffer(){
-        layout.buffer();
+        layout.buffer(assembler);
     }
 
     protected void bufferDebug(){
-        layout.bufferDebug(this);
+        layout.bufferDebug(assembler);
     }
 
-    protected void populatePrograms(){
+    protected final void populatePrograms(){
         int size = programs.size();
 
         for(int i = 0; i < size; i++){

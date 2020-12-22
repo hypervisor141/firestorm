@@ -198,5 +198,4 @@ public abstract class FSG{
     }
 
     protected abstract void destroyAssets();
-
 }

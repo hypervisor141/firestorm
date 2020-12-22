@@ -21,12 +21,10 @@ public final class FSBufferLayout{
     public static final Mechanism LINK_INTERLEAVED_SINGULAR = new LinkInterleavedSingular();
 
     protected VLListType<Layout> layouts;
-    protected FSGAssembler assembler;
     protected FSMesh targetmesh;
 
-    public FSBufferLayout(FSMesh mesh, FSGAssembler assembler){
+    public FSBufferLayout(FSMesh mesh){
         this.targetmesh = mesh;
-        this.assembler = assembler;
 
         layouts = new VLListType<>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
     }
@@ -38,15 +36,15 @@ public final class FSBufferLayout{
         return layout;
     }
 
-    public void buffer(){
+    public void buffer(FSGAssembler assembler){
         int size = layouts.size();
 
         for(int i = 0; i < size; i++){
-            layouts.get(i).buffer();
+            layouts.get(i).buffer(assembler);
         }
     }
 
-    public void bufferDebug(FSGScanner scanner){
+    public void bufferDebug(FSGAssembler assembler){
         int size = layouts.size();
 
         VLDebug.append("BufferLayout[");
@@ -60,7 +58,7 @@ public final class FSBufferLayout{
             VLDebug.printD();
 
             try{
-                layouts.get(i).bufferDebug(scanner);
+                layouts.get(i).bufferDebug(assembler);
 
             }catch(Exception ex){
                 VLDebug.append(" [FAILED]\n");
@@ -173,7 +171,7 @@ public final class FSBufferLayout{
             return this;
         }
 
-        protected void buffer(){
+        protected void buffer(FSGAssembler assembler){
             int size = entries.size();
             VLBuffer b = buffer.get(bufferindex).buffer();
             EntryType entry;
@@ -187,7 +185,7 @@ public final class FSBufferLayout{
             entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, totalstride);
         }
 
-        protected void bufferDebug(FSGScanner scanner){
+        protected void bufferDebug(FSGAssembler assembler){
             int size = entries.size();
             EntryType e;
 
@@ -218,7 +216,7 @@ public final class FSBufferLayout{
 
             buffer.get(bufferindex).buffer().stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
-            buffer();
+            buffer(assembler);
         }
     }
 

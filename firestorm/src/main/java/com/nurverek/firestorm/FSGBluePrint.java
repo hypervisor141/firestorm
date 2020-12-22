@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 public interface FSGBluePrint{
 
     FSGScanner register(FSG gen);
-    void buffer(FSMesh mesh, FSBufferLayout layout, FSBufferManager manager);
+    FSBufferLayout layout(FSMesh mesh, FSBufferManager manager);
     void makeLinks(FSMesh mesh);
-    void program(FSMesh mesh);
+    void program(FSG gen, FSMesh mesh);
 }
