@@ -199,8 +199,8 @@ public final class FSP{
     }
 
 
-    public void modify(Modifier mod, FSConfig.Policy policy){
-        mod.modify(this, policy);
+    public void modify(FSPMod mod, FSConfig.Policy policy){
+        mod.modify(this);
     }
 
     public void addSetupConfig(FSConfig config){
@@ -624,15 +624,6 @@ public final class FSP{
         meshes.clear();
     }
 
-
-    public static abstract class Modifier{
-
-        public Modifier(){
-
-        }
-
-        protected abstract void modify(FSP program, FSConfig.Policy policy);
-    }
 
     public static class MaterialDynamic extends FSConfigLocated{
 
