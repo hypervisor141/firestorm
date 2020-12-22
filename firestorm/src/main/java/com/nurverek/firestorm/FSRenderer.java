@@ -49,7 +49,7 @@ public final class FSRenderer{
     protected static void startRenderer(){
         RENDERTHREAD = new RenderThread();
         RENDERTHREAD.setPriority(Thread.MAX_PRIORITY);
-        RENDERTHREAD.setName("HiveGLHandler");
+        RENDERTHREAD.setName("FireStormThread");
         RENDERTHREAD.initialize();
     }
 
