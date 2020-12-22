@@ -161,6 +161,10 @@ public abstract class FSG{
         return VMANAGER;
     }
 
+    public Automator automator(){
+        return AUTOMATOR;
+    }
+
     public long id(){
         return ID;
     }
