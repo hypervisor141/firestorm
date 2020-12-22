@@ -206,45 +206,66 @@ public abstract class FSG{
     protected abstract void destroyAssets();
 
 
+    public static interface BluePrint{
+
+        Scanner register(FSG gen);
+        void buffer(FSMesh mesh, FSBufferLayout layout);
+        void makeLinks(FSMesh mesh);
+        void program(FSMesh mesh);
+    }
+
     public final class Automator{
 
         protected FSM fsm;
-        protected VLListType<Scanner> scanners;
+        protected VLListType<BluePrint> blueprints;
 
         protected Automator(FSM fsm){
             this.fsm = fsm;
 
             int size = fsm.data.size();
-            scanners = new VLListType<>(size, size);
+            blueprints = new VLListType<>(size, size);
         }
 
-
-        public Registration addScannerSingle(Assembler assembler, DataPack pack, String name, int drawmode){
-            Scanner s = new ScannerSingular(assembler, new DataGroup(new VLListType<DataPack>(new DataPack[]{ pack }, 1)), name, drawmode);
-            scanners.add(s);
-
-            return new Registration(s);
+        public void register(BluePrint blueprint){
+            blueprints.add(blueprint);
         }
 
-        public Registration addScannerInstanced(Assembler assembler, DataGroup datagroup, String prefixname, int drawmode, int estimatedsize){
-            Scanner s = new ScannerInstanced(assembler, datagroup, prefixname, drawmode, estimatedsize);
-            scanners.add(s);
+        public void run(int debug){
+            int size = blueprints.size();
+            VLListType<Scanner> scanners = new VLListType<>(size, 0);
 
-            return new Registration(s);
+            for(int i = 0; i < size; i++){
+                scanners.add(blueprints.get(i).register(FSG.this));
+            }
+
+            build(scanners, debug);
+
+            Scanner s;
+            BluePrint bp;
+
+            for(int i = 0; i < size; i++){
+                s = scanners.get(i);
+                bp = blueprints.get(i);
+
+                bp.buffer(s.mesh, s.layout);
+                bp.makeLinks(s.mesh);
+            }
+
+            buffer(scanners, debug);
+
+            for(int i = 0; i < size; i++){
+                blueprints.get(i).program(scanners.get(i).mesh);
+            }
+
+            program(scanners, debug);
         }
 
-        public Registration addScannerCustom(Scanner scanner){
-            scanners.add(scanner);
-
-            return new Registration(scanner);
-        }
-
-        public void build(int debug){
+        private void build(VLListType<Scanner> scanners, int debug){
             VLListType<FSM.Data> data = fsm.data;
             FSM.Data d;
 
             int size = data.size();
-            int size2 = scanners.size();
+            int size2 = blueprints.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
@@ -351,8 +372,8 @@ public abstract class FSG{
             }
         }
 
-        public void buffer(int debug){
-            int size = scanners.size();
+        private void buffer(VLListType<Scanner> scanners, int debug){
+            int size = blueprints.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
@@ -421,8 +442,8 @@ public abstract class FSG{
             }
         }
 
-        public void program(int debug){
-            int size = scanners.size();
+        private void program(VLListType<Scanner> scanners, int debug){
+            int size = blueprints.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
@@ -465,31 +486,6 @@ public abstract class FSG{
                     scanners.get(i).populatePrograms();
                 }
             }
-        }
-    }
-
-    public static final class Registration{
-
-        protected Scanner scanner;
-
-        protected Registration(Scanner scanner){
-            this.scanner = scanner;
-        }
-
-        public FSMesh mesh(){
-            return scanner.mesh;
-        }
-
-        public FSBufferLayout bufferLayout(){
-            return scanner.layout;
-        }
-
-        public void clearPrograms(){
-            scanner.programs.clear();
-        }
-
-        public void addProgram(FSP program){
-            scanner.programs.add(program);
         }
     }
 
