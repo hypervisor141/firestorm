@@ -174,7 +174,7 @@ public final class FSGAutomator{
             VLDebug.printDirect("[Buffering Stage]\n");
 
             try{
-                gen.BUFFERMANAGER.initialize();
+                gen.bufferManager().initialize();
 
             }catch(Exception ex){
                 VLDebug.printE();
@@ -213,7 +213,7 @@ public final class FSGAutomator{
             }
 
             try{
-                gen.BUFFERMANAGER.upload();
+                gen.bufferManager().upload();
 
             }catch(Exception ex){
                 VLDebug.printE();
@@ -224,7 +224,7 @@ public final class FSGAutomator{
             VLDebug.printD();
 
         }else{
-            gen.BUFFERMANAGER.initialize();
+            gen.bufferManager().initialize();
 
             for(int i = 0; i < size; i++){
                 scanners.get(i).buffer();
