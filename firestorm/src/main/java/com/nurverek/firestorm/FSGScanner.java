@@ -104,7 +104,7 @@ public abstract class FSGScanner{
         VLDebug.append("]]\n");
     }
 
-    public class Singular extends FSGScanner{
+    public static class Singular extends FSGScanner{
 
         protected Singular(FSGAssembler assembler, FSGData datagroup, String name, int drawmode){
             super(assembler, datagroup, new FSMesh(drawmode, 1, 0), name);
@@ -132,7 +132,7 @@ public abstract class FSGScanner{
         }
     }
 
-    public class Instanced extends FSGScanner{
+    public static class Instanced extends FSGScanner{
 
         protected Instanced(FSGAssembler assembler, FSGData data, String prefixname, int drawmode, int estimatedsize){
             super(assembler, data, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
