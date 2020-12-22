@@ -324,19 +324,19 @@ public class FSGAssembler implements VLStringify{
         data.normals().provider(converted.array());
     }
 
-    protected final void buildFirst(FSGScanner scanner, FSM.Data fsm){
-        operate(firstfuncs, scanner, fsm);
+    protected final void buildFirst(FSInstance instance, FSGScanner scanner, FSM.Data fsm){
+        operate(firstfuncs, instance, scanner, fsm);
     }
 
-    protected final void buildRest(FSGScanner scanner, FSM.Data fsm){
-        operate(restfuncs, scanner, fsm);
+    protected final void buildRest(FSInstance instance, FSGScanner scanner, FSM.Data fsm){
+        operate(restfuncs, instance, scanner, fsm);
     }
 
     protected final BufferStep bufferFunc(int element){
         return buffersteps[element];
     }
 
-    private final void operate(VLListType<BuildStep> funcs, FSGScanner scanner, FSM.Data fsm){
+    private final void operate(VLListType<BuildStep> funcs, FSInstance instance, FSGScanner scanner, FSM.Data fsm){
         FSMesh mesh = scanner.mesh;
         FSBufferLayout layout = scanner.layout;
         VLArrayShort indices = mesh.indices;
@@ -344,10 +344,7 @@ public class FSGAssembler implements VLStringify{
         int newindex = mesh.size();
         int funcsize = funcs.size();
 
-        FSInstance instance = new FSInstance();
         FSInstance.Data data = instance.data;
-
-        mesh.addInstance(instance);
 
         for(int i = 0; i < funcsize; i++){
             funcs.get(i).process(this, mesh, indices, instance, data, fsm, layout);

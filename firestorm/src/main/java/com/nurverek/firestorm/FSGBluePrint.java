@@ -13,7 +13,7 @@ public abstract class FSGBluePrint{
     }
 
     protected abstract FSGScanner register(FSG gen);
-    protected abstract void adjustPreScan(FSMesh mesh);
+    protected abstract void adjustPreAssembly(FSMesh mesh, FSInstance instance);
     protected abstract void adjustPostScan(FSMesh mesh);
     protected abstract void makeLinks(FSMesh mesh);
     protected abstract FSBufferLayout layout(FSMesh mesh, FSBufferManager manager);

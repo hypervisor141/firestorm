@@ -15,10 +15,18 @@ public class FSMesh extends VLSyncable{
     protected long id;
     protected int drawmode;
 
-    public FSMesh(int drawmode, int instancecapacity, int instanceresizer){
+    public FSMesh(int drawmode, int capacity, int resizer){
+        initialize(drawmode, capacity, resizer);
+    }
+
+    public FSMesh(){
+
+    }
+
+    public void initialize(int drawmode, int capacity, int resizer){
         this.drawmode = drawmode;
 
-        instances = new VLListType<>(instancecapacity, instanceresizer);
+        instances = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();
     }
 

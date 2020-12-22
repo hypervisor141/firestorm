@@ -30,11 +30,7 @@ public final class FSGAutomator{
         FSGBluePrint bp;
 
         for(int i = 0; i < size; i++){
-            bp = blueprints.get(i);
-            s = bp.register(gen);
-            bp.adjustPreScan(s.mesh);
-
-            scanners.add(s);
+            scanners.add(blueprints.get(i).register(gen));
         }
 
         build(scanners, debug);

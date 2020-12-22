@@ -7,17 +7,19 @@ import com.nurverek.vanguard.VLListType;
 
 public abstract class FSGScanner{
 
+    protected FSGBluePrint blueprint;
     protected FSGAssembler assembler;
     protected FSBufferLayout layout;
 
     protected FSMesh mesh;
     protected String name;
 
-    protected FSGScanner(FSGAssembler assembler, FSMesh mesh, String name){
-        this.mesh = mesh;
+    protected FSGScanner(FSGBluePrint blueprint, FSGAssembler assembler, String name){
+        this.blueprint = blueprint;
         this.assembler = assembler;
         this.name = name;
 
+        mesh = new FSMesh();
         mesh.name(name);
     }
 
@@ -90,23 +92,29 @@ public abstract class FSGScanner{
 
     public static class Singular extends FSGScanner{
 
-        public Singular(FSGAssembler assembler, String name, int drawmode){
-            super(assembler, new FSMesh(drawmode, 1, 0), name);
+        public Singular(FSGBluePrint blueprint, FSGAssembler assembler, String name, int drawmode){
+            super(blueprint, assembler, name);
+            mesh.initialize(drawmode, 1, 0);
         }
 
         @Override
         protected boolean scan(FSGAutomator automator, FSM.Data fsm){
             if(fsm.name.equalsIgnoreCase(name)){
+                FSInstance instance = new FSInstance();
+                mesh.addInstance(instance);
+
+                blueprint.adjustPreAssembly(mesh, instance);
+
                 if(assembler.LOAD_INDICES){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
-                    assembler.buildFirst(this, fsm);
+                    assembler.buildFirst(instance, this, fsm);
 
                     if(assembler.SYNC_INDICES_AND_BUFFER){
                         assembler.buffersteps[FSG.ELEMENT_INDEX] = FSGAssembler.BUFFER_SYNC;
                     }
 
                 }else{
-                    assembler.buildFirst(this, fsm);
+                    assembler.buildFirst(instance, this, fsm);
                 }
 
                 return true;
@@ -118,23 +126,29 @@ public abstract class FSGScanner{
 
     public static class Instanced extends FSGScanner{
 
-        public Instanced(FSGAssembler assembler, String prefixname, int drawmode, int estimatedsize){
-            super(assembler, new FSMesh(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f)), prefixname);
+        public Instanced(FSGBluePrint blueprint, FSGAssembler assembler, String prefixname, int drawmode, int estimatedsize){
+            super(blueprint, assembler, prefixname);
+            mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
         }
 
         @Override
         protected boolean scan(FSGAutomator automator, FSM.Data fsm){
             if(fsm.name.contains(name)){
+                FSInstance instance = new FSInstance();
+                mesh.addInstance(instance);
+
+                blueprint.adjustPreAssembly(mesh, instance);
+
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
-                    assembler.buildFirst(this, fsm);
+                    assembler.buildFirst(instance, this, fsm);
 
                     if(assembler.SYNC_INDICES_AND_BUFFER){
                         assembler.buffersteps[FSG.ELEMENT_INDEX] = FSGAssembler.BUFFER_SYNC;
                     }
 
                 }else{
-                    assembler.buildRest(this, fsm);
+                    assembler.buildRest(instance, this, fsm);
                 }
 
                 return true;
