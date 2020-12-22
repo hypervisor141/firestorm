@@ -21,10 +21,10 @@ public final class FSBufferLayout{
     public static final Mechanism LINK_INTERLEAVED_SINGULAR = new LinkInterleavedSingular();
 
     protected VLListType<Layout> layouts;
-    protected FSG.Assembler assembler;
+    protected FSGAssembler assembler;
     protected FSMesh targetmesh;
 
-    public FSBufferLayout(FSMesh mesh, FSG.Assembler assembler){
+    public FSBufferLayout(FSMesh mesh, FSGAssembler assembler){
         this.targetmesh = mesh;
         this.assembler = assembler;
 
@@ -46,7 +46,7 @@ public final class FSBufferLayout{
         }
     }
 
-    public void bufferDebug(FSG.Scanner scanner){
+    public void bufferDebug(FSGScanner scanner){
         int size = layouts.size();
 
         VLDebug.append("BufferLayout[");
@@ -187,7 +187,7 @@ public final class FSBufferLayout{
             entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, totalstride);
         }
 
-        protected void bufferDebug(FSG.Scanner scanner){
+        protected void bufferDebug(FSGScanner scanner){
             int size = entries.size();
             EntryType e;
 
@@ -224,7 +224,7 @@ public final class FSBufferLayout{
 
     public abstract static interface Mechanism<ENTRY extends EntryType>{
 
-        public abstract int buffer(FSG.Assembler assembler, FSMesh mesh, ENTRY entry, FSBufferManager buffer, int bufferindex, int stride);
+        public abstract int buffer(FSGAssembler assembler, FSMesh mesh, ENTRY entry, FSBufferManager buffer, int bufferindex, int stride);
 
         public abstract int getTargetSize(ENTRY entry, FSMesh mesh);
     }
@@ -234,7 +234,7 @@ public final class FSBufferLayout{
         private ElementSequentialInstanced(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -244,7 +244,7 @@ public final class FSBufferLayout{
             VLArrayFloat array;
             FSBufferAddress address;
 
-            FSG.Assembler.BufferStep step = assembler.bufferFunc(element);
+            FSGAssembler.BufferStep step = assembler.bufferFunc(element);
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
@@ -276,7 +276,7 @@ public final class FSBufferLayout{
         private ElementInterleavedInstanced(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -285,7 +285,7 @@ public final class FSBufferLayout{
             int element = entry.element;
             int mainoffset = buffer.position(bufferindex);
 
-            FSG.Assembler.BufferStep step = assembler.bufferFunc(element);
+            FSGAssembler.BufferStep step = assembler.bufferFunc(element);
             FSBufferAddress address;
 
             for(int i = 0; i < size; i++){
@@ -317,7 +317,7 @@ public final class FSBufferLayout{
         private ElementSequentialSingular(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -349,7 +349,7 @@ public final class FSBufferLayout{
         private ElementInterleavedSingular(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -382,7 +382,7 @@ public final class FSBufferLayout{
         private ElementSequentialIndices(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             int element = entry.element;
 
             FSBufferAddress address = new FSBufferAddress();
@@ -408,7 +408,7 @@ public final class FSBufferLayout{
         private LinkSequentialSingular(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             FSLinkBufferedType link = (FSLinkBufferedType)mesh.link(entry.element);
             link.buffer(buffer, bufferindex, 0, link.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
@@ -426,7 +426,7 @@ public final class FSBufferLayout{
         private LinkInterleavedSingular(){}
 
         @Override
-        public int buffer(FSG.Assembler assembler, FSMesh mesh, EntryLink entry, FSBufferManager buffer, int bufferindex, int stride){
+        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryLink entry, FSBufferManager buffer, int bufferindex, int stride){
             int firstpos = buffer.position(bufferindex);
             FSLinkBufferedType link = (FSLinkBufferedType)mesh.link(entry.element);
 
