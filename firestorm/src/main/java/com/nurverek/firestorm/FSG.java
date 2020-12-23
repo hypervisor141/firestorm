@@ -116,15 +116,15 @@ public abstract class FSG{
         }
     }
 
-    public void constructAutomator(FSM fsm){
-        automator = new FSGAutomator(this, fsm);
+    public void constructAutomator(FSM fsm, int capacity){
+        automator = new FSGAutomator(this, fsm, capacity);
     }
 
     public void constructAutomator(InputStream is, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
         FSM data = new FSM();
         data.loadFromFile(is, order, fullsizedposition, estimatedsize);
 
-        automator = new FSGAutomator(this, data);
+        automator = new FSGAutomator(this, data, estimatedsize);
     }
 
     public void constructAutomator(String path, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws FileNotFoundException, SecurityException, IOException{

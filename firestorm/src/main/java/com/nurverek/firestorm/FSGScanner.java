@@ -3,7 +3,6 @@ package com.nurverek.firestorm;
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayShort;
 import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLListType;
 
 public abstract class FSGScanner{
 
@@ -104,7 +103,7 @@ public abstract class FSGScanner{
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.adjustPreAssembly(mesh, instance);
+                blueprint.preAssemblyAdjustment(mesh, instance);
 
                 if(assembler.LOAD_INDICES){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
@@ -140,7 +139,7 @@ public abstract class FSGScanner{
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.adjustPreAssembly(mesh, instance);
+                blueprint.preAssemblyAdjustment(mesh, instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
