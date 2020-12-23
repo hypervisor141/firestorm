@@ -17,29 +17,29 @@ public final class FSGAutomator{
         entries = new VLListType<>(capacity, capacity);
     }
 
-    public void register(FSGBluePrint blueprint, String name){
-        entries.add(new Entry(blueprint, name));
+    public FSMesh register(FSGBluePrint blueprint, String name){
+        Entry e = new Entry(blueprint, name);
+        e.register(gen);
+
+        entries.add(e);
+
+        return e.scanner.mesh;
     }
 
     public void run(int debug){
         int size = entries.size();
-        VLListType<FSGScanner> scanners = new VLListType<>(size, size);
 
         Entry entry;
         FSGScanner scanner;
         FSGBluePrint blueprint;
         FSMesh mesh;
 
-        for(int i = 0; i < size; i++){
-            scanners.add(entries.get(i).register(gen));
-        }
-
-        build(scanners, debug);
+        build(debug);
 
         FSBufferManager buffermanager = gen.bufferManager();
 
         for(int i = 0; i < size; i++){
-            scanner = scanners.get(i);
+            scanner = entries.get(i).scanner;
 
             blueprint = entries.get(i).blueprint;
             blueprint.postScanAdjustment(scanner.mesh);
@@ -48,24 +48,26 @@ public final class FSGAutomator{
             scanner.layout = blueprint.bufferLayouts(scanner.mesh, buffermanager);
         }
 
-        buffer(scanners, debug);
+        buffer(debug);
 
         for(int i = 0; i < size; i++){
-            mesh = scanners.get(i).mesh;
+            entry = entries.get(i);
 
-            blueprint = entries.get(i).blueprint;
+            mesh = entry.scanner.mesh;
+
+            blueprint = entry.blueprint;
             blueprint.postBufferAdjustment(mesh);
             blueprint.attachMeshToPrograms(mesh);
             blueprint.finished(mesh);
         }
     }
 
-    private void build(VLListType<FSGScanner> scanners, int debug){
+    private void build(int debug){
         VLListType<FSM.Data> data = fsm.data;
         FSM.Data d;
 
         int size = data.size();
-        int size2 = scanners.size();
+        int size2 = entries.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
@@ -76,7 +78,7 @@ public final class FSGAutomator{
             VLDebug.printDirect("[Assembler Check Stage]\n");
 
             for(int i = 0; i < size2; i++){
-                s = scanners.get(i);
+                s = entries.get(i).scanner;
 
                 if(s.assembler.checkDebug()){
                     VLDebug.append("Scanner[");
@@ -97,7 +99,7 @@ public final class FSGAutomator{
                 d = data.get(i);
 
                 for(int i2 = 0; i2 < size2; i2++){
-                    s = scanners.get(i2);
+                    s = entries.get(i2).scanner;
                     mesh = s.mesh;
                     found = false;
 
@@ -143,7 +145,7 @@ public final class FSGAutomator{
             VLDebug.printDirect("[Checking Scan Results]\n");
 
             for(int i = 0; i < size2; i++){
-                s = scanners.get(i);
+                s = entries.get(i).scanner;
 
                 if(s.mesh.size() == 0){
                     VLDebug.append("Scan incomplete : found no instance for mesh with keyword \"");
@@ -166,14 +168,14 @@ public final class FSGAutomator{
                 d = data.get(i);
 
                 for(int i2 = 0; i2 < size2; i2++){
-                    scanners.get(i2).scan(this, d);
+                    entries.get(i2).scanner.scan(this, d);
                 }
             }
         }
     }
 
-    private void buffer(VLListType<FSGScanner> scanners, int debug){
-        int size = scanners.size();
+    private void buffer(int debug){
+        int size = entries.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
@@ -190,7 +192,7 @@ public final class FSGAutomator{
             }
 
             for(int i = 0; i < size; i++){
-                s = scanners.get(i);
+                s = entries.get(i).scanner;
 
                 VLDebug.append("Buffering[");
                 VLDebug.append(i + 1);
@@ -235,7 +237,7 @@ public final class FSGAutomator{
             gen.bufferManager().initialize();
 
             for(int i = 0; i < size; i++){
-                scanners.get(i).buffer();
+                entries.get(i).scanner.buffer();
             }
 
             gen.bufferManager().upload();
@@ -245,6 +247,7 @@ public final class FSGAutomator{
     private static final class Entry{
 
         protected FSGBluePrint blueprint;
+        protected FSGScanner scanner;
         protected String name;
 
         protected Entry(FSGBluePrint blueprint, String name){
@@ -252,8 +255,8 @@ public final class FSGAutomator{
             this.name = name;
         }
 
-        protected FSGScanner register(FSG gen){
-            return blueprint.register(gen, name);
+        protected void register(FSG gen){
+            scanner = blueprint.register(gen, name);
         }
     }
 }

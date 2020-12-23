@@ -171,7 +171,7 @@ public abstract class FSG{
         return touchable;
     }
 
-    public void destroy(){
+    public final void destroy(){
         destroyAssets();
 
         VLListType<FSP> programs;
