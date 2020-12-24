@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import com.nurverek.vanguard.VLFloat;
 import com.nurverek.vanguard.VLInt;
 
-public abstract class FSShadow extends FSConfigSelective{
+public abstract class FSShadow<LIGHT extends FSLight> extends FSConfigSelective{
 
     public static final String FUNCTION_BIAS =
             "float shadowMapBias(vec3 normal, vec3 lightdir, float minbias, float maxbias){\n" +
@@ -15,7 +15,7 @@ public abstract class FSShadow extends FSConfigSelective{
     
     protected FSFrameBuffer framebuffer;
     protected FSTexture texture;
-    protected FSLight light;
+    protected LIGHT light;
 
     protected VLInt width;
     protected VLInt height;
@@ -23,7 +23,7 @@ public abstract class FSShadow extends FSConfigSelective{
     protected VLFloat maxbias;
     protected VLFloat divident;
 
-    public FSShadow(int size, int resizer, FSLight light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident){
+    public FSShadow(int size, int resizer, LIGHT light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident){
         super(size, resizer);
 
         this.light = light;
@@ -91,7 +91,7 @@ public abstract class FSShadow extends FSConfigSelective{
         return framebuffer;
     }
 
-    public FSLight light(){
+    public LIGHT light(){
         return light;
     }
 

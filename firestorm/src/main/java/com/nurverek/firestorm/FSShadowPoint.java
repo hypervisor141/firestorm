@@ -8,7 +8,7 @@ import com.nurverek.vanguard.VLFloat;
 import com.nurverek.vanguard.VLInt;
 import com.nurverek.vanguard.VLListType;
 
-public final class FSShadowPoint extends FSShadow {
+public final class FSShadowPoint extends FSShadow<FSLightPoint>{
 
     private static int[] DRAWBUFFERMODECACHE = new int[]{ GLES32.GL_NONE };
 
@@ -57,7 +57,7 @@ public final class FSShadowPoint extends FSShadow {
     protected VLFloat znear;
     protected VLFloat zfar;
 
-    public FSShadowPoint(FSLight light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident, VLFloat znear, VLFloat zfar){
+    public FSShadowPoint(FSLightPoint light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident, VLFloat znear, VLFloat zfar){
         super(2, 0, light, width, height, minbias, maxbias, divident);
 
         this.zfar = zfar;

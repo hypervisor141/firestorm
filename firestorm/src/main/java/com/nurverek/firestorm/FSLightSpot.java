@@ -57,22 +57,18 @@ public class FSLightSpot extends FSLight {
         return position;
     }
 
-    @Override
     public VLArrayFloat center(){
         return center;
     }
 
-    @Override
     public VLArrayFloat direction(){
         return direction;
     }
 
-    @Override
     public VLFloat cutOff(){
         return cutoff;
     }
 
-    @Override
     public VLFloat outerCutOff(){
         return outercutoff;
     }
