@@ -16,7 +16,7 @@ public abstract class FSGScanner{
     protected FSGScanner(FSGBluePrint blueprint, FSGAssembler assembler, String name){
         this.blueprint = blueprint;
         this.assembler = assembler;
-        this.name = name;
+        this.name = name.toLowerCase();
 
         mesh = new FSMesh();
     }

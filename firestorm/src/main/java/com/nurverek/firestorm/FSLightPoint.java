@@ -7,22 +7,11 @@ public class FSLightPoint extends FSLight{
 
     public static final String[] STRUCT_MEMBERS = new String[]{
             "vec3 position",
-            "float constant",
-            "float linear",
-            "float quadratic"
+            "Attenuation attenuation"
     };
 
-    public static final String FUNCTION_ATTENUATION =
-            "float attenuation(PointLight light, vec3 vertexpos){\n" +
-                    "\tfloat distance = length(light.position - vertexpos);\n" +
-                    "\treturn 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));\n" +
-                    "}";
-
     public static final String FUNCTION_LIGHT =
-            "vec3 pointLight(PointLight light, Material material, vec3 normal, vec3 vertexpos, vec3 cameraPos, vec3 lightdir, float shadow){\n" +
-                    "\tfloat distance = length(light.position - vertexpos);\n" +
-                    "\tfloat attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));\n" +
-                    "\n" +
+            "vec3 pointLight(PointLight light, Material material, vec3 normal, vec3 cameraPos, vec3 lightdir, float shadow, float attenuation){\n" +
                     "\treturn material.ambient * attenuation +\n" +
                     "\t       shadow * (material.diffuse * max(dot(normal, lightdir), 0.0) * attenuation +\n" +
                     "\t       material.specular * pow(max(dot(normal, normalize(lightdir + cameraPos)), 0.0), material.shininess) * attenuation);\n" +
@@ -58,9 +47,5 @@ public class FSLightPoint extends FSLight{
     @Override
     public String getLightFunction(){
         return FUNCTION_LIGHT;
-    }
-
-    public String getAttenuationFunction(){
-        return FUNCTION_ATTENUATION;
     }
 }

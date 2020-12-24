@@ -4,7 +4,7 @@ import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLFloat;
 import com.nurverek.vanguard.VLListType;
 
-public class FSLightSpot extends FSLight {
+public class FSLightSpot extends FSLight{
 
     public static final String[] STRUCT_MEMBERS = new String[]{
             "vec3 position",
