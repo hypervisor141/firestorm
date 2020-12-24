@@ -47,7 +47,8 @@ public final class FSControl {
     private static long GLOBAL_ID = 1000;
     private static long TOTAL_FRAMES = 0;
     private static long FRAME_TIME;
-    private static long AVGFRAMETIME;
+    private static long AVERAGE_SWAPPED_TIME;
+    private static long AVERAGE_PROCESS_TIME;
     private static long FRAME_SECOND_TRACKER;
     private static int FPS;
     private static int UNCHANGED_FRAMES;
@@ -325,24 +326,25 @@ public final class FSControl {
         }
     }
 
-    protected static long timeFrameEnded(){
-        long now = System.currentTimeMillis();
+    protected static void timeFrameEnded(){
+        AVERAGE_SWAPPED_TIME = (AVERAGE_SWAPPED_TIME + System.currentTimeMillis() - FRAME_TIME) / 2;
+    }
 
-        long time = now - FRAME_TIME;
+    protected static void timeBufferSwapped(){
+        long now = System.currentTimeMillis();
         long tracker = now - FRAME_SECOND_TRACKER;
 
         FPS++;
         TOTAL_FRAMES++;
-        AVGFRAMETIME = (AVGFRAMETIME + time) / 2;
 
-        if(tracker / 1000f >= 1){
-            Log.d(LOGTAG, "FPS(" + FPS + "), Time(" + (tracker / 1000f) + "sec), TotalFrames(" + TOTAL_FRAMES + "), AverageFrameTime(" + AVGFRAMETIME + "ms)");
+        AVERAGE_PROCESS_TIME = (AVERAGE_PROCESS_TIME + now - FRAME_TIME) / 2;
+
+        if(tracker / 1000F >= 1){
+            Log.d(LOGTAG, "FPS[" + FPS + "] time[" + (tracker / 1000f) + "sec] totalFrames[" + TOTAL_FRAMES + "] averageProcessingTime[" + AVERAGE_SWAPPED_TIME + "ms] averageFullFrameTime[" + AVERAGE_PROCESS_TIME + "]");
 
             FRAME_SECOND_TRACKER = now;
             FPS = 0;
         }
-
-        return time;
     }
 
     private static void destroyGL(){

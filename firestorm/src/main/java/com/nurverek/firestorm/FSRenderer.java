@@ -231,6 +231,7 @@ public final class FSRenderer{
 
 
     protected static void swapBuffers(){
+        FSControl.timeFrameEnded();
         FSControl.swapBuffers();
 
         int size = passes.size();
@@ -239,7 +240,7 @@ public final class FSRenderer{
             passes.get(i).noitifyPostFrameSwap();
         }
 
-        FSControl.timeFrameEnded();
+        FSControl.timeBufferSwapped();
     }
 
     protected static boolean needsSwap(){
