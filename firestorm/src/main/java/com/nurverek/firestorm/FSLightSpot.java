@@ -52,6 +52,16 @@ public class FSLightSpot extends FSLight {
         }, 0));
     }
 
+    public void updateDirection(){
+        float[] dir = direction().provider();
+        float[] pos = position().provider();
+        float[] cent = center().provider();
+
+        dir[0] = cent[0] - pos[0];
+        dir[1] = cent[1] - pos[1];
+        dir[2] = cent[2] - pos[2];
+    }
+
     @Override
     public VLArrayFloat position(){
         return position;
