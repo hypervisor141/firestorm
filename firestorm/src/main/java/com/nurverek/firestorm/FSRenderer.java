@@ -15,8 +15,9 @@ import java.util.NoSuchElementException;
 
 public final class FSRenderer{
 
-    protected static RenderThread RENDERTHREAD;
     public final static Object RENDERLOCK = new Object();
+    private final static String THREAD_NAME = "FireStormThread";
+    protected static RenderThread RENDERTHREAD;
 
     private static ArrayList<FSRenderPass> passes;
     private static ArrayList<VLThreadHost> threadhosts;
@@ -49,7 +50,7 @@ public final class FSRenderer{
     protected static void startRenderer(){
         RENDERTHREAD = new RenderThread();
         RENDERTHREAD.setPriority(Thread.MAX_PRIORITY);
-        RENDERTHREAD.setName("FireStormThread");
+        RENDERTHREAD.setName(THREAD_NAME);
         RENDERTHREAD.initialize();
     }
 
