@@ -340,7 +340,7 @@ public final class FSControl {
         AVERAGE_PROCESS_TIME = (AVERAGE_PROCESS_TIME + now - FRAME_TIME) / 2;
 
         if(tracker / 1000F >= 1){
-            Log.d(LOGTAG, "FPS[" + FPS + "] time[" + (tracker / 1000f) + "sec] totalFrames[" + TOTAL_FRAMES + "] averageProcessingTime[" + AVERAGE_SWAPPED_TIME + "ms] averageFullFrameTime[" + AVERAGE_PROCESS_TIME + "]");
+            Log.d(LOGTAG, "FPS[" + FPS + "] time[" + (tracker / 1000f) + "sec] totalFrames[" + TOTAL_FRAMES + "] averageProcessingTime[" + AVERAGE_SWAPPED_TIME + "ms] averageFullFrameTime[" + AVERAGE_PROCESS_TIME + "ms]");
 
             FRAME_SECOND_TRACKER = now;
             FPS = 0;
