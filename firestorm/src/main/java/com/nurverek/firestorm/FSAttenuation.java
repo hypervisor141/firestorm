@@ -76,6 +76,7 @@ public abstract class FSAttenuation extends FSConfigSequence{
         protected VLFloat radius;
 
         public Radius(VLFloat radius){
+            this.radius = radius;
             update(new VLListType<>(new FSConfig[]{ new FSP.Uniform1f(radius) }, 0));
         }
 
