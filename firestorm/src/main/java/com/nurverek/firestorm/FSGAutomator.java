@@ -116,17 +116,19 @@ public final class FSGAutomator{
                             found = true;
                         }
 
-                        FSInstance instance1 = mesh.first();
-                        FSInstance instance2 = mesh.instance(mesh.size() - 1);
+                        if(found && mesh.size() > 1){
+                            FSInstance instance1 = mesh.first();
+                            FSInstance instance2 = mesh.instance(mesh.size() - 1);
 
-                        if(found && mesh.size() > 1 && instance1.positions().size() != instance2.positions().size()){
-                            VLDebug.printD();
-                            VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1 position size[");
-                            VLDebug.append(instance1.positions().size());
-                            VLDebug.append("] instance2 position size[");
-                            VLDebug.append(instance2.positions().size());
-                            VLDebug.append("]");
-                            VLDebug.printE();
+                            if(instance1.positions().size() != instance2.positions().size()){
+                                VLDebug.printD();
+                                VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1 position size[");
+                                VLDebug.append(instance1.positions().size());
+                                VLDebug.append("] instance2 position size[");
+                                VLDebug.append(instance2.positions().size());
+                                VLDebug.append("]");
+                                VLDebug.printE();
+                            }
                         }
 
                     }catch(Exception ex){
