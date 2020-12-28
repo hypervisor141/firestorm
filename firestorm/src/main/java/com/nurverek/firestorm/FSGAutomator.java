@@ -122,9 +122,9 @@ public final class FSGAutomator{
 
                             if(instance1.positions().size() != instance2.positions().size()){
                                 VLDebug.printD();
-                                VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1 position size[");
+                                VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1_Vertex_Size[");
                                 VLDebug.append(instance1.positions().size());
-                                VLDebug.append("] instance2 position size[");
+                                VLDebug.append("] Instance2_Vertex_Size[");
                                 VLDebug.append(instance2.positions().size());
                                 VLDebug.append("]");
                                 VLDebug.printE();
