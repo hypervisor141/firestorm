@@ -17,6 +17,10 @@ public final class FSViewConfig{
     protected VLArrayFloat eyepos;
     protected VLArrayInt viewport;
 
+    protected VLArrayFloat viewmatsettings;
+    protected VLArrayFloat perspectivesettings;
+    protected VLArrayFloat orthographicsettings;
+
     public FSViewConfig(){
         projectionmat = null;
 
@@ -25,14 +29,15 @@ public final class FSViewConfig{
         viewmat = new VLArrayFloat(new float[16]);
         viewprojectionmat = new VLArrayFloat(new float[16]);
 
+        viewmatsettings = new VLArrayFloat(new float[9]);
+        perspectivesettings = new VLArrayFloat(new float[4]);
+        orthographicsettings = new VLArrayFloat(new float[6]);
+
         viewport = new VLArrayInt(new int[4]);
         eyepos = new VLArrayFloat(new float[4]);
 
         setPerspectiveMode();
     }
-
-
-
 
     public void viewPort(int x, int y, int width, int height){
         int[] viewport = this.viewport.provider();
@@ -68,14 +73,42 @@ public final class FSViewConfig{
     public void lookAt(float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
         float[] eyepos = this.eyepos.provider();
         Matrix.setLookAtM(viewmat.provider(), 0, eyepos[0], eyepos[1], eyepos[2], centerX, centerY, centerZ, upX, upY, upZ);
+
+        float[] settings = viewmatsettings.provider();
+
+        settings[0] = eyepos[0];
+        settings[1] = eyepos[1];
+        settings[2] = eyepos[2];
+        settings[3] = centerX;
+        settings[4] = centerY;
+        settings[5] = centerZ;
+        settings[6] = upX;
+        settings[7] = upY;
+        settings[8] = upZ;
     }
 
     public void perspective(float fovy, float aspect, float znear, float zfar){
         Matrix.perspectiveM(perspectivemat.provider(), 0, fovy, aspect, znear, zfar);
+
+        float[] settings = perspectivesettings.provider();
+
+        settings[0] = fovy;
+        settings[1] = aspect;
+        settings[2] = znear;
+        settings[3] = zfar;
     }
 
     public void orthographic(float left, float right, float bottom, float top, float znear, float zfar){
         Matrix.orthoM(orthographicmat.provider(), 0, left, right, bottom, top, znear, zfar);
+
+        float[] settings = perspectivesettings.provider();
+
+        settings[0] = left;
+        settings[1] = right;
+        settings[2] = bottom;
+        settings[3] = top;
+        settings[4] = znear;
+        settings[5] = zfar;
     }
 
     public void updateViewPort(){
@@ -145,6 +178,18 @@ public final class FSViewConfig{
 
     public VLArrayInt viewPort(){
         return viewport;
+    }
+
+    public VLArrayFloat viewMatrixSettings(){
+        return viewmatsettings;
+    }
+
+    public VLArrayFloat perspectiveSettings(){
+        return perspectivesettings;
+    }
+
+    public VLArrayFloat orhtographicsSettings(){
+        return orthographicsettings;
     }
 
     public int viewPortX(){
