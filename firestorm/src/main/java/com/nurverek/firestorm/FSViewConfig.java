@@ -55,6 +55,11 @@ public final class FSViewConfig{
         eyepos[1] = eyeY;
         eyepos[2] = eyeZ;
         eyepos[3] = 1;
+
+        float[] settings = viewmatsettings.provider();
+        settings[0] = eyepos[0];
+        settings[1] = eyepos[1];
+        settings[2] = eyepos[2];
     }
 
     public void eyePositionResetW(){
@@ -68,6 +73,11 @@ public final class FSViewConfig{
         eyepos[0] /= w;
         eyepos[1] /= w;
         eyepos[2] /= w;
+
+        float[] settings = viewmatsettings.provider();
+        settings[0] = eyepos[0];
+        settings[1] = eyepos[1];
+        settings[2] = eyepos[2];
     }
 
     public void lookAt(float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
@@ -85,6 +95,11 @@ public final class FSViewConfig{
         settings[6] = upX;
         settings[7] = upY;
         settings[8] = upZ;
+    }
+
+    public void lookAtUpdate(){
+        float[] settings = viewmatsettings.provider();
+        Matrix.setLookAtM(viewmat.provider(), 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5], settings[6], settings[7], settings[8]);
     }
 
     public void perspective(float fovy, float aspect, float znear, float zfar){
