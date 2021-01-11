@@ -56,7 +56,13 @@ public final class FSViewConfig{
         eyepos[2] = eyeZ;
         eyepos[3] = 1;
 
+        eyePositionUpdate();
+    }
+
+    public void eyePositionUpdate(){
+        float[] eyepos = this.eyepos.provider();
         float[] settings = viewmatsettings.provider();
+
         settings[0] = eyepos[0];
         settings[1] = eyepos[1];
         settings[2] = eyepos[2];
@@ -74,10 +80,7 @@ public final class FSViewConfig{
         eyepos[1] /= w;
         eyepos[2] /= w;
 
-        float[] settings = viewmatsettings.provider();
-        settings[0] = eyepos[0];
-        settings[1] = eyepos[1];
-        settings[2] = eyepos[2];
+        eyePositionUpdate();
     }
 
     public void lookAt(float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
