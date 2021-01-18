@@ -29,6 +29,10 @@ public class FSInstance{
         buffers = new FSBufferTracker();
     }
 
+    public FSInstance(FSInstance src){
+        copy(src);
+    }
+
     public void modelMatrix(FSMatrixModel set){
         modelmatrix = set;
     }
@@ -122,6 +126,15 @@ public class FSInstance{
         return mesh.indices;
     }
 
+    public void copy(FSInstance src){
+        id = FSControl.getNextID();
+
+        data = new Data(src.data);
+        states = new States(src.states);
+        schematics = new FSSchematics(this, src.schematics);
+        buffers = new FSBufferTracker();
+    }
+
 
     public static final class Data{
 
@@ -133,6 +146,9 @@ public class FSInstance{
             elements = new VLArrayFloat[DEFAULT_SIZE];
         }
 
+        public Data(Data src){
+            copy(src);
+        }
 
         public void element(int element, VLArrayFloat array){
             elements[element] = array;
@@ -180,6 +196,21 @@ public class FSInstance{
         }
 
         public VLArrayFloat normals(){ return elements[FSG.ELEMENT_NORMAL]; }
+
+        public void copy(Data src){
+            elements = new VLArrayFloat[DEFAULT_SIZE];
+
+            VLArrayFloat array;
+
+            for(int i = 0; i < elements.length; i++){
+                array = src.elements[i];
+
+                if(array != null){
+                    elements[i] = new VLArrayFloat(array.provider().clone());
+                }
+            }
+        }
+
     }
 
     public final class States{
@@ -191,9 +222,23 @@ public class FSInstance{
             activeindex = 0;
         }
 
+        protected States(States src){
+            initialize(src);
+        }
 
         public void initialize(int initialsize, int resizer){
             vault = new VLListType<>(initialsize, resizer);
+        }
+
+        public void initialize(States src){
+            activeindex = src.activeindex;
+
+            int size = src.vault.size();
+            vault = new VLListType<>(size, src.vault.resizerCount());
+
+            for(int i = 0; i < size; i++){
+                vault.add(new Data(src.vault.get(i)));
+            }
         }
 
         public int currentActiveIndex(){

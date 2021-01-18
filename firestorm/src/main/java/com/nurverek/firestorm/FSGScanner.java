@@ -138,7 +138,6 @@ public abstract class FSGScanner{
 
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
-
                 blueprint.preAssemblyAdjustment(mesh, instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
@@ -151,6 +150,47 @@ public abstract class FSGScanner{
 
                 }else{
                     assembler.buildRest(instance, this, fsm);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public static class InstancedCopy extends FSGScanner{
+
+        private int copycount;
+
+        public InstancedCopy(FSGBluePrint blueprint, FSGAssembler assembler, String prefixname, int drawmode, int copycount){
+            super(blueprint, assembler, prefixname);
+
+            this.copycount = copycount;
+            mesh.initialize(drawmode, copycount, 0);
+        }
+
+        @Override
+        protected boolean scan(FSGAutomator automator, FSM.Data fsm){
+            if(fsm.name.contains(name)){
+                mesh.name(name);
+
+                FSInstance instance = new FSInstance();
+                mesh.addInstance(instance);
+
+                blueprint.preAssemblyAdjustment(mesh, instance);
+
+                if(assembler.LOAD_INDICES && mesh.indices == null){
+                    mesh.indices(new VLArrayShort(fsm.indices.array()));
+                    assembler.buildFirst(instance, this, fsm);
+
+                    for(int i = 0; i < copycount; i++){
+                        mesh.addInstance(new FSInstance(instance));
+                    }
+
+                    if(assembler.SYNC_INDICES_AND_BUFFER){
+                        assembler.buffersteps[FSG.ELEMENT_INDEX] = FSGAssembler.BUFFER_SYNC;
+                    }
                 }
 
                 return true;

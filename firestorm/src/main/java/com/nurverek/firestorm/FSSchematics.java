@@ -57,7 +57,7 @@ public final class FSSchematics extends VLSyncable{
         inputbounds = new VLListType<>(0, 1);
     }
 
-    public FSSchematics(FSInstance instance, FSSchematics src){
+    public FSSchematics(FSInstance owner, FSSchematics src){
         this.instance = instance;
 
         mainbounds = new VLListType<>(0, 1);
@@ -74,7 +74,6 @@ public final class FSSchematics extends VLSyncable{
         modelupdater = src.modelupdater;
         mvpupdater = src.mvpupdater;
     }
-
 
     public void initialize(){
         bounds = new float[FSG.UNIT_SIZE_POSITION * 2];
