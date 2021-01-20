@@ -6,12 +6,6 @@ import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLVManager;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteOrder;
-
 public abstract class FSG{
 
     public static final int ELEMENT_BYTES_MODEL = Float.SIZE / 8;
@@ -59,8 +53,6 @@ public abstract class FSG{
 
     private VLListType<VLListType<FSP>> programsets;
     private VLVManager vmanager;
-
-    private FSGAutomator automator;
     private FSBufferManager buffermanager;
 
     private long id;
@@ -116,25 +108,6 @@ public abstract class FSG{
         }
     }
 
-    public void constructAutomator(FSM fsm, int capacity){
-        automator = new FSGAutomator(this, fsm, capacity);
-    }
-
-    public void constructAutomator(InputStream is, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
-        FSM data = new FSM();
-        data.loadFromFile(is, order, fullsizedposition, estimatedsize);
-
-        automator = new FSGAutomator(this, data, estimatedsize);
-    }
-
-    public void constructAutomator(String path, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws FileNotFoundException, SecurityException, IOException{
-        constructAutomator(new FileInputStream(path), order, fullsizedposition, estimatedsize);
-    }
-
-    public void releaseAutomator(){
-        automator = null;
-    }
-
     public void touchable(boolean t){
         touchable = t;
     }
@@ -153,10 +126,6 @@ public abstract class FSG{
 
     public VLVManager vManager(){
         return vmanager;
-    }
-
-    public FSGAutomator automator(){
-        return automator;
     }
 
     public long id(){
@@ -191,7 +160,6 @@ public abstract class FSG{
         programsets = null;
         buffermanager = null;
         vmanager = null;
-        automator = null;
 
         touchable = false;
         id = -1;

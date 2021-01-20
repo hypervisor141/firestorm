@@ -1,20 +1,32 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLDebug;
+import com.nurverek.vanguard.VLList;
 import com.nurverek.vanguard.VLListType;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteOrder;
 
 public final class FSGAutomator{
 
     private final FSG gen;
 
-    protected FSM fsm;
+    protected VLListType<FSM> files;
     protected VLListType<Entry> entries;
 
-    protected FSGAutomator(FSG gen, FSM fsm, int capacity){
+    protected FSGAutomator(FSG gen, int filecapacity, int scancapacity){
         this.gen = gen;
-        this.fsm = fsm;
 
-        entries = new VLListType<>(capacity, capacity);
+        files = new VLListType<>(filecapacity, filecapacity);
+        entries = new VLListType<>(scancapacity, scancapacity);
+    }
+
+    public void add(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
+        FSM data = new FSM();
+        data.loadFromFile(src, order, fullsizedposition, estimatedsize);
+
+        files.add(data);
     }
 
     public FSMesh register(FSGBluePrint blueprint, String name){
@@ -63,11 +75,7 @@ public final class FSGAutomator{
     }
 
     private void build(int debug){
-        VLListType<FSM.Data> data = fsm.data;
-        FSM.Data d;
-
-        int size = data.size();
-        int size2 = entries.size();
+        int entrysize = entries.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
@@ -77,7 +85,7 @@ public final class FSGAutomator{
 
             VLDebug.printDirect("[Assembler Check Stage]\n");
 
-            for(int i = 0; i < size2; i++){
+            for(int i = 0; i < entrysize; i++){
                 s = entries.get(i).scanner;
 
                 if(s.assembler.checkDebug()){
@@ -93,57 +101,67 @@ public final class FSGAutomator{
             VLDebug.printDirect("[DONE]\n");
             VLDebug.printDirect("[Build Stage]\n");
 
+            int filesize = files.size();
+
             FSMesh mesh;
+            FSM.Data d;
+            VLListType<FSM.Data> data;
+            int datasize;
 
-            for(int i = 0; i < size; i++){
-                d = data.get(i);
+            for(int i = 0; i < filesize; i++){
+                data = files.get(i).data;
+                datasize = data.size();
 
-                for(int i2 = 0; i2 < size2; i2++){
-                    s = entries.get(i2).scanner;
-                    mesh = s.mesh;
-                    found = false;
+                for(int i2 = 0; i2 < datasize; i2++){
+                    d = data.get(i2);
 
-                    try{
-                        if(s.scan(this, d) && debug >= FSControl.DEBUG_FULL){
-                            VLDebug.append("Built[");
-                            VLDebug.append(i);
-                            VLDebug.append("] keyword[");
-                            VLDebug.append(s.name);
-                            VLDebug.append("] name[");
-                            VLDebug.append(d.name);
-                            VLDebug.append("] ");
+                    for(int i3 = 0; i3 < entrysize; i3++){
+                        s = entries.get(i3).scanner;
+                        mesh = s.mesh;
+                        found = false;
 
-                            found = true;
-                        }
+                        try{
+                            if(s.scan(this, d) && debug >= FSControl.DEBUG_FULL){
+                                VLDebug.append("Built[");
+                                VLDebug.append(i2);
+                                VLDebug.append("] keyword[");
+                                VLDebug.append(s.name);
+                                VLDebug.append("] name[");
+                                VLDebug.append(d.name);
+                                VLDebug.append("] ");
 
-                        if(found && mesh.size() > 1){
-                            FSInstance instance1 = mesh.first();
-                            FSInstance instance2 = mesh.instance(mesh.size() - 1);
-
-                            if(instance1.positions().size() != instance2.positions().size()){
-                                VLDebug.printD();
-                                VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1_Vertex_Size[");
-                                VLDebug.append(instance1.positions().size());
-                                VLDebug.append("] Instance2_Vertex_Size[");
-                                VLDebug.append(instance2.positions().size());
-                                VLDebug.append("]");
-                                VLDebug.printE();
+                                found = true;
                             }
+
+                            if(found && mesh.size() > 1){
+                                FSInstance instance1 = mesh.first();
+                                FSInstance instance2 = mesh.instance(mesh.size() - 1);
+
+                                if(instance1.positions().size() != instance2.positions().size()){
+                                    VLDebug.printD();
+                                    VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1_Vertex_Size[");
+                                    VLDebug.append(instance1.positions().size());
+                                    VLDebug.append("] Instance2_Vertex_Size[");
+                                    VLDebug.append(instance2.positions().size());
+                                    VLDebug.append("]");
+                                    VLDebug.printE();
+                                }
+                            }
+
+                        }catch(Exception ex){
+                            VLDebug.append("Error building \"");
+                            VLDebug.append(s.name);
+                            VLDebug.append("\"\n[Assembler Configuration]\n");
+
+                            s.assembler.stringify(VLDebug.get(), null);
+                            VLDebug.printE();
+
+                            throw new RuntimeException(ex);
                         }
 
-                    }catch(Exception ex){
-                        VLDebug.append("Error building \"");
-                        VLDebug.append(s.name);
-                        VLDebug.append("\"\n[Assembler Configuration]\n");
-
-                        s.assembler.stringify(VLDebug.get(), null);
-                        VLDebug.printE();
-
-                        throw new RuntimeException(ex);
-                    }
-
-                    if(found){
-                        VLDebug.printD();
+                        if(found){
+                            VLDebug.printD();
+                        }
                     }
                 }
             }
@@ -152,7 +170,7 @@ public final class FSGAutomator{
             VLDebug.printD();
             VLDebug.printDirect("[Checking Scan Results]\n");
 
-            for(int i = 0; i < size2; i++){
+            for(int i = 0; i < entrysize; i++){
                 s = entries.get(i).scanner;
 
                 if(s.mesh.size() == 0){
@@ -172,11 +190,23 @@ public final class FSGAutomator{
             VLDebug.printD();
 
         }else{
-            for(int i = 0; i < size; i++){
-                d = data.get(i);
+            int filesize = files.size();
 
-                for(int i2 = 0; i2 < size2; i2++){
-                    entries.get(i2).scanner.scan(this, d);
+            FSMesh mesh;
+            FSM.Data d;
+            VLListType<FSM.Data> data;
+            int datasize;
+
+            for(int i = 0; i < filesize; i++){
+                data = files.get(i).data;
+                datasize = data.size();
+
+                for(int i2 = 0; i2 < datasize; i2++){
+                    d = data.get(i2);
+
+                    for(int i3 = 0; i3 < entrysize; i3++){
+                        entries.get(i3).scanner.scan(this, d);
+                    }
                 }
             }
         }
