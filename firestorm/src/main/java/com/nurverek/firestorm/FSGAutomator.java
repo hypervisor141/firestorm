@@ -15,7 +15,7 @@ public final class FSGAutomator{
     protected VLListType<FSM> files;
     protected VLListType<Entry> entries;
 
-    protected FSGAutomator(FSG gen, int filecapacity, int scancapacity){
+    public FSGAutomator(FSG gen, int filecapacity, int scancapacity){
         this.gen = gen;
 
         files = new VLListType<>(filecapacity, filecapacity);
