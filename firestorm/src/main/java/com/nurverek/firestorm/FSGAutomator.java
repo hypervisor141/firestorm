@@ -1,7 +1,6 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLList;
 import com.nurverek.vanguard.VLListType;
 
 import java.io.IOException;
