@@ -191,14 +191,16 @@ public final class FSInput{
     }
 
     protected static void destroy(){
-        LISTENRER_TOUCH = null;
-        LISTENRER_DOWN = null;
-        LISTENRER_SINGLETAP = null;
-        LISTENRER_LONGPRESS = null;
-        LISTENRER_SHOWPRESS = null;
-        LISTENRER_SCROLL = null;
-        LISTENRER_FLING = null;
-        LISTENER_MAIN = null;
+        if(!FSControl.getKeepAlive()){
+            LISTENRER_TOUCH = null;
+            LISTENRER_DOWN = null;
+            LISTENRER_SINGLETAP = null;
+            LISTENRER_LONGPRESS = null;
+            LISTENRER_SHOWPRESS = null;
+            LISTENRER_SCROLL = null;
+            LISTENRER_FLING = null;
+            LISTENER_MAIN = null;
+        }
     }
 
     public static class Entry{
