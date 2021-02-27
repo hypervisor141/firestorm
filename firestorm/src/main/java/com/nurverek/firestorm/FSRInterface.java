@@ -1,5 +1,6 @@
 package com.nurverek.firestorm;
 
-public class FSRInterface{
+public interface FSRInterface{
 
+    FSRThread create();
 }

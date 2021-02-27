@@ -14,12 +14,20 @@ import java.util.NoSuchElementException;
 
 public class FSR{
 
-    public final static Object RENDERLOCK = new Object();
+    public static final Object RENDERLOCK = new Object();
+    private static final FSRInterface DEFAULT_INTERFACE = new FSRInterface(){
+
+        @Override
+        public FSRThread create(){
+            return new FSRThread();
+        }
+    };
 
     private static ArrayList<FSRPass> passes;
     private static ArrayList<VLThreadHost> threadhosts;
     private static ArrayList<Runnable> tasks;
 
+    private static FSRInterface threadinterface;
     private static FSRThread renderthread;
 
     protected static boolean isInitialized;
@@ -32,8 +40,8 @@ public class FSR{
 
     protected static VLVManager CONTROLMANAGER = new VLVManager(1, 10);
 
-    protected static void initialize(FSRThread thread){
-        renderthread = thread;
+    protected static void initialize(FSRInterface threadsrc){
+        threadinterface = threadsrc;
 
         passes = new ArrayList<>();
         threadhosts = new ArrayList<>();
@@ -49,10 +57,15 @@ public class FSR{
     }
 
     protected static void initialize(){
-        initialize(new FSRThread());
+        initialize(DEFAULT_INTERFACE);
+    }
+
+    public static void setFSRThreadInterface(FSRInterface threadsrc){
+        threadinterface = threadsrc;
     }
 
     protected static void startRenderThread(){
+        renderthread = threadinterface.create();
         renderthread.setPriority(Thread.MAX_PRIORITY);
         renderthread.initialize();
     }
