@@ -168,7 +168,7 @@ public final class FSSchematics extends VLSyncable{
 
     private void updateCentroid(){
         instance.data.model().transformPoint(centroidmodel, 0, centroid, 0);
-        FSControl.multiplyVP(centroidmvp, 0, centroidmodel, 0);
+        FSControl.getViewConfig().multiplyViewPerspective(centroidmvp, 0, centroidmodel, 0);
     }
 
     private void updateModels(){
@@ -179,8 +179,10 @@ public final class FSSchematics extends VLSyncable{
     }
 
     private void updateMVPs(){
-        FSControl.multiplyVP(boundsmvp, 0, boundsmodel, 0);
-        FSControl.multiplyVP(boundsmvp, 4, boundsmodel, 4);
+        FSViewConfig config = FSControl.getViewConfig();
+
+        config.multiplyViewPerspective(boundsmvp, 0, boundsmodel, 0);
+        config.multiplyViewPerspective(boundsmvp, 4, boundsmodel, 4);
     }
 
     public void checkCollision(FSInstance target, InstanceCollision results){
