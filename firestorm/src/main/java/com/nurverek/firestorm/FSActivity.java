@@ -1,6 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -9,18 +8,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-public abstract class FSActivity extends Activity implements View.OnClickListener, FSEvents {
+import androidx.appcompat.app.AppCompatActivity;
 
-    protected int WIDTH, HEIGHT, REALWIDTH, REALHEIGHT;
-    protected float DENSITY;
-    protected FSSurface SURFACE;
+public abstract class FSActivity extends AppCompatActivity implements View.OnClickListener, FSEvents{
 
     protected RelativeLayout BASE;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        initialize();
+        BASE = new RelativeLayout(this);
+
+        FSSurface surface = FSControl.initialize(this, this);
+        surface.setId(View.generateViewId());
+        surface.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        surface.setX(0);
+        surface.setY(0);
+
+        BASE.addView(surface, 0);
+
+        modifyUI(BASE);
+        setContentView(BASE);
 
         super.onCreate(savedInstanceState);
     }
@@ -28,40 +35,6 @@ public abstract class FSActivity extends Activity implements View.OnClickListene
     @Override
     public void onConfigurationChanged(Configuration newConfig){
         super.onConfigurationChanged(newConfig);
-    }
-
-    protected void initialize(){
-        DisplayMetrics metris = new DisplayMetrics();
-        Display display = getWindowManager().getDefaultDisplay();
-
-        display.getMetrics(metris);
-        WIDTH = metris.widthPixels;
-        HEIGHT = metris.heightPixels;
-
-        display.getRealMetrics(metris);
-        REALWIDTH = metris.widthPixels;
-        REALHEIGHT = metris.heightPixels;
-
-        DENSITY = getResources().getDisplayMetrics().density;
-
-        BASE = new RelativeLayout(this);
-        modifyUI(BASE);
-
-        FSControl.setMainDimensions(WIDTH, HEIGHT);
-        FSControl.setRealDimensions(REALWIDTH, REALHEIGHT);
-
-        createSurface();
-        setContentView(BASE);
-    }
-
-    private void createSurface(){
-        SURFACE = new FSSurface(this);
-        SURFACE.setId(View.generateViewId());
-        SURFACE.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        SURFACE.setX(0);
-        SURFACE.setY(0);
-
-        BASE.addView(SURFACE, 0);
     }
 
     protected abstract void modifyUI(RelativeLayout base);
@@ -72,17 +45,8 @@ public abstract class FSActivity extends Activity implements View.OnClickListene
 
     protected void destroy(){
         BASE.removeAllViews();
-
         BASE = null;
-        SURFACE = null;
-
-        WIDTH = 0;
-        HEIGHT = 0;
-        DENSITY = 0;
     }
-
-
-
 
     @Override
     public void GLPreSurfaceCreate(boolean continuing){
@@ -152,40 +116,5 @@ public abstract class FSActivity extends Activity implements View.OnClickListene
     @Override
     public void GLPostAdvancement(long changes){
 
-    }
-
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-    }
-
-    @Override
-    public void onClick(View v){
-
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
     }
 }
