@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-public interface FSEvents {
+public interface FSEvents{
 
     void GLPreSurfaceCreate(boolean continuing);
     void GLPostSurfaceCreate(boolean continuing);
