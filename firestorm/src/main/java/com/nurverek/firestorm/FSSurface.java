@@ -17,6 +17,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
     private Choreographer choreographer;
     private Config config;
     private FSEvents events;
+    private Activity act;
 
     private boolean destroyed;
 
@@ -24,6 +25,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
         super(act.getApplicationContext());
 
         this.events = events;
+
         destroyed = false;
 
         gesture = new GestureDetectorCompat(act, this);

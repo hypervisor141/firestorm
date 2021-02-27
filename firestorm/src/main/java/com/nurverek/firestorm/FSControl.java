@@ -14,12 +14,13 @@ public final class FSControl{
     public static final int DEBUG_FULL = 2;
 
     protected static FSSurface surface;
+    protected static Activity activity;
     protected static FSViewConfig viewconfig;
 
     protected static boolean keepalive;
     protected static float[] clearcolor;
 
-    public static FSSurface initialize(FSSurface surface){
+    public static FSSurface initialize(Activity act, FSSurface surface){
         VLDebug.tag(LOGTAG);
 
         keepalive = false;
@@ -28,6 +29,7 @@ public final class FSControl{
         viewconfig = new FSViewConfig();
 
         FSControl.surface = surface;
+        FSControl.activity = act;
 
         FSInput.initialize();
         FSRenderControl.initialize();
@@ -37,7 +39,7 @@ public final class FSControl{
     }
 
     public static FSSurface initialize(Activity act, FSEvents events){
-        return initialize(new FSSurface(act, events));
+        return initialize(act, new FSSurface(act, events));
     }
 
     public static void setKeepAlive(boolean enabled){
@@ -55,12 +57,16 @@ public final class FSControl{
         return keepalive;
     }
 
-    public static FSSurface getSurface(){
-        return surface;
+    public static Activity getActivity(){
+        return activity;
     }
 
     public static Context getContext(){
         return surface.getContext();
+    }
+    
+    public static FSSurface getSurface(){
+        return surface;
     }
 
     public static FSViewConfig getViewConfig(){
