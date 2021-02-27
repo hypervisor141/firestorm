@@ -27,7 +27,7 @@ public class FSMesh extends VLSyncable{
         this.drawmode = drawmode;
 
         instances = new VLListType<>(capacity, resizer);
-        id = FSControl.getNextID();
+        id = FSRenderControl.getNextID();
     }
 
     public void initLinks(VLListType<FSLinkType> links){
