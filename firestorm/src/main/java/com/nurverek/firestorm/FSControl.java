@@ -64,7 +64,7 @@ public final class FSControl{
     public static Context getContext(){
         return surface.getContext();
     }
-    
+
     public static FSSurface getSurface(){
         return surface;
     }
@@ -85,6 +85,7 @@ public final class FSControl{
         FSRenderControl.destroy();
 
         if(!keepalive){
+            activity = null;
             viewconfig = null;
             surface = null;
             clearcolor = null;
