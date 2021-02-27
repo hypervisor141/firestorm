@@ -1,5 +1,6 @@
 package com.nurverek.firestorm;
 
+import android.app.Activity;
 import android.opengl.GLES32;
 
 import com.nurverek.vanguard.VLArrayFloat;
@@ -70,7 +71,7 @@ public abstract class FSG{
         addProgramSets(programsetsize);
     }
 
-    public abstract void assemble(FSActivity act);
+    public abstract void assemble(Activity act);
 
     protected abstract void update(int passindex, int programsetindex);
 
