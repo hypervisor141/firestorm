@@ -1,0 +1,137 @@
+package com.nurverek.firestorm;
+
+import android.os.Looper;
+
+import java.util.ArrayList;
+
+public final class FSRenderThread extends Thread{
+
+    protected static final int CREATE_GL_CONTEXT = 7435;
+    protected static final int SURFACE_CREATED = 7436;
+    protected static final int SURFACE_CHANGED = 7437;
+    protected static final int DRAW_FRAME = 7438;
+
+    private Object lock;
+    private boolean ready;
+
+    private volatile boolean running;
+
+    private ArrayList<Integer> orders;
+    private ArrayList<Object> data;
+
+    public FSRenderThread(){
+        orders = new ArrayList<>();
+        data = new ArrayList<>();
+
+        lock = new Object();
+        running = false;
+    }
+
+    @Override
+    public void run(){
+        Looper.prepare();
+
+        synchronized(lock){
+            ready = true;
+            lock.notify();
+        }
+
+        ArrayList<Object> data = new ArrayList<>();
+        ArrayList<Integer> orders = new ArrayList<>();
+
+        while(running){
+            synchronized(lock){
+                while(this.orders.isEmpty() && running){
+                    try{
+                        lock.wait();
+                    }catch(InterruptedException ex){
+                        ex.printStackTrace();
+                    }
+                }
+
+                orders.addAll(this.orders);
+                data.addAll(this.data);
+
+                this.orders.clear();
+                this.data.clear();
+            }
+
+            int size = orders.size();
+
+            for(int i = 0; i < size; i++){
+                int o = orders.get(i);
+                Object d = data.get(i);
+
+                if(o == CREATE_GL_CONTEXT){
+                    FSEGL.initialize(FSControl.getSurface().getHolder(), (boolean)d);
+
+                }else if(o == SURFACE_CREATED){
+                    FSRenderer.onSurfaceCreated((boolean)d);
+
+                }else if(o == SURFACE_CHANGED){
+                    int[] a = (int[])d;
+                    FSRenderer.onSurfaceChanged(a[0], a[1]);
+
+                }else if(o == DRAW_FRAME){
+                    FSRenderer.onDrawFrame();
+                }
+            }
+
+            orders.clear();
+            data.clear();
+        }
+
+        synchronized(lock){
+            ready = false;
+        }
+    }
+
+    protected void initialize(){
+        synchronized(lock){
+            running = true;
+            start();
+
+            while(!ready){
+                try{
+                    lock.wait();
+                }catch(InterruptedException ex){
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public boolean running(){
+        return running;
+    }
+
+    public Object lock(){
+        return lock;
+    }
+
+    public FSRenderThread task(int code, Object d){
+        synchronized(lock){
+            orders.add(code);
+            data.add(d);
+
+            lock.notify();
+        }
+
+        return this;
+    }
+
+    protected FSRenderThread shutdown(){
+        synchronized(lock){
+            running = false;
+            lock.notify();
+        }
+
+        try{
+            join();
+        }catch(InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        return this;
+    }
+}
