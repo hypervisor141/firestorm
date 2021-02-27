@@ -32,8 +32,8 @@ public final class FSControl{
         FSControl.activity = act;
 
         FSInput.initialize();
-        FSRenderControl.initialize();
-        FSRenderer.initialize();
+        FSRControl.initialize();
+        FSR.initialize();
 
         return FSControl.surface;
     }
@@ -78,11 +78,11 @@ public final class FSControl{
     }
 
     protected static void destroy(){
-        FSRenderer.destroy();
+        FSR.destroy();
         FSDimensions.destroy();
         FSEGL.destroy();
         FSInput.destroy();
-        FSRenderControl.destroy();
+        FSRControl.destroy();
 
         if(!keepalive){
             activity = null;

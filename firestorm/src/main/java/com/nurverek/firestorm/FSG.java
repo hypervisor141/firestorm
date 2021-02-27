@@ -61,7 +61,7 @@ public abstract class FSG{
     public FSG(int programsetsize, int buffercapacity, int bufferresizer){
         touchable = true;
 
-        id = FSRenderControl.getNextID();
+        id = FSRControl.getNextID();
         buffermanager = new FSBufferManager(buffercapacity, bufferresizer);
 
         programsets = new VLListType<>(5, 20);

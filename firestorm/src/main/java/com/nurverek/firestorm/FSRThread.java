@@ -4,7 +4,7 @@ import android.os.Looper;
 
 import java.util.ArrayList;
 
-public final class FSRenderThread extends Thread{
+public final class FSRThread extends Thread{
 
     protected static final int CREATE_GL_CONTEXT = 7435;
     protected static final int SURFACE_CREATED = 7436;
@@ -19,7 +19,7 @@ public final class FSRenderThread extends Thread{
     private ArrayList<Integer> orders;
     private ArrayList<Object> data;
 
-    public FSRenderThread(){
+    public FSRThread(){
         orders = new ArrayList<>();
         data = new ArrayList<>();
 
@@ -66,14 +66,14 @@ public final class FSRenderThread extends Thread{
                     FSEGL.initialize(FSControl.getSurface().getHolder(), (boolean)d);
 
                 }else if(o == SURFACE_CREATED){
-                    FSRenderer.onSurfaceCreated((boolean)d);
+                    FSR.onSurfaceCreated((boolean)d);
 
                 }else if(o == SURFACE_CHANGED){
                     int[] a = (int[])d;
-                    FSRenderer.onSurfaceChanged(a[0], a[1]);
+                    FSR.onSurfaceChanged(a[0], a[1]);
 
                 }else if(o == DRAW_FRAME){
-                    FSRenderer.onDrawFrame();
+                    FSR.onDrawFrame();
                 }
             }
 
@@ -109,7 +109,7 @@ public final class FSRenderThread extends Thread{
         return lock;
     }
 
-    public FSRenderThread task(int code, Object d){
+    public FSRThread task(int code, Object d){
         synchronized(lock){
             orders.add(code);
             data.add(d);
@@ -120,7 +120,7 @@ public final class FSRenderThread extends Thread{
         return this;
     }
 
-    protected FSRenderThread shutdown(){
+    protected FSRThread shutdown(){
         synchronized(lock){
             running = false;
             lock.notify();

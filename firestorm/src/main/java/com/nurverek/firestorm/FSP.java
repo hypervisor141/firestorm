@@ -902,7 +902,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSRenderer.depthMask(mask);
+            FSR.depthMask(mask);
         }
 
         @Override
@@ -935,7 +935,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSRenderer.cullFace(mode);
+            FSR.cullFace(mode);
         }
 
         @Override
@@ -1001,7 +1001,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSRenderer.readBuffer(mode);
+            FSR.readBuffer(mode);
         }
 
         @Override

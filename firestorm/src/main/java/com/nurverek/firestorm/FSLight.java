@@ -7,7 +7,7 @@ public abstract class FSLight extends FSConfigSequence{
     protected long id;
 
     public FSLight(){
-        id = FSRenderControl.getNextID();
+        id = FSRControl.getNextID();
     }
 
     public abstract String[] getStructMembers();

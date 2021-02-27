@@ -36,15 +36,15 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
 
     public void initialize(){
         destroy();
-        id = FSRenderer.createBuffers(1)[0];
+        id = FSR.createBuffers(1)[0];
     }
 
     public void bind(){
-        FSRenderer.vertexBufferBind(target, id);
+        FSR.vertexBufferBind(target, id);
     }
 
     public void unbind(){
-        FSRenderer.vertexBufferBind(target, 0);
+        FSR.vertexBufferBind(target, 0);
     }
 
     public void upload(){
@@ -52,7 +52,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
         bind();
 
         buffer.position(0);
-        FSRenderer.vertexBufferData(target, sizebytes, buffer.provider(), accessmode);
+        FSR.vertexBufferData(target, sizebytes, buffer.provider(), accessmode);
 
         needsupdate = false;
     }
@@ -62,7 +62,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
 
         int bytes = buffer.getTypeBytes();
         buffer.position(offset);
-        FSRenderer.vertexBufferSubData(target, offset * bytes, size * bytes, buffer.provider());
+        FSR.vertexBufferSubData(target, offset * bytes, size * bytes, buffer.provider());
 
         needsupdate = false;
     }
@@ -72,7 +72,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
         FSTools.checkGLError();
 
         buffer.position(0);
-        FSRenderer.vertexBufferSubData(target, 0, sizebytes, buffer.provider());
+        FSR.vertexBufferSubData(target, 0, sizebytes, buffer.provider());
 
         needsupdate = false;
     }
@@ -87,7 +87,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
         int bytes = buffer.getTypeBytes();
 
         bind();
-        buffer.initialize(FSRenderer.mapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT));
+        buffer.initialize(FSR.mapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT));
 
         needsupdate = false;
         mapped = true;
@@ -99,13 +99,13 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
 
     public void flushMap(int offset, int size){
         int bytes = buffer.getTypeBytes();
-        FSRenderer.flushMapBuffer(target, offset * bytes, size * bytes);
+        FSR.flushMapBuffer(target, offset * bytes, size * bytes);
 
         needsupdate = false;
     }
 
     public void flushMap(){
-        FSRenderer.flushMapBuffer(target, 0, sizeBytes());
+        FSR.flushMapBuffer(target, 0, sizeBytes());
         needsupdate = false;
     }
 
@@ -116,7 +116,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
     }
 
     public VLBuffer unMap(){
-        FSRenderer.unMapBuffer(target);
+        FSR.unMapBuffer(target);
 
         mapped = false;
         needsupdate = false;
@@ -125,7 +125,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
     }
 
     public void bindBufferBase(){
-        FSRenderer.vertexBufferBindBase(target, bindpoint, id);
+        FSR.vertexBufferBindBase(target, bindpoint, id);
     }
 
     public void bindPoint(int newbindpoint){
@@ -198,7 +198,7 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
 
     public void destroy(){
         if(id != -1){
-            FSRenderer.deleteVertexBuffers(new int[]{ id });
+            FSR.deleteVertexBuffers(new int[]{ id });
             id = -1;
         }
     }

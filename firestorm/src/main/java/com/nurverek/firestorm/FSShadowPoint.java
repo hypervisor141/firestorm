@@ -114,8 +114,8 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
         framebuffer.attachTexture(GLES32.GL_DEPTH_ATTACHMENT, texture.id(), 0);
         framebuffer.checkStatus();
 
-        FSRenderer.readBuffer(GLES32.GL_NONE);
-        FSRenderer.drawBuffers(0, DRAWBUFFERMODECACHE, 0);
+        FSR.readBuffer(GLES32.GL_NONE);
+        FSR.drawBuffers(0, DRAWBUFFERMODECACHE, 0);
 
         framebuffer.unbind();
 

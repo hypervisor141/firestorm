@@ -59,8 +59,8 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
         events.GLPreSurfaceCreate(resume);
 
-        FSRenderer.startRenderThread();
-        FSRenderer.getRenderThread().task(FSRenderThread.CREATE_GL_CONTEXT, resume).task(FSRenderThread.SURFACE_CREATED, resume);
+        FSR.startRenderThread();
+        FSR.getRenderThread().task(FSRThread.CREATE_GL_CONTEXT, resume).task(FSRThread.SURFACE_CREATED, resume);
 
         events.GLPostSurfaceCreate(resume);
         choreographer.postFrameCallback(this);
@@ -71,7 +71,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
         events.GLPreSurfaceChange(width, height);
 
-        FSRenderer.getRenderThread().task(FSRenderThread.SURFACE_CHANGED, new int[]{ width, height });
+        FSR.getRenderThread().task(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
 
         events.GLPostSurfaceChange(width, height);
     }
@@ -90,14 +90,14 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void doFrame(long frameTimeNanos){
-        FSRenderer.getRenderThread().task(FSRenderThread.DRAW_FRAME, null);
+        FSR.getRenderThread().task(FSRThread.DRAW_FRAME, null);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
         gesture.onTouchEvent(e);
 
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_TOUCH, e, null, -1, -1);
         }
 
@@ -106,7 +106,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public boolean onDown(MotionEvent e){
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_DOWN, e, null, -1, -1);
         }
 
@@ -115,7 +115,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public boolean onSingleTapUp(MotionEvent e){
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_SINGLETAP, e, null, -1, -1);
         }
 
@@ -124,14 +124,14 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void onLongPress(MotionEvent e){
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_LONGPRESS, e, null, -1, -1);
         }
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, final float distanceY){
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_SCROLL, e1, e2, distanceX, distanceY);
         }
 
@@ -140,7 +140,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY){
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_FLING, e1, e2, velocityX, velocityY);
         }
 
@@ -149,7 +149,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void onShowPress(MotionEvent e){
-        if(FSRenderer.isInitialized && config.getTouchable()){
+        if(FSR.isInitialized && config.getTouchable()){
             FSInput.checkInput(FSInput.TYPE_SHOWPRESS, e, null, -1, -1);
         }
     }

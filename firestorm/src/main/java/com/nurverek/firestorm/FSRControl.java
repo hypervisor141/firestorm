@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import android.util.Log;
 
-public class FSRenderControl{
+public class FSRControl{
 
     private static int EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = 5;
     private static long GLOBAL_ID = 1000;
@@ -26,13 +26,13 @@ public class FSRenderControl{
     }
 
     public static void setEfficientRenderMode(boolean enable){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             EFFICIENT_RENDER = enable;
         }
     }
 
     public static void setPerformanceMonitorMode(boolean enabled){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             PERFORMANCE_MONITOR = enabled;
         }
     }

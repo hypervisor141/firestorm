@@ -102,25 +102,25 @@ public final class FSInput{
             throw new RuntimeException("ProcessListener can't be null.");
         }
 
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             LISTENER_MAIN = listener;
         }
     }
 
     public static void add(Type type, Entry listener){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             type.get().add(listener);
         }
     }
 
     public static void remove(Type type, int index){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             type.get().remove(index);
         }
     }
 
     public static void removeAllMatching(Type type, long id){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             ArrayList<Entry> entries = type.get();
             int size = entries.size();
 
@@ -134,31 +134,31 @@ public final class FSInput{
     }
 
     public static Entry get(Type type, int index){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             return type.get().get(index);
         }
     }
 
     public static ArrayList<Entry> get(Type type){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             return type.get();
         }
     }
 
     public static int size(Type type){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             return type.get().size();
         }
     }
 
     public static void clear(Type type){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             type.get().clear();
         }
     }
 
     public static void checkInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        synchronized(FSRenderer.RENDERLOCK){
+        synchronized(FSR.RENDERLOCK){
             CURRENT_ME1 = e1;
             CURRENT_ME2 = e2;
             CURRENT_F1 = f1;

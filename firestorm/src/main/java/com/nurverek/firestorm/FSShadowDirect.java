@@ -87,8 +87,8 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         framebuffer.attachTexture2D(GLES32.GL_DEPTH_ATTACHMENT, texture.target().get(), texture.id(), 0);
         framebuffer.checkStatus();
 
-        FSRenderer.readBuffer(GLES32.GL_NONE);
-        FSRenderer.drawBuffers(0, DRAWBUFFERMODECACHE, 0);
+        FSR.readBuffer(GLES32.GL_NONE);
+        FSR.drawBuffers(0, DRAWBUFFERMODECACHE, 0);
 
         framebuffer.unbind();
 

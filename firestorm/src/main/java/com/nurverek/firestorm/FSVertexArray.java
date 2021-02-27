@@ -14,15 +14,15 @@ public final class FSVertexArray {
 
 
     public void create(){
-        id = FSRenderer.createVertexArrays(1)[0];
+        id = FSR.createVertexArrays(1)[0];
     }
 
     public void bind(){
-        FSRenderer.vertexArrayBind(id);
+        FSR.vertexArrayBind(id);
     }
 
     public void unbind(){
-        FSRenderer.vertexArrayBind(0);
+        FSR.vertexArrayBind(0);
     }
 
     public void setID(int s){

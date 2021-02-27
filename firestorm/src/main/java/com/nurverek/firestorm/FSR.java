@@ -12,15 +12,15 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-public class FSRenderer{
+public class FSR{
 
     public final static Object RENDERLOCK = new Object();
 
-    private static ArrayList<FSRenderPass> passes;
+    private static ArrayList<FSRPass> passes;
     private static ArrayList<VLThreadHost> threadhosts;
     private static ArrayList<Runnable> tasks;
 
-    private static FSRenderThread renderthread;
+    private static FSRThread renderthread;
 
     protected static boolean isInitialized;
 
@@ -32,7 +32,7 @@ public class FSRenderer{
 
     protected static VLVManager CONTROLMANAGER = new VLVManager(1, 10);
 
-    protected static void initialize(FSRenderThread thread){
+    protected static void initialize(FSRThread thread){
         renderthread = thread;
 
         passes = new ArrayList<>();
@@ -49,7 +49,7 @@ public class FSRenderer{
     }
 
     protected static void initialize(){
-        initialize(new FSRenderThread());
+        initialize(new FSRThread());
     }
 
     protected static void startRenderThread(){
@@ -119,7 +119,7 @@ public class FSRenderer{
         EXTERNAL_CHANGES = 0;
         INTERNAL_CHANGES = 0;
 
-        FSRenderControl.processFrameAndSignalNextFrame(changes);
+        FSRControl.processFrameAndSignalNextFrame(changes);
 
         events.GLPostAdvancement(changes);
     }
@@ -132,7 +132,7 @@ public class FSRenderer{
         INTERNAL_CHANGES += changes;
     }
 
-    public static void addRenderPass(FSRenderPass pass){
+    public static void addRenderPass(FSRPass pass){
         passes.add(pass);
     }
 
@@ -143,7 +143,7 @@ public class FSRenderer{
     public static void addTask(Runnable task){
         synchronized(tasks){
             tasks.add(task);
-            FSRenderControl.signalFrameRender(true);
+            FSRControl.signalFrameRender(true);
         }
     }
 
@@ -153,7 +153,7 @@ public class FSRenderer{
         }
     }
 
-    protected static FSRenderThread getRenderThread(){
+    protected static FSRThread getRenderThread(){
         return renderthread;
     }
 
@@ -161,7 +161,7 @@ public class FSRenderer{
         return CURRENT_RENDER_PASS_INDEX;
     }
 
-    public static FSRenderPass getRenderPass(int index){
+    public static FSRPass getRenderPass(int index){
         return passes.get(index);
     }
 
@@ -169,7 +169,7 @@ public class FSRenderer{
         return threadhosts.get(index);
     }
 
-    public static void removeRenderPass(FSRenderPass pass){
+    public static void removeRenderPass(FSRPass pass){
         int size = passes.size();
 
         for(int i = 0; i < size; i++){
@@ -179,7 +179,7 @@ public class FSRenderer{
         }
     }
 
-    public static FSRenderPass removeRenderPass(int index){
+    public static FSRPass removeRenderPass(int index){
         return passes.remove(index);
     }
 
@@ -212,7 +212,7 @@ public class FSRenderer{
     }
 
     protected static void finishFrame(){
-        FSRenderControl.timeFrameEnded();
+        FSRControl.timeFrameEnded();
         FSEGL.swapBuffers();
 
         int size = passes.size();
@@ -221,7 +221,7 @@ public class FSRenderer{
             passes.get(i).noitifyPostFrameSwap();
         }
 
-        FSRenderControl.timeBufferSwapped();
+        FSRControl.timeBufferSwapped();
     }
 
     protected static boolean needsSwap(){
