@@ -32,7 +32,7 @@ public final class FSRenderPass{
         update = true;
         draw = true;
         
-        id = FSControl.getNextID();
+        id = FSRenderControl.getNextID();
 
         this.debug = debug;
     }
@@ -42,12 +42,12 @@ public final class FSRenderPass{
 
     public void add(Entry e){
         entries.add(e);
-        FSControl.signalFrameRender(true);
+        FSRenderControl.signalFrameRender(true);
     }
 
     public void add(int index, Entry e){
         entries.add(index, e);
-        FSControl.signalFrameRender(true);
+        FSRenderControl.signalFrameRender(true);
     }
 
     public Entry get(int index){
@@ -159,7 +159,7 @@ public final class FSRenderPass{
 
             @Override
             public void execute(int orderindex, int passindex){
-                FSControl.timeFrameStarted();
+                FSRenderControl.timeFrameStarted();
             }
         });
         
@@ -285,7 +285,9 @@ public final class FSRenderPass{
     }
 
     public void update(){
-        FSControl.EVENTS.GLPreDraw();
+        FSEvents events = FSControl.getSurface().events();
+
+        events.GLPreDraw();
 
         Entry e;
 
@@ -308,11 +310,13 @@ public final class FSRenderPass{
             }
         }
 
-        FSControl.EVENTS.GLPostDraw();
+        events.GLPostDraw();
     }
 
     public void draw(){
-        FSControl.EVENTS.GLPreDraw();
+        FSEvents events = FSControl.getSurface().events();
+
+        events.GLPreDraw();
 
         Entry e;
 
@@ -335,7 +339,7 @@ public final class FSRenderPass{
             }
         }
 
-        FSControl.EVENTS.GLPostDraw();
+        events.GLPostDraw();
     }
 
     protected void noitifyPostFrameSwap(){
@@ -363,7 +367,7 @@ public final class FSRenderPass{
         update = src.update;
         draw = src.draw;
         
-        id = FSControl.getNextID();
+        id = FSRenderControl.getNextID();
 
         return this;
     }
