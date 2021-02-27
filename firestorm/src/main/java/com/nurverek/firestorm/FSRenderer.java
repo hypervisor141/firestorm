@@ -1,7 +1,6 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
-import android.os.Looper;
 
 import com.nurverek.vanguard.VLThreadHost;
 import com.nurverek.vanguard.VLVManager;
@@ -13,15 +12,15 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-public final class FSRenderer{
+public class FSRenderer{
 
     public final static Object RENDERLOCK = new Object();
-    private final static String THREAD_NAME = "FireStormThread";
-    protected static RenderThread RENDERTHREAD;
 
     private static ArrayList<FSRenderPass> passes;
     private static ArrayList<VLThreadHost> threadhosts;
     private static ArrayList<Runnable> tasks;
+
+    private static FSRenderThread renderthread;
 
     protected static boolean isInitialized;
 
@@ -33,7 +32,9 @@ public final class FSRenderer{
 
     protected static VLVManager CONTROLMANAGER = new VLVManager(1, 10);
 
-    public static void initialize(){
+    protected static void initialize(FSRenderThread thread){
+        renderthread = thread;
+
         passes = new ArrayList<>();
         threadhosts = new ArrayList<>();
         tasks = new ArrayList<>();
@@ -47,26 +48,30 @@ public final class FSRenderer{
         CURRENT_PROGRAM_SET_INDEX = 0;
     }
 
-    protected static void startRenderer(){
-        RENDERTHREAD = new RenderThread();
-        RENDERTHREAD.setPriority(Thread.MAX_PRIORITY);
-        RENDERTHREAD.setName(THREAD_NAME);
-        RENDERTHREAD.initialize();
+    protected static void initialize(){
+        initialize(new FSRenderThread());
     }
 
-    private static void onSurfaceCreated(boolean continuing){
-        FSControl.EVENTS.GLPreCreated(continuing);
-        FSControl.EVENTS.GLPostCreated(continuing);
+    protected static void startRenderThread(){
+        renderthread.setPriority(Thread.MAX_PRIORITY);
+        renderthread.initialize();
     }
 
-    private static void onSurfaceChanged(int width, int height){
-        FSControl.setContainerDimensions(width, height);
+    protected static void onSurfaceCreated(boolean continuing){
+        FSEvents events = FSControl.getSurface().events();
 
-        FSControl.EVENTS.GLPreChange(width, height);
-        FSControl.EVENTS.GLPostChange(width, height);
+        events.GLPreCreated(continuing);
+        events.GLPostCreated(continuing);
     }
 
-    private static void onDrawFrame(){
+    protected static void onSurfaceChanged(int width, int height){
+        FSEvents events = FSControl.getSurface().events();
+
+        events.GLPreChange(width, height);
+        events.GLPostChange(width, height);
+    }
+
+    protected static void onDrawFrame(){
         synchronized(RENDERLOCK){
             int size = passes.size();
 
@@ -78,7 +83,7 @@ public final class FSRenderer{
                 passes.get(i).execute();
             }
 
-            swapBuffers();
+            finishFrame();
         }
     }
 
@@ -100,7 +105,9 @@ public final class FSRenderer{
     }
 
     protected static void advanceRunners(){
-        FSControl.EVENTS.GLPreAdvancement();
+        FSEvents events = FSControl.getSurface().events();
+
+        events.GLPreAdvancement();
 
         int changes = CONTROLMANAGER.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
         int size = passes.size();
@@ -112,8 +119,9 @@ public final class FSRenderer{
         EXTERNAL_CHANGES = 0;
         INTERNAL_CHANGES = 0;
 
-        FSControl.checkRenderControl(changes);
-        FSControl.EVENTS.GLPostAdvancement(changes);
+        FSRenderControl.processFrameAndSignalNextFrame(changes);
+
+        events.GLPostAdvancement(changes);
     }
 
     public static void addExternalChangesForFrame(int changes){
@@ -135,7 +143,7 @@ public final class FSRenderer{
     public static void addTask(Runnable task){
         synchronized(tasks){
             tasks.add(task);
-            FSControl.signalFrameRender(true);
+            FSRenderControl.signalFrameRender(true);
         }
     }
 
@@ -143,6 +151,10 @@ public final class FSRenderer{
         synchronized (tasks){
             tasks.add(0, task);
         }
+    }
+
+    protected static FSRenderThread getRenderThread(){
+        return renderthread;
     }
 
     public static int getCurrentRenderPassIndex(){
@@ -187,10 +199,6 @@ public final class FSRenderer{
         }
     }
 
-    public static RenderThread getHandlerThread(){
-        return RENDERTHREAD;
-    }
-
     public static int getRenderPassesSize(){
         return passes.size();
     }
@@ -203,36 +211,9 @@ public final class FSRenderer{
         return CONTROLMANAGER;
     }
 
-    public static boolean getHandlerReady(){
-        return RENDERTHREAD.ready;
-    }
-
-    public static void destroy(){
-        int size = passes.size();
-
-        for(int i = 0; i < size; i++){
-            passes.get(i).destroy();
-        }
-
-        isInitialized = false;
-
-        CURRENT_RENDER_PASS_INDEX = 0;
-        EXTERNAL_CHANGES = 0;
-        INTERNAL_CHANGES = 0;
-
-        passes = null;
-        CONTROLMANAGER = null;
-        tasks = null;
-        threadhosts = null;
-    }
-
-
-
-
-
-    protected static void swapBuffers(){
-        FSControl.timeFrameEnded();
-        FSControl.swapBuffers();
+    protected static void finishFrame(){
+        FSRenderControl.timeFrameEnded();
+        FSEGL.swapBuffers();
 
         int size = passes.size();
 
@@ -240,7 +221,7 @@ public final class FSRenderer{
             passes.get(i).noitifyPostFrameSwap();
         }
 
-        FSControl.timeBufferSwapped();
+        FSRenderControl.timeBufferSwapped();
     }
 
     protected static boolean needsSwap(){
@@ -256,7 +237,7 @@ public final class FSRenderer{
     }
 
     public static void clearColor(){
-        GLES32.glClearColor(FSControl.CLEARCOLOR[0], FSControl.CLEARCOLOR[1], FSControl.CLEARCOLOR[2], FSControl.CLEARCOLOR[3]);
+        GLES32.glClearColor(FSControl.clearcolor[0], FSControl.clearcolor[1], FSControl.clearcolor[2], FSControl.clearcolor[3]);
     }
 
     public static void polygonOffset(float factor, float units){
@@ -510,133 +491,26 @@ public final class FSRenderer{
         GLES32.glBeginTransformFeedback(primitivemode);
     }
 
+    protected static void destroy(){
+        renderthread.shutdown();
 
+        if(!FSControl.getKeepAlive()){
+            int size = passes.size();
 
-
-
-    protected static final class RenderThread extends Thread{
-
-        protected static final int INITIALIZE_GL = 7435;
-        protected static final int SURFACE_CREATED = 7436;
-        protected static final int SURFACE_CHANGED = 7437;
-        protected static final int DRAW_FRAME = 7438;
-
-        private Object lock;
-        private boolean ready;
-
-        private volatile boolean running;
-
-        private ArrayList<Integer> orders;
-        private ArrayList<Object> data;
-
-        private RenderThread(){
-            orders = new ArrayList<>();
-            data = new ArrayList<>();
-
-            lock = new Object();
-            running = false;
-        }
-
-        int pass = 0;
-
-        @Override
-        public void run(){
-            Looper.prepare();
-
-            synchronized(lock){
-                ready = true;
-                lock.notify();
+            for(int i = 0; i < size; i++){
+                passes.get(i).destroy();
             }
 
-            ArrayList<Object> data = new ArrayList<>();
-            ArrayList<Integer> orders = new ArrayList<>();
+            isInitialized = false;
 
-            while(running){
-                synchronized(lock){
-                    while(this.orders.isEmpty() && running){
-                        try{
-                            lock.wait();
-                        }catch(InterruptedException ex){
-                            ex.printStackTrace();
-                        }
-                    }
+            CURRENT_RENDER_PASS_INDEX = 0;
+            EXTERNAL_CHANGES = 0;
+            INTERNAL_CHANGES = 0;
 
-                    orders.addAll(this.orders);
-                    data.addAll(this.data);
-
-                    this.orders.clear();
-                    this.data.clear();
-                }
-
-                int size = orders.size();
-
-                for(int i = 0; i < size; i++){
-                    int o = orders.get(i);
-                    Object d = data.get(i);
-
-                    if(o == INITIALIZE_GL){
-                        FSControl.initializeGL((boolean)d);
-
-                    }else if(o == SURFACE_CREATED){
-                        onSurfaceCreated((boolean)d);
-
-                    }else if(o == SURFACE_CHANGED){
-                        int[] a = (int[])d;
-                        onSurfaceChanged(a[0], a[1]);
-
-                    }else if(o == DRAW_FRAME){
-                        onDrawFrame();
-                    }
-                }
-
-                orders.clear();
-                data.clear();
-            }
-
-            synchronized(lock){
-                ready = false;
-            }
-        }
-
-        private void initialize(){
-            synchronized(lock){
-                running = true;
-                start();
-
-                while(!ready){
-                    try{
-                        lock.wait();
-                    }catch(InterruptedException ex){
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        public RenderThread assign(int order, Object d){
-            synchronized(lock){
-                orders.add(order);
-                data.add(d);
-
-                lock.notify();
-            }
-
-            return this;
-        }
-
-        public RenderThread shutdown(){
-            synchronized(lock){
-                running = false;
-                lock.notify();
-            }
-
-            try{
-                FSRenderer.RENDERTHREAD.join();
-            }catch(InterruptedException ex){
-                ex.printStackTrace();
-            }
-
-            return this;
+            passes = null;
+            CONTROLMANAGER = null;
+            tasks = null;
+            threadhosts = null;
         }
     }
 }
