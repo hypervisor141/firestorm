@@ -4,7 +4,7 @@ import android.os.Looper;
 
 import java.util.ArrayList;
 
-public final class FSRThread extends Thread{
+public class FSRThread extends Thread{
 
     protected static final int CREATE_GL_CONTEXT = 7435;
     protected static final int SURFACE_CREATED = 7436;

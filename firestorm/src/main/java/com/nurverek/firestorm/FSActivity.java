@@ -18,7 +18,7 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState){
         BASE = new RelativeLayout(this);
 
-        FSSurface surface = FSControl.initialize(this, createEvents());
+        FSSurface surface = createSurface();
         surface.setId(View.generateViewId());
         surface.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         surface.setX(0);
@@ -37,7 +37,7 @@ public abstract class FSActivity extends AppCompatActivity{
         super.onConfigurationChanged(newConfig);
     }
 
-    protected abstract FSEvents createEvents();
+    protected abstract FSSurface createSurface();
 
     protected abstract void modifyUI(RelativeLayout base);
 

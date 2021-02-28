@@ -10,7 +10,7 @@ import android.view.SurfaceView;
 import androidx.core.view.GestureDetectorCompat;
 
 
-public final class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
+public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         Choreographer.FrameCallback, GestureDetector.OnGestureListener{
 
     private GestureDetectorCompat gesture;
@@ -21,7 +21,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
 
     private boolean destroyed;
 
-    protected FSSurface(Activity act, FSEvents events){
+    public FSSurface(Activity act, FSEvents events){
         super(act.getApplicationContext());
 
         this.events = events;
@@ -169,7 +169,7 @@ public final class FSSurface extends SurfaceView implements SurfaceHolder.Callba
         }
     }
 
-    public static final class Config{
+    public static class Config{
 
         private boolean dirtyrender;
         private boolean touchable;

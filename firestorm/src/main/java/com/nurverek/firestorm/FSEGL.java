@@ -16,7 +16,7 @@ public class FSEGL{
     private static EGLContext context;
     private static EGLConfig config;
 
-    protected static void initialize(SurfaceHolder holder, boolean resuming){
+    public static void initialize(SurfaceHolder holder, boolean resuming){
         if(!resuming || context == null || surface == null){
             int[] vers = new int[2];
             EGLConfig[] configs = new EGLConfig[1];
@@ -67,14 +67,14 @@ public class FSEGL{
         FSTools.checkEGLError("eglMakeCurrent");
     }
 
-    protected static void swapBuffers(){
+    public static void swapBuffers(){
         EGL14.eglSwapBuffers(display, surface);
         FSTools.checkEGLError("eglSwapBuffers");
 
         GLES32.glGetError();
     }
 
-    protected static void destroy(){
+    public static void destroy(){
         EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
         FSTools.checkEGLError("eglMakeCurrent");
 
