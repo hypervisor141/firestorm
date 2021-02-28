@@ -20,7 +20,7 @@ public final class FSControl{
     protected static boolean keepalive;
     protected static float[] clearcolor;
 
-    public static FSSurface initialize(Activity act, FSSurface surface){
+    public static FSSurface initialize(Activity act, FSSurface surface, FSRInterface threadinterface){
         VLDebug.tag(LOGTAG);
 
         keepalive = false;
@@ -33,13 +33,9 @@ public final class FSControl{
 
         FSInput.initialize();
         FSRControl.initialize();
-        FSR.initialize();
+        FSR.initialize(threadinterface);
 
         return FSControl.surface;
-    }
-
-    public static FSSurface initialize(Activity act, FSEvents events){
-        return initialize(act, new FSSurface(act, events));
     }
 
     public static void setKeepAlive(boolean enabled){

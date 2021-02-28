@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 public class FSR{
 
     public static final Object RENDERLOCK = new Object();
-    private static final FSRInterface DEFAULT_INTERFACE = new FSRInterface(){
+    public static final FSRInterface DEFAULT_INTERFACE = new FSRInterface(){
 
         @Override
         public FSRThread create(){
@@ -54,10 +54,6 @@ public class FSR{
         CURRENT_RENDER_PASS_INDEX = 0;
         CURRENT_FSG_INDEX = 0;
         CURRENT_PROGRAM_SET_INDEX = 0;
-    }
-
-    protected static void initialize(){
-        initialize(DEFAULT_INTERFACE);
     }
 
     public static void setFSRThreadInterface(FSRInterface threadsrc){
