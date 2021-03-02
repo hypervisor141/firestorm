@@ -242,14 +242,12 @@ public final class FSBufferLayout{
             VLArrayFloat array;
             FSBufferAddress address;
 
-            FSGAssembler.BufferStep step = assembler.bufferFunc(element);
-
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
                 address = new FSBufferAddress();
-                step.process(address, buffer, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+                buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
                 instance.bufferTracker().add(element, address);
             }
@@ -283,7 +281,6 @@ public final class FSBufferLayout{
             int element = entry.element;
             int mainoffset = buffer.position(bufferindex);
 
-            FSGAssembler.BufferStep step = assembler.bufferFunc(element);
             FSBufferAddress address;
 
             for(int i = 0; i < size; i++){
@@ -291,7 +288,8 @@ public final class FSBufferLayout{
                 array = instance.element(element);
 
                 address = new FSBufferAddress();
-                step.process(address, buffer, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+                buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+
                 instance.bufferTracker().add(element, address);
             }
 
@@ -330,7 +328,8 @@ public final class FSBufferLayout{
 
             for(int i = 0; i < size; i++){
                 address = new FSBufferAddress();
-                assembler.bufferFunc(element).process(address, buffer, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+                buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+
                 instances.get(i).bufferTracker().add(element, address);
             }
 
@@ -360,8 +359,7 @@ public final class FSBufferLayout{
             array = instance.element(element);
 
             FSBufferAddress address = new FSBufferAddress();
-            assembler.bufferFunc(element).process(address, buffer, bufferindex, array,
-                    0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
                 instances.get(i).bufferTracker().add(element, address);
@@ -384,8 +382,7 @@ public final class FSBufferLayout{
             int element = entry.element;
 
             FSBufferAddress address = new FSBufferAddress();
-            assembler.bufferFunc(element).process(address, buffer, bufferindex, mesh.indices, 0,
-                    mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            buffer.buffer(address, bufferindex, mesh.indices, 0, mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             int size = mesh.size();
 

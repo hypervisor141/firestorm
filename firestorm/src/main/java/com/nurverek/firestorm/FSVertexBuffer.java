@@ -4,9 +4,8 @@ import android.opengl.GLES32;
 
 import com.nurverek.vanguard.VLBuffer;
 import com.nurverek.vanguard.VLStringify;
-import com.nurverek.vanguard.VLSyncable;
 
-public class FSVertexBuffer extends VLSyncable implements VLStringify {
+public class FSVertexBuffer implements VLStringify {
 
     private VLBuffer buffer;
 
@@ -124,6 +123,10 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
         return buffer;
     }
 
+    public void markForUpdate(){
+        needsupdate = true;
+    }
+
     public void bindBufferBase(){
         FSR.vertexBufferBindBase(target, bindpoint, id);
     }
@@ -200,18 +203,6 @@ public class FSVertexBuffer extends VLSyncable implements VLStringify {
         if(id != -1){
             FSR.deleteVertexBuffers(new int[]{ id });
             id = -1;
-        }
-    }
-
-    public static final class Definition extends VLSyncable.Definition<VLSyncable, FSVertexBuffer>{
-
-        public Definition(FSVertexBuffer target){
-            super(target);
-        }
-
-        @Override
-        protected void sync(VLSyncable source, FSVertexBuffer target){
-            target.needsupdate = true;
         }
     }
 }

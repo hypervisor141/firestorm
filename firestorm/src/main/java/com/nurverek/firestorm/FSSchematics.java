@@ -1,10 +1,9 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncable;
 import com.nurverek.vanguard.VLUpdater;
 
-public final class FSSchematics extends VLSyncable{
+public final class FSSchematics{
 
     private static final VLUpdater<FSSchematics> UPDATE_CENTROID = new VLUpdater<FSSchematics>(){
 
@@ -578,31 +577,6 @@ public final class FSSchematics extends VLSyncable{
 
     public VLListType<FSBounds> inputBounds(){
         return inputbounds;
-    }
-
-
-    public static final class DefinitionPosition extends VLSyncable.Definition<VLSyncable, FSSchematics>{
-
-        public DefinitionPosition(FSSchematics schematics){
-            super(schematics);
-        }
-
-        @Override
-        protected void sync(VLSyncable source, FSSchematics target){
-            target.updateBoundaries();
-        }
-    }
-
-    public static final class DefinitionModel extends VLSyncable.Definition<VLSyncable, FSSchematics>{
-
-        public DefinitionModel(FSSchematics schematics){
-            super(schematics);
-        }
-
-        @Override
-        protected void sync(VLSyncable source, FSSchematics target){
-            target.markForNewUpdates();
-        }
     }
 
     public static final class InstanceCollision{

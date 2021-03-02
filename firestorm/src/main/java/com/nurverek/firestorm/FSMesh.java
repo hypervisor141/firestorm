@@ -2,9 +2,8 @@ package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLArrayShort;
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncable;
 
-public class FSMesh extends VLSyncable{
+public class FSMesh{
 
     protected String name;
 

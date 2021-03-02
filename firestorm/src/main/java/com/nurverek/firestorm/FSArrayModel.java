@@ -4,7 +4,6 @@ import android.opengl.Matrix;
 
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncable;
 import com.nurverek.vanguard.VLV;
 import com.nurverek.vanguard.VLVMatrix;
 import com.nurverek.vanguard.VLVTypeVariable;
@@ -91,20 +90,5 @@ public class FSArrayModel extends VLArrayFloat{
         results[offset] /= w;
         results[offset + 1] /= w;
         results[offset + 2] /= w;
-    }
-
-    public static class Definition extends VLSyncable.Definition<FSMatrixModel, FSArrayModel>{
-
-        public boolean replace;
-
-        public Definition(FSArrayModel target, boolean replace){
-            super(target);
-            this.replace = replace;
-        }
-
-        @Override
-        protected void sync(FSMatrixModel source, FSArrayModel target){
-            target.transform(0, source, replace);
-        }
     }
 }

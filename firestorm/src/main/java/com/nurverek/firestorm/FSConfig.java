@@ -1,9 +1,8 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLSyncable;
 
-public abstract class FSConfig extends VLSyncable{
+public abstract class FSConfig{
 
     public static final Policy POLICY_ALWAYS = new Policy(){
 
@@ -112,19 +111,5 @@ public abstract class FSConfig extends VLSyncable{
 
         protected abstract void configure(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex);
         protected abstract void configureDebug(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex);
-    }
-
-    public static final class Definition extends VLSyncable.Definition<Object, FSConfig>{
-
-        public Definition(FSConfig target){
-            super(target);
-        }
-
-        @Override
-        protected void sync(Object source, FSConfig target){
-            if(target.policy != FSConfig.POLICY_ALWAYS){
-                target.policy = FSConfig.POLICY_ONCE;
-            }
-        }
     }
 }

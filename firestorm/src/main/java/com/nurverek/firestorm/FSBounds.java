@@ -1,10 +1,9 @@
 package com.nurverek.firestorm;
 
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncable;
 import com.nurverek.vanguard.VLUpdater;
 
-public abstract class FSBounds extends VLSyncable{
+public abstract class FSBounds{
 
     protected static final float[] CACHE1 = new float[4];
     protected static final float[] CACHE2 = new float[4];
@@ -227,19 +226,6 @@ public abstract class FSBounds extends VLSyncable{
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
             return coefficient;
-        }
-    }
-
-
-    public static final class Definition extends VLSyncable.Definition<VLSyncable, FSBounds>{
-
-        public Definition(FSBounds target){
-            super(target);
-        }
-
-        @Override
-        protected void sync(VLSyncable source, FSBounds target){
-            target.markForUpdate();
         }
     }
 

@@ -10,16 +10,6 @@ import com.nurverek.vanguard.VLV;
 
 public class FSGAssembler implements VLStringify{
 
-    public boolean SYNC_MODELMATRIX_AND_MODELARRAY = false;
-    public boolean SYNC_MODELARRAY_AND_BUFFER = false;
-    public boolean SYNC_MODELARRAY_AND_SCHEMATICS = false;
-    public boolean SYNC_POSITION_AND_BUFFER = false;
-    public boolean SYNC_POSITION_AND_SCHEMATICS = false;
-    public boolean SYNC_COLOR_AND_BUFFER = false;
-    public boolean SYNC_TEXCOORD_AND_BUFFER = false;
-    public boolean SYNC_NORMAL_AND_BUFFER = false;
-    public boolean SYNC_INDICES_AND_BUFFER = false;
-
     public boolean LOAD_MODELS = false;
     public boolean LOAD_POSITIONS = false;
     public boolean LOAD_TEXCOORDS = false;
@@ -35,34 +25,18 @@ public class FSGAssembler implements VLStringify{
     public boolean CONVERT_POSITIONS_TO_MODELARRAYS = false;
     public boolean DRAW_MODE_INDEXED = false;
 
-    protected BufferStep[] buffersteps;
     private final VLListType<BuildStep> firstfuncs;
     private final VLListType<BuildStep> restfuncs;
 
     public FSGAssembler(){
         firstfuncs = new VLListType<>(10, 20);
         restfuncs = new VLListType<>(10, 20);
-        buffersteps = new BufferStep[FSG.ELEMENT_TOTAL_COUNT];
 
         setDefaultAll();
     }
 
 
     public void setDefaultAll(){
-        for(int i = 0; i < buffersteps.length; i++){
-            buffersteps[i] = BUFFER_NO_SYNC;
-        }
-
-        SYNC_MODELMATRIX_AND_MODELARRAY = false;
-        SYNC_MODELARRAY_AND_BUFFER = true;
-        SYNC_MODELARRAY_AND_SCHEMATICS = true;
-        SYNC_POSITION_AND_SCHEMATICS = true;
-        SYNC_POSITION_AND_BUFFER = true;
-        SYNC_COLOR_AND_BUFFER = true;
-        SYNC_TEXCOORD_AND_BUFFER = true;
-        SYNC_NORMAL_AND_BUFFER = true;
-        SYNC_INDICES_AND_BUFFER = true;
-
         LOAD_MODELS = true;
         LOAD_POSITIONS = true;
         LOAD_COLORS = true;
@@ -95,18 +69,6 @@ public class FSGAssembler implements VLStringify{
         if(LOAD_MODELS){
             firstfuncs.add(MODEL_INITIALIZE);
             restfuncs.add(MODEL_INITIALIZE);
-
-            if(SYNC_MODELMATRIX_AND_MODELARRAY){
-                firstfuncs.add(MODEL_SYNC_MODELMATRIX_AND_MODELARRAY);
-                restfuncs.add(MODEL_SYNC_MODELMATRIX_AND_MODELARRAY);
-            }
-            if(SYNC_MODELARRAY_AND_BUFFER){
-                buffersteps[FSG.ELEMENT_MODEL] = BUFFER_SYNC;
-            }
-            if(SYNC_MODELARRAY_AND_SCHEMATICS){
-                firstfuncs.add(MODEL_SYNC_MODELARRAY_AND_SCHEMATICS);
-                restfuncs.add(MODEL_SYNC_MODELARRAY_AND_SCHEMATICS);
-            }
         }
     }
 
@@ -146,14 +108,6 @@ public class FSGAssembler implements VLStringify{
                 }
             }
         }
-
-        if(SYNC_POSITION_AND_BUFFER){
-            buffersteps[FSG.ELEMENT_POSITION] = BUFFER_SYNC;
-        }
-        if(SYNC_POSITION_AND_SCHEMATICS){
-            firstfuncs.add(POSITION_SYNC_WITH_SCHEMATICS);
-            restfuncs.add(POSITION_SYNC_WITH_SCHEMATICS);
-        }
     }
 
     private void configureColors(){
@@ -175,10 +129,6 @@ public class FSGAssembler implements VLStringify{
             }else{
                 restfuncs.add(step);
             }
-        }
-
-        if(SYNC_COLOR_AND_BUFFER){
-            buffersteps[FSG.ELEMENT_COLOR] = BUFFER_SYNC;
         }
     }
 
@@ -202,10 +152,6 @@ public class FSGAssembler implements VLStringify{
                 restfuncs.add(step);
             }
         }
-
-        if(SYNC_TEXCOORD_AND_BUFFER){
-            buffersteps[FSG.ELEMENT_TEXCOORD] = BUFFER_SYNC;
-        }
     }
 
     private void configureNormals(){
@@ -228,18 +174,11 @@ public class FSGAssembler implements VLStringify{
                 restfuncs.add(step);
             }
         }
-
-        if(SYNC_NORMAL_AND_BUFFER){
-            buffersteps[FSG.ELEMENT_NORMAL] = BUFFER_SYNC;
-        }
     }
 
-    private void buildmodelClusterFromSchematics(FSInstance instance){
+    private void buildModelClusterFromSchematics(FSInstance instance){
         FSSchematics schematics = instance.schematics;
-        FSMatrixModel set = instance.modelMatrix();
-
-        set.addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
-        set.sync();
+        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
     }
 
     private void centralizePositions(FSInstance instance){
@@ -332,10 +271,6 @@ public class FSGAssembler implements VLStringify{
         operate(restfuncs, instance, scanner, fsm);
     }
 
-    protected final BufferStep bufferFunc(int element){
-        return buffersteps[element];
-    }
-
     private final void operate(VLListType<BuildStep> funcs, FSInstance instance, FSGScanner scanner, FSM.Data fsm){
         FSMesh mesh = scanner.mesh;
         FSBufferLayout layout = scanner.layout;
@@ -356,24 +291,6 @@ public class FSGAssembler implements VLStringify{
     }
 
     public final void stringify(StringBuilder info, Object hint){
-        info.append("SYNC_MODELMATRIX_TO_MODELARRAY[");
-        info.append(SYNC_MODELMATRIX_AND_MODELARRAY);
-        info.append("]\nSYNC_MODELARRAY_AND_BUFFER[");
-        info.append(SYNC_MODELARRAY_AND_BUFFER);
-        info.append("]\nSYNC_MODELARRAY_AND_SCHEMATICS[");
-        info.append(SYNC_MODELARRAY_AND_SCHEMATICS);
-        info.append("]\nSYNC_POSITION_AND_SCHEMATICS[");
-        info.append(SYNC_POSITION_AND_SCHEMATICS);
-        info.append("]\nSYNC_POSITION_AND_BUFFER[");
-        info.append(SYNC_POSITION_AND_BUFFER);
-        info.append("]\nSYNC_COLOR_AND_BUFFER[");
-        info.append(SYNC_COLOR_AND_BUFFER);
-        info.append("]\nSYNC_TEXCOORD_AND_BUFFER[");
-        info.append(SYNC_TEXCOORD_AND_BUFFER);
-        info.append("]\nSYNC_NORMAL_AND_BUFFER[");
-        info.append(SYNC_NORMAL_AND_BUFFER);
-        info.append("]\nSYNC_INDICES_AND_BUFFER[");
-        info.append(SYNC_INDICES_AND_BUFFER);
         info.append("]\nLOAD_MODELS[");
         info.append(LOAD_MODELS);
         info.append("]\nLOAD_POSITIONS[");
@@ -410,21 +327,6 @@ public class FSGAssembler implements VLStringify{
             instance.modelMatrix(new FSMatrixModel(2, 10));
         }
     };
-    private static final BuildStep MODEL_SYNC_MODELMATRIX_AND_MODELARRAY = new BuildStep(){
-
-        @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            instance.modelMatrix().SYNCER.add(new FSArrayModel.Definition(instance.model(), true));
-        }
-    };
-    private static final BuildStep MODEL_SYNC_MODELARRAY_AND_SCHEMATICS = new BuildStep(){
-
-        @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            instance.model().SYNCER.add(new FSSchematics.DefinitionModel(instance.schematics));
-        }
-    };
-
 
     private static final BuildStep POSITION_MATRIX_DEFAULT = new BuildStep(){
 
@@ -451,14 +353,14 @@ public class FSGAssembler implements VLStringify{
 
         @Override
         protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            assembler.buildmodelClusterFromSchematics(instance);
+            assembler.buildModelClusterFromSchematics(instance);
         }
     };
     private static final BuildStep POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE = new BuildStep(){
 
         @Override
         protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            assembler.buildmodelClusterFromSchematics(instance);
+            assembler.buildModelClusterFromSchematics(instance);
             assembler.centralizePositions(instance);
             instance.schematics.updateBoundaries();
         }
@@ -477,13 +379,6 @@ public class FSGAssembler implements VLStringify{
         @Override
         protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
             instance.schematics.updateBoundaries(mesh.first().schematics);
-        }
-    };
-    private static final BuildStep POSITION_SYNC_WITH_SCHEMATICS = new BuildStep(){
-
-        @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            instance.positions().SYNCER.add(new FSSchematics.DefinitionPosition(instance.schematics));
         }
     };
 
@@ -557,33 +452,6 @@ public class FSGAssembler implements VLStringify{
             data.normals(new VLArrayFloat(mesh.instance(0).normals().provider()));
         }
     };
-
-
-    protected  static final BufferStep BUFFER_NO_SYNC = new BufferStep(){
-
-        @Override
-        protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array){
-            manager.buffer(results, index, array);
-        }
-
-        @Override
-        protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            manager.buffer(results, index, array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
-        }
-    };
-    protected static final BufferStep BUFFER_SYNC = new BufferStep(){
-
-        @Override
-        protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array){
-            manager.bufferSync(results, index, array);
-        }
-
-        @Override
-        protected void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride){
-            manager.bufferSync(results, index, array, arrayoffset, arraycount, unitoffset, unitsize, unitsubcount, stride);
-        }
-    };
-
 
     private abstract static class BuildStep{
 

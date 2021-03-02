@@ -109,10 +109,6 @@ public abstract class FSGScanner{
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
                     assembler.buildFirst(instance, this, fsm);
 
-                    if(assembler.SYNC_INDICES_AND_BUFFER){
-                        assembler.buffersteps[FSG.ELEMENT_INDEX] = FSGAssembler.BUFFER_SYNC;
-                    }
-
                 }else{
                     assembler.buildFirst(instance, this, fsm);
                 }
@@ -143,10 +139,6 @@ public abstract class FSGScanner{
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
                     assembler.buildFirst(instance, this, fsm);
-
-                    if(assembler.SYNC_INDICES_AND_BUFFER){
-                        assembler.buffersteps[FSG.ELEMENT_INDEX] = FSGAssembler.BUFFER_SYNC;
-                    }
 
                 }else{
                     assembler.buildRest(instance, this, fsm);
@@ -186,10 +178,6 @@ public abstract class FSGScanner{
 
                     for(int i = 0; i < copycount; i++){
                         mesh.addInstance(new FSInstance(instance));
-                    }
-
-                    if(assembler.SYNC_INDICES_AND_BUFFER){
-                        assembler.buffersteps[FSG.ELEMENT_INDEX] = FSGAssembler.BUFFER_SYNC;
                     }
                 }
 
