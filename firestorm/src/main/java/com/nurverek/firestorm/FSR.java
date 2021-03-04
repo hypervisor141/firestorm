@@ -3,7 +3,6 @@ package com.nurverek.firestorm;
 import android.opengl.GLES32;
 
 import com.nurverek.vanguard.VLThreadHost;
-import com.nurverek.vanguard.VLVManager;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -111,7 +110,7 @@ public class FSR{
         }
     }
 
-    protected static void advanceRunners(){
+    protected static void next(){
         FSEvents events = FSControl.getSurface().events();
 
         events.GLPreAdvancement();
@@ -120,7 +119,7 @@ public class FSR{
         int changes = 0;
 
         for(int i = 0; i < size; i++){
-            changes += passes.get(i).advanceRunners();
+            changes += passes.get(i).next();
         }
 
         EXTERNAL_CHANGES = 0;

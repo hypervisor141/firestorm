@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.opengl.GLES32;
 
 import com.nurverek.vanguard.VLArrayFloat;
+import com.nurverek.vanguard.VLBufferManagerBase;
 import com.nurverek.vanguard.VLListType;
+import com.nurverek.vanguard.VLSyncTree;
+import com.nurverek.vanguard.VLSyncType;
 import com.nurverek.vanguard.VLVManager;
+import com.nurverek.vanguard.VLVTypeManager;
 import com.nurverek.vanguard.VLVTypeRunner;
 
-public abstract class FSG{
+public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>, SYNCER extends VLSyncTree<? extends VLSyncType<?>>, BUFFERMANAGER extends FSBufferManager>{
 
     public static final int ELEMENT_BYTES_MODEL = Float.SIZE / 8;
     public static final int ELEMENT_BYTES_POSITION = Float.SIZE / 8;
@@ -54,16 +58,18 @@ public abstract class FSG{
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
     private VLListType<VLListType<FSP>> programsets;
-    private VLVManager vmanager;
-    private FSBufferManager buffermanager;
+    private BUFFERMANAGER buffermanager;
+    private MANAGER rootmanager;
+    private SYNCER syncer;
 
     private long id;
     private boolean touchable;
 
-    public FSG(int programsetsize, int buffercapacity, int bufferresizer, VLVManager<VLVTypeRunner> vmanager){
-        this.vmanager = vmanager;
+    public FSG(int programsetsize, MANAGER rootmanager, SYNCER syncer, BUFFERMANAGER buffermanager){
+        this.rootmanager = rootmanager;
+        this.syncer = syncer;
+        this.buffermanager = buffermanager;
 
-        buffermanager = new FSBufferManager(buffercapacity, bufferresizer);
         programsets = new VLListType<>(5, 20);
         id = FSRControl.getNextID();
         touchable = true;
@@ -92,7 +98,7 @@ public abstract class FSG{
     protected void postFramSwap(int passindex){}
 
     public int next(){
-        return vmanager.next();
+        return rootmanager.next(syncer);
     }
 
     public VLArrayFloat createColorArray(float[] basecolor, int count){
@@ -118,10 +124,6 @@ public abstract class FSG{
         touchable = t;
     }
 
-    public FSBufferManager bufferManager(){
-        return buffermanager;
-    }
-
     public VLListType<FSP> programSet(int passindex){
         return programsets.get(passindex);
     }
@@ -130,8 +132,16 @@ public abstract class FSG{
         return programsets;
     }
 
-    public VLVManager vManager(){
-        return vmanager;
+    public MANAGER rootManager(){
+        return rootmanager;
+    }
+
+    public SYNCER syncer(){
+        return syncer;
+    }
+
+    public BUFFERMANAGER bufferManager(){
+        return buffermanager;
     }
 
     public long id(){
@@ -165,7 +175,7 @@ public abstract class FSG{
 
         programsets = null;
         buffermanager = null;
-        vmanager = null;
+        rootmanager = null;
 
         touchable = false;
         id = -1;

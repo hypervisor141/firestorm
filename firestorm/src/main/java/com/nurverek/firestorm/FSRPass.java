@@ -8,7 +8,7 @@ public final class FSRPass{
 
     private ArrayList<Entry> entries;
     
-    private boolean advanceprocessors;
+    private boolean next;
     private boolean runtasks;
     private boolean clearcolor;
     private boolean cleardepth;
@@ -24,7 +24,7 @@ public final class FSRPass{
     public FSRPass(int debug){
         entries = new ArrayList<>();
 
-        advanceprocessors = true;
+        next = true;
         runtasks = true;
         clearcolor = true;
         cleardepth = true;
@@ -87,8 +87,8 @@ public final class FSRPass{
 
 
 
-    public FSRPass setAdvanceProcessors(boolean enabled){
-        advanceprocessors = enabled;
+    public FSRPass setNext(boolean enabled){
+        next = enabled;
         return this;
     }
 
@@ -122,8 +122,8 @@ public final class FSRPass{
         return this;
     }
 
-    public boolean getAdvanceProcessors(){
-        return advanceprocessors;
+    public boolean getNext(){
+        return next;
     }
 
     public boolean getRunTasks(){
@@ -253,12 +253,12 @@ public final class FSRPass{
                 }
             });
         }
-        if(advanceprocessors){
+        if(next){
             orders.add(new Order(){
 
                 @Override
                 public void execute(int orderindex, int passindex){
-                    FSR.advanceRunners();
+                    FSR.next();
                 }
             });
         }
@@ -274,7 +274,7 @@ public final class FSRPass{
         }
     }
 
-    public int advanceRunners(){
+    public int next(){
         int changes = 0;
 
         for(int i = 0; i < entries.size(); i++){
@@ -359,7 +359,7 @@ public final class FSRPass{
     }
 
     public FSRPass copySettings(FSRPass src){
-        advanceprocessors = src.advanceprocessors;
+        next = src.next;
         runtasks = src.runtasks;
         clearcolor = src.clearcolor;
         cleardepth = src.cleardepth;
