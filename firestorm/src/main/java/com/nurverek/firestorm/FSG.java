@@ -6,6 +6,7 @@ import android.opengl.GLES32;
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLListType;
 import com.nurverek.vanguard.VLVManager;
+import com.nurverek.vanguard.VLVTypeRunner;
 
 public abstract class FSG{
 
@@ -59,15 +60,14 @@ public abstract class FSG{
     private long id;
     private boolean touchable;
 
-    public FSG(int programsetsize, int buffercapacity, int bufferresizer){
-        touchable = true;
+    public FSG(int programsetsize, int buffercapacity, int bufferresizer, VLVManager<VLVTypeRunner> vmanager){
+        this.vmanager = vmanager;
 
-        id = FSRControl.getNextID();
         buffermanager = new FSBufferManager(buffercapacity, bufferresizer);
-
         programsets = new VLListType<>(5, 20);
-        vmanager = new VLVManager(10, 10);
-
+        id = FSRControl.getNextID();
+        touchable = true;
+        
         addProgramSets(programsetsize);
     }
 
