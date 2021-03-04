@@ -71,8 +71,13 @@ public abstract class FSG{
         addProgramSets(programsetsize);
     }
 
-    public abstract void assemble(Activity act);
+    public void initialize(Activity act){
+        assemble(act);
+        layout();
+    }
 
+    protected abstract void assemble(Activity act);
+    protected abstract void layout();
     protected abstract void update(int passindex, int programsetindex);
 
     public void draw(int passindex, int programsetindex){
