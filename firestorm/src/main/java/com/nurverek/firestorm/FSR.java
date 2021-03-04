@@ -38,8 +38,6 @@ public class FSR{
     private static int EXTERNAL_CHANGES;
     private static int INTERNAL_CHANGES;
 
-    protected static VLVManager CONTROLMANAGER = new VLVManager(1, 10);
-
     protected static void initialize(FSRInterface threadsrc){
         threadinterface = threadsrc;
 
@@ -118,8 +116,8 @@ public class FSR{
 
         events.GLPreAdvancement();
 
-        int changes = CONTROLMANAGER.next() + EXTERNAL_CHANGES + INTERNAL_CHANGES;
         int size = passes.size();
+        int changes = 0;
 
         for(int i = 0; i < size; i++){
             changes += passes.get(i).advanceRunners();
@@ -214,10 +212,6 @@ public class FSR{
 
     public static int getThreadHostSize(){
         return threadhosts.size();
-    }
-
-    public static VLVManager getControlManager(){
-        return CONTROLMANAGER;
     }
 
     protected static void finishFrame(){
@@ -517,7 +511,6 @@ public class FSR{
             INTERNAL_CHANGES = 0;
 
             passes = null;
-            CONTROLMANAGER = null;
             tasks = null;
             threadhosts = null;
         }

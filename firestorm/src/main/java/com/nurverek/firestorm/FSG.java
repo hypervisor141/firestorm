@@ -67,7 +67,7 @@ public abstract class FSG{
         programsets = new VLListType<>(5, 20);
         id = FSRControl.getNextID();
         touchable = true;
-        
+
         addProgramSets(programsetsize);
     }
 
