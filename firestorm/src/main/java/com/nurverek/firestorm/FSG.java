@@ -79,11 +79,11 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     public void initialize(Activity act){
         assemble(act);
-        layout();
+        layout(rootmanager, syncer);
     }
 
     protected abstract void assemble(Activity act);
-    protected abstract void layout();
+    protected abstract void layout(MANAGER rootmanager, SYNCER syncer);
     protected abstract void update(int passindex, int programsetindex);
 
     public void draw(int passindex, int programsetindex){
