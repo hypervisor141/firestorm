@@ -10,7 +10,7 @@ import com.nurverek.vanguard.VLSyncType;
 import com.nurverek.vanguard.VLVTypeManager;
 import com.nurverek.vanguard.VLVTypeRunner;
 
-public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>, SYNCER extends VLSyncTree<? extends VLSyncType<?>>, BUFFERMANAGER extends FSBufferManager>{
+public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>, BUFFERMANAGER extends FSBufferManager>{
 
     public static final int ELEMENT_BYTES_MODEL = Float.SIZE / 8;
     public static final int ELEMENT_BYTES_POSITION = Float.SIZE / 8;
@@ -58,14 +58,12 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     private VLListType<VLListType<FSP>> programsets;
     private BUFFERMANAGER buffermanager;
     private MANAGER rootmanager;
-    private SYNCER syncer;
 
     private long id;
     private boolean touchable;
 
-    public FSG(int programsetsize, MANAGER rootmanager, SYNCER syncer, BUFFERMANAGER buffermanager){
+    public FSG(int programsetsize, MANAGER rootmanager, BUFFERMANAGER buffermanager){
         this.rootmanager = rootmanager;
-        this.syncer = syncer;
         this.buffermanager = buffermanager;
 
         programsets = new VLListType<>(5, 20);
@@ -77,11 +75,11 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     public void initialize(Activity act){
         assemble(act);
-        layout(rootmanager, syncer);
+        layout(rootmanager);
     }
 
     protected abstract void assemble(Activity act);
-    protected abstract void layout(MANAGER rootmanager, SYNCER syncer);
+    protected abstract void layout(MANAGER rootmanager);
     protected abstract void update(int passindex, int programsetindex);
 
     public void draw(int passindex, int programsetindex){
@@ -96,7 +94,7 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     protected void postFramSwap(int passindex){}
 
     public int next(){
-        return rootmanager.next(syncer);
+        return rootmanager.next();
     }
 
     public VLArrayFloat createColorArray(float[] basecolor, int count){
@@ -132,10 +130,6 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     public MANAGER rootManager(){
         return rootmanager;
-    }
-
-    public SYNCER syncer(){
-        return syncer;
     }
 
     public BUFFERMANAGER bufferManager(){

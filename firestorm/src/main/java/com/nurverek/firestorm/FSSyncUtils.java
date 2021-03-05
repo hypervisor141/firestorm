@@ -16,11 +16,6 @@ public class FSSyncUtils{
                 target.policy(FSConfig.POLICY_ONCE);
             }
         }
-
-        @Override
-        public void sync(int i, Object source){
-            sync(source);
-        }
     }
 
     public static final class SchematicsUpdateBounds extends VLSyncMap<Object, FSSchematics>{
@@ -33,11 +28,6 @@ public class FSSyncUtils{
         public void sync(Object source){
             target.updateBoundaries();
         }
-
-        @Override
-        public void sync(int i, Object source){
-            sync(source);
-        }
     }
 
     public static final class SchematicsMarkUpdate extends VLSyncMap<Object, FSSchematics>{
@@ -49,11 +39,6 @@ public class FSSyncUtils{
         @Override
         public void sync(Object source){
             target.markForNewUpdates();
-        }
-
-        @Override
-        public void sync(int i, Object source){
-            sync(source);
         }
     }
 
@@ -70,11 +55,6 @@ public class FSSyncUtils{
         public void sync(FSMatrixModel source){
             target.transform(0, source, replace);
         }
-
-        @Override
-        public void sync(int i, FSMatrixModel source){
-            sync(source);
-        }
     }
 
     public static final class Bounds extends VLSyncMap<Object, FSBounds>{
@@ -87,11 +67,6 @@ public class FSSyncUtils{
         public void sync(Object source){
             target.markForUpdate();
         }
-
-        @Override
-        public void sync(int i, Object source){
-            sync(source);
-        }
     }
 
     public static final class VertexBuffer extends VLSyncMap<Object, FSVertexBuffer>{
@@ -103,11 +78,6 @@ public class FSSyncUtils{
         @Override
         public void sync(Object source){
             target.needsUpdate();
-        }
-
-        @Override
-        public void sync(int i, Object source){
-            sync(source);
         }
     }
 }
