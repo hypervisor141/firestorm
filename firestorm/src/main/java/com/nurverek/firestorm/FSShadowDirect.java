@@ -100,14 +100,13 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         float[] pos = light.position().provider();
         float[] cent = light.center().provider();
 
-        config.eyePosition(pos[0], pos[1], pos[2]);
-        config.lookAt(cent[0], cent[1], cent[2], upX, upY, upZ);
+        config.lookAt(pos[0], pos[1], pos[2], cent[0], cent[1], cent[2], upX, upY, upZ);
         config.orthographic(left, right, bottom, top, znear, zfar);
-        config.updateViewProjection();
+        config.applyViewProjection();
     }
 
     public VLArrayFloat lightViewProjection(){
-        return config.viewProjectionMatrix();
+        return config.matrixViewProjection();
     }
 
     public FSViewConfig viewConfig(){

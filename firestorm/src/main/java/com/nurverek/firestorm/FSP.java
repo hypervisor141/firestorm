@@ -863,7 +863,6 @@ public final class FSP{
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             config.viewPort(x, y, width, height);
-            config.updateViewPort();
         }
 
         @Override
