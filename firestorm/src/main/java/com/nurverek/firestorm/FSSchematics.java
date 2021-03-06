@@ -178,7 +178,7 @@ public final class FSSchematics{
     }
 
     private void updateMVPs(){
-        FSViewConfig config = FSControl.getViewConfig();
+        FSView config = FSControl.getViewConfig();
 
         config.multiplyViewPerspective(boundsmvp, 0, boundsmodel, 0);
         config.multiplyViewPerspective(boundsmvp, 4, boundsmodel, 4);

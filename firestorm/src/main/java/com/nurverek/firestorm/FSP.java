@@ -836,13 +836,13 @@ public final class FSP{
 
     public static class ViewPort extends FSConfig{
 
-        public FSViewConfig config;
+        public FSView config;
         public int x;
         public int y;
         public int width;
         public int height;
 
-        public ViewPort(Policy policy, FSViewConfig config, int x, int y, int width, int height){
+        public ViewPort(Policy policy, FSView config, int x, int y, int width, int height){
             super(policy);
 
             this.x = x;
@@ -852,7 +852,7 @@ public final class FSP{
             this.config = config;
         }
 
-        public ViewPort(FSViewConfig config, int x, int y, int width, int height){
+        public ViewPort(FSView config, int x, int y, int width, int height){
             this.x = x;
             this.y = y;
             this.width = width;

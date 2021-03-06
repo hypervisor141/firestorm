@@ -47,12 +47,12 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
 
     public static final int SELECT_STRUCT_DATA = 0;
 
-    protected FSViewConfig config;
+    protected FSView config;
 
     public FSShadowDirect(FSLightDirect light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident){
         super(1, 0, light, width, height, minbias, maxbias, divident);
 
-        config = new FSViewConfig();
+        config = new FSView();
         config.setOrthographicMode();
 
         configs().add(new FSConfigSequence(new VLListType<>(new FSConfig[]{
@@ -109,7 +109,7 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         return config.matrixViewProjection();
     }
 
-    public FSViewConfig viewConfig(){
+    public FSView viewConfig(){
         return config;
     }
 

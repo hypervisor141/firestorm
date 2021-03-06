@@ -7,7 +7,7 @@ import android.opengl.Matrix;
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLArrayInt;
 
-public final class FSViewConfig{
+public final class FSView{
 
     protected VLArrayFloat matview;
     protected VLArrayFloat matperspective;
@@ -20,7 +20,7 @@ public final class FSViewConfig{
     protected VLArrayFloat settingsperspective;
     protected VLArrayFloat settingsorthographic;
 
-    public FSViewConfig(){
+    public FSView(){
         matprojection = null;
 
         matview = new VLArrayFloat(new float[16]);

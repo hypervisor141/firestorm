@@ -15,7 +15,7 @@ public final class FSControl{
 
     protected static FSSurface surface;
     protected static Activity activity;
-    protected static FSViewConfig viewconfig;
+    protected static FSView viewconfig;
 
     protected static boolean keepalive;
     protected static float[] clearcolor;
@@ -26,7 +26,7 @@ public final class FSControl{
         keepalive = false;
 
         clearcolor = new float[4];
-        viewconfig = new FSViewConfig();
+        viewconfig = new FSView();
 
         FSControl.surface = surface;
         FSControl.activity = act;
@@ -65,7 +65,7 @@ public final class FSControl{
         return surface;
     }
 
-    public static FSViewConfig getViewConfig(){
+    public static FSView getViewConfig(){
         return viewconfig;
     }
 
