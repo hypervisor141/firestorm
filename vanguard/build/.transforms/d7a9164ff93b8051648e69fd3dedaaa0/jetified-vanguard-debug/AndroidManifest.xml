@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nurverek.vanguard"
     android:versionCode="1550"
-    android:versionName="8.5.1" >
+    android:versionName="8.6.0" >
 
     <uses-sdk
         android:minSdkVersion="24"
