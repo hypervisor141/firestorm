@@ -5,8 +5,6 @@ import android.opengl.GLES32;
 
 import com.nurverek.vanguard.VLArrayFloat;
 import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLSyncTree;
-import com.nurverek.vanguard.VLSyncType;
 import com.nurverek.vanguard.VLVTypeManager;
 import com.nurverek.vanguard.VLVTypeRunner;
 
