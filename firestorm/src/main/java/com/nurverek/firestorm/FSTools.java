@@ -24,6 +24,8 @@ import com.nurverek.vanguard.VLMath;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -287,6 +289,29 @@ public final class FSTools{
         }
 
         return null;
+    }
+
+    public static byte[] convertBitmapToBytes(Bitmap b){
+        ByteBuffer buffer = ByteBuffer.allocateDirect(12 + b.getByteCount());
+        buffer.order(ByteOrder.nativeOrder());
+        buffer.position(0);
+        buffer.putInt(b.getWidth());
+        buffer.putInt(b.getHeight());
+        b.copyPixelsToBuffer(buffer);
+
+        return buffer.array();
+    }
+
+    public static Bitmap convertBytesToBitmap(byte[] data, Bitmap.Config config){
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        buffer.position(0);
+        int width = buffer.getInt();
+        int height = buffer.getInt();
+
+        Bitmap b = Bitmap.createBitmap(width, height, config);
+        b.copyPixelsFromBuffer(buffer);
+
+        return b;
     }
 
     public static void hideKeyboard(Activity act){
