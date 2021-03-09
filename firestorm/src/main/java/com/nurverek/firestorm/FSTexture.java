@@ -6,10 +6,9 @@ import android.opengl.GLUtils;
 
 import java.nio.Buffer;
 
-import vanguard.VLFactory;
 import vanguard.VLInt;
 
-public class FSTexture extends VLFactory{
+public class FSTexture{
 
     public static int LIB_BIND = 0;
     public static int LIB_UPLOAD_UNIT = 1;
