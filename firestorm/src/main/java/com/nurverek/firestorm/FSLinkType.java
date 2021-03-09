@@ -12,5 +12,5 @@ public abstract class FSLinkType<DATA>{
 
     }
 
-    public abstract FSBufferAddress address();
+    public abstract FSBufferTracker address();
 }

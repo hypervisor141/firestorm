@@ -5,9 +5,9 @@ import android.opengl.GLES32;
 import vanguard.VLBuffer;
 import vanguard.VLStringify;
 
-public class FSVertexBuffer implements VLStringify{
+public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringify{
 
-    private VLBuffer buffer;
+    private BUFFER buffer;
 
     private int target;
     private int accessmode;
@@ -114,7 +114,7 @@ public class FSVertexBuffer implements VLStringify{
         }
     }
 
-    public VLBuffer unMap(){
+    public BUFFER unMap(){
         FSR.unMapBuffer(target);
 
         mapped = false;
@@ -139,7 +139,7 @@ public class FSVertexBuffer implements VLStringify{
         buffer.release();
     }
 
-    public void provider(VLBuffer buffer){
+    public void provider(BUFFER buffer){
         this.buffer = buffer;
     }
 
@@ -155,7 +155,7 @@ public class FSVertexBuffer implements VLStringify{
         accessmode = s;
     }
 
-    public VLBuffer provider(){
+    public BUFFER provider(){
         return buffer;
     }
 

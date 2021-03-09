@@ -241,13 +241,13 @@ public final class FSBufferLayout{
 
             FSInstance instance;
             VLArrayFloat array;
-            FSBufferAddress address;
+            FSBufferTracker address;
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                address = new FSBufferAddress();
+                address = new FSBufferTracker();
                 buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
                 instance.bufferTracker().add(element, address);
@@ -282,13 +282,13 @@ public final class FSBufferLayout{
             int element = entry.element;
             int mainoffset = buffer.position(bufferindex);
 
-            FSBufferAddress address;
+            FSBufferTracker address;
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                address = new FSBufferAddress();
+                address = new FSBufferTracker();
                 buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
                 instance.bufferTracker().add(element, address);
@@ -322,13 +322,13 @@ public final class FSBufferLayout{
 
             FSInstance instance;
             VLArrayFloat array;
-            FSBufferAddress address;
+            FSBufferTracker address;
 
             instance = instances.get(0);
             array = instance.element(element);
 
             for(int i = 0; i < size; i++){
-                address = new FSBufferAddress();
+                address = new FSBufferTracker();
                 buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
                 instances.get(i).bufferTracker().add(element, address);
@@ -359,7 +359,7 @@ public final class FSBufferLayout{
             instance = instances.get(0);
             array = instance.element(element);
 
-            FSBufferAddress address = new FSBufferAddress();
+            FSBufferTracker address = new FSBufferTracker();
             buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
@@ -382,7 +382,7 @@ public final class FSBufferLayout{
         public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
             int element = entry.element;
 
-            FSBufferAddress address = new FSBufferAddress();
+            FSBufferTracker address = new FSBufferTracker();
             buffer.buffer(address, bufferindex, mesh.indices, 0, mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             int size = mesh.size();

@@ -1079,7 +1079,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress o = mesh.first().bufferTracker().get(element, bufferaddressindex);
+            FSBufferTracker o = mesh.first().bufferTracker().get(element, bufferaddressindex);
 
             int databytesize = FSG.ELEMENT_BYTES[element];
 
@@ -1127,7 +1127,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress o = mesh.first().bufferTracker().get(element, bufferaddressindex);
+            FSBufferTracker o = mesh.first().bufferTracker().get(element, bufferaddressindex);
 
             int databytesize = FSG.ELEMENT_BYTES[element];
 
@@ -2089,17 +2089,17 @@ public final class FSP{
 
     public static class UniformBlockData extends FSConfigLocated{
 
-        public FSBufferAddress address;
+        public FSBufferTracker address;
         protected String name;
 
-        public UniformBlockData(Policy policy, FSBufferAddress address, String name){
+        public UniformBlockData(Policy policy, FSBufferTracker address, String name){
             super(policy);
 
             this.address = address;
             this.name = name;
         }
 
-        public UniformBlockData(FSBufferAddress address, String name){
+        public UniformBlockData(FSBufferTracker address, String name){
             this.address = address;
             this.name = name;
         }
@@ -2300,7 +2300,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
+            FSBufferTracker address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
 
             address.bind();
             GLES32.glDrawElements(mesh.drawmode, address.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
@@ -2342,7 +2342,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
+            FSBufferTracker address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
 
             address.bind();
             GLES32.glDrawElementsInstanced(mesh.drawmode, address.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX], mesh.size());
@@ -2396,7 +2396,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferAddress address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
+            FSBufferTracker address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
 
             address.bind();
             GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);

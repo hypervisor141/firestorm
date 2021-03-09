@@ -2,16 +2,17 @@ package com.nurverek.firestorm;
 
 import vanguard.VLBufferAddress;
 import vanguard.VLBufferManagerBase;
+import vanguard.VLBufferTrackerType;
 import vanguard.VLBufferable;
 
 public abstract class FSLinkBufferedType<DATA, MANAGER extends VLBufferManagerBase, ADDRESS extends VLBufferAddress<MANAGER>>
         extends FSLinkType<DATA> implements VLBufferable<MANAGER, ADDRESS>{
 
-    public FSBufferAddress address;
+    public VLBufferTrackerType address;
 
-    public FSLinkBufferedType(DATA data){
+    public FSLinkBufferedType(DATA data, VLBufferTrackerType address){
         super(data);
-        address = new FSBufferAddress();
+        this.address = address;
     }
 
     public FSLinkBufferedType(){
@@ -19,7 +20,7 @@ public abstract class FSLinkBufferedType<DATA, MANAGER extends VLBufferManagerBa
     }
 
     @Override
-    public FSBufferAddress address(){
+    public VLBufferTrackerType address(){
         return address;
     }
 

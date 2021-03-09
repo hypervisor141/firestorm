@@ -9,7 +9,7 @@ public class FSInstance{
     protected FSMesh mesh;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
-    protected FSBufferTracker buffers;
+    protected FSBufferBindings buffers;
 
     protected FSTexture colortexture;
     protected FSLightMaterial lightmaterial;
@@ -26,7 +26,7 @@ public class FSInstance{
         data = new Data();
         states = new States();
         schematics = new FSSchematics(this);
-        buffers = new FSBufferTracker();
+        buffers = new FSBufferBindings();
     }
 
     public FSInstance(FSInstance src){
@@ -86,7 +86,7 @@ public class FSInstance{
         return schematics;
     }
 
-    public FSBufferTracker bufferTracker(){
+    public FSBufferBindings bufferTracker(){
         return buffers;
     }
 
@@ -132,7 +132,7 @@ public class FSInstance{
         data = new Data(src.data);
         states = new States(src.states);
         schematics = new FSSchematics(this, src.schematics);
-        buffers = new FSBufferTracker();
+        buffers = new FSBufferBindings();
     }
 
 

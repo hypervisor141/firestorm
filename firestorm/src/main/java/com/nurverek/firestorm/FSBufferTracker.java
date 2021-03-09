@@ -1,45 +1,24 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLBTracker;
-import vanguard.VLBufferAddress;
+import vanguard.VLBuffer;
 import vanguard.VLBufferTracker;
-import vanguard.VLBufferTrackerType;
 
-public class FSBTracker extends VLBTracker{
+public class FSBufferTracker<BUFFER extends VLBuffer<?, ?>> extends VLBufferTracker<BUFFER>{
 
-    public FSVertexBuffer buffer;
+    public FSVertexBuffer<BUFFER> buffer;
 
-    public FSBTracker(FSVertexBuffer buffer, int offset, int unitoffset, int unitsize, int stride, int count){
-        super(offset, unitoffset, unitsize, stride, count);
+    public FSBufferTracker(FSVertexBuffer<BUFFER> buffer, int offset, int count){
+        super(buffer.provider(), offset, count);
         this.buffer = buffer;
     }
 
-    public FSBTracker(){
+    public FSBufferTracker(){
 
     }
 
     @Override
-    public void stringify(StringBuilder src, Object hint){
-        src.append("[");
-        src.append(getClass().getSimpleName());
-        src.append("] buffer[");
-        src.append(buffer.getClass().getSimpleName());
-        src.append("] offset[");
-        src.append(offset);
-        src.append("] unitSize[");
-        src.append(unitsize);
-        src.append("] unitOffset[");
-        src.append(unitoffset);
-        src.append("] stride[");
-        src.append(stride);
-        src.append("] count[");
-        src.append(count);
-        src.append("] bindPoint[");
-        src.append(buffer.bindPoint());
-        src.append("] content[ ");
-
-        buffer.provider().stringify(src, hint);
-
-        src.append(" ]");
+    public void buffer(BUFFER buffer){
+        super.buffer(buffer);
+        this.buffer.provider(buffer);
     }
 }

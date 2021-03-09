@@ -8,7 +8,7 @@ import vanguard.VLListType;
 import vanguard.VLVTypeManager;
 import vanguard.VLVTypeRunner;
 
-public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>, BUFFERMANAGER extends FSBufferManager>{
+public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>>{
 
     public static final int ELEMENT_BYTES_MODEL = Float.SIZE / 8;
     public static final int ELEMENT_BYTES_POSITION = Float.SIZE / 8;
@@ -54,15 +54,13 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
     private VLListType<VLListType<FSP>> programsets;
-    private BUFFERMANAGER buffermanager;
     private MANAGER rootmanager;
 
     private long id;
     private boolean touchable;
 
-    public FSG(int programsetsize, MANAGER rootmanager, BUFFERMANAGER buffermanager){
+    public FSG(int programsetsize, MANAGER rootmanager){
         this.rootmanager = rootmanager;
-        this.buffermanager = buffermanager;
 
         programsets = new VLListType<>(5, 20);
         id = FSRControl.getNextID();
@@ -130,10 +128,6 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         return rootmanager;
     }
 
-    public BUFFERMANAGER bufferManager(){
-        return buffermanager;
-    }
-
     public long id(){
         return id;
     }
@@ -159,12 +153,7 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
             }
         }
 
-        for(int i = 0; i < buffermanager.size(); i++){
-            buffermanager.get(i).release();
-        }
-
         programsets = null;
-        buffermanager = null;
         rootmanager = null;
 
         touchable = false;

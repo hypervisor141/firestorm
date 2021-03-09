@@ -460,7 +460,7 @@ public class FSGAssembler implements VLStringify{
 
     protected abstract static class BufferStep{
 
-        protected abstract void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array);
-        protected abstract void process(FSBufferAddress results, FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
+        protected abstract void process(FSBufferTracker results, FSBufferManager manager, int index, VLArray array);
+        protected abstract void process(FSBufferTracker results, FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
     }
 }
