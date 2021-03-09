@@ -1,36 +1,52 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLListType;
+import vanguard.VLBufferAddress;
+import vanguard.VLBufferTracker;
+import vanguard.VLBufferTrackerType;
 
-public class FSBufferTracker{
+public class FSBufferAddress extends VLBufferTrackerType{
 
-    protected VLListType<FSBufferAddress>[] addresses;
-
-    protected FSBufferTracker(){
-        addresses = new VLListType[FSG.ELEMENT_TOTAL_COUNT];
-
-        for(int i = 0; i < addresses.length; i++){
-            addresses[i] = new VLListType<>(1, 2);
-        }
+    public FSBufferAddress(FSBufferManager manager, int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count){
+        super(manager, bufferindex, offset, unitoffset, unitsize, stride, count);
     }
 
-    public void add(int element, FSBufferAddress e){
-        addresses[element].add(e);
+    public FSBufferAddress(){
+
     }
 
-    public void set(int element, int index, FSBufferAddress e){
-        addresses[element].set(index, e);
+    @Override
+    public FSEntryTypeVertexBuffer target(){
+        return manager.get(bufferindex);
     }
 
-    public VLListType<FSBufferAddress> get(int element){
-        return addresses[element];
+    public void bind(){
+        target().vertexBuffer().bind();
+    }
+    
+    public void unbind(){
+        target().vertexBuffer().unbind();
     }
 
-    public FSBufferAddress get(int element, int index){
-        return addresses[element].get(index);
-    }
+    @Override
+    public void stringify(StringBuilder src, Object hint){
+        FSVertexBuffer buffer = target().vertexBuffer();
 
-    public int size(int element){
-        return addresses[element].size();
+        src.append("[BufferAddress] managerType[");
+        src.append(manager.getClass().getSimpleName());
+        src.append("] offset[");
+        src.append(offset);
+        src.append("] unitSize[");
+        src.append(unitsize);
+        src.append("] unitOffset[");
+        src.append(unitoffset);
+        src.append("] stride[");
+        src.append(stride);
+        src.append("] count[");
+        src.append(count);
+        src.append("] bindPoint[");
+        src.append(buffer.bindPoint());
+        src.append("] content[ ");
+        buffer.provider().stringify(src, hint);
+        src.append(" ]");
     }
 }
