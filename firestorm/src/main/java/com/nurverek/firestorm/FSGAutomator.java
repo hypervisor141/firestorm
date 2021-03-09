@@ -1,11 +1,11 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLListType;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
+
+import vanguard.VLDebug;
+import vanguard.VLListType;
 
 public final class FSGAutomator{
 

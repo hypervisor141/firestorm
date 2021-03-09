@@ -2,16 +2,16 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayInt;
-import com.nurverek.vanguard.VLArrayUtils;
-import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLFloat;
-import com.nurverek.vanguard.VLInt;
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLStringify;
-
 import java.io.UnsupportedEncodingException;
+
+import vanguard.VLArrayFloat;
+import vanguard.VLArrayInt;
+import vanguard.VLArrayUtils;
+import vanguard.VLDebug;
+import vanguard.VLFloat;
+import vanguard.VLInt;
+import vanguard.VLListType;
+import vanguard.VLStringify;
 
 public final class FSP{
 

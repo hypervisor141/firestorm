@@ -1,9 +1,6 @@
 package com.nurverek.firestorm;
 
-import android.opengl.GLES32;
-
-import com.nurverek.vanguard.VLBufferAddress;
-import com.nurverek.vanguard.VLBufferManagerBase;
+import vanguard.VLBufferAddress;
 
 public class FSBufferAddress extends VLBufferAddress<FSBufferManager>{
 

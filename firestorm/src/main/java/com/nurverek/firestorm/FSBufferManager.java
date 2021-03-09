@@ -1,10 +1,10 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayInt;
-import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLBuffer;
-import com.nurverek.vanguard.VLBufferManagerBase;
+import vanguard.VLArrayFloat;
+import vanguard.VLArrayInt;
+import vanguard.VLArrayShort;
+import vanguard.VLBuffer;
+import vanguard.VLBufferManagerBase;
 
 public class FSBufferManager extends VLBufferManagerBase<FSEntryTypeVertexBuffer, FSBufferManager, FSBufferAddress>{
 

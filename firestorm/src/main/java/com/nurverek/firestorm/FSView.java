@@ -4,8 +4,8 @@ import android.opengl.GLES32;
 import android.opengl.GLU;
 import android.opengl.Matrix;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayInt;
+import vanguard.VLArrayFloat;
+import vanguard.VLArrayInt;
 
 public final class FSView{
 

@@ -1,9 +1,9 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLBuffer;
-import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLArrayFloat;
+import vanguard.VLBuffer;
+import vanguard.VLDebug;
+import vanguard.VLListType;
 
 public final class FSBufferLayout{
 
@@ -26,7 +26,8 @@ public final class FSBufferLayout{
     public FSBufferLayout(FSMesh mesh){
         this.targetmesh = mesh;
 
-        layouts = new VLListType<>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
+        layouts = new VLListType
+                <>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
     }
 
     public Layout add(FSBufferManager buffer, int bufferindex, int capacity){

@@ -4,12 +4,12 @@ import android.graphics.Bitmap;
 import android.opengl.GLES32;
 import android.opengl.GLUtils;
 
-import com.nurverek.vanguard.VLFactory;
-import com.nurverek.vanguard.VLInt;
-
 import java.nio.Buffer;
 
-public class FSTexture extends VLFactory {
+import vanguard.VLFactory;
+import vanguard.VLInt;
+
+public class FSTexture extends VLFactory{
 
     public static int LIB_BIND = 0;
     public static int LIB_UPLOAD_UNIT = 1;

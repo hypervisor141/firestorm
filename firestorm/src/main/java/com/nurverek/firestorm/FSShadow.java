@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLFloat;
-import com.nurverek.vanguard.VLInt;
+import vanguard.VLFloat;
+import vanguard.VLInt;
 
 public abstract class FSShadow<LIGHT extends FSLight> extends FSConfigSelective{
 

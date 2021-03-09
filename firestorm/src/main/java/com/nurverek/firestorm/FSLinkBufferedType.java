@@ -1,9 +1,8 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLBufferAddress;
-import com.nurverek.vanguard.VLBufferManager;
-import com.nurverek.vanguard.VLBufferManagerBase;
-import com.nurverek.vanguard.VLBufferable;
+import vanguard.VLBufferAddress;
+import vanguard.VLBufferManagerBase;
+import vanguard.VLBufferable;
 
 public abstract class FSLinkBufferedType<DATA, MANAGER extends VLBufferManagerBase, ADDRESS extends VLBufferAddress<MANAGER>>
         extends FSLinkType<DATA> implements VLBufferable<MANAGER, ADDRESS>{

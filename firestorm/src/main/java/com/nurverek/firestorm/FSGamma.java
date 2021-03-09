@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLFloat;
+import vanguard.VLFloat;
 
 public class FSGamma extends FSP.Uniform1f{
 

@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLUpdater;
+import vanguard.VLListType;
+import vanguard.VLUpdater;
 
 public abstract class FSBounds{
 
@@ -36,8 +36,6 @@ public abstract class FSBounds{
     protected FSBounds(FSSchematics schematics){
         this.schematics = schematics;
     }
-
-
 
     protected final void initialize(Point offset, VLListType<Point> points){
         this.offset = offset;

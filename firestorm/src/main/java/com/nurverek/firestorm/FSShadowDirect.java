@@ -2,10 +2,10 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLFloat;
-import com.nurverek.vanguard.VLInt;
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLArrayFloat;
+import vanguard.VLFloat;
+import vanguard.VLInt;
+import vanguard.VLListType;
 
 public final class FSShadowDirect extends FSShadow<FSLightDirect>{
 

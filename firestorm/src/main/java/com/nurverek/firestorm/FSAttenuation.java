@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLFloat;
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLFloat;
+import vanguard.VLListType;
 
 public abstract class FSAttenuation extends FSConfigSequence{
 

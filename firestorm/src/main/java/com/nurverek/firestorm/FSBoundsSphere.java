@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLMath;
+import vanguard.VLListType;
+import vanguard.VLMath;
 
 public class FSBoundsSphere extends FSBounds {
 

@@ -1,8 +1,8 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArray;
-import com.nurverek.vanguard.VLBuffer;
-import com.nurverek.vanguard.VLBufferManagerBase;
+import vanguard.VLArray;
+import vanguard.VLBuffer;
+import vanguard.VLBufferManagerBase;
 
 public abstract class FSEntryTypeVertexBuffer<TYPE extends VLArray> extends VLBufferManagerBase.EntryType<TYPE>{
 

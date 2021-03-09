@@ -1,19 +1,18 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLListFloat;
-import com.nurverek.vanguard.VLListShort;
-import com.nurverek.vanguard.VLListType;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import vanguard.VLListFloat;
+import vanguard.VLListShort;
+import vanguard.VLListType;
+
 public class FSM{
 
     public VLListType<Data> data;
-
 
     public FSM(){
 

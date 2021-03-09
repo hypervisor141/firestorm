@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLArrayShort;
+import vanguard.VLListType;
 
 public class FSMesh{
 

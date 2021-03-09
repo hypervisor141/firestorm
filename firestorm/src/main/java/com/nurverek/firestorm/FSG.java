@@ -3,10 +3,10 @@ package com.nurverek.firestorm;
 import android.app.Activity;
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLVTypeManager;
-import com.nurverek.vanguard.VLVTypeRunner;
+import vanguard.VLArrayFloat;
+import vanguard.VLListType;
+import vanguard.VLVTypeManager;
+import vanguard.VLVTypeRunner;
 
 public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>, BUFFERMANAGER extends FSBufferManager>{
 

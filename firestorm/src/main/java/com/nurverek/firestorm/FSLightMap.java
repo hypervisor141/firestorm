@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLListType;
 
 public final class FSLightMap extends FSConfigSequence {
 

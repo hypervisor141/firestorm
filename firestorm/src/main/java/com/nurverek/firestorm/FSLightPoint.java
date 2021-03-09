@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLArrayFloat;
+import vanguard.VLListType;
 
 public class FSLightPoint extends FSLight{
 

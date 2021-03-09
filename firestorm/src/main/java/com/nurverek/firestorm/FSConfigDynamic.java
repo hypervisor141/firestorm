@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLDebug;
+import vanguard.VLDebug;
 
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 

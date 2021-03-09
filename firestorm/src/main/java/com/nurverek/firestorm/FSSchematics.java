@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLUpdater;
+import vanguard.VLListType;
+import vanguard.VLUpdater;
 
 public final class FSSchematics{
 

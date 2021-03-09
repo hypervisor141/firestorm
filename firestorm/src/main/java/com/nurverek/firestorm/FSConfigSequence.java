@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLDebug;
-import com.nurverek.vanguard.VLListType;
+import vanguard.VLDebug;
+import vanguard.VLListType;
 
 public class FSConfigSequence extends FSConfigLocated{
 

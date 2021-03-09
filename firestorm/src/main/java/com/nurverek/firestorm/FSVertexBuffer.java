@@ -2,10 +2,10 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLBuffer;
-import com.nurverek.vanguard.VLStringify;
+import vanguard.VLBuffer;
+import vanguard.VLStringify;
 
-public class FSVertexBuffer implements VLStringify {
+public class FSVertexBuffer implements VLStringify{
 
     private VLBuffer buffer;
 

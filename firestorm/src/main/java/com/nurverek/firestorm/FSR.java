@@ -2,14 +2,14 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import com.nurverek.vanguard.VLThreadHost;
-
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+
+import vanguard.VLThreadHost;
 
 public class FSR{
 

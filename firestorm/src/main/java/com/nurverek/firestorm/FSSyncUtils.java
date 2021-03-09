@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLSyncMap;
+import vanguard.VLSyncMap;
 
 public class FSSyncUtils{
 

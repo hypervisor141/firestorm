@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArray;
+import vanguard.VLArray;
 
 public abstract class FSConfigArray<TYPE extends VLArray> extends FSConfigLocated {
 

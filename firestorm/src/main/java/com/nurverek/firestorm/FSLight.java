@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArrayFloat;
+import vanguard.VLArrayFloat;
 
 public abstract class FSLight extends FSConfigSequence{
 

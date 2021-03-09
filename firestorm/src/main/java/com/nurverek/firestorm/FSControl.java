@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import android.app.Activity;
 import android.content.Context;
 
-import com.nurverek.vanguard.VLDebug;
+import vanguard.VLDebug;
 
 public final class FSControl{
 

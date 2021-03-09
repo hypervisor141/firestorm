@@ -5,9 +5,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.nurverek.vanguard.VLStringify;
+import vanguard.VLStringify;
 
-public final class FSShader implements VLStringify {
+public final class FSShader implements VLStringify{
 
     private static final String HEADER = "#version 320 es\n";
     private static final String MAINHEADER = "void main(){\n";

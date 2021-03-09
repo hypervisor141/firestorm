@@ -1,8 +1,8 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLDebug;
+import vanguard.VLArrayFloat;
+import vanguard.VLArrayShort;
+import vanguard.VLDebug;
 
 public abstract class FSGScanner{
 

@@ -2,11 +2,11 @@ package com.nurverek.firestorm;
 
 import android.opengl.Matrix;
 
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLV;
-import com.nurverek.vanguard.VLVMatrix;
-import com.nurverek.vanguard.VLVTypeVariable;
+import vanguard.VLArrayFloat;
+import vanguard.VLListType;
+import vanguard.VLV;
+import vanguard.VLVMatrix;
+import vanguard.VLVTypeVariable;
 
 public class FSArrayModel extends VLArrayFloat{
 

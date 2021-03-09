@@ -1,12 +1,12 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLArray;
-import com.nurverek.vanguard.VLArrayFloat;
-import com.nurverek.vanguard.VLArrayShort;
-import com.nurverek.vanguard.VLListFloat;
-import com.nurverek.vanguard.VLListType;
-import com.nurverek.vanguard.VLStringify;
-import com.nurverek.vanguard.VLV;
+import vanguard.VLArray;
+import vanguard.VLArrayFloat;
+import vanguard.VLArrayShort;
+import vanguard.VLListFloat;
+import vanguard.VLListType;
+import vanguard.VLStringify;
+import vanguard.VLV;
 
 public class FSGAssembler implements VLStringify{
 

@@ -1,13 +1,13 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLListFloat;
-import com.nurverek.vanguard.VLListShort;
-import com.nurverek.vanguard.VLListType;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import vanguard.VLListFloat;
+import vanguard.VLListShort;
+import vanguard.VLListType;
 
 public final class FSWaveFront{
 

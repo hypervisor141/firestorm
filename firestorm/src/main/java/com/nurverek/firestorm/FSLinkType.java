@@ -1,8 +1,5 @@
 package com.nurverek.firestorm;
 
-import com.nurverek.vanguard.VLBufferManagerBase;
-import com.nurverek.vanguard.VLBufferable;
-
 public abstract class FSLinkType<DATA>{
 
     public DATA data;
