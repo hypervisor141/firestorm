@@ -1,38 +1,29 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLBTracker;
 import vanguard.VLBufferAddress;
 import vanguard.VLBufferTracker;
 import vanguard.VLBufferTrackerType;
 
-public class FSBufferAddress extends VLBufferTrackerType{
+public class FSBTracker extends VLBTracker{
 
-    public FSBufferAddress(FSBufferManager manager, int bufferindex, int offset, int unitoffset, int unitsize, int stride, int count){
-        super(manager, bufferindex, offset, unitoffset, unitsize, stride, count);
+    public FSVertexBuffer buffer;
+
+    public FSBTracker(FSVertexBuffer buffer, int offset, int unitoffset, int unitsize, int stride, int count){
+        super(offset, unitoffset, unitsize, stride, count);
+        this.buffer = buffer;
     }
 
-    public FSBufferAddress(){
+    public FSBTracker(){
 
-    }
-
-    @Override
-    public FSEntryTypeVertexBuffer target(){
-        return manager.get(bufferindex);
-    }
-
-    public void bind(){
-        target().vertexBuffer().bind();
-    }
-    
-    public void unbind(){
-        target().vertexBuffer().unbind();
     }
 
     @Override
     public void stringify(StringBuilder src, Object hint){
-        FSVertexBuffer buffer = target().vertexBuffer();
-
-        src.append("[BufferAddress] managerType[");
-        src.append(manager.getClass().getSimpleName());
+        src.append("[");
+        src.append(getClass().getSimpleName());
+        src.append("] buffer[");
+        src.append(buffer.getClass().getSimpleName());
         src.append("] offset[");
         src.append(offset);
         src.append("] unitSize[");
@@ -46,7 +37,9 @@ public class FSBufferAddress extends VLBufferTrackerType{
         src.append("] bindPoint[");
         src.append(buffer.bindPoint());
         src.append("] content[ ");
+
         buffer.provider().stringify(src, hint);
+
         src.append(" ]");
     }
 }
