@@ -3,8 +3,6 @@ package com.nurverek.firestorm;
 import android.opengl.GLES32;
 
 import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;

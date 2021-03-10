@@ -59,7 +59,7 @@ public final class FSRPass{
 
         for(int i = 0; i < entries.size(); i++){
             e = entries.get(i);
-            FSG c = e.c;
+            FSG<?> c = e.c;
 
             if(c.id() == id){
                 return e;
@@ -73,7 +73,7 @@ public final class FSRPass{
         return entries.size();
     }
 
-    public void remove(FSG c){
+    public void remove(FSG<?> c){
         for(int i = 0; i < entries.size(); i++){
             if(entries.get(i).c.id() == c.id()){
                 entries.remove(i);
@@ -175,27 +175,25 @@ public final class FSRPass{
             if(clearstencil){
                 clearbit |= GLES32.GL_STENCIL_BUFFER_BIT;
             }
-            
-            if(clearbit != 0){
-                final int clearbitf = clearbit;
 
-                orders.add(new Order(){
+            final int clearbitf = clearbit;
 
-                    @Override
-                    public void execute(int orderindex, int passindex){
-                        FSR.clear(clearbitf);
+            orders.add(new Order(){
 
-                        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
-                            try{
-                                FSTools.checkGLError();
+                @Override
+                public void execute(int orderindex, int passindex){
+                    FSR.clear(clearbitf);
 
-                            }catch(Exception ex){
-                                throw new RuntimeException("Error running glClear() for bits[" + clearbitf + "] renderPass[" + passindex + "]", ex);
-                            }
+                    if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                        try{
+                            FSTools.checkGLError();
+
+                        }catch(Exception ex){
+                            throw new RuntimeException("Error running glClear() for bits[" + clearbitf + "] renderPass[" + passindex + "]", ex);
                         }
                     }
-                });
-            }
+                }
+            });
 
             if(clearcolor){
                 orders.add(new Order(){
@@ -397,15 +395,15 @@ public final class FSRPass{
 
     public static final class Entry{
 
-        protected FSG c;
+        protected FSG<?> c;
         protected int programsetindex;
 
-        public Entry(FSG c, int programsetindex){
+        public Entry(FSG<?> c, int programsetindex){
             this.c = c;
             this.programsetindex = programsetindex;
         }
 
-        public FSG constructor(){
+        public FSG<?> constructor(){
             return c;
         }
 

@@ -11,13 +11,13 @@ public class FSRThread extends Thread{
     protected static final int SURFACE_CHANGED = 7437;
     protected static final int DRAW_FRAME = 7438;
 
-    private Object lock;
+    private final Object lock;
     private boolean ready;
 
     private volatile boolean running;
 
-    private ArrayList<Integer> orders;
-    private ArrayList<Object> data;
+    private final ArrayList<Integer> orders;
+    private final ArrayList<Object> data;
 
     public FSRThread(){
         orders = new ArrayList<>();

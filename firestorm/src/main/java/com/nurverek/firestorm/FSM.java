@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 import vanguard.VLListFloat;
 import vanguard.VLListShort;
@@ -42,7 +43,7 @@ public class FSM{
             Data d = new Data(positionsize, colorsize, texcoordssize, normalsize, indexsize);
 
             bis.read(rawbuffer, 0, namesize);
-            d.name = new String(rawbuffer, 0, namesize, "UTF-8");
+            d.name = new String(rawbuffer, 0, namesize, StandardCharsets.UTF_8);
 
             d.positions.resize(positionsize + (fullsizedvertex ? (positionsize / 3) : 0));
             for(int i2 = 0, counter = 0; i2 < positionsize; i2++){

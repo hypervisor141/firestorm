@@ -34,8 +34,6 @@ public class FSConfigSequence extends FSConfigLocated{
 
     }
 
-
-
     public VLListType<FSConfig> configs(){
         return configs;
     }

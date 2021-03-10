@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-public final class FSVertexArray {
+public final class FSVertexArray{
 
     private int id = 0;
 
@@ -11,7 +11,6 @@ public final class FSVertexArray {
     public FSVertexArray(){
 
     }
-
 
     public void create(){
         id = FSR.createVertexArrays(1)[0];

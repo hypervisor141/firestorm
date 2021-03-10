@@ -80,9 +80,9 @@ public final class FSWaveFront{
         int index = line.indexOf(" ");
         int secondindex = line.lastIndexOf(" ");
 
-        o.positions.add(Float.valueOf(line.substring(0, index)));
-        o.positions.add(Float.valueOf(line.substring(index + 1, secondindex)));
-        o.positions.add(Float.valueOf(line.substring(secondindex + 1)));
+        o.positions.add(Float.parseFloat(line.substring(0, index)));
+        o.positions.add(Float.parseFloat(line.substring(index + 1, secondindex)));
+        o.positions.add(Float.parseFloat(line.substring(secondindex + 1)));
 
         if(fullsizedposition){
             o.positions.add(1F);
@@ -95,8 +95,8 @@ public final class FSWaveFront{
         int index = line.indexOf(" ");
         int secondindex = line.lastIndexOf(" ");
 
-        o.texcoords.add(Float.valueOf(line.substring(0, index)));
-        o.texcoords.add(1 - Float.valueOf(line.substring(index + 1)));
+        o.texcoords.add(Float.parseFloat(line.substring(0, index)));
+        o.texcoords.add(1 - Float.parseFloat(line.substring(index + 1)));
 
         uvcount++;
     }
@@ -105,9 +105,9 @@ public final class FSWaveFront{
         int index = line.indexOf(" ");
         int secondindex = line.lastIndexOf(" ");
 
-        o.normals.add(Float.valueOf(line.substring(0, index)));
-        o.normals.add(Float.valueOf(line.substring(index + 1, secondindex)));
-        o.normals.add(Float.valueOf(line.substring(secondindex + 1)));
+        o.normals.add(Float.parseFloat(line.substring(0, index)));
+        o.normals.add(Float.parseFloat(line.substring(index + 1, secondindex)));
+        o.normals.add(Float.parseFloat(line.substring(secondindex + 1)));
 
         normalcount++;
     }
@@ -121,9 +121,9 @@ public final class FSWaveFront{
 
         for(int i = 0; i < 3; i++){
             data = new VertexData(
-                    Integer.valueOf(line.substring(start, separator1)),
-                    o.texcoords.size() == 0 ? -1 : Integer.valueOf(line.substring(separator1 + 1, separator2)),
-                    o.normals.size() == 0 ? -1 : Integer.valueOf(line.substring(separator2 + 1, space)));
+                    Integer.parseInt(line.substring(start, separator1)),
+                    o.texcoords.size() == 0 ? -1 : Integer.parseInt(line.substring(separator1 + 1, separator2)),
+                    o.normals.size() == 0 ? -1 : Integer.parseInt(line.substring(separator2 + 1, space)));
             
             separator1 = line.indexOf("/", space);
             separator2  = line.indexOf("/", separator1 + 1);

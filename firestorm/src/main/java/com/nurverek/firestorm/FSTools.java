@@ -76,7 +76,7 @@ public final class FSTools{
             c.drawText(text, 0, height / 2f - texth / 2f, PAINTCACHE);
 
         }else if(location == LOCATION_MID_CENTER){
-            c.drawText(text, width / 2f - textw / 2f, height / 2 - texth / 2f, PAINTCACHE);
+            c.drawText(text, width / 2f - textw / 2f, height / 2F - texth / 2f, PAINTCACHE);
 
         }else if(location == LOCATION_MID_RIGHT){
             c.drawText(text, width - textw, height / 2f - texth / 2f, PAINTCACHE);
@@ -126,7 +126,7 @@ public final class FSTools{
             c.drawText(text, 0, height / 2f - texth / 2f, PAINTCACHE);
 
         }else if(location == LOCATION_MID_CENTER){
-            c.drawText(text, width / 2f - textw / 2f, height / 2 - texth / 2f, PAINTCACHE);
+            c.drawText(text, width / 2f - textw / 2f, height / 2F - texth / 2f, PAINTCACHE);
 
         }else if(location == LOCATION_MID_RIGHT){
             c.drawText(text, width - textw, height / 2f - texth / 2f, PAINTCACHE);
@@ -194,8 +194,8 @@ public final class FSTools{
         paint.setStrokeWidth(strokewidth);
         paint.setColor(color);
 
-        float xoffset = bitmap.getWidth() / 2;
-        float yoffset = bitmap.getHeight() / 2;
+        float xoffset = bitmap.getWidth() / 2F;
+        float yoffset = bitmap.getHeight() / 2F;
 
         double cycle = 2 * Math.PI / sidecount;
         double x, y;
@@ -280,7 +280,9 @@ public final class FSTools{
             outputFile.delete();
 
             return result;
+
         }catch(final Exception e){
+            e.printStackTrace();
 
         }finally{
             if(outputFile != null){

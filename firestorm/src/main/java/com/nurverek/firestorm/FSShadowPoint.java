@@ -10,8 +10,6 @@ import vanguard.VLListType;
 
 public final class FSShadowPoint extends FSShadow<FSLightPoint>{
 
-    private static int[] DRAWBUFFERMODECACHE = new int[]{ GLES32.GL_NONE };
-
     public static final String[] STRUCT_MEMBERS = new String[]{
             "float minbias",
             "float maxbias",
@@ -53,7 +51,7 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
     public static final int SELECT_STRUCT_DATA = 0;
     public static final int SELECT_LIGHT_TRANSFORMS = 1;
 
-    private VLArrayFloat[] lightvp;
+    private final VLArrayFloat[] lightvp;
     protected VLFloat znear;
     protected VLFloat zfar;
 
@@ -123,7 +121,7 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
     }
 
     public void updateLightVP(){
-        Matrix.perspectiveM(PERSPECTIVECACHE, 0, 90, width.get() / height.get(), znear.get(), zfar.get());
+        Matrix.perspectiveM(PERSPECTIVECACHE, 0, 90, (float)width.get() / height.get(), znear.get(), zfar.get());
         float[] pos = light.position().provider();
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0], pos[1], pos[2], pos[0] + 1F, pos[1], pos[2], 0, -1F, 0);

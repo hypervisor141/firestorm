@@ -69,9 +69,9 @@ public class FSSyncUtils{
         }
     }
 
-    public static final class VertexBuffer extends VLSyncMap<Object, FSVertexBuffer>{
+    public static final class VertexBuffer extends VLSyncMap<Object, FSVertexBuffer<?>>{
 
-        public VertexBuffer(FSVertexBuffer target){
+        public VertexBuffer(FSVertexBuffer<?> target){
             super(target);
         }
 

@@ -38,8 +38,8 @@ public final class FSSchematics{
     private VLUpdater<FSSchematics> modelupdater;
     private VLUpdater<FSSchematics> mvpupdater;
 
-    private VLListType<FSBounds> mainbounds;
-    private VLListType<FSBounds> inputbounds;
+    private final VLListType<FSBounds> mainbounds;
+    private final VLListType<FSBounds> inputbounds;
 
     private float[] centroid;
     private float[] centroidmodel;
@@ -56,7 +56,7 @@ public final class FSSchematics{
         inputbounds = new VLListType<>(0, 1);
     }
 
-    public FSSchematics(FSInstance owner, FSSchematics src){
+    public FSSchematics(FSInstance instance, FSSchematics src){
         this.instance = instance;
 
         mainbounds = new VLListType<>(0, 1);

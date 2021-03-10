@@ -9,8 +9,6 @@ import vanguard.VLListType;
 
 public final class FSShadowDirect extends FSShadow<FSLightDirect>{
 
-    private static int[] DRAWBUFFERMODECACHE = new int[]{ GLES32.GL_NONE };
-
     public static final String[] STRUCT_MEMBERS = new String[]{
             "float minbias",
             "float maxbias",
