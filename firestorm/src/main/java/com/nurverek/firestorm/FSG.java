@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.opengl.GLES32;
 
 import vanguard.VLArrayFloat;
+import vanguard.VLBuffer;
 import vanguard.VLListType;
 import vanguard.VLVTypeManager;
 import vanguard.VLVTypeRunner;
@@ -54,17 +55,19 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
     private VLListType<VLListType<FSP>> programsets;
+    private VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers;
     private MANAGER rootmanager;
 
     private long id;
     private boolean touchable;
 
-    public FSG(int programsetsize, MANAGER rootmanager){
+    public FSG(int programsetsize, int buffercapacity, MANAGER rootmanager){
         this.rootmanager = rootmanager;
-
-        programsets = new VLListType<>(5, 20);
         id = FSRControl.getNextID();
         touchable = true;
+
+        buffers = new VLListType<>(buffercapacity, (int)Math.ceil(buffercapacity / 2F));
+        programsets = new VLListType<>(5, 20);
 
         addProgramSets(programsetsize);
     }
@@ -112,6 +115,10 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         }
     }
 
+    public long id(){
+        return id;
+    }
+
     public void touchable(boolean t){
         touchable = t;
     }
@@ -124,12 +131,12 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         return programsets;
     }
 
-    public MANAGER rootManager(){
-        return rootmanager;
+    public VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers(){
+        return buffers;
     }
 
-    public long id(){
-        return id;
+    public MANAGER rootManager(){
+        return rootmanager;
     }
 
     public int programsSize(){
@@ -143,21 +150,33 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     public final void destroy(){
         destroyAssets();
 
+        id = -1;
+        touchable = false;
+
         VLListType<FSP> programs;
 
-        for(int i = 0; i < programsets.size(); i++){
+        int size1 = programsets.size();
+        int size2 = 0;
+
+        for(int i = 0; i < size1; i++){
             programs = programsets.get(i);
 
-            for(int i2 = 0; i2 < programs.size(); i2++){
+            size2 = programs.size();
+
+            for(int i2 = 0; i2 < size2; i2++){
                 programs.get(i2).destroy();
             }
         }
 
-        programsets = null;
-        rootmanager = null;
+        size1 = buffers.size();
 
-        touchable = false;
-        id = -1;
+        for(int i = 0; i < size1; i++){
+            buffers.get(i).destroy();
+        }
+
+        programsets = null;
+        buffers = null;
+        rootmanager = null;
     }
 
     protected abstract void destroyAssets();

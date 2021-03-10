@@ -24,11 +24,11 @@ public abstract class FSGScanner{
     protected abstract boolean scan(FSGAutomator automator, FSM.Data data);
 
     protected void buffer(){
-        layout.buffer(assembler);
+        layout.buffer();
     }
 
     protected void bufferDebug(){
-        layout.bufferDebug(assembler);
+        layout.bufferDebug();
     }
 
     protected void debugInfo(){
@@ -153,7 +153,7 @@ public abstract class FSGScanner{
 
     public static class InstancedCopy extends FSGScanner{
 
-        private int copycount;
+        private final int copycount;
 
         public InstancedCopy(FSGBluePrint blueprint, FSGAssembler assembler, String prefixname, int drawmode, int copycount){
             super(blueprint, assembler, prefixname);

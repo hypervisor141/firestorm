@@ -86,7 +86,7 @@ public class FSInstance{
         return schematics;
     }
 
-    public FSBufferBindings bufferTracker(){
+    public FSBufferBindings bufferBindings(){
         return buffers;
     }
 

@@ -8,7 +8,7 @@ public class FSMesh{
     protected String name;
 
     protected VLListType<FSInstance> instances;
-    protected VLListType<FSLinkType> links;
+    protected VLListType<FSLink<?>> links;
     protected VLArrayShort indices;
 
     protected long id;
@@ -29,11 +29,11 @@ public class FSMesh{
         id = FSRControl.getNextID();
     }
 
-    public void initLinks(VLListType<FSLinkType> links){
+    public void initLinks(VLListType<FSLink<?>> links){
         this.links = links;
     }
 
-    public void addLink(FSLinkType link){
+    public void addLink(FSLink<?> link){
         links.add(link);
     }
 
@@ -62,7 +62,7 @@ public class FSMesh{
         return instances.get(index);
     }
 
-    public FSLinkType link(int index){
+    public FSLink<?> link(int index){
         return links.get(index);
     }
 
@@ -90,7 +90,7 @@ public class FSMesh{
         return instances;
     }
 
-    public VLListType<FSLinkType> links(){
+    public VLListType<FSLink<?>> links(){
         return links;
     }
 

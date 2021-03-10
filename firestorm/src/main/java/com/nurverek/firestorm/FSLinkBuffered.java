@@ -1,29 +1,25 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLBuffer;
-import vanguard.VLBufferAddress;
-import vanguard.VLBufferManagerBase;
-import vanguard.VLBufferTrackerDetailed;
-import vanguard.VLBufferTrackerType;
-import vanguard.VLBufferable;
+import vanguard.VLBufferTracker;
 
-public abstract class FSLinkBufferedType<DATA, MANAGER extends VLBufferManagerBase, ADDRESS extends VLBufferAddress<MANAGER>>
-        extends FSLinkType<DATA> implements VLBufferable<MANAGER, ADDRESS>{
+public abstract class FSLinkBuffered<DATA, BUFFER extends VLBuffer<?, ?>, TRACKER extends VLBufferTracker<BUFFER>> extends FSLink<DATA>{
 
-    public VLBufferTrackerDetailed<VLBuffer<?, ?>> address;
+    public TRACKER tracker;
 
-    public FSLinkBufferedType(DATA data, VLBufferTrackerType address){
+    public FSLinkBuffered(DATA data, TRACKER tracker){
         super(data);
-        this.address = address;
+        this.tracker = tracker;
     }
 
-    public FSLinkBufferedType(){
+    public FSLinkBuffered(){
 
     }
 
-    @Override
-    public VLBufferTrackerType tracker(){
-        return address;
+    public abstract void buffer(BUFFER buffer, int unitoffset, int unitsize, int unitsubcount, int stride);
+
+    public TRACKER tracker(){
+        return tracker;
     }
 
     public abstract int size();

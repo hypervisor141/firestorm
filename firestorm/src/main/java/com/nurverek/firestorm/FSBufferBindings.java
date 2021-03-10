@@ -1,11 +1,11 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLBufferTrackerType;
+import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLListType;
 
 public class FSBufferBindings{
 
-    protected VLListType<VLBufferTrackerType>[] trackers;
+    protected VLListType<VLBufferTrackerDetailed<?>>[] trackers;
 
     protected FSBufferBindings(){
         trackers = new VLListType[FSG.ELEMENT_TOTAL_COUNT];
@@ -15,19 +15,19 @@ public class FSBufferBindings{
         }
     }
 
-    public void add(int element, VLBufferTrackerType e){
-        trackers[element].add(e);
+    public void add(int element, VLBufferTrackerDetailed<?> entry){
+        trackers[element].add(entry);
     }
 
-    public void set(int element, int index, VLBufferTrackerType e){
-        trackers[element].set(index, e);
+    public void set(int element, int index, VLBufferTrackerDetailed<?> entry){
+        trackers[element].set(index, entry);
     }
 
-    public VLListType<VLBufferTrackerType> get(int element){
+    public VLListType<VLBufferTrackerDetailed<?>> get(int element){
         return trackers[element];
     }
 
-    public VLBufferTrackerType get(int element, int index){
+    public VLBufferTrackerDetailed<?> get(int element, int index){
         return trackers[element].get(index);
     }
 

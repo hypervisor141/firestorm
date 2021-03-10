@@ -2,11 +2,12 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayInt;
 import vanguard.VLArrayUtils;
+import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLDebug;
 import vanguard.VLFloat;
 import vanguard.VLInt;
@@ -17,7 +18,7 @@ public final class FSP{
 
     private static final int BUFFER_PRINT_LIMIT = 50;
 
-    private VLListType<FSShader> shaders;
+    private final VLListType<FSShader> shaders;
 
     protected FSShader vertexshader;
     protected FSShader geometryshader;
@@ -627,7 +628,7 @@ public final class FSP{
 
     public static class MaterialDynamic extends FSConfigLocated{
 
-        private int glslsize;
+        private final int glslsize;
 
         public MaterialDynamic(Policy policy, int glslsize){
             super(policy);
@@ -670,7 +671,7 @@ public final class FSP{
 
     public static class LightMapDynamic extends FSConfigLocated{
 
-        private int glslsize;
+        private final int glslsize;
 
         public LightMapDynamic(Policy policy, int glslsize){
             super(policy);
@@ -714,8 +715,8 @@ public final class FSP{
 
     public static class MaterialDynamicInstanced extends FSConfigLocated{
 
-        private int glslsize;
-        private int instancecount;
+        private final int glslsize;
+        private final int instancecount;
 
         public MaterialDynamicInstanced(Policy policy, int glslsize, int instancecount){
             super(policy);
@@ -775,8 +776,8 @@ public final class FSP{
 
     public static class LightMapDynamicInstanced extends FSConfigLocated{
 
-        private int glslsize;
-        private int instancecount;
+        private final int glslsize;
+        private final int instancecount;
 
         public LightMapDynamicInstanced(Policy policy, int glslsize, int instancecount){
             super(policy);
@@ -1063,28 +1064,28 @@ public final class FSP{
     public static class AttribPointer extends FSConfigLocated{
 
         public int element;
-        public int bufferaddressindex;
+        public int bufferindex;
 
-        public AttribPointer(Policy policy, int element, int bufferaddressindex){
+        public AttribPointer(Policy policy, int element, int bufferindex){
             super(policy);
 
             this.element = element;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
-        public AttribPointer(int element, int bufferaddressindex){
+        public AttribPointer(int element, int bufferindex){
             this.element = element;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferTracker o = mesh.first().bufferTracker().get(element, bufferaddressindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(element, bufferindex);
 
             int databytesize = FSG.ELEMENT_BYTES[element];
 
-            o.bind();
-            GLES32.glVertexAttribPointer(location, o.unitSize(), FSG.ELEMENT_GLDATA_TYPES[element], false, o.stride() * databytesize, o.offset() * databytesize);
+            ((FSVertexBuffer<?>)tracker.buffer()).bind();
+            GLES32.glVertexAttribPointer(location, tracker.unitsize(), FSG.ELEMENT_GLDATA_TYPES[element], false, tracker.stride() * databytesize, tracker.offset() * databytesize);
         }
 
         @Override
@@ -1099,10 +1100,10 @@ public final class FSP{
             VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferaddressindex);
+            VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(element, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -1111,28 +1112,27 @@ public final class FSP{
     public static class AttribIPointer extends FSConfigLocated{
 
         public int element;
-        public int bufferaddressindex;
+        public int bufferindex;
 
-        public AttribIPointer(Policy policy, int element){
+        public AttribIPointer(Policy policy, int element, int bufferindex){
             super(policy);
 
             this.element = element;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
         public AttribIPointer(int element){
             this.element = element;
-            this.bufferaddressindex = bufferaddressindex;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferTracker o = mesh.first().bufferTracker().get(element, bufferaddressindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(element, bufferindex);
 
             int databytesize = FSG.ELEMENT_BYTES[element];
 
-            o.bind();
-            GLES32.glVertexAttribIPointer(location, o.unitSize(), FSG.ELEMENT_GLDATA_TYPES[element], o.stride() * databytesize, o.offset() * databytesize);
+            ((FSVertexBuffer<?>)tracker.buffer()).bind();
+            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSG.ELEMENT_GLDATA_TYPES[element], tracker.stride() * databytesize, tracker.offset() * databytesize);
         }
 
         @Override
@@ -1147,10 +1147,10 @@ public final class FSP{
             VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferaddressindex);
+            VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(element, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2034,21 +2034,21 @@ public final class FSP{
     public static class UniformBlockElement extends FSConfigLocated{
 
         public int element;
-        public int bufferaddressindex;
+        public int bufferindex;
 
         protected String name;
 
-        public UniformBlockElement(Policy policy, int element, String name, int bufferaddressindex){
+        public UniformBlockElement(Policy policy, int element, String name, int bufferindex){
             super(policy);
 
             this.element = element;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
             this.name = name;
         }
 
-        public UniformBlockElement(int element, String name, int bufferaddressindex){
+        public UniformBlockElement(int element, String name, int bufferindex){
             this.element = element;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
             this.name = name;
         }
 
@@ -2060,7 +2060,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer buffer = mesh.first().bufferTracker().get(element, bufferaddressindex).target().vertexBuffer();
+            FSVertexBuffer<?> buffer = (FSVertexBuffer<?>)mesh.first().bufferBindings().get(element, bufferindex).buffer();
 
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
@@ -2078,10 +2078,10 @@ public final class FSP{
             VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferaddressindex);
+            VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(element, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(element, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2089,18 +2089,18 @@ public final class FSP{
 
     public static class UniformBlockData extends FSConfigLocated{
 
-        public FSBufferTracker address;
+        public VLBufferTrackerDetailed<?> tracker;
         protected String name;
 
-        public UniformBlockData(Policy policy, FSBufferTracker address, String name){
+        public UniformBlockData(Policy policy, VLBufferTrackerDetailed<?> tracker, String name){
             super(policy);
 
-            this.address = address;
+            this.tracker = tracker;
             this.name = name;
         }
 
-        public UniformBlockData(FSBufferTracker address, String name){
-            this.address = address;
+        public UniformBlockData(VLBufferTrackerDetailed<?> tracker, String name){
+            this.tracker = tracker;
             this.name = name;
         }
 
@@ -2112,7 +2112,7 @@ public final class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer buffer = address.target().vertexBuffer();
+            FSVertexBuffer<?> buffer = (FSVertexBuffer<?>)tracker.buffer();
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
         }
@@ -2127,7 +2127,9 @@ public final class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("element[NONE] ");
-            address.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            tracker.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
             VLDebug.append("] ");
         }
     }
@@ -2287,23 +2289,23 @@ public final class FSP{
 
     public static class DrawElements extends FSConfig{
 
-        public int bufferaddressindex;
+        public int bufferindex;
 
-        public DrawElements(Policy policy, int bufferaddressindex){
+        public DrawElements(Policy policy, int bufferindex){
             super(policy);
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
-        public DrawElements(int bufferaddressindex){
-            this.bufferaddressindex = bufferaddressindex;
+        public DrawElements(int bufferindex){
+            this.bufferindex = bufferindex;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferTracker address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex);
 
-            address.bind();
-            GLES32.glDrawElements(mesh.drawmode, address.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
+            ((FSVertexBuffer<?>)tracker.buffer()).bind();
+            GLES32.glDrawElements(mesh.drawmode, tracker.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], tracker.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2318,10 +2320,10 @@ public final class FSP{
             VLDebug.append("element[");
             VLDebug.append(FSG.ELEMENT_NAMES[FSG.ELEMENT_INDEX]);
             VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferaddressindex);
+            VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2329,23 +2331,23 @@ public final class FSP{
 
     public static class DrawElementsInstanced extends FSConfig{
 
-        public int bufferaddressindex;
+        public int bufferindex;
 
-        public DrawElementsInstanced(Policy policy, int bufferaddressindex){
+        public DrawElementsInstanced(Policy policy, int bufferindex){
             super(policy);
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
-        public DrawElementsInstanced(int bufferaddressindex){
-            this.bufferaddressindex = bufferaddressindex;
+        public DrawElementsInstanced(int bufferindex){
+            this.bufferindex = bufferindex;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferTracker address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex);
 
-            address.bind();
-            GLES32.glDrawElementsInstanced(mesh.drawmode, address.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX], mesh.size());
+            ((FSVertexBuffer<?>)tracker.buffer()).bind();
+            GLES32.glDrawElementsInstanced(mesh.drawmode, tracker.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], tracker.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX], mesh.size());
         }
 
         @Override
@@ -2362,10 +2364,10 @@ public final class FSP{
             VLDebug.append("] instanceCount[");
             VLDebug.append(mesh.size());
             VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferaddressindex);
+            VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2376,30 +2378,30 @@ public final class FSP{
         public int start;
         public int end;
         public int count;
-        public int bufferaddressindex;
+        public int bufferindex;
 
-        public DrawRangeElements(Policy policy, int start, int end, int count, int bufferaddressindex){
+        public DrawRangeElements(Policy policy, int start, int end, int count, int bufferindex){
             super(policy);
 
             this.start = start;
             this.end = end;
             this.count = count;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
-        public DrawRangeElements(int start, int end, int count, int bufferaddressindex){
+        public DrawRangeElements(int start, int end, int count, int bufferindex){
             this.start = start;
             this.end = end;
             this.count = count;
-            this.bufferaddressindex = bufferaddressindex;
+            this.bufferindex = bufferindex;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferTracker address = mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex);
 
-            address.bind();
-            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], address.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
+            ((FSVertexBuffer<?>)tracker.buffer()).bind();
+            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], tracker.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2420,10 +2422,10 @@ public final class FSP{
             VLDebug.append("] count[");
             VLDebug.append(count);
             VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferaddressindex);
+            VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferTracker().get(FSG.ELEMENT_INDEX, bufferaddressindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2444,20 +2446,16 @@ public final class FSP{
 
         @Override
         public void stringify(StringBuilder src, Object hint){
-            try{
-                src.append("[countRow : ");
-                src.append(length[0]);
-                src.append(" size : ");
-                src.append(size[0]);
-                src.append(" type : ");
-                src.append(type[0]);
-                src.append(" name : ");
-                src.append(new String(VLArrayUtils.slice(name, 0, length[0]), "UTF-8"));
-                src.append(" ]");
+            src.append("[countRow : ");
+            src.append(length[0]);
+            src.append(" size : ");
+            src.append(size[0]);
+            src.append(" type : ");
+            src.append(type[0]);
+            src.append(" name : ");
+            src.append(new String(VLArrayUtils.slice(name, 0, length[0]), StandardCharsets.UTF_8));
+            src.append(" ]");
 
-            }catch(UnsupportedEncodingException ex){
-                ex.printStackTrace();
-            }
         }
     }
 }

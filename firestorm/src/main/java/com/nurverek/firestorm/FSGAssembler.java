@@ -1,6 +1,5 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLArray;
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLListFloat;
@@ -271,7 +270,7 @@ public class FSGAssembler implements VLStringify{
         operate(restfuncs, instance, scanner, fsm);
     }
 
-    private final void operate(VLListType<BuildStep> funcs, FSInstance instance, FSGScanner scanner, FSM.Data fsm){
+    private void operate(VLListType<BuildStep> funcs, FSInstance instance, FSGScanner scanner, FSM.Data fsm){
         FSMesh mesh = scanner.mesh;
         FSBufferLayout layout = scanner.layout;
         VLArrayShort indices = mesh.indices;
@@ -456,11 +455,5 @@ public class FSGAssembler implements VLStringify{
     private abstract static class BuildStep{
 
         protected abstract void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout);
-    }
-
-    protected abstract static class BufferStep{
-
-        protected abstract void process(FSBufferTracker results, FSBufferManager manager, int index, VLArray array);
-        protected abstract void process(FSBufferTracker results, FSBufferManager manager, int index, VLArray array, int arrayoffset, int arraycount, int unitoffset, int unitsize, int unitsubcount, int stride);
     }
 }

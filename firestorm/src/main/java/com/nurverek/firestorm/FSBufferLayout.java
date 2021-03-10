@@ -1,7 +1,10 @@
 package com.nurverek.firestorm;
 
+import java.nio.Buffer;
+
 import vanguard.VLArrayFloat;
 import vanguard.VLBuffer;
+import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLDebug;
 import vanguard.VLListType;
 
@@ -30,22 +33,22 @@ public final class FSBufferLayout{
                 <>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
     }
 
-    public Layout add(FSBufferManager buffer, int bufferindex, int capacity){
-        Layout layout = new Layout(buffer, bufferindex, capacity);
+    public Layout add(VLBuffer<?, ?> buffer, int capacity){
+        Layout layout = new Layout(buffer, capacity);
         layouts.add(layout);
 
         return layout;
     }
 
-    public void buffer(FSGAssembler assembler){
+    public void buffer(){
         int size = layouts.size();
 
         for(int i = 0; i < size; i++){
-            layouts.get(i).buffer(assembler);
+            layouts.get(i).buffer();
         }
     }
 
-    public void bufferDebug(FSGAssembler assembler){
+    public void bufferDebug(){
         int size = layouts.size();
 
         VLDebug.append("BufferLayout[");
@@ -59,7 +62,7 @@ public final class FSBufferLayout{
             VLDebug.printD();
 
             try{
-                layouts.get(i).bufferDebug(assembler);
+                layouts.get(i).bufferDebug();
 
             }catch(Exception ex){
                 VLDebug.append(" [FAILED]\n");
@@ -73,7 +76,7 @@ public final class FSBufferLayout{
     }
 
 
-    public static abstract class EntryType{
+    public static abstract class Entry{
 
         public Mechanism mechanism;
 
@@ -81,23 +84,23 @@ public final class FSBufferLayout{
         public int unitoffset;
         public int unitsize;
         public int unitsubcount;
-        public int stride;
+        public int strideadjustment;
 
-        public EntryType(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
+        public Entry(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int strideadjustment){
             this.mechanism = mechanism;
             this.element = element;
             this.unitoffset = unitoffset;
             this.unitsize = unitsize;
             this.unitsubcount = unitsubcount;
-            this.stride = stride;
+            this.strideadjustment = strideadjustment;
         }
 
         public int strideAdjustment(){
-            return stride;
+            return strideadjustment;
         }
 
         public int bufferSizeAdjustment(FSMesh mesh){
-            return (mechanism.getTargetSize(this, mesh) / unitsize) * stride;
+            return (mechanism.getTargetSize(this, mesh) / unitsize) * strideadjustment;
         }
 
         public void debugInfo(){
@@ -113,44 +116,43 @@ public final class FSBufferLayout{
             VLDebug.append(unitsize);
             VLDebug.append("] unitSubCount[");
             VLDebug.append(unitsubcount);
+            VLDebug.append("] strideAdjustment[");
+            VLDebug.append(strideadjustment);
             VLDebug.append("]]");
         }
     }
 
-    public static class EntryElement extends EntryType{
+    public static class EntryElement extends Entry{
 
-        public EntryElement(Mechanism<EntryElement> mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
+        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
             super(mechanism, element, unitoffset, unitsize, unitsubcount, stride);
         }
 
-        public EntryElement(Mechanism<EntryElement> mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
+        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
             super(mechanism, element, unitoffset, unitsize, unitsubcount, unitsubcount);
         }
 
-        public EntryElement(Mechanism<EntryElement> mechanism, int element){
+        public EntryElement(Mechanism mechanism, int element){
             super(mechanism, element, 0, FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element]);
         }
     }
 
-    public static class EntryLink extends EntryType{
+    public static class EntryLink extends Entry{
 
-        public EntryLink(Mechanism<EntryElement> mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount, int stride){
+        public EntryLink(Mechanism mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount, int stride){
             super(mechanism, linkindex, unitoffset, unitsize, unitsubcount, stride);
         }
     }
 
     public final class Layout{
 
-        protected VLListType<EntryType> entries;
-        protected FSBufferManager buffer;
+        protected VLListType<Entry> entries;
+        protected VLBuffer<?, ?> buffer;
 
-        protected int bufferindex;
         protected int totalstride;
 
-        private Layout(FSBufferManager buffer, int bufferindex, int capacity){
+        private Layout(VLBuffer<?, ?> buffer, int capacity){
             this.buffer = buffer;
-            this.bufferindex = bufferindex;
-
             entries = new VLListType<>(capacity, capacity / 2);
         }
 
@@ -158,7 +160,7 @@ public final class FSBufferLayout{
             totalstride += entry.strideAdjustment();
             entries.add(entry);
 
-            buffer.adjustCapacity(bufferindex, entry.bufferSizeAdjustment(targetmesh));
+            buffer.adjustPreInitCapacity(entry.bufferSizeAdjustment(targetmesh));
 
             return this;
         }
@@ -167,28 +169,27 @@ public final class FSBufferLayout{
             totalstride += entry.strideAdjustment();
             entries.add(entry);
 
-            buffer.adjustCapacity(bufferindex, entry.bufferSizeAdjustment(targetmesh));
+            buffer.adjustPreInitCapacity(entry.bufferSizeAdjustment(targetmesh));
 
             return this;
         }
 
-        protected void buffer(FSGAssembler assembler){
+        protected void buffer(){
             int size = entries.size();
-            VLBuffer b = buffer.get(bufferindex).buffer();
-            EntryType entry;
+            Entry entry;
 
             for(int i = 0; i < size - 1; i++){
                 entry = entries.get(i);
-                b.position(entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, totalstride));
+                buffer.position(entry.mechanism.buffer(targetmesh, entry, buffer, totalstride));
             }
 
             entry = entries.get(entries.size() - 1);
-            entry.mechanism.buffer(assembler, targetmesh, entry, buffer, bufferindex, totalstride);
+            entry.mechanism.buffer(targetmesh, entry, buffer, totalstride);
         }
 
-        protected void bufferDebug(FSGAssembler assembler){
+        protected void bufferDebug(){
             int size = entries.size();
-            EntryType e;
+            Entry e;
 
             if(totalstride <= 0){
                 VLDebug.append("Invalid stride[");
@@ -198,9 +199,7 @@ public final class FSBufferLayout{
                 throw new RuntimeException();
             }
 
-            VLDebug.append("bufferIndex[");
-            VLDebug.append(bufferindex);
-            VLDebug.append("] stride[");
+            VLDebug.append("stride[");
             VLDebug.append(totalstride);
             VLDebug.append("] entries[");
 
@@ -215,25 +214,26 @@ public final class FSBufferLayout{
 
             VLDebug.append("] ");
 
-            buffer.get(bufferindex).buffer().stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
-            buffer(assembler);
+            buffer();
         }
     }
 
-    public abstract static interface Mechanism<ENTRY extends EntryType>{
+    public interface Mechanism{
 
-        public abstract int buffer(FSGAssembler assembler, FSMesh mesh, ENTRY entry, FSBufferManager buffer, int bufferindex, int stride);
-
-        public abstract int getTargetSize(ENTRY entry, FSMesh mesh);
+        <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride);
+        int getTargetSize(Entry entry, FSMesh mesh);
     }
 
-    private static final class ElementSequentialInstanced implements Mechanism<EntryType>{
+    private static final class ElementSequentialInstanced implements Mechanism{
 
-        private ElementSequentialInstanced(){}
+        private ElementSequentialInstanced(){
+
+        }
 
         @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -241,22 +241,22 @@ public final class FSBufferLayout{
 
             FSInstance instance;
             VLArrayFloat array;
-            FSBufferTracker address;
+            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker;
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                address = new FSBufferTracker();
-                buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+                tracker = new VLBufferTrackerDetailed<>();
+                buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
-                instance.bufferTracker().add(element, address);
+                instance.bufferBindings().add(element, tracker);
             }
 
-            return buffer.position(bufferindex);
+            return buffer.position();
         }
 
-        public int getTargetSize(EntryType entry, FSMesh mesh){
+        public int getTargetSize(Entry entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -268,36 +268,38 @@ public final class FSBufferLayout{
         }
     }
 
-    private static final class ElementInterleavedInstanced implements Mechanism<EntryType>{
+    private static final class ElementInterleavedInstanced implements Mechanism{
 
-        private ElementInterleavedInstanced(){}
+        private ElementInterleavedInstanced(){
+
+        }
 
         @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
 
             int size = instances.size();
             int element = entry.element;
-            int mainoffset = buffer.position(bufferindex);
+            int mainoffset = buffer.position();
 
-            FSBufferTracker address;
+            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker;
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                address = new FSBufferTracker();
-                buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+                tracker = new VLBufferTrackerDetailed<>();
+                buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
-                instance.bufferTracker().add(element, address);
+                instance.bufferBindings().add(element, tracker);
             }
 
             return mainoffset + entry.unitsubcount;
         }
 
-        public int getTargetSize(EntryType entry, FSMesh mesh){
+        public int getTargetSize(Entry entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -309,12 +311,14 @@ public final class FSBufferLayout{
         }
     }
 
-    private static final class ElementSequentialSingular implements Mechanism<EntryType>{
+    private static final class ElementSequentialSingular implements Mechanism{
 
-        private ElementSequentialSingular(){}
+        private ElementSequentialSingular(){
+
+        }
 
         @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -322,118 +326,123 @@ public final class FSBufferLayout{
 
             FSInstance instance;
             VLArrayFloat array;
-            FSBufferTracker address;
+            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker;
 
             instance = instances.get(0);
             array = instance.element(element);
 
             for(int i = 0; i < size; i++){
-                address = new FSBufferTracker();
-                buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+                tracker = new VLBufferTrackerDetailed<>();
+                buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
-                instances.get(i).bufferTracker().add(element, address);
+                instances.get(i).bufferBindings().add(element, tracker);
             }
 
-            return buffer.position(bufferindex);
+            return buffer.position();
         }
 
-        public int getTargetSize(EntryType entry, FSMesh mesh){
+        public int getTargetSize(Entry entry, FSMesh mesh){
             return mesh.instance(0).element(entry.element).size();
         }
     }
 
-    private static final class ElementInterleavedSingular implements Mechanism<EntryType>{
+    private static final class ElementInterleavedSingular implements Mechanism{
 
-        private ElementInterleavedSingular(){}
+        private ElementInterleavedSingular(){
+
+        }
 
         @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
 
             int size = instances.size();
             int element = entry.element;
-            int mainoffset = buffer.position(bufferindex);
+            int mainoffset = buffer.position();
 
             instance = instances.get(0);
             array = instance.element(element);
 
-            FSBufferTracker address = new FSBufferTracker();
-            buffer.buffer(address, bufferindex, array, 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker = new VLBufferTrackerDetailed<>();
+            buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).bufferTracker().add(element, address);
+                instances.get(i).bufferBindings().add(element, tracker);
             }
 
             return mainoffset + entry.unitsubcount;
         }
 
-        public int getTargetSize(EntryType entry, FSMesh mesh){
+        public int getTargetSize(Entry entry, FSMesh mesh){
             return mesh.instance(0).element(entry.element).size();
         }
     }
 
-    private static final class ElementSequentialIndices implements Mechanism<EntryType>{
+    private static final class ElementSequentialIndices implements Mechanism{
 
-        private ElementSequentialIndices(){}
+        private ElementSequentialIndices(){
+
+        }
 
         @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
             int element = entry.element;
 
-            FSBufferTracker address = new FSBufferTracker();
-            buffer.buffer(address, bufferindex, mesh.indices, 0, mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker = new VLBufferTrackerDetailed<>();
+            buffer.put(tracker, mesh.indices.provider(), 0, mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             int size = mesh.size();
 
             for(int i = 0; i < size; i++){
-                mesh.instance(i).bufferTracker().add(element, address);
+                mesh.instance(i).bufferBindings().add(element, tracker);
             }
 
-            return buffer.position(bufferindex);
+            return buffer.position();
         }
 
-        public int getTargetSize(EntryType entry, FSMesh mesh){
+        public int getTargetSize(Entry entry, FSMesh mesh){
             return mesh.indices().size();
         }
     }
 
-    private static final class LinkSequentialSingular implements Mechanism<EntryType>{
+    private static final class LinkSequentialSingular implements Mechanism{
 
-        private LinkSequentialSingular(){}
+        private LinkSequentialSingular(){
 
-        @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryType entry, FSBufferManager buffer, int bufferindex, int stride){
-            FSLinkBufferedType link = (FSLinkBufferedType)mesh.link(entry.element);
-            link.buffer(buffer, bufferindex, 0, link.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
-
-            return buffer.position(bufferindex);
         }
 
         @Override
-        public int getTargetSize(EntryType entry, FSMesh mesh){
-            return (((FSLinkBufferedType)mesh.link(entry.element)).size() / entry.unitsize) * entry.unitsubcount;
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+            ((FSLinkBuffered<?, VLBuffer<ELEMENT, BUFFER>, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+
+            return buffer.position();
+        }
+
+        @Override
+        public int getTargetSize(Entry entry, FSMesh mesh){
+            return (((FSLinkBuffered<?, ?, ?>)mesh.link(entry.element)).size() / entry.unitsize) * entry.unitsubcount;
         }
     }
 
-    private static final class LinkInterleavedSingular implements Mechanism<EntryLink>{
+    private static final class LinkInterleavedSingular implements Mechanism{
 
-        private LinkInterleavedSingular(){}
+        private LinkInterleavedSingular(){
+
+        }
 
         @Override
-        public int buffer(FSGAssembler assembler, FSMesh mesh, EntryLink entry, FSBufferManager buffer, int bufferindex, int stride){
-            int firstpos = buffer.position(bufferindex);
-            FSLinkBufferedType link = (FSLinkBufferedType)mesh.link(entry.element);
-
-            link.buffer(buffer, bufferindex, 0, link.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+            int firstpos = buffer.position();
+            ((FSLinkBuffered<?, VLBuffer<ELEMENT, BUFFER>, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return firstpos + entry.unitsubcount;
         }
 
         @Override
-        public int getTargetSize(EntryLink entry, FSMesh mesh){
-            return ((FSLinkBufferedType)mesh.link(entry.element)).size();
+        public int getTargetSize(Entry entry, FSMesh mesh){
+            return ((FSLinkBuffered<?, ?, ?>)mesh.link(entry.element)).size();
         }
     }
 }

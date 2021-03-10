@@ -2,6 +2,10 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import vanguard.VLBuffer;
 import vanguard.VLStringify;
 
@@ -21,6 +25,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     public FSVertexBuffer(int target, int accessmode){
         this.target = target;
         this.accessmode = accessmode;
+
         id = -1;
     }
 
@@ -31,7 +36,6 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
         id = -1;
     }
-
 
     public void initialize(){
         destroy();
@@ -86,7 +90,11 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
         int bytes = buffer.getTypeBytes();
 
         bind();
-        buffer.initialize(FSR.mapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT));
+
+        ByteBuffer b = (ByteBuffer)FSR.mapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT);
+        b.order(ByteOrder.nativeOrder());
+
+        buffer.initialize(b);
 
         needsupdate = false;
         mapped = true;

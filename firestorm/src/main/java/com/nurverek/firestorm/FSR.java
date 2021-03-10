@@ -402,8 +402,8 @@ public class FSR{
         GLES32.glUniformBlockBinding(program, uboid, bindpoint);
     }
 
-    public static ByteBuffer mapBufferRange(int target, int offset, int length, int access){
-        return ((ByteBuffer) GLES32.glMapBufferRange(target, offset, length, access)).order(ByteOrder.nativeOrder());
+    public static Buffer mapBufferRange(int target, int offset, int length, int access){
+        return GLES32.glMapBufferRange(target, offset, length, access);
     }
 
     public static void flushMapBuffer(int target, int offset, int length){

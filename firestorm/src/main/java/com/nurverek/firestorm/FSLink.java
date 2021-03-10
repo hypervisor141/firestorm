@@ -1,19 +1,14 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLBuffer;
-import vanguard.VLBufferTracker;
-
-public abstract class FSLinkType<DATA>{
+public class FSLink<DATA>{
 
     public DATA data;
 
-    public FSLinkType(DATA data){
+    public FSLink(DATA data){
         this.data = data;
     }
 
-    public FSLinkType(){
+    public FSLink(){
 
     }
-
-    public abstract VLBufferTracker<VLBuffer<?, ?>> tracker();
 }

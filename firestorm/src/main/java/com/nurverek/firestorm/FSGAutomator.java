@@ -4,17 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 
+import vanguard.VLBuffer;
 import vanguard.VLDebug;
 import vanguard.VLListType;
 
 public final class FSGAutomator{
 
-    private final FSG gen;
+    private final FSG<?> gen;
 
     protected VLListType<FSM> files;
     protected VLListType<Entry> entries;
 
-    public FSGAutomator(FSG gen, int filecapacity, int scancapacity){
+    public FSGAutomator(FSG<?> gen, int filecapacity, int scancapacity){
         this.gen = gen;
 
         files = new VLListType<>(filecapacity, filecapacity);
@@ -47,8 +48,6 @@ public final class FSGAutomator{
 
         build(debug);
 
-        FSBufferManager buffermanager = gen.bufferManager();
-
         for(int i = 0; i < size; i++){
             scanner = entries.get(i).scanner;
 
@@ -56,7 +55,7 @@ public final class FSGAutomator{
             blueprint.postScanAdjustment(scanner.mesh);
             blueprint.createLinks(scanner.mesh);
 
-            scanner.layout = blueprint.bufferLayouts(scanner.mesh, buffermanager);
+            scanner.layout = blueprint.bufferLayouts(scanner.mesh);
         }
 
         buffer(debug);
@@ -220,14 +219,6 @@ public final class FSGAutomator{
 
             VLDebug.printDirect("[Buffering Stage]\n");
 
-            try{
-                gen.bufferManager().initialize();
-
-            }catch(Exception ex){
-                VLDebug.printE();
-                throw new RuntimeException("Failed to initialize buffers", ex);
-            }
-
             for(int i = 0; i < size; i++){
                 s = entries.get(i).scanner;
 
@@ -259,8 +250,14 @@ public final class FSGAutomator{
                 VLDebug.printD();
             }
 
+            VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers = gen.buffers();
+
             try{
-                gen.bufferManager().upload();
+                int buffersize = buffers.size();
+
+                for(int i = 0; i < size; i++){
+                    buffers.get(i).upload();
+                }
 
             }catch(Exception ex){
                 VLDebug.printE();
@@ -271,13 +268,20 @@ public final class FSGAutomator{
             VLDebug.printD();
 
         }else{
-            gen.bufferManager().initialize();
+            VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers = gen.buffers();
+            int buffersize = buffers.size();
+
+            for(int i = 0; i < buffersize; i++){
+                buffers.get(i).initialize();
+            }
 
             for(int i = 0; i < size; i++){
                 entries.get(i).scanner.buffer();
             }
 
-            gen.bufferManager().upload();
+            for(int i = 0; i < buffersize; i++){
+                buffers.get(i).upload();
+            }
         }
     }
 
@@ -292,7 +296,7 @@ public final class FSGAutomator{
             this.name = name;
         }
 
-        protected void register(FSG gen){
+        protected void register(FSG<?> gen){
             scanner = blueprint.register(gen, name);
         }
     }
