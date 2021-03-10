@@ -1,5 +1,8 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLBuffer;
+import vanguard.VLBufferTracker;
+
 public abstract class FSLinkType<DATA>{
 
     public DATA data;
@@ -12,5 +15,5 @@ public abstract class FSLinkType<DATA>{
 
     }
 
-    public abstract FSBufferTracker address();
+    public abstract VLBufferTracker<VLBuffer<?, ?>> tracker();
 }
