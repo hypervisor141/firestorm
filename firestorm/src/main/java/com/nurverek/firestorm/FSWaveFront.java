@@ -13,7 +13,7 @@ public final class FSWaveFront{
 
     public VLListType<Data> data;
 
-    private int dataresizer;
+    private final int dataresizer;
     private int pdivider;
 
     private int positioncount;
