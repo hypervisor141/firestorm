@@ -8,7 +8,6 @@ public class FSRPass{
 
     private ArrayList<Entry> entries;
 
-    private boolean runtasks;
     private boolean clearcolor;
     private boolean cleardepth;
     private boolean clearstencil;
@@ -23,7 +22,6 @@ public class FSRPass{
     public FSRPass(int debug){
         entries = new ArrayList<>();
 
-        runtasks = true;
         clearcolor = true;
         cleardepth = true;
         clearstencil = true;
@@ -80,11 +78,6 @@ public class FSRPass{
         return entries.remove(index);
     }
 
-    public FSRPass setRunTasks(boolean enabled){
-        runtasks = enabled;
-        return this;
-    }
-
     public FSRPass setClearColor(boolean enabled){
         clearcolor = enabled;
         return this;
@@ -108,10 +101,6 @@ public class FSRPass{
     public FSRPass setDrawMeshes(boolean enabled){
         draw = enabled;
         return this;
-    }
-
-    public boolean getRunTasks(){
-        return runtasks;
     }
 
     public boolean getClearColor(){
@@ -197,24 +186,6 @@ public class FSRPass{
                     }
                 });
             }
-        }
-        if(runtasks){
-            orders.add(new Order(){
-                
-                @Override
-                public void execute(int orderindex, int passindex){
-                    FSR.runTasks();
-
-                    if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
-                        try{
-                            FSTools.checkGLError();
-
-                        }catch(Exception ex){
-                            throw new RuntimeException("Error running tasks on renderPass[" + passindex + "]", ex);
-                        }
-                    }
-                }
-            });
         }
         if(update){
             orders.add(new Order(){
@@ -322,7 +293,6 @@ public class FSRPass{
     }
 
     public FSRPass copySettings(FSRPass src){
-        runtasks = src.runtasks;
         clearcolor = src.clearcolor;
         cleardepth = src.cleardepth;
         clearstencil = src.clearstencil;

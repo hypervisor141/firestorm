@@ -19,7 +19,6 @@ public class FSR{
     };
 
     private static ArrayList<FSRPass> passes;
-    private static ArrayList<Runnable> tasks;
 
     private static FSRInterface threadinterface;
     private static FSRThread renderthread;
@@ -34,7 +33,6 @@ public class FSR{
         threadinterface = threadsrc;
 
         passes = new ArrayList<>();
-        tasks = new ArrayList<>();
 
         isInitialized = true;
 
@@ -83,38 +81,8 @@ public class FSR{
         }
     }
 
-    protected static void runTasks(){
-        try{
-            synchronized(tasks){
-                int size = tasks.size();
-
-                for(int i = 0; i < size; i++){
-                    tasks.get(i).run();
-                }
-
-                tasks.clear();
-            }
-
-        }catch(NoSuchElementException ex){
-            ex.printStackTrace();
-        }
-    }
-
     public static void addRenderPass(FSRPass pass){
         passes.add(pass);
-    }
-
-    public static void addTask(Runnable task){
-        synchronized(tasks){
-            tasks.add(task);
-            FSRFrames.signalFrameRender(true);
-        }
-    }
-
-    public static void addTaskPriority(Runnable task){
-        synchronized (tasks){
-            tasks.add(0, task);
-        }
     }
 
     protected static FSRThread getRenderThread(){
@@ -445,7 +413,6 @@ public class FSR{
             isInitialized = false;
 
             passes = null;
-            tasks = null;
         }
     }
 }
