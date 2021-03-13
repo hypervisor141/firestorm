@@ -7,8 +7,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-import vanguard.VLThreadHost;
-
 public class FSR{
 
     public static final Object RENDERLOCK = new Object();
@@ -21,7 +19,6 @@ public class FSR{
     };
 
     private static ArrayList<FSRPass> passes;
-    private static ArrayList<VLThreadHost> threadhosts;
     private static ArrayList<Runnable> tasks;
 
     private static FSRInterface threadinterface;
@@ -39,7 +36,6 @@ public class FSR{
         threadinterface = threadsrc;
 
         passes = new ArrayList<>();
-        threadhosts = new ArrayList<>();
         tasks = new ArrayList<>();
 
         isInitialized = true;
@@ -108,26 +104,6 @@ public class FSR{
         }
     }
 
-    protected static void next(){
-        FSEvents events = FSControl.getSurface().events();
-
-        events.GLPreAdvancement();
-
-        int size = passes.size();
-        int changes = 0;
-
-        for(int i = 0; i < size; i++){
-            changes += passes.get(i).next();
-        }
-
-        EXTERNAL_CHANGES = 0;
-        INTERNAL_CHANGES = 0;
-
-        FSRControl.processFrameAndSignalNextFrame(changes);
-
-        events.GLPostAdvancement(changes);
-    }
-
     public static void addExternalChangesForFrame(int changes){
         EXTERNAL_CHANGES += changes;
     }
@@ -140,14 +116,10 @@ public class FSR{
         passes.add(pass);
     }
 
-    public static void addThreadHost(VLThreadHost p){
-        threadhosts.add(p);
-    }
-
     public static void addTask(Runnable task){
         synchronized(tasks){
             tasks.add(task);
-            FSRControl.signalFrameRender(true);
+            FSRFrames.signalFrameRender(true);
         }
     }
 
@@ -169,10 +141,6 @@ public class FSR{
         return passes.get(index);
     }
 
-    public static VLThreadHost getThreadHost(int index){
-        return threadhosts.get(index);
-    }
-
     public static void removeRenderPass(FSRPass pass){
         int size = passes.size();
 
@@ -187,32 +155,12 @@ public class FSR{
         return passes.remove(index);
     }
 
-    public static void removeThreadHost(int index, boolean destroy){
-        VLThreadHost p = threadhosts.remove(index);
-
-        if(destroy){
-            p.destroy();
-        }
-    }
-
-    public static void removeThreadHost(VLThreadHost p, boolean destroy){
-        threadhosts.remove(p);
-
-        if(destroy){
-            p.destroy();
-        }
-    }
-
     public static int getRenderPassesSize(){
         return passes.size();
     }
 
-    public static int getThreadHostSize(){
-        return threadhosts.size();
-    }
-
     protected static void finishFrame(){
-        FSRControl.timeFrameEnded();
+        FSRFrames.timeFrameEnded();
         FSEGL.swapBuffers();
 
         int size = passes.size();
@@ -221,7 +169,7 @@ public class FSR{
             passes.get(i).noitifyPostFrameSwap();
         }
 
-        FSRControl.timeBufferSwapped();
+        FSRFrames.timeBufferSwapped();
     }
 
     protected static boolean needsSwap(){
@@ -509,7 +457,6 @@ public class FSR{
 
             passes = null;
             tasks = null;
-            threadhosts = null;
         }
     }
 }

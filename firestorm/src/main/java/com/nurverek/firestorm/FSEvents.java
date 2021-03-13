@@ -14,6 +14,4 @@ public class FSEvents{
     public void GLPostChange(int width, int height){}
     public void GLPreDraw(){}
     public void GLPostDraw(){}
-    public void GLPreAdvancement(){}
-    public void GLPostAdvancement(long changes){}
 }

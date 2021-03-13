@@ -26,7 +26,7 @@ public class FSMesh{
         this.drawmode = drawmode;
 
         instances = new VLListType<>(capacity, resizer);
-        id = FSRControl.getNextID();
+        id = FSRFrames.getNextID();
     }
 
     public void initLinks(VLListType<FSLink<?>> links){

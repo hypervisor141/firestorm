@@ -21,7 +21,7 @@ public class FSInstance{
     protected long id;
 
     public FSInstance(){
-        id = FSRControl.getNextID();
+        id = FSRFrames.getNextID();
 
         data = new Data();
         states = new States();
@@ -127,7 +127,7 @@ public class FSInstance{
     }
 
     public void copy(FSInstance src){
-        id = FSRControl.getNextID();
+        id = FSRFrames.getNextID();
 
         data = new Data(src.data);
         states = new States(src.states);

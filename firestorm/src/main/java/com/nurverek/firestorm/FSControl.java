@@ -32,8 +32,9 @@ public final class FSControl{
         FSControl.activity = act;
 
         FSInput.initialize();
-        FSRControl.initialize();
+        FSRFrames.initialize();
         FSR.initialize(threadinterface);
+        FSVThreadManager.initialize();
 
         return FSControl.surface;
     }
@@ -78,7 +79,8 @@ public final class FSControl{
         FSDimensions.destroy();
         FSEGL.destroy();
         FSInput.destroy();
-        FSRControl.destroy();
+        FSRFrames.destroy();
+        FSVThreadManager.destroy();
 
         if(!keepalive){
             activity = null;

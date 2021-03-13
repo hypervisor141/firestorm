@@ -63,7 +63,7 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     public FSG(int programsetsize, int buffercapacity, MANAGER rootmanager){
         this.rootmanager = rootmanager;
-        id = FSRControl.getNextID();
+        id = FSRFrames.getNextID();
         touchable = true;
 
         buffers = new VLListType<>(buffercapacity, (int)Math.ceil(buffercapacity / 2F));
@@ -91,10 +91,6 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     }
 
     protected void postFramSwap(int passindex){}
-
-    public int next(){
-        return rootmanager.next();
-    }
 
     public VLArrayFloat createColorArray(float[] basecolor, int count){
         float[] colors = new float[count * 4];

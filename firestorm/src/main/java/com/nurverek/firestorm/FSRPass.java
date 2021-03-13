@@ -4,11 +4,10 @@ import android.opengl.GLES32;
 
 import java.util.ArrayList;
 
-public final class FSRPass{
+public class FSRPass{
 
     private ArrayList<Entry> entries;
-    
-    private boolean next;
+
     private boolean runtasks;
     private boolean clearcolor;
     private boolean cleardepth;
@@ -24,7 +23,6 @@ public final class FSRPass{
     public FSRPass(int debug){
         entries = new ArrayList<>();
 
-        next = true;
         runtasks = true;
         clearcolor = true;
         cleardepth = true;
@@ -32,22 +30,19 @@ public final class FSRPass{
         update = true;
         draw = true;
         
-        id = FSRControl.getNextID();
+        id = FSRFrames.getNextID();
 
         this.debug = debug;
     }
 
-
-
-
     public void add(Entry e){
         entries.add(e);
-        FSRControl.signalFrameRender(true);
+        FSRFrames.signalFrameRender(true);
     }
 
     public void add(int index, Entry e){
         entries.add(index, e);
-        FSRControl.signalFrameRender(true);
+        FSRFrames.signalFrameRender(true);
     }
 
     public Entry get(int index){
@@ -85,13 +80,6 @@ public final class FSRPass{
         return entries.remove(index);
     }
 
-
-
-    public FSRPass setNext(boolean enabled){
-        next = enabled;
-        return this;
-    }
-
     public FSRPass setRunTasks(boolean enabled){
         runtasks = enabled;
         return this;
@@ -120,10 +108,6 @@ public final class FSRPass{
     public FSRPass setDrawMeshes(boolean enabled){
         draw = enabled;
         return this;
-    }
-
-    public boolean getNext(){
-        return next;
     }
 
     public boolean getRunTasks(){
@@ -159,7 +143,7 @@ public final class FSRPass{
 
             @Override
             public void execute(int orderindex, int passindex){
-                FSRControl.timeFrameStarted();
+                FSRFrames.timeFrameStarted();
             }
         });
         
@@ -251,15 +235,6 @@ public final class FSRPass{
                 }
             });
         }
-        if(next){
-            orders.add(new Order(){
-
-                @Override
-                public void execute(int orderindex, int passindex){
-                    FSR.next();
-                }
-            });
-        }
         
         return this;
     }
@@ -270,16 +245,6 @@ public final class FSRPass{
         for(int i = 0; i < size; i++){
             orders.get(i).execute(i, FSR.CURRENT_RENDER_PASS_INDEX);
         }
-    }
-
-    public int next(){
-        int changes = 0;
-
-        for(int i = 0; i < entries.size(); i++){
-            changes += entries.get(i).c.next();
-        }
-
-        return changes;
     }
 
     public void update(){
@@ -357,7 +322,6 @@ public final class FSRPass{
     }
 
     public FSRPass copySettings(FSRPass src){
-        next = src.next;
         runtasks = src.runtasks;
         clearcolor = src.clearcolor;
         cleardepth = src.cleardepth;
@@ -365,7 +329,7 @@ public final class FSRPass{
         update = src.update;
         draw = src.draw;
         
-        id = FSRControl.getNextID();
+        id = FSRFrames.getNextID();
 
         return this;
     }
