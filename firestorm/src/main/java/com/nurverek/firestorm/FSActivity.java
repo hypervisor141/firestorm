@@ -2,8 +2,6 @@ package com.nurverek.firestorm;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -43,6 +41,15 @@ public abstract class FSActivity extends AppCompatActivity{
 
     public RelativeLayout getBaseLayout(){
         return BASE;
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        if(!FSControl.getKeepAlive()){
+            destroy();
+        }
     }
 
     protected void destroy(){
