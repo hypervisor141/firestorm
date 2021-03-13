@@ -29,8 +29,6 @@ public class FSR{
     protected static int CURRENT_RENDER_PASS_INDEX;
     protected static int CURRENT_FSG_INDEX;
     protected static int CURRENT_PROGRAM_SET_INDEX;
-    private static int EXTERNAL_CHANGES;
-    private static int INTERNAL_CHANGES;
 
     protected static void initialize(FSRInterface threadsrc){
         threadinterface = threadsrc;
@@ -40,8 +38,6 @@ public class FSR{
 
         isInitialized = true;
 
-        EXTERNAL_CHANGES = 0;
-        INTERNAL_CHANGES = 0;
         CURRENT_RENDER_PASS_INDEX = 0;
         CURRENT_FSG_INDEX = 0;
         CURRENT_PROGRAM_SET_INDEX = 0;
@@ -104,14 +100,6 @@ public class FSR{
         }
     }
 
-    public static void addExternalChangesForFrame(int changes){
-        EXTERNAL_CHANGES += changes;
-    }
-
-    protected static void addInternalChangesForFrame(int changes){
-        INTERNAL_CHANGES += changes;
-    }
-
     public static void addRenderPass(FSRPass pass){
         passes.add(pass);
     }
@@ -170,6 +158,7 @@ public class FSR{
         }
 
         FSRFrames.timeBufferSwapped();
+        FSRFrames.processFrameAndSignalNextFrame();
     }
 
     protected static boolean needsSwap(){
@@ -449,11 +438,11 @@ public class FSR{
                 passes.get(i).destroy();
             }
 
-            isInitialized = false;
+            CURRENT_RENDER_PASS_INDEX = -1;
+            CURRENT_PROGRAM_SET_INDEX = -1;
+            CURRENT_FSG_INDEX = -1;
 
-            CURRENT_RENDER_PASS_INDEX = 0;
-            EXTERNAL_CHANGES = 0;
-            INTERNAL_CHANGES = 0;
+            isInitialized = false;
 
             passes = null;
             tasks = null;

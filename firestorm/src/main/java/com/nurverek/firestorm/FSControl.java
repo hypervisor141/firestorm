@@ -34,7 +34,7 @@ public final class FSControl{
         FSInput.initialize();
         FSRFrames.initialize();
         FSR.initialize(threadinterface);
-        FSVThreadManager.initialize();
+        FSThreadManager.initialize();
 
         return FSControl.surface;
     }
@@ -80,7 +80,7 @@ public final class FSControl{
         FSEGL.destroy();
         FSInput.destroy();
         FSRFrames.destroy();
-        FSVThreadManager.destroy();
+        FSThreadManager.destroy();
 
         if(!keepalive){
             activity = null;

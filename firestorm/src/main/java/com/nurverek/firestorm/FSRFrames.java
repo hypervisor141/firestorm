@@ -13,6 +13,7 @@ public class FSRFrames{
     private static long FRAME_SECOND_TRACKER;
     private static int FPS;
     private static int UNCHANGED_FRAMES;
+    protected static int EXTERNAL_CHANGES = 0;
 
     private static volatile boolean EFFICIENT_RENDER;
     private static volatile boolean PERFORMANCE_MONITOR;
@@ -21,8 +22,13 @@ public class FSRFrames{
         FPS = 0;
         FRAME_TIME = 0;
         UNCHANGED_FRAMES = 0;
+        EXTERNAL_CHANGES = 0;
         EFFICIENT_RENDER = true;
         PERFORMANCE_MONITOR = false;
+    }
+
+    public static void addExternalChangesForFrame(int changes){
+        EXTERNAL_CHANGES += changes;
     }
 
     public static void setEfficientRenderMode(boolean enable){
@@ -37,8 +43,8 @@ public class FSRFrames{
         }
     }
 
-    public static void setEfficientModeUnChangedFramesThreshold(){
-
+    public static void setEfficientModeUnChangedFramesThreshold(int threshold){
+        EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = threshold;
     }
 
     public static long getNextID(){
@@ -89,12 +95,12 @@ public class FSRFrames{
         }
     }
 
-    protected static void processFrameAndSignalNextFrame(int changes){
+    protected static void processFrameAndSignalNextFrame(){
         FSSurface surface = FSControl.getSurface();
         FSSurface.Config config = FSControl.getSurface().config();
 
         if(EFFICIENT_RENDER){
-            if(changes == 0){
+            if(EXTERNAL_CHANGES == 0){
 
                 if(UNCHANGED_FRAMES >= EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD){
                     UNCHANGED_FRAMES = 0;
