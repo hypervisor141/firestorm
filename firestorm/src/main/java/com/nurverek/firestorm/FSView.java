@@ -7,7 +7,7 @@ import android.opengl.Matrix;
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayInt;
 
-public final class FSView{
+public class FSView{
 
     protected VLArrayFloat matview;
     protected VLArrayFloat matperspective;
