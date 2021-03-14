@@ -15,21 +15,19 @@ public final class FSControl{
 
     protected static FSSurface surface;
     protected static Activity activity;
-    protected static FSView viewconfig;
+    protected static FSView view;
 
     protected static boolean keepalive;
     protected static float[] clearcolor;
 
-    public static FSSurface initialize(Activity act, FSSurface surface, FSRInterface threadinterface){
+    public static FSSurface initialize(Activity act, FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, float[] clearcolor){
         VLDebug.tag(LOGTAG);
 
-        keepalive = false;
-
-        clearcolor = new float[4];
-        viewconfig = new FSView();
-
-        FSControl.surface = surface;
         FSControl.activity = act;
+        FSControl.surface = surface;
+        FSControl.view = view;
+        FSControl.keepalive = keepalive;
+        FSControl.clearcolor = clearcolor;
 
         FSInput.initialize();
         FSRFrames.initialize();
@@ -66,8 +64,8 @@ public final class FSControl{
         return surface;
     }
 
-    public static FSView getViewConfig(){
-        return viewconfig;
+    public static FSView getView(){
+        return view;
     }
 
     public static float[] getClearColor(){
@@ -84,7 +82,7 @@ public final class FSControl{
 
         if(!keepalive){
             activity = null;
-            viewconfig = null;
+            view = null;
             surface = null;
             clearcolor = null;
         }

@@ -167,7 +167,7 @@ public final class FSSchematics{
 
     private void updateCentroid(){
         instance.data.model().transformPoint(centroidmodel, 0, centroid, 0);
-        FSControl.getViewConfig().multiplyViewPerspective(centroidmvp, 0, centroidmodel, 0);
+        FSControl.getView().multiplyViewPerspective(centroidmvp, 0, centroidmodel, 0);
     }
 
     private void updateModels(){
@@ -178,7 +178,7 @@ public final class FSSchematics{
     }
 
     private void updateMVPs(){
-        FSView config = FSControl.getViewConfig();
+        FSView config = FSControl.getView();
 
         config.multiplyViewPerspective(boundsmvp, 0, boundsmodel, 0);
         config.multiplyViewPerspective(boundsmvp, 4, boundsmodel, 4);

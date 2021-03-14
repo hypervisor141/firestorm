@@ -164,7 +164,7 @@ public final class FSInput{
             CURRENT_F1 = f1;
             CURRENT_F2 = f2;
 
-            FSView config = FSControl.getViewConfig();
+            FSView config = FSControl.getView();
             config.unProject2DPoint(e1.getX(), e1.getY(), NEARCACHE, 0, FARCACHE, 0);
 
             ArrayList<Entry> entries = type.get();
