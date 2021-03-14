@@ -13,7 +13,7 @@ public abstract class FSAttenuation extends FSConfigSequence{
 
     public abstract String getFunction();
 
-    public static final class Distance extends FSAttenuation{
+    public static class Distance extends FSAttenuation{
 
         public static final String[] STRUCT_MEMBERS = new String[]{
                 "float constant",
@@ -62,7 +62,7 @@ public abstract class FSAttenuation extends FSConfigSequence{
         }
     }
 
-    public static final class Radius extends FSAttenuation{
+    public static class Radius extends FSAttenuation{
 
         public static final String[] STRUCT_MEMBERS = new String[]{
                 "float radius"
