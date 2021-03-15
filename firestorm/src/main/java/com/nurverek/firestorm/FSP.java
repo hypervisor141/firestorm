@@ -14,7 +14,7 @@ import vanguard.VLInt;
 import vanguard.VLListType;
 import vanguard.VLStringify;
 
-public final class FSP{
+public class FSP{
 
     private static final int BUFFER_PRINT_LIMIT = 50;
 
@@ -48,11 +48,8 @@ public final class FSP{
         meshes = new VLListType<>(10, 50);
 
         uniformlocation = 0;
-
-        initializeVertexShader();
-        initializeFragmentShader();
+        customize();
     }
-
 
     public void addMesh(FSMesh mesh){
         meshes.add(mesh);
@@ -101,7 +98,6 @@ public final class FSP{
     public int id(){
         return program;
     }
-
 
     public void initializeVertexShader(FSShader shader){
         if(vertexshader == null){
@@ -199,9 +195,8 @@ public final class FSP{
         return computeshader;
     }
 
+    public void customize(){
 
-    public void modify(FSPMod mod, FSConfig.Policy policy){
-        mod.modify(this);
     }
 
     public void addSetupConfig(FSConfig config){
