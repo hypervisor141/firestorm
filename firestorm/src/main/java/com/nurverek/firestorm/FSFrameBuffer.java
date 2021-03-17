@@ -6,6 +6,10 @@ public class FSFrameBuffer{
 
     protected int id;
 
+    public FSFrameBuffer(int id){
+        this.id = id;
+    }
+
     public FSFrameBuffer(){
 
     }
@@ -15,12 +19,24 @@ public class FSFrameBuffer{
         id = FSStatic.CACHE_INT[0];
     }
 
+    public void bind(){
+        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER, id);
+    }
+
+    public void unbind(){
+        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER, 0);
+    }
+
     public void checkStatus(){
         int status = GLES32.glCheckFramebufferStatus(GLES32.GL_FRAMEBUFFER);
 
         if(status != GLES32.GL_FRAMEBUFFER_COMPLETE){
             throw new RuntimeException("Framebuffer incomplete with code : " + status);
         }
+    }
+
+    public void parameterI(int pname, int param){
+        GLES32.glFramebufferParameteri(GLES32.GL_FRAMEBUFFER, pname, param);
     }
 
     public void attachTexture(int attachment, int texture, int level){
@@ -35,12 +51,8 @@ public class FSFrameBuffer{
         GLES32.glFramebufferTextureLayer(GLES32.GL_FRAMEBUFFER, attachment, texture, level, layer);
     }
 
-    public void bind(){
-        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER, id);
-    }
-
-    public void unbind(){
-        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER, 0);
+    public void attachRenderBuffer(int attachment, int renderbuffertarget, int renderbuffer){
+        GLES32.glFramebufferRenderbuffer(GLES32.GL_FRAMEBUFFER, attachment, renderbuffertarget, renderbuffer);
     }
 
     public int id(){

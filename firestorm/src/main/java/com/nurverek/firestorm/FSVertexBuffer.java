@@ -36,6 +36,13 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
         id = -1;
     }
 
+    public FSVertexBuffer(int id, int target, int accessmode, int bindpoint){
+        this.id = id;
+        this.target = target;
+        this.accessmode = accessmode;
+        this.bindpoint = bindpoint;
+    }
+
     public void initialize(){
         destroy();
 

@@ -1,11 +1,6 @@
 package com.nurverek.firestorm;
 
-import android.opengl.GLES32;
-
-import java.nio.Buffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 public class FSR{
 
@@ -25,9 +20,8 @@ public class FSR{
 
     protected static boolean isInitialized;
 
-    protected static int CURRENT_RENDER_PASS_INDEX;
-    protected static int CURRENT_FSG_INDEX;
-    protected static int CURRENT_PROGRAM_SET_INDEX;
+    protected static int CURRENT_PASS_INDEX;
+    protected static int CURRENT_ENTRY_INDEX;
 
     protected static void initialize(FSRInterface threadsrc){
         threadinterface = threadsrc;
@@ -36,9 +30,8 @@ public class FSR{
 
         isInitialized = true;
 
-        CURRENT_RENDER_PASS_INDEX = 0;
-        CURRENT_FSG_INDEX = 0;
-        CURRENT_PROGRAM_SET_INDEX = 0;
+        CURRENT_PASS_INDEX = 0;
+        CURRENT_ENTRY_INDEX = 0;
     }
 
     public static void setFSRThreadInterface(FSRInterface threadsrc){
@@ -70,9 +63,8 @@ public class FSR{
             int size = passes.size();
 
             for(int i = 0; i < size; i++){
-                CURRENT_RENDER_PASS_INDEX = i;
-                CURRENT_PROGRAM_SET_INDEX = -1;
-                CURRENT_FSG_INDEX = -1;
+                CURRENT_PASS_INDEX = i;
+                CURRENT_ENTRY_INDEX = -1;
 
                 passes.get(i).execute();
             }
@@ -89,8 +81,8 @@ public class FSR{
         return renderthread;
     }
 
-    public static int getCurrentRenderPassIndex(){
-        return CURRENT_RENDER_PASS_INDEX;
+    public static int getCurrentPassIndex(){
+        return CURRENT_PASS_INDEX;
     }
 
     public static FSRPass getRenderPass(int index){
@@ -139,9 +131,8 @@ public class FSR{
                 passes.get(i).destroy();
             }
 
-            CURRENT_RENDER_PASS_INDEX = -1;
-            CURRENT_PROGRAM_SET_INDEX = -1;
-            CURRENT_FSG_INDEX = -1;
+            CURRENT_PASS_INDEX = -1;
+            CURRENT_ENTRY_INDEX = -1;
 
             isInitialized = false;
 

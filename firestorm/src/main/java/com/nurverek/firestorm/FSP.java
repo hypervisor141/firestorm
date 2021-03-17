@@ -30,6 +30,7 @@ public class FSP{
     protected VLListType<FSConfig> setupconfigs;
     protected VLListType<FSConfig> meshconfigs;
     protected VLListType<FSConfig> postdrawconfigs;
+    protected VLListType<FSConfig> postframeconfigs;
     protected VLListType<FSMesh> meshes;
 
     private int program;
@@ -43,8 +44,9 @@ public class FSP{
 
         shaders = new VLListType<>(5, 5);
         setupconfigs = new VLListType<>(10, 10);
-        meshconfigs = new VLListType<>(20, 20);
+        meshconfigs = new VLListType<>(10, 10);
         postdrawconfigs = new VLListType<>(10, 10);
+        postframeconfigs = new VLListType<>(10, 10);
         meshes = new VLListType<>(10, 50);
 
         uniformlocation = 0;
@@ -249,7 +251,6 @@ public class FSP{
             throw new RuntimeException("All location-based configs need to be a subclass of FSConfigLocated.");
         }
     }
-
 
     public FSP build(){
         VLDebug.recreate();
@@ -525,12 +526,59 @@ public class FSP{
         }
     }
 
+    public void postFrame(int passindex){
+        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+            try{
+                FSTools.checkGLError();
+
+            }catch(Exception ex){
+                throw new RuntimeException("Pre-program-run error (there is an unchecked error somewhere before in the code)", ex);
+            }
+        }
+
+        use();
+
+        int size = postframeconfigs.size();
+        FSConfig config;
+
+        if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
+            VLDebug.recreate();
+
+            VLDebug.append("PROGRAM[");
+            VLDebug.append(program);
+            VLDebug.append("] [PostFrameConfig] size[");
+            VLDebug.append(size);
+            VLDebug.append("]");
+            VLDebug.printD();
+
+            for(int i = 0; i < size; i++){
+                VLDebug.append("[");
+                VLDebug.append(i + 1);
+                VLDebug.append("/");
+                VLDebug.append(size);
+                VLDebug.append("] ");
+
+                config = postframeconfigs.get(i);
+                config.policy().configureDebug(config, this, null, -1, passindex);
+            }
+
+            VLDebug.printD();
+
+        }else{
+            for(int i = 0; i < size; i++){
+                config = postframeconfigs.get(i);
+                config.policy().configure(config, this, null, -1, passindex);
+            }
+        }
+    }
+
     public void use(){
         GLES32.glUseProgram(program);
 
         if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
+
             }catch(Exception ex){
                 VLDebug.append("Error on program activation program[");
                 VLDebug.append(program);

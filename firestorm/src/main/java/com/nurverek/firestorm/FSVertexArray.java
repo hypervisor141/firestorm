@@ -27,15 +27,14 @@ public final class FSVertexArray{
         GLES32.glBindVertexArray(0);
     }
 
-    public void id(int s){
-        id = s;
-    }
-
     public int id(){
         return id;
     }
 
     public void destroy(){
         id = -1;
+
+        FSStatic.CACHE_INT[0] = id;
+        GLES32.glDeleteVertexArrays(1, FSStatic.CACHE_INT, 0);
     }
 }

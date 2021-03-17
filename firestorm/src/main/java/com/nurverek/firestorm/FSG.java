@@ -54,7 +54,7 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     public static final int[] ELEMENT_GLDATA_TYPES = new int[]{ ELEMENT_GLDATA_TYPE_MODEL, ELEMENT_GLDATA_TYPE_POSITION, ELEMENT_GLDATA_TYPE_COLOR, ELEMENT_GLDATA_TYPE_TEXCOORD, ELEMENT_GLDATA_TYPE_NORMAL, ELEMENT_GLDATA_TYPE_INDEX };
     public static final String[] ELEMENT_NAMES = new String[]{ "MODEL", "POSITION", "COLOR", "TEXCOORD", "NORMAL", "INDEX" };
 
-    private VLListType<VLListType<FSP>> programsets;
+    private VLListType<FSP> programs;
     private VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers;
 
     private MANAGER rootmanager;
@@ -62,36 +62,22 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
     private long id;
     private boolean touchable;
 
-    public FSG(int programsetsize, int buffercapacity, MANAGER rootmanager){
+    public FSG(int programcapacity, int buffercapacity, MANAGER rootmanager){
+        buffers = new VLListType<>(buffercapacity, buffercapacity);
+        programs = new VLListType<>(programcapacity, programcapacity);
+
         this.rootmanager = rootmanager;
         id = FSRFrames.getNextID();
         touchable = true;
-
-        buffers = new VLListType<>(buffercapacity, (int)Math.ceil(buffercapacity / 2F));
-        programsets = new VLListType<>(5, 20);
-
-        addProgramSets(programsetsize);
     }
 
-    public void initialize(Activity act){
-        assemble(act);
+    public void initialize(Activity act, VLListType<FSRPass> targets){
+        assemble(act, buffers, programs, targets);
         layout(rootmanager);
     }
 
-    protected abstract void assemble(Activity act);
+    protected abstract void assemble(Activity act, VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers, VLListType<FSP> programs, VLListType<FSRPass> targets);
     protected abstract void layout(MANAGER rootmanager);
-    protected abstract void update(int passindex, int programsetindex);
-
-    public void draw(int passindex, int programsetindex){
-        VLListType<FSP> p = programsets.get(programsetindex);
-        int size = p.size();
-
-        for(int i = 0; i < size; i++){
-            p.get(i).draw(passindex);
-        }
-    }
-
-    protected void postFramSwap(int passindex){}
 
     public VLArrayFloat createColorArray(float[] basecolor, int count){
         float[] colors = new float[count * 4];
@@ -106,12 +92,6 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         return new VLArrayFloat(colors);
     }
 
-    public void addProgramSets(int count){
-        for(int i = 0; i < count; i++){
-            programsets.add(new VLListType<FSP>(5, 10));
-        }
-    }
-
     public long id(){
         return id;
     }
@@ -120,12 +100,8 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         touchable = t;
     }
 
-    public VLListType<FSP> programSet(int passindex){
-        return programsets.get(passindex);
-    }
-
-    public VLListType<VLListType<FSP>> programSets(){
-        return programsets;
+    public VLListType<FSP> programs(){
+        return programs;
     }
 
     public VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers(){
@@ -134,10 +110,6 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     public MANAGER rootManager(){
         return rootmanager;
-    }
-
-    public int programsSize(){
-        return programsets.size();
     }
 
     public boolean touchable(){
@@ -150,28 +122,19 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         id = -1;
         touchable = false;
 
-        VLListType<FSP> programs;
+        int size = this.programs.size();
 
-        int size1 = programsets.size();
-        int size2 = 0;
-
-        for(int i = 0; i < size1; i++){
-            programs = programsets.get(i);
-
-            size2 = programs.size();
-
-            for(int i2 = 0; i2 < size2; i2++){
-                programs.get(i2).destroy();
-            }
+        for(int i = 0; i < size; i++){
+            programs.get(i).destroy();
         }
 
-        size1 = buffers.size();
+        size = buffers.size();
 
-        for(int i = 0; i < size1; i++){
+        for(int i = 0; i < size; i++){
             buffers.get(i).destroy();
         }
 
-        programsets = null;
+        this.programs = null;
         buffers = null;
         rootmanager = null;
     }

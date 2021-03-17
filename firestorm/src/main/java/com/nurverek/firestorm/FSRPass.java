@@ -4,14 +4,16 @@ import android.opengl.GLES32;
 
 import java.util.ArrayList;
 
+import vanguard.VLListType;
+
 public class FSRPass{
 
-    private ArrayList<Entry> entries;
+    private ArrayList<FSP> entries;
+    private float[] color;
 
     private boolean clearcolor;
     private boolean cleardepth;
     private boolean clearstencil;
-    private boolean update;
     private boolean draw;
     
     private long id;
@@ -25,7 +27,6 @@ public class FSRPass{
         clearcolor = true;
         cleardepth = true;
         clearstencil = true;
-        update = true;
         draw = true;
         
         id = FSRFrames.getNextID();
@@ -33,29 +34,41 @@ public class FSRPass{
         this.debug = debug;
     }
 
-    public void add(Entry e){
-        entries.add(e);
-        FSRFrames.signalFrameRender(true);
+    public void add(FSG<?> source){
+        VLListType<FSP> programs = source.programs();
+        int size = programs.size();
+
+        for(int i = 0; i < size; i++){
+            entries.add(programs.get(i));
+        }
     }
 
-    public void add(int index, Entry e){
-        entries.add(index, e);
-        FSRFrames.signalFrameRender(true);
+    public void add(FSP entry){
+        entries.add(entry);
     }
 
-    public void remove(FSG<?> target){
+    public void add(int index, FSP entry){
+        entries.add(index, entry);
+    }
+
+    public void remove(FSP target){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            if(entries.get(i).target.id() == target.id()){
+            if(entries.get(i).id() == target.id()){
                 entries.remove(i);
                 i--;
             }
         }
     }
 
-    public Entry remove(int index){
+    public FSP remove(int index){
         return entries.remove(index);
+    }
+
+    public FSRPass setColor(float[] color){
+        this.color = color;
+        return this;
     }
 
     public FSRPass setClearColor(boolean enabled){
@@ -73,14 +86,13 @@ public class FSRPass{
         return this;
     }
 
-    public FSRPass setUpdateMeshes(boolean enabled){
-        update = enabled;
-        return this;
-    }
-
     public FSRPass setDrawMeshes(boolean enabled){
         draw = enabled;
         return this;
+    }
+
+    public float[] getColor(){
+        return color;
     }
 
     public boolean getClearColor(){
@@ -95,10 +107,6 @@ public class FSRPass{
         return clearstencil;
     }
 
-    public boolean getUpdateMeshes(){
-        return update;
-    }
-
     public boolean getDrawMeshes(){
         return draw;
     }
@@ -107,18 +115,17 @@ public class FSRPass{
         return id;
     }
 
-    public Entry get(int index){
+    public FSP get(int index){
         return entries.get(index);
     }
 
-    public Entry findEntryByID(int id){
-        Entry entry;
+    public FSP findEntryByID(int id){
+        FSP entry;
 
         for(int i = 0; i < entries.size(); i++){
             entry = entries.get(i);
-            FSG<?> target = entry.target;
 
-            if(target.id() == id){
+            if(entry.id() == id){
                 return entry;
             }
         }
@@ -158,7 +165,7 @@ public class FSRPass{
 
                 @Override
                 public void execute(int orderindex, int passindex){
-                    FSR.clear(clearbitf);
+                    GLES32.glClear(clearbitf);
 
                     if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                         try{
@@ -176,7 +183,7 @@ public class FSRPass{
 
                     @Override
                     public void execute(int orderindex, int passindex){
-                        FSR.clearColor();
+                        GLES32.glClearColor(color[0], color[1], color[2], color[3]);
 
                         if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                             try{
@@ -189,16 +196,6 @@ public class FSRPass{
                     }
                 });
             }
-        }
-        if(update){
-            orders.add(new Order(){
-
-                @Override
-                public void execute(int orderindex, int passindex){
-                    update();
-                }
-            });
-
         }
         if(draw){
             orders.add(new Order(){
@@ -213,41 +210,27 @@ public class FSRPass{
         return this;
     }
 
-    private void execute(){
+    protected void execute(){
         int size = orders.size();
 
         for(int i = 0; i < size; i++){
-            orders.get(i).execute(i, FSR.CURRENT_RENDER_PASS_INDEX);
+            orders.get(i).execute(i, FSR.CURRENT_PASS_INDEX);
         }
     }
 
-    private void update(){
-        FSEvents events = FSControl.getSurface().events();
-
-        events.GLPreDraw();
-
-        Entry e;
-
-        for(int index = 0; index < entries.size(); index++){
-            e = entries.get(index);
-
-            FSR.CURRENT_FSG_INDEX = index;
-            FSR.CURRENT_PROGRAM_SET_INDEX = e.programsetindex;
-
-            entries.get(index).target.update(FSR.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
+    protected void noitifyPostFrameSwap(){
+        for(int i = 0; i < entries.size(); i++){
+            entries.get(i).postFrame(FSR.CURRENT_PASS_INDEX);
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 
                 }catch(Exception ex){
-                    throw new RuntimeException("Error running update() for FSG[" + index
-                            + "] programSet[" + e.programsetindex + "] renderPass[" + FSR.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                    throw new RuntimeException("Error running postFrameSwap() for Entry[" + i + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
                 }
             }
         }
-
-        events.GLPostDraw();
     }
 
     private void draw(){
@@ -255,23 +238,22 @@ public class FSRPass{
 
         events.GLPreDraw();
 
-        Entry e;
+        int size = entries.size();
+        FSP entry;
 
-        for(int index = 0; index < entries.size(); index++){
-            e = entries.get(index);
+        for(int index = 0; index < size; index++){
+            entry = entries.get(index);
 
-            FSR.CURRENT_FSG_INDEX = index;
-            FSR.CURRENT_PROGRAM_SET_INDEX = e.programsetindex;
+            FSR.CURRENT_ENTRY_INDEX = index;
 
-            e.target.draw(FSR.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
+            entry.draw(FSR.CURRENT_PASS_INDEX);
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 
                 }catch(Exception ex){
-                    throw new RuntimeException("Error running draw() for FSG[" + index
-                            + "] programSet[" + e.programsetindex + "] renderPass[" + FSR.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                    throw new RuntimeException("Error running draw() for Entry[" + index + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
                 }
             }
         }
@@ -279,27 +261,10 @@ public class FSRPass{
         events.GLPostDraw();
     }
 
-    private void noitifyPostFrameSwap(){
-        for(int i = 0; i < entries.size(); i++){
-            entries.get(i).target.postFramSwap(FSR.CURRENT_RENDER_PASS_INDEX);
-
-            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
-                try{
-                    FSTools.checkGLError();
-
-                }catch(Exception ex){
-                    throw new RuntimeException("Error running postFrameSwap() for entry[" + i + "] FSG[" + i
-                            + "] programSet[" + entries.get(i).programsetindex + "] renderPass[" + FSR.CURRENT_RENDER_PASS_INDEX + "]", ex);
-                }
-            }
-        }
-    }
-
     public FSRPass copySettings(FSRPass src){
         clearcolor = src.clearcolor;
         cleardepth = src.cleardepth;
         clearstencil = src.clearstencil;
-        update = src.update;
         draw = src.draw;
         
         id = FSRFrames.getNextID();
@@ -309,15 +274,14 @@ public class FSRPass{
 
     public void destroy(){
         for(int i = 0; i < entries.size(); i++){
-            entries.get(i).target.destroy();
+            entries.get(i).destroy();
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 
                 }catch(Exception ex){
-                    throw new RuntimeException("Error running destroy() for FSG[" + i
-                            + "] programSet[" + entries.get(i).programsetindex + "] renderPass[" + FSR.CURRENT_RENDER_PASS_INDEX + "]", ex);
+                    throw new RuntimeException("Error running destroy() for Entry[" + i + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
                 }
             }
         }
@@ -328,24 +292,5 @@ public class FSRPass{
     protected static interface Order{
         
         void execute(int orderindex, int passindex);
-    }
-
-    public static class Entry{
-
-        protected FSG<?> target;
-        protected int programsetindex;
-
-        public Entry(FSG<?> target, int programsetindex){
-            this.target = target;
-            this.programsetindex = programsetindex;
-        }
-
-        public FSG<?> target(){
-            return target;
-        }
-
-        public int programSetIndex(){
-            return programsetindex;
-        }
     }
 }
