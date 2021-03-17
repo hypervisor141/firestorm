@@ -71,18 +71,18 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         touchable = true;
     }
 
-    public void initialize(Activity act, VLListType<FSRPass> targets){
-        assemble(act, buffers, programs, targets);
+    public void initialize(Activity act){
+        assemble(act, buffers, programs, FSR.getRenderPasses());
         layout(rootmanager);
     }
 
     protected abstract void assemble(Activity act, VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers, VLListType<FSP> programs, VLListType<FSRPass> targets);
     protected abstract void layout(MANAGER rootmanager);
 
-    public VLArrayFloat createColorArray(float[] basecolor, int count){
-        float[] colors = new float[count * 4];
+    protected VLArrayFloat createColorArray(float[] basecolor, int count){
+        float[] colors = new float[count * UNIT_SIZE_COLOR];
 
-        for(int i = 0; i < colors.length; i += 4){
+        for(int i = 0; i < colors.length; i += UNIT_SIZE_COLOR){
             colors[i] = basecolor[0];
             colors[i + 1] = basecolor[1];
             colors[i + 2] = basecolor[2];

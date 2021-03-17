@@ -2,6 +2,8 @@ package com.nurverek.firestorm;
 
 import java.util.ArrayList;
 
+import vanguard.VLListType;
+
 public class FSR{
 
     public static final Object RENDERLOCK = new Object();
@@ -13,7 +15,7 @@ public class FSR{
         }
     };
 
-    private static ArrayList<FSRPass> passes;
+    private static VLListType<FSRPass> passes;
 
     private static FSRInterface threadinterface;
     private static FSRThread renderthread;
@@ -26,7 +28,7 @@ public class FSR{
     protected static void initialize(FSRInterface threadsrc){
         threadinterface = threadsrc;
 
-        passes = new ArrayList<>();
+        passes = new VLListType<>(10, 10);
 
         isInitialized = true;
 
@@ -89,6 +91,10 @@ public class FSR{
         return passes.get(index);
     }
 
+    public static VLListType<FSRPass> getRenderPasses(){
+        return passes;
+    }
+
     public static void removeRenderPass(FSRPass pass){
         int size = passes.size();
 
@@ -100,7 +106,10 @@ public class FSR{
     }
 
     public static FSRPass removeRenderPass(int index){
-        return passes.remove(index);
+        FSRPass item = passes.get(index);
+        passes.remove(index);
+
+        return item;
     }
 
     public static int getRenderPassesSize(){
