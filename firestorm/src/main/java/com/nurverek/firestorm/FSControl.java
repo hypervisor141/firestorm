@@ -18,7 +18,6 @@ public final class FSControl{
     protected static FSView view;
 
     protected static boolean keepalive;
-    protected static float[] clearcolor;
 
     public static FSSurface initialize(Activity act, FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, float[] clearcolor){
         VLDebug.tag(LOGTAG);
@@ -27,7 +26,6 @@ public final class FSControl{
         FSControl.surface = surface;
         FSControl.view = view;
         FSControl.keepalive = keepalive;
-        FSControl.clearcolor = clearcolor;
 
         FSInput.initialize();
         FSRFrames.initialize();
@@ -39,13 +37,6 @@ public final class FSControl{
 
     public static void setKeepAlive(boolean enabled){
         keepalive = enabled;
-    }
-
-    public static void setClearColor(float r, float g, float b, float a){
-        clearcolor[0] = r;
-        clearcolor[1] = g;
-        clearcolor[2] = b;
-        clearcolor[3] = a;
     }
 
     public static boolean getKeepAlive(){
@@ -68,10 +59,6 @@ public final class FSControl{
         return view;
     }
 
-    public static float[] getClearColor(){
-        return clearcolor;
-    }
-
     protected static void destroy(){
         FSR.destroy();
         FSDimensions.destroy();
@@ -84,7 +71,6 @@ public final class FSControl{
             activity = null;
             view = null;
             surface = null;
-            clearcolor = null;
         }
     }
 }
