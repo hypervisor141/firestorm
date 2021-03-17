@@ -1,13 +1,9 @@
 package com.nurverek.firestorm;
 
-import android.opengl.GLES32;
-
 import vanguard.VLFloat;
 import vanguard.VLInt;
 
 public abstract class FSShadow<LIGHT extends FSLight> extends FSConfigSelective{
-
-    protected static final int[] DRAWBUFFERMODECACHE = new int[]{ GLES32.GL_NONE };
 
     public static final String FUNCTION_BIAS =
             "float shadowMapBias(vec3 normal, vec3 lightdir, float minbias, float maxbias){\n" +

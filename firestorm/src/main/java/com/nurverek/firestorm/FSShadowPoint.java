@@ -77,12 +77,12 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
         }, 0)));
         
         configs().add(new FSConfigSequence(new VLListType<FSConfig>(new FSConfig[]{
-                new FSP.UniformMatrix4fvd(lightViewProjection(0), 0, 1),
-                new FSP.UniformMatrix4fvd(lightViewProjection(1), 0, 1),
-                new FSP.UniformMatrix4fvd(lightViewProjection(2), 0, 1),
-                new FSP.UniformMatrix4fvd(lightViewProjection(3), 0, 1),
-                new FSP.UniformMatrix4fvd(lightViewProjection(4), 0, 1),
-                new FSP.UniformMatrix4fvd(lightViewProjection(5), 0, 1)
+                new FSP.UniformMatrix4fvd(lightvp[0], 0, 1),
+                new FSP.UniformMatrix4fvd(lightvp[1], 0, 1),
+                new FSP.UniformMatrix4fvd(lightvp[2], 0, 1),
+                new FSP.UniformMatrix4fvd(lightvp[3], 0, 1),
+                new FSP.UniformMatrix4fvd(lightvp[4], 0, 1),
+                new FSP.UniformMatrix4fvd(lightvp[5], 0, 1)
 
         }, 0)));
     }
@@ -106,18 +106,20 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
 
     @Override
     protected FSFrameBuffer initializeFrameBuffer(FSTexture texture){
-        FSFrameBuffer framebuffer = new FSFrameBuffer();
-        framebuffer.initialize();
-        framebuffer.bind();
-        framebuffer.attachTexture(GLES32.GL_DEPTH_ATTACHMENT, texture.id(), 0);
-        framebuffer.checkStatus();
+        FSFrameBuffer buffer = new FSFrameBuffer();
+        buffer.initialize();
+        buffer.bind();
+        buffer.attachTexture(GLES32.GL_DEPTH_ATTACHMENT, texture.id(), 0);
+        buffer.checkStatus();
 
-        FSR.readBuffer(GLES32.GL_NONE);
-        FSR.drawBuffers(0, DRAWBUFFERMODECACHE, 0);
+        FSStatic.CACHE_INT[0] = GLES32.GL_NONE;
 
-        framebuffer.unbind();
+        GLES32.glReadBuffer(GLES32.GL_NONE);
+        GLES32.glDrawBuffers(0, FSStatic.CACHE_INT, 0);
 
-        return framebuffer;
+        buffer.unbind();
+
+        return buffer;
     }
 
     public void updateLightVP(){

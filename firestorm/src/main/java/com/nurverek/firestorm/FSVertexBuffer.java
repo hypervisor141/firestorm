@@ -38,15 +38,17 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
     public void initialize(){
         destroy();
-        id = FSR.createBuffers(1)[0];
+
+        GLES32.glGenBuffers(1, FSStatic.CACHE_INT, 0);
+        id = FSStatic.CACHE_INT[0];
     }
 
     public void bind(){
-        FSR.vertexBufferBind(target, id);
+        GLES32.glBindBuffer(target, id);
     }
 
     public void unbind(){
-        FSR.vertexBufferBind(target, 0);
+        GLES32.glBindBuffer(target, 0);
     }
 
     public void upload(){
@@ -54,7 +56,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
         bind();
 
         buffer.position(0);
-        FSR.vertexBufferData(target, sizebytes, buffer.provider(), accessmode);
+        GLES32.glBufferData(target, sizebytes, buffer.provider(), accessmode);
 
         needsupdate = false;
     }
@@ -64,7 +66,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
         int bytes = buffer.getTypeBytes();
         buffer.position(offset);
-        FSR.vertexBufferSubData(target, offset * bytes, size * bytes, buffer.provider());
+        GLES32.glBufferSubData(target, offset * bytes, size * bytes, buffer.provider());
 
         needsupdate = false;
     }
@@ -74,7 +76,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
         FSTools.checkGLError();
 
         buffer.position(0);
-        FSR.vertexBufferSubData(target, 0, sizebytes, buffer.provider());
+        GLES32.glBufferSubData(target, 0, sizebytes, buffer.provider());
 
         needsupdate = false;
     }
@@ -90,7 +92,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
         bind();
 
-        ByteBuffer b = (ByteBuffer)FSR.mapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT);
+        ByteBuffer b = (ByteBuffer)GLES32.glMapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT);
         b.order(ByteOrder.nativeOrder());
 
         buffer.initialize(b);
@@ -105,13 +107,13 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
     public void flushMap(int offset, int size){
         int bytes = buffer.getTypeBytes();
-        FSR.flushMapBuffer(target, offset * bytes, size * bytes);
+        GLES32.glFlushMappedBufferRange(target, offset * bytes, size * bytes);
 
         needsupdate = false;
     }
 
     public void flushMap(){
-        FSR.flushMapBuffer(target, 0, sizeBytes());
+        GLES32.glFlushMappedBufferRange(target, 0, sizeBytes());
         needsupdate = false;
     }
 
@@ -122,7 +124,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     }
 
     public BUFFER unMap(){
-        FSR.unMapBuffer(target);
+        GLES32.glUnmapBuffer(target);
 
         mapped = false;
         needsupdate = false;
@@ -135,7 +137,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     }
 
     public void bindBufferBase(){
-        FSR.vertexBufferBindBase(target, bindpoint, id);
+        GLES32.glBindBufferBase(target, bindpoint, id);
     }
 
     public void bindPoint(int newbindpoint){
@@ -207,9 +209,9 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     }
 
     public void destroy(){
-        if(id != -1){
-            FSR.deleteVertexBuffers(new int[]{ id });
-            id = -1;
-        }
+        FSStatic.CACHE_INT[0] = id;
+        GLES32.glDeleteBuffers(1, FSStatic.CACHE_INT, 0);
+
+        id = -1;
     }
 }

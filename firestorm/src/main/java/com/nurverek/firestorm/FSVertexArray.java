@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.opengl.GLES32;
+
 public final class FSVertexArray{
 
     private int id = 0;
@@ -13,22 +15,23 @@ public final class FSVertexArray{
     }
 
     public void create(){
-        id = FSR.createVertexArrays(1)[0];
+        GLES32.glGenVertexArrays(1, FSStatic.CACHE_INT, 0);
+        id = FSStatic.CACHE_INT[0];
     }
 
     public void bind(){
-        FSR.vertexArrayBind(id);
+        GLES32.glBindVertexArray(id);
     }
 
     public void unbind(){
-        FSR.vertexArrayBind(0);
+        GLES32.glBindVertexArray(0);
     }
 
-    public void setID(int s){
+    public void id(int s){
         id = s;
     }
 
-    public int getArrayID(){
+    public int id(){
         return id;
     }
 

@@ -897,7 +897,7 @@ public class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSR.depthMask(mask);
+            GLES32.glDepthMask(mask);
         }
 
         @Override
@@ -930,7 +930,7 @@ public class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSR.cullFace(mode);
+            GLES32.glCullFace(mode);
         }
 
         @Override
@@ -996,7 +996,7 @@ public class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSR.readBuffer(mode);
+            GLES32.glReadBuffer(mode);
         }
 
         @Override

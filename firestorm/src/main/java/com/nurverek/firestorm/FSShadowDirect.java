@@ -79,18 +79,20 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
 
     @Override
     protected FSFrameBuffer initializeFrameBuffer(FSTexture texture){
-        FSFrameBuffer framebuffer = new FSFrameBuffer();
-        framebuffer.initialize();
-        framebuffer.bind();
-        framebuffer.attachTexture2D(GLES32.GL_DEPTH_ATTACHMENT, texture.target().get(), texture.id(), 0);
-        framebuffer.checkStatus();
+        FSFrameBuffer buffer = new FSFrameBuffer();
+        buffer.initialize();
+        buffer.bind();
+        buffer.attachTexture2D(GLES32.GL_DEPTH_ATTACHMENT, texture.target().get(), texture.id(), 0);
+        buffer.checkStatus();
 
-        FSR.readBuffer(GLES32.GL_NONE);
-        FSR.drawBuffers(0, DRAWBUFFERMODECACHE, 0);
+        FSStatic.CACHE_INT[0] = GLES32.GL_NONE;
 
-        framebuffer.unbind();
+        GLES32.glReadBuffer(GLES32.GL_NONE);
+        GLES32.glDrawBuffers(0, FSStatic.CACHE_INT, 0);
 
-        return framebuffer;
+        buffer.unbind();
+
+        return buffer;
     }
 
     public void updateLightProjection(float upX, float upY, float upZ, float left, float right,

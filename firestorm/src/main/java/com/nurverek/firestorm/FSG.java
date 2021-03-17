@@ -56,6 +56,7 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     private VLListType<VLListType<FSP>> programsets;
     private VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers;
+
     private MANAGER rootmanager;
 
     private long id;

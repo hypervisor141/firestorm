@@ -43,33 +43,13 @@ public class FSRPass{
         FSRFrames.signalFrameRender(true);
     }
 
-    public Entry get(int index){
-        return entries.get(index);
-    }
+    public void remove(FSG<?> target){
+        int size = entries.size();
 
-    public Entry getWithID(int id){
-        Entry e;
-
-        for(int i = 0; i < entries.size(); i++){
-            e = entries.get(i);
-            FSG<?> c = e.c;
-
-            if(c.id() == id){
-                return e;
-            }
-        }
-
-        return null;
-    }
-
-    public int size(){
-        return entries.size();
-    }
-
-    public void remove(FSG<?> c){
-        for(int i = 0; i < entries.size(); i++){
-            if(entries.get(i).c.id() == c.id()){
+        for(int i = 0; i < size; i++){
+            if(entries.get(i).target.id() == target.id()){
                 entries.remove(i);
+                i--;
             }
         }
     }
@@ -125,6 +105,29 @@ public class FSRPass{
 
     public long id(){
         return id;
+    }
+
+    public Entry get(int index){
+        return entries.get(index);
+    }
+
+    public Entry findEntryByID(int id){
+        Entry entry;
+
+        for(int i = 0; i < entries.size(); i++){
+            entry = entries.get(i);
+            FSG<?> target = entry.target;
+
+            if(target.id() == id){
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
+    public int size(){
+        return entries.size();
     }
 
     public FSRPass build(){
@@ -209,8 +212,8 @@ public class FSRPass{
         
         return this;
     }
-    
-    protected void execute(){
+
+    private void execute(){
         int size = orders.size();
 
         for(int i = 0; i < size; i++){
@@ -218,7 +221,7 @@ public class FSRPass{
         }
     }
 
-    public void update(){
+    private void update(){
         FSEvents events = FSControl.getSurface().events();
 
         events.GLPreDraw();
@@ -231,7 +234,7 @@ public class FSRPass{
             FSR.CURRENT_FSG_INDEX = index;
             FSR.CURRENT_PROGRAM_SET_INDEX = e.programsetindex;
 
-            entries.get(index).c.update(FSR.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
+            entries.get(index).target.update(FSR.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
@@ -247,7 +250,7 @@ public class FSRPass{
         events.GLPostDraw();
     }
 
-    public void draw(){
+    private void draw(){
         FSEvents events = FSControl.getSurface().events();
 
         events.GLPreDraw();
@@ -260,7 +263,7 @@ public class FSRPass{
             FSR.CURRENT_FSG_INDEX = index;
             FSR.CURRENT_PROGRAM_SET_INDEX = e.programsetindex;
 
-            e.c.draw(FSR.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
+            e.target.draw(FSR.CURRENT_RENDER_PASS_INDEX, e.programsetindex);
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
@@ -276,9 +279,9 @@ public class FSRPass{
         events.GLPostDraw();
     }
 
-    protected void noitifyPostFrameSwap(){
+    private void noitifyPostFrameSwap(){
         for(int i = 0; i < entries.size(); i++){
-            entries.get(i).c.postFramSwap(FSR.CURRENT_RENDER_PASS_INDEX);
+            entries.get(i).target.postFramSwap(FSR.CURRENT_RENDER_PASS_INDEX);
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
@@ -306,7 +309,7 @@ public class FSRPass{
 
     public void destroy(){
         for(int i = 0; i < entries.size(); i++){
-            entries.get(i).c.destroy();
+            entries.get(i).target.destroy();
 
             if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
                 try{
@@ -327,18 +330,18 @@ public class FSRPass{
         void execute(int orderindex, int passindex);
     }
 
-    public static final class Entry{
+    public static class Entry{
 
-        protected FSG<?> c;
+        protected FSG<?> target;
         protected int programsetindex;
 
-        public Entry(FSG<?> c, int programsetindex){
-            this.c = c;
+        public Entry(FSG<?> target, int programsetindex){
+            this.target = target;
             this.programsetindex = programsetindex;
         }
 
-        public FSG<?> constructor(){
-            return c;
+        public FSG<?> target(){
+            return target;
         }
 
         public int programSetIndex(){

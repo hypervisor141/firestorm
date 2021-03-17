@@ -6,13 +6,11 @@ public abstract class FSGBluePrint{
 
     }
 
-    public final void initialize(FSG<?> gen){
-        createPrograms();
-        attachPrograms(gen);
+    public final void initialize(FSG<?> gen, int passindex){
+        attachPrograms(gen, passindex);
     }
 
-    protected abstract void createPrograms();
-    protected abstract void attachPrograms(FSG<?> gen);
+    protected abstract void attachPrograms(FSG<?> gen, int passindex);
     protected abstract FSGScanner register(FSG<?> gen, String name);
     protected abstract void preAssemblyAdjustment(FSMesh mesh, FSInstance instance);
     protected abstract void postScanAdjustment(FSMesh mesh);

@@ -11,12 +11,12 @@ public class FSFrameBuffer{
     }
 
     public void initialize(){
-        id = FSR.createFrameBuffer(1)[0];
+        GLES32.glGenFramebuffers(1, FSStatic.CACHE_INT,0);
+        id = FSStatic.CACHE_INT[0];
     }
 
-
     public void checkStatus(){
-        int status = FSR.checkFramebufferStatus(GLES32.GL_FRAMEBUFFER);
+        int status = GLES32.glCheckFramebufferStatus(GLES32.GL_FRAMEBUFFER);
 
         if(status != GLES32.GL_FRAMEBUFFER_COMPLETE){
             throw new RuntimeException("Framebuffer incomplete with code : " + status);
@@ -24,23 +24,23 @@ public class FSFrameBuffer{
     }
 
     public void attachTexture(int attachment, int texture, int level){
-        FSR.frameBufferTexture(GLES32.GL_FRAMEBUFFER, attachment, texture, level);
+        GLES32.glFramebufferTexture(GLES32.GL_FRAMEBUFFER, attachment, texture, level);
     }
 
     public void attachTexture2D(int attachment, int textarget, int texture, int level){
-        FSR.frameBufferTexture2D(GLES32.GL_FRAMEBUFFER, attachment, textarget, texture, level);
+        GLES32.glFramebufferTexture2D(GLES32.GL_FRAMEBUFFER, attachment, textarget, texture, level);
     }
 
     public void attachTextureLayer(int attachment, int texture, int level, int layer){
-        FSR.frameBufferTextureLayer(GLES32.GL_FRAMEBUFFER, attachment, texture, level, layer);
+        GLES32.glFramebufferTextureLayer(GLES32.GL_FRAMEBUFFER, attachment, texture, level, layer);
     }
 
     public void bind(){
-        FSR.frameBufferBind(GLES32.GL_FRAMEBUFFER, id);
+        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER, id);
     }
 
     public void unbind(){
-        FSR.frameBufferBind(GLES32.GL_FRAMEBUFFER, 0);
+        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER, 0);
     }
 
     public int id(){
@@ -48,6 +48,7 @@ public class FSFrameBuffer{
     }
 
     public void destroy(){
-        FSR.deleteFrameBuffer(new int[]{ id });
+        FSStatic.CACHE_INT[0] = id;
+        GLES32.glDeleteFramebuffers(1, FSStatic.CACHE_INT, 0);
     }
 }
