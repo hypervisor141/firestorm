@@ -18,15 +18,8 @@ public class FSP{
 
     private static final int BUFFER_PRINT_LIMIT = 50;
 
-    private final VLListType<FSShader> shaders;
+    private VLListType<FSShader> shaders;
     protected VLListType<FSMesh> meshes;
-
-    protected FSShader vertexshader;
-    protected FSShader geometryshader;
-    protected FSShader tesselevalshader;
-    protected FSShader tesselcontrolshader;
-    protected FSShader fragmentshader;
-    protected FSShader computeshader;
 
     protected FSConfig setupconfig;
     protected FSConfig meshconfig;
@@ -60,132 +53,12 @@ public class FSP{
         this.postframeconfig = postframegroup;
     }
 
-    public void initializeVertexShader(FSShader shader){
-        if(vertexshader == null){
-            vertexshader = shader;
-            shaders.add(shader);
-        }
-    }
-
-    public void initializeGeometryShader(FSShader shader){
-        if(geometryshader == null){
-            geometryshader = shader;
-            shaders.add(shader);
-        }
-    }
-
-    public void initializeTesselControlShader(FSShader shader){
-        if(tesselcontrolshader == null){
-            tesselcontrolshader = shader;
-            shaders.add(shader);
-        }
-    }
-
-    public void initializeTesselEvalShader(FSShader shader){
-        if(tesselevalshader == null){
-            tesselevalshader = shader;
-            shaders.add(shader);
-        }
-    }
-
-    public void initializeFragmentShader(FSShader shader){
-        if(fragmentshader == null){
-            fragmentshader = shader;
-            shaders.add(shader);
-        }
-    }
-
-    public void initializeComputeShader(FSShader shader){
-        if(computeshader == null){
-            computeshader = shader;
-            shaders.add(shader);
-        }
-    }
-
-    public FSShader initializeVertexShader(){
-        if(vertexshader == null){
-            vertexshader = new FSShader(GLES32.GL_VERTEX_SHADER);
-            shaders.add(vertexshader);
-        }
-
-        return vertexshader;
-    }
-
-    public FSShader initializeGeometryShader(){
-        if(geometryshader == null){
-            geometryshader = new FSShader(GLES32.GL_GEOMETRY_SHADER);
-            shaders.add(geometryshader);
-        }
-
-        return geometryshader;
-    }
-
-    public FSShader initializeTesselEvalShader(){
-        if(tesselevalshader == null){
-            tesselevalshader = new FSShader(GLES32.GL_TESS_EVALUATION_SHADER);
-            shaders.add(tesselevalshader);
-        }
-
-        return tesselevalshader;
-    }
-
-    public FSShader initializeTesselControlShader(){
-        if(tesselcontrolshader == null){
-            tesselcontrolshader = new FSShader(GLES32.GL_TESS_CONTROL_SHADER);
-            shaders.add(tesselcontrolshader);
-        }
-
-        return tesselcontrolshader;
-    }
-
-    public FSShader initializeFragmentShader(){
-        if(fragmentshader == null){
-            fragmentshader = new FSShader(GLES32.GL_FRAGMENT_SHADER);
-            shaders.add(fragmentshader);
-        }
-
-        return fragmentshader;
-    }
-
-    public FSShader initializeComputeShader(){
-        if(computeshader == null){
-            computeshader = new FSShader(GLES32.GL_COMPUTE_SHADER);
-            shaders.add(computeshader);
-        }
-
-        return computeshader;
-    }
-
     public VLListType<FSShader> shaders(){
         return shaders;
     }
 
     public VLListType<FSMesh> meshes(){
         return meshes;
-    }
-
-    public FSShader vertexShader(){
-        return vertexshader;
-    }
-
-    public FSShader geometryShader(){
-        return geometryshader;
-    }
-
-    public FSShader tesselControlShader(){
-        return tesselcontrolshader;
-    }
-
-    public FSShader tesselEvalShader(){
-        return tesselevalshader;
-    }
-
-    public FSShader fragmentShader(){
-        return fragmentshader;
-    }
-
-    public FSShader computeShader(){
-        return computeshader;
     }
 
     public FSConfig setupConfigs(){
@@ -205,26 +78,26 @@ public class FSP{
     }
 
     public void registerAttributeLocation(FSShader shader, FSConfig config){
-        checkRegistration(config);
+        checkRegistrable(config);
         config.location(shader.nextAttribLocation(config.getGLSLSize()));
     }
 
     public void registerUniformLocation(FSShader shader, FSConfig config){
-        checkRegistration(config);
+        checkRegistrable(config);
         config.location(nextUniformLocation(config.getGLSLSize()));
     }
 
     public void registerAttributeArrayLocation(FSShader shader, int arraysize, FSConfig config){
-        checkRegistration(config);
+        checkRegistrable(config);
         config.location(shader.nextAttribLocation(config.getGLSLSize() * arraysize));
     }
 
     public void registerUniformArrayLocation(FSShader shader, int arraysize, FSConfig config){
-        checkRegistration(config);
+        checkRegistrable(config);
         config.location(nextUniformLocation(config.getGLSLSize() * arraysize));
     }
 
-    private void checkRegistration(FSConfig config){
+    private void checkRegistrable(FSConfig config){
         if(!(config instanceof FSConfigLocated)){
             throw new RuntimeException("All location-based configs need to be a subclass of FSConfigLocated.");
         }
@@ -339,14 +212,7 @@ public class FSP{
             shaders.get(i).delete();
         }
 
-        shaders.clear();
-
-        vertexshader = null;
-        geometryshader = null;
-        tesselcontrolshader = null;
-        tesselevalshader = null;
-        fragmentshader = null;
-        computeshader = null;
+        shaders = null;
     }
 
     public void draw(int passindex){
