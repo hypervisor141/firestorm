@@ -5,7 +5,7 @@ import vanguard.VLListType;
 
 public class FSConfigSelective extends FSConfigLocated{
 
-    private VLListType<FSConfig> configs;
+    private final VLListType<FSConfig> configs;
     private FSConfig active;
     private int glslsize;
 
@@ -32,13 +32,13 @@ public class FSConfigSelective extends FSConfigLocated{
     }
 
     @Override
-    protected void programBuilt(FSP program){
-        super.programBuilt(program);
+    protected void notifyProgramBuilt(FSP program){
+        super.notifyProgramBuilt(program);
 
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            configs.get(i).programBuilt(program);
+            configs.get(i).notifyProgramBuilt(program);
         }
     }
 

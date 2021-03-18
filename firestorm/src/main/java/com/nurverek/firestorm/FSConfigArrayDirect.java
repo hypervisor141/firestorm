@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import vanguard.VLArray;
 import vanguard.VLDebug;
 
-public abstract class FSConfigArrayDirect<TYPE extends VLArray> extends FSConfigArray<TYPE>{
+public abstract class FSConfigArrayDirect<TYPE extends VLArray<?, ?>> extends FSConfigArray<TYPE>{
 
     public FSConfigArrayDirect(Policy policy, TYPE array, int offset, int count){
         super(policy, array, offset, count);

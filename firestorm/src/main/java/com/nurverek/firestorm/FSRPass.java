@@ -2,39 +2,23 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import java.util.ArrayList;
-
 import vanguard.VLListType;
 
 public class FSRPass{
 
-    private ArrayList<FSP> entries;
-    private float[] color;
-
-    private boolean clearcolor;
-    private boolean cleardepth;
-    private boolean clearstencil;
-    private boolean draw;
+    private VLListType<FSP> entries;
     
-    private long id;
-
-    protected final ArrayList<Order> orders = new ArrayList<>(15);
+    private final long id;
     protected int debug;
     
-    public FSRPass(int debug){
-        entries = new ArrayList<>();
-
-        clearcolor = true;
-        cleardepth = true;
-        clearstencil = true;
-        draw = true;
-        
-        id = FSRFrames.getNextID();
-
+    public FSRPass(int capacity, int debug){
+        entries = new VLListType<>(capacity, capacity);
         this.debug = debug;
+
+        id = FSRFrames.getNextID();
     }
 
-    public void add(FSG<?> source){
+    public void addAll(FSG<?> source){
         VLListType<FSP> programs = source.programs();
         int size = programs.size();
 
@@ -62,61 +46,16 @@ public class FSRPass{
         }
     }
 
-    public FSP remove(int index){
-        return entries.remove(index);
+    public FSP get(int index){
+        return entries.get(index);
     }
 
-    public FSRPass setColor(float[] color){
-        this.color = color;
-        return this;
-    }
-
-    public FSRPass setClearColor(boolean enabled){
-        clearcolor = enabled;
-        return this;
-    }
-
-    public FSRPass setClearDepth(boolean enabled){
-        cleardepth = enabled;
-        return this;
-    }
-
-    public FSRPass setClearStencil(boolean enabled){
-        clearstencil = enabled;
-        return this;
-    }
-
-    public FSRPass setDrawMeshes(boolean enabled){
-        draw = enabled;
-        return this;
-    }
-
-    public float[] getColor(){
-        return color;
-    }
-
-    public boolean getClearColor(){
-        return clearcolor;
-    }
-
-    public boolean getClearDepth(){
-        return cleardepth;
-    }
-
-    public boolean getClearStencil(){
-        return clearstencil;
-    }
-
-    public boolean getDrawMeshes(){
-        return draw;
+    public VLListType<FSP> get(){
+        return entries;
     }
 
     public long id(){
         return id;
-    }
-
-    public FSP get(int index){
-        return entries.get(index);
     }
 
     public FSP findEntryByID(int id){
@@ -142,7 +81,7 @@ public class FSRPass{
 
             @Override
             public void execute(int orderindex, int passindex){
-                FSRFrames.timeFrameStarted();
+
             }
         });
         
@@ -210,14 +149,6 @@ public class FSRPass{
         return this;
     }
 
-    protected void execute(){
-        int size = orders.size();
-
-        for(int i = 0; i < size; i++){
-            orders.get(i).execute(i, FSR.CURRENT_PASS_INDEX);
-        }
-    }
-
     protected void noitifyPostFrameSwap(){
         for(int i = 0; i < entries.size(); i++){
             entries.get(i).postFrame(FSR.CURRENT_PASS_INDEX);
@@ -233,7 +164,7 @@ public class FSRPass{
         }
     }
 
-    private void draw(){
+    protected void draw(){
         FSEvents events = FSControl.getSurface().events();
 
         events.GLPreDraw();
@@ -261,17 +192,6 @@ public class FSRPass{
         events.GLPostDraw();
     }
 
-    public FSRPass copySettings(FSRPass src){
-        clearcolor = src.clearcolor;
-        cleardepth = src.cleardepth;
-        clearstencil = src.clearstencil;
-        draw = src.draw;
-        
-        id = FSRFrames.getNextID();
-
-        return this;
-    }
-
     public void destroy(){
         for(int i = 0; i < entries.size(); i++){
             entries.get(i).destroy();
@@ -287,10 +207,5 @@ public class FSRPass{
         }
 
         entries = null;
-    }
-    
-    protected static interface Order{
-        
-        void execute(int orderindex, int passindex);
     }
 }

@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import vanguard.VLArray;
 import vanguard.VLDebug;
 
-public abstract class FSConfigArrayElement <TYPE extends VLArray> extends FSConfigArray<TYPE>{
+public abstract class FSConfigArrayElement <TYPE extends VLArray<?, ?>> extends FSConfigArray<TYPE>{
 
     private int instance;
     private int element;

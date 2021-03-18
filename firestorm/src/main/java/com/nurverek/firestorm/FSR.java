@@ -64,11 +64,13 @@ public class FSR{
         synchronized(RENDERLOCK){
             int size = passes.size();
 
+            FSRFrames.timeFrameStarted();
+
             for(int i = 0; i < size; i++){
                 CURRENT_PASS_INDEX = i;
                 CURRENT_ENTRY_INDEX = -1;
 
-                passes.get(i).execute();
+                passes.get(i).draw();
             }
 
             finishFrame();

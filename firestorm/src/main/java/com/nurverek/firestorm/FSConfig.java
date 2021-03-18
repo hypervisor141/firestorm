@@ -49,6 +49,14 @@ public abstract class FSConfig{
         policy = POLICY_ALWAYS;
     }
 
+    public final void configureWithPolicy(FSP program, FSMesh mesh, int meshindex, int passindex){
+        policy.configure(this, program, mesh, meshindex, passindex);
+    }
+
+    public final void configureDebugWithPolicy(FSP program, FSMesh mesh, int meshindex, int passindex){
+        policy.configureDebug(this, program, mesh, meshindex, passindex);
+    }
+
     public abstract void configure(FSP program, FSMesh mesh, int meshindex, int passindex);
 
     public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
@@ -66,7 +74,7 @@ public abstract class FSConfig{
         }
     }
 
-    protected void programBuilt(FSP program){}
+    protected void notifyProgramBuilt(FSP program){}
 
     public void policy(Policy policy){
         this.policy = policy;

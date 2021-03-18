@@ -36,9 +36,8 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
     }
 
     @Override
-    protected void programBuilt(FSP program){
-        super.programBuilt(program);
-        config.programBuilt(program);
+    protected void notifyProgramBuilt(FSP program){
+        config.notifyProgramBuilt(program);
     }
 
     @Override

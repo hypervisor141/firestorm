@@ -5,7 +5,7 @@ import vanguard.VLListType;
 
 public class FSConfigSequence extends FSConfigLocated{
 
-    private VLListType<FSConfig> configs;
+    public VLListType<FSConfig> configs;
     private int glslsize;
 
     public FSConfigSequence(Policy policy, VLListType<FSConfig> configs){
@@ -34,10 +34,6 @@ public class FSConfigSequence extends FSConfigLocated{
 
     }
 
-    public VLListType<FSConfig> configs(){
-        return configs;
-    }
-
     public void update(VLListType<FSConfig> stages){
         this.configs = stages;
 
@@ -54,8 +50,12 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public int getGLSLSize(){
-        return glslsize;
+    protected void notifyProgramBuilt(FSP program){
+        int size = configs.size();
+
+        for(int i = 0; i < size; i++){
+            configs.get(i).notifyProgramBuilt(program);
+        }
     }
 
     @Override
@@ -109,6 +109,11 @@ public class FSConfigSequence extends FSConfigLocated{
         VLDebug.append("EXITING [");
         VLDebug.append(classname);
         VLDebug.append("]\n");
+    }
+
+    @Override
+    public int getGLSLSize(){
+        return glslsize;
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArray;
 
-public abstract class FSConfigArray<TYPE extends VLArray> extends FSConfigLocated {
+public abstract class FSConfigArray<TYPE extends VLArray<?, ?>> extends FSConfigLocated{
 
     protected TYPE array;
     protected int offset;

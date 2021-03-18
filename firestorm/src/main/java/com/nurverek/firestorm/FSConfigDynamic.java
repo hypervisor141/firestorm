@@ -5,7 +5,7 @@ import vanguard.VLDebug;
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
     private TYPE config;
-    private int glslsize;
+    private final int glslsize;
 
     public FSConfigDynamic(Policy policy, TYPE config){
         super(policy);
@@ -24,9 +24,8 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    protected void programBuilt(FSP program){
-        super.programBuilt(program);
-        config.programBuilt(program);
+    protected void notifyProgramBuilt(FSP program){
+        config.notifyProgramBuilt(program);
     }
 
     @Override
