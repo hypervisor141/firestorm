@@ -19,6 +19,7 @@ public class FSP{
     private static final int BUFFER_PRINT_LIMIT = 50;
 
     private final VLListType<FSShader> shaders;
+    protected VLListType<FSMesh> meshes;
 
     protected FSShader vertexshader;
     protected FSShader geometryshader;
@@ -27,11 +28,10 @@ public class FSP{
     protected FSShader fragmentshader;
     protected FSShader computeshader;
 
-    protected VLListType<FSConfig> setupconfigs;
-    protected VLListType<FSConfig> meshconfigs;
-    protected VLListType<FSConfig> postdrawconfigs;
-    protected VLListType<FSConfig> postframeconfigs;
-    protected VLListType<FSMesh> meshes;
+    protected FSConfig setupconfig;
+    protected FSConfig meshconfig;
+    protected FSConfig postdrawconfig;
+    protected FSConfig postframeconfig;
 
     private int program;
     protected int debug;
@@ -42,63 +42,22 @@ public class FSP{
         program = -1;
         debug = debugmode;
 
-        shaders = new VLListType<>(5, 5);
-        setupconfigs = new VLListType<>(10, 10);
-        meshconfigs = new VLListType<>(10, 10);
-        postdrawconfigs = new VLListType<>(10, 10);
-        postframeconfigs = new VLListType<>(10, 10);
-        meshes = new VLListType<>(10, 50);
+        shaders = new VLListType<>(5, 1);
+        meshes = new VLListType<>(20, 20);
 
         uniformlocation = 0;
-        customize();
+        customize(debug);
     }
 
-    public void addMesh(FSMesh mesh){
-        meshes.add(mesh);
+    public void customize(int debug){
+
     }
 
-    public FSShader vertexShader(){
-        return vertexshader;
-    }
-
-    public FSShader geometryShader(){
-        return geometryshader;
-    }
-
-    public FSShader tesselControlShader(){
-        return tesselcontrolshader;
-    }
-
-    public FSShader tesselEvalShader(){
-        return tesselevalshader;
-    }
-
-    public FSShader fragmentShader(){
-        return fragmentshader;
-    }
-
-    public FSShader computeShader(){
-        return computeshader;
-    }
-
-    public VLListType<FSConfig> setupConfigs(){
-        return setupconfigs;
-    }
-
-    public VLListType<FSConfig> meshConfigs(){
-        return meshconfigs;
-    }
-
-    public VLListType<FSConfig> postDrawConfigs(){
-        return postdrawconfigs;
-    }
-
-    public VLListType<FSMesh> meshes(){
-        return meshes;
-    }
-
-    public int id(){
-        return program;
+    public void initializeConfigs(FSConfig setupgroup, FSConfig meshgroup, FSConfig postdrawgroup, FSConfig postframegroup){
+        this.setupconfig = setupgroup;
+        this.meshconfig = meshgroup;
+        this.postdrawconfig = postdrawgroup;
+        this.postframeconfig = postframegroup;
     }
 
     public void initializeVertexShader(FSShader shader){
@@ -197,34 +156,53 @@ public class FSP{
         return computeshader;
     }
 
-    public void customize(){
-
+    public VLListType<FSShader> shaders(){
+        return shaders;
     }
 
-    public void addSetupConfig(FSConfig config){
-        setupconfigs.add(config);
+    public VLListType<FSMesh> meshes(){
+        return meshes;
     }
 
-    public void addSetupConfig(VLListType<FSConfig> configs){
-        setupconfigs.add(configs);
+    public FSShader vertexShader(){
+        return vertexshader;
     }
 
-    public void addMeshConfig(FSConfig config){
-        meshconfigs.add(config);
+    public FSShader geometryShader(){
+        return geometryshader;
     }
 
-    public void addMeshConfig(VLListType<FSConfig> configs){
-        meshconfigs.add(configs);
+    public FSShader tesselControlShader(){
+        return tesselcontrolshader;
     }
 
-    public void addPostDrawConfig(FSConfig config){
-        postdrawconfigs.add(config);
+    public FSShader tesselEvalShader(){
+        return tesselevalshader;
     }
 
-    public void addPostDrawConfig(VLListType<FSConfig> configs){
-        postdrawconfigs.add(configs);
+    public FSShader fragmentShader(){
+        return fragmentshader;
     }
 
+    public FSShader computeShader(){
+        return computeshader;
+    }
+
+    public FSConfig setupConfigs(){
+        return setupconfig;
+    }
+
+    public FSConfig meshConfigs(){
+        return meshconfig;
+    }
+
+    public FSConfig postDrawConfigs(){
+        return postdrawconfig;
+    }
+
+    public int id(){
+        return program;
+    }
 
     public void registerAttributeLocation(FSShader shader, FSConfig config){
         checkRegistration(config);
@@ -324,44 +302,14 @@ public class FSP{
 
         if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
             try{
-                size = setupconfigs.size();
-                VLDebug.append("Running programBuilt() for SetupConfigs\n");
+                VLDebug.append("[Notifying program built for SetupConfig]");
+                setupconfig.notifyProgramBuilt(this);
 
-                for(int i = 0; i < size; i++){
-                    VLDebug.append("SetupConfig(");
-                    VLDebug.append(i);
-                    VLDebug.append(") : ");
+                VLDebug.append("[Notifying program built for MeshConfig]");
+                meshconfig.notifyProgramBuilt(this);
 
-                    setupconfigs.get(i).programBuilt(this);
-
-                    VLDebug.append("Complete.\n");
-                }
-
-                size = meshconfigs.size();
-                VLDebug.append("Running programBuilt() for MeshConfigs\n");
-
-                for(int i = 0; i < size; i++){
-                    VLDebug.append("MeshConfig(");
-                    VLDebug.append(i);
-                    VLDebug.append(") : ");
-
-                    meshconfigs.get(i).programBuilt(this);
-
-                    VLDebug.append("Complete.\n");
-                }
-
-                size = postdrawconfigs.size();
-                VLDebug.append("Running programBuilt() for PostDrawConfigs\n");
-
-                for(int i = 0; i < size; i++){
-                    VLDebug.append("PostDrawConfig(");
-                    VLDebug.append(i);
-                    VLDebug.append(") : ");
-
-                    postdrawconfigs.get(i).programBuilt(this);
-
-                    VLDebug.append("Complete.\n");
-                }
+                VLDebug.append("[Notifying program built for PostDrawConfig]");
+                postdrawconfig.notifyProgramBuilt(this);
 
             }catch(Exception ex){
                 VLDebug.append("Failed.\n");
@@ -376,23 +324,9 @@ public class FSP{
             VLDebug.printD();
 
         }else{
-            size = setupconfigs.size();
-
-            for(int i = 0; i < size; i++){
-                setupconfigs.get(i).programBuilt(this);
-            }
-
-            size = meshconfigs.size();
-
-            for(int i = 0; i < size; i++){
-                meshconfigs.get(i).programBuilt(this);
-            }
-
-            size = postdrawconfigs.size();
-
-            for(int i = 0; i < size; i++){
-                postdrawconfigs.get(i).programBuilt(this);
-            }
+            setupconfig.notifyProgramBuilt(this);
+            meshconfig.notifyProgramBuilt(this);
+            postdrawconfig.notifyProgramBuilt(this);
         }
 
         return this;
@@ -428,101 +362,56 @@ public class FSP{
         use();
 
         int meshsize = meshes.size();
-        int setupconfigsize = setupconfigs.size();
-        int meshconfigsize = meshconfigs.size();
-        int postdrawconfigsize = postdrawconfigs.size();
-
-        FSMesh mesh;
-        FSConfig config;
 
         if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
 
-            VLDebug.append("PROGRAM[");
+            VLDebug.append("------- PROGRAM[");
             VLDebug.append(program);
-            VLDebug.append("] [SetupConfig] size[");
-            VLDebug.append(setupconfigsize);
-            VLDebug.append("]");
+            VLDebug.append("] -------");
             VLDebug.printD();
 
-            for(int i = 0; i < setupconfigsize; i++){
-                VLDebug.append("[");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(setupconfigsize);
-                VLDebug.append("] ");
+            VLDebug.append("[SetupConfig]");
+            VLDebug.printD();
 
-                config = setupconfigs.get(i);
-                config.policy().configureDebug(config, this, null, -1, passindex);
-            }
+            setupconfig.configureDebugWithPolicy(this, null, -1, passindex);
+
+            VLDebug.printD();
+
+            FSMesh mesh;
 
             for(int i = 0; i < meshsize; i++){
                 mesh = meshes.get(i);
 
-                VLDebug.append("PROGRAM[");
-                VLDebug.append(program);
-                VLDebug.append("] [MeshConfig] [");
+                VLDebug.append("[MeshConfig] [");
                 VLDebug.append(i + 1);
                 VLDebug.append("/");
                 VLDebug.append(meshsize);
                 VLDebug.append("] [");
                 VLDebug.append(mesh.name());
-                VLDebug.append("] size[");
-                VLDebug.append(meshconfigsize);
                 VLDebug.append("]");
                 VLDebug.printD();
 
-                for(int i2 = 0; i2 < meshconfigsize; i2++){
-                    VLDebug.append("[");
-                    VLDebug.append(i2 + 1);
-                    VLDebug.append("/");
-                    VLDebug.append(meshconfigsize);
-                    VLDebug.append("] ");
+                meshconfig.configureDebugWithPolicy(this, meshes.get(i), i, passindex);
 
-                    config = meshconfigs.get(i2);
-                    config.policy().configureDebug(config, this, mesh, i, passindex);
-                }
+                VLDebug.printD();
             }
 
-            VLDebug.append("PROGRAM[");
-            VLDebug.append(program);
-            VLDebug.append("] [PostDrawConfig] size[");
-            VLDebug.append(postdrawconfigsize);
-            VLDebug.append("]\n");
+            VLDebug.append("[PostDrawConfig]");
             VLDebug.printD();
 
-            for(int i = 0; i < postdrawconfigsize; i++){
-                VLDebug.append("[");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(postdrawconfigsize);
-                VLDebug.append("] ");
-
-                config = postdrawconfigs.get(i);
-                config.policy().configureDebug(config, this, null, -1, passindex);
-            }
+            postdrawconfig.configureDebugWithPolicy(this, null, -1, passindex);
 
             VLDebug.printD();
 
         }else{
-            for(int i = 0; i < setupconfigsize; i++){
-                config = setupconfigs.get(i);
-                config.policy().configure(config, this, null, -1, passindex);
-            }
+            setupconfig.configureWithPolicy(this, null, -1, passindex);
 
             for(int i = 0; i < meshsize; i++){
-                mesh = meshes.get(i);
-
-                for(int i2 = 0; i2 < meshconfigsize; i2++){
-                    config = meshconfigs.get(i2);
-                    config.policy().configure(config, this, mesh, i, passindex);
-                }
+                meshconfig.configureWithPolicy(this, meshes.get(i), i, passindex);
             }
 
-            for(int i = 0; i < postdrawconfigsize; i++){
-                config = postdrawconfigs.get(i);
-                config.policy().configure(config, this, null, -1, passindex);
-            }
+            postdrawconfig.configureWithPolicy(this, null, -1, passindex);
         }
     }
 
@@ -538,37 +427,23 @@ public class FSP{
 
         use();
 
-        int size = postframeconfigs.size();
-        FSConfig config;
-
         if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
 
-            VLDebug.append("PROGRAM[");
+            VLDebug.append("------- PROGRAM[");
             VLDebug.append(program);
-            VLDebug.append("] [PostFrameConfig] size[");
-            VLDebug.append(size);
-            VLDebug.append("]");
+            VLDebug.append("] -------");
             VLDebug.printD();
 
-            for(int i = 0; i < size; i++){
-                VLDebug.append("[");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(size);
-                VLDebug.append("] ");
+            VLDebug.append("[PostFrameConfig]");
+            VLDebug.printD();
 
-                config = postframeconfigs.get(i);
-                config.policy().configureDebug(config, this, null, -1, passindex);
-            }
+            postframeconfig.configureDebugWithPolicy(this, null, -1, passindex);
 
             VLDebug.printD();
 
         }else{
-            for(int i = 0; i < size; i++){
-                config = postframeconfigs.get(i);
-                config.policy().configure(config, this, null, -1, passindex);
-            }
+            postframeconfig.configureWithPolicy(this, null, -1, passindex);
         }
     }
 
@@ -659,12 +534,13 @@ public class FSP{
 
     public void destroy(){
         GLES32.glDeleteProgram(program);
-
         releaseShaders();
 
-        setupconfigs.clear();
-        meshconfigs.clear();
-        postdrawconfigs.clear();
+        setupconfig = null;
+        meshconfig = null;
+        postdrawconfig = null;
+        postframeconfig = null;
+
         meshes.clear();
     }
 
@@ -2096,7 +1972,7 @@ public class FSP{
         }
 
         @Override
-        protected void programBuilt(FSP program){
+        protected void notifyProgramBuilt(FSP program){
             location = program.getUniformBlockIndex(name);
             name = null;
         }
@@ -2148,7 +2024,7 @@ public class FSP{
         }
 
         @Override
-        protected void programBuilt(FSP program){
+        protected void notifyProgramBuilt(FSP program){
             location = program.getUniformBlockIndex(name);
             name = null;
         }
