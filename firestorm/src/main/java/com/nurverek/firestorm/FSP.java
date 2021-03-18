@@ -4,6 +4,7 @@ import android.opengl.GLES32;
 
 import java.nio.charset.StandardCharsets;
 
+import vanguard.VLArray;
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayInt;
 import vanguard.VLArrayUtils;
@@ -409,7 +410,6 @@ public class FSP{
 
         meshes.clear();
     }
-
 
     public static class MaterialDynamic extends FSConfigLocated{
 
@@ -846,6 +846,148 @@ public class FSP{
         }
     }
 
+    public abstract static class Array<TYPE extends VLArray<?, ?>> extends FSConfigLocated{
+
+        protected TYPE array;
+        protected int offset;
+        protected int count;
+
+        public Array(Policy policy, TYPE array, int offset, int count){
+            super(policy);
+
+            this.array = array;
+            this.offset = offset;
+            this.count = count;
+        }
+
+        public Array(TYPE array, int offset, int count){
+            this.array = array;
+            this.offset = offset;
+            this.count = count;
+        }
+
+        public final void offset(int s){
+            offset = s;
+        }
+
+        public final void count(int s){
+            offset = s;
+        }
+
+        public final void array(TYPE array){
+            this.array = array;
+        }
+
+
+        public final int offset(){
+            return offset;
+        }
+
+        public final int count(){
+            return count;
+        }
+
+        public int instance(){
+            return -1;
+        }
+
+        public int element(){
+            return -1;
+        }
+
+        public final TYPE array(){
+            return array;
+        }
+
+        @Override
+        public abstract void debugInfo(FSP program, FSMesh mesh, int debug);
+
+        @Override
+        public int getGLSLSize(){
+            return count;
+        }
+    }
+
+    public abstract static class ArrayDirect<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
+
+        public ArrayDirect(Policy policy, TYPE array, int offset, int count){
+            super(policy, array, offset, count);
+        }
+
+        public ArrayDirect(TYPE array, int offset, int count){
+            super(array, offset, count);
+        }
+
+        @Override
+        public void debugInfo(FSP program, FSMesh mesh, int debug){
+            VLDebug.append("offset[");
+            VLDebug.append(offset);
+            VLDebug.append("] count[");
+            VLDebug.append(count);
+            VLDebug.append("] array[");
+
+            array.stringify(VLDebug.get(), null);
+
+            VLDebug.append("]");
+        }
+    }
+
+    public abstract static class ArrayElement<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
+
+        private int instance;
+        private int element;
+
+        public ArrayElement(Policy policy, int element, int instance, int offset, int count){
+            super(policy, null, offset, count);
+
+            this.element = element;
+            this.instance = instance;
+        }
+
+        public ArrayElement(int element, int instance, int offset, int count){
+            super(null, offset, count);
+
+            this.element = element;
+            this.instance = instance;
+        }
+
+        public final void set(int instance, int element){
+            this.element = element;
+            this.instance = instance;
+        }
+
+        public final int element(){
+            return element;
+        }
+
+        public final int instance(){
+            return instance;
+        }
+
+        @Override
+        public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+            array = (TYPE)mesh.instance(instance).element(element);
+        }
+
+        @Override
+        public void debugInfo(FSP program, FSMesh mesh, int debug){
+            VLDebug.append("] instance[");
+            VLDebug.append(instance);
+            VLDebug.append("] element[");
+            VLDebug.append(FSG.ELEMENT_NAMES[element]);
+            VLDebug.append("] array[");
+
+            if(array == null){
+                mesh.instance(instance).element(element).stringify(VLDebug.get(), null);
+
+            }else{
+                array.stringify(VLDebug.get(), null);
+            }
+
+            VLDebug.append("]");
+        }
+    }
+
     public static class AttribPointer extends FSConfigLocated{
 
         public int element;
@@ -941,7 +1083,7 @@ public class FSP{
         }
     }
 
-    public static class UniformMatrix4fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class UniformMatrix4fvd extends ArrayDirect<VLArrayFloat>{
 
         public UniformMatrix4fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -957,7 +1099,7 @@ public class FSP{
         }
     }
 
-    public static class UniformMatrix4fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class UniformMatrix4fve extends ArrayElement<VLArrayFloat>{
 
         public UniformMatrix4fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -974,7 +1116,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform4fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Uniform4fvd extends ArrayDirect<VLArrayFloat>{
 
         public Uniform4fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -990,7 +1132,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform4fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Uniform4fve extends ArrayElement<VLArrayFloat>{
 
         public Uniform4fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1008,7 +1150,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform3fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Uniform3fvd extends ArrayDirect<VLArrayFloat>{
 
         public Uniform3fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1024,7 +1166,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform3fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Uniform3fve extends ArrayElement<VLArrayFloat>{
 
         public Uniform3fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1041,7 +1183,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform2fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Uniform2fvd extends ArrayDirect<VLArrayFloat>{
 
         public Uniform2fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1057,7 +1199,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform2fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Uniform2fve extends ArrayElement<VLArrayFloat>{
 
         public Uniform2fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1074,7 +1216,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform1fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Uniform1fvd extends ArrayDirect<VLArrayFloat>{
 
         public Uniform1fvd(Policy policy, VLArrayFloat array, int offset, int count){
             super(policy, array, offset, count);
@@ -1090,7 +1232,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform1fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Uniform1fve extends ArrayElement<VLArrayFloat>{
 
         public Uniform1fve(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1272,7 +1414,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform4ivd extends FSConfigArrayDirect<VLArrayInt>{
+    public static class Uniform4ivd extends ArrayDirect<VLArrayInt>{
 
         public Uniform4ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1288,7 +1430,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform4ive extends FSConfigArrayElement<VLArrayInt>{
+    public static class Uniform4ive extends ArrayElement<VLArrayInt>{
 
         public Uniform4ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1305,7 +1447,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform3ivd extends FSConfigArrayDirect<VLArrayInt>{
+    public static class Uniform3ivd extends ArrayDirect<VLArrayInt>{
 
         public Uniform3ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1321,7 +1463,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform3ive extends FSConfigArrayElement<VLArrayInt>{
+    public static class Uniform3ive extends ArrayElement<VLArrayInt>{
 
         public Uniform3ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1338,7 +1480,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform2ivd extends FSConfigArrayDirect<VLArrayInt>{
+    public static class Uniform2ivd extends ArrayDirect<VLArrayInt>{
 
         public Uniform2ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1354,7 +1496,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform2ive extends FSConfigArrayElement<VLArrayInt>{
+    public static class Uniform2ive extends ArrayElement<VLArrayInt>{
 
         public Uniform2ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1371,7 +1513,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform1ivd extends FSConfigArrayDirect<VLArrayInt>{
+    public static class Uniform1ivd extends ArrayDirect<VLArrayInt>{
 
         public Uniform1ivd(Policy policy, VLArrayInt array, int offset, int count){
             super(policy, array, offset, count);
@@ -1387,7 +1529,7 @@ public class FSP{
         }
     }
 
-    public static class Uniform1ive extends FSConfigArrayElement<VLArrayInt>{
+    public static class Uniform1ive extends ArrayElement<VLArrayInt>{
 
         public Uniform1ive(Policy policy, int instance, int element, int offset, int count){
             super(policy, element, instance, offset, count);
@@ -1569,7 +1711,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib4fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Attrib4fvd extends ArrayDirect<VLArrayFloat>{
 
         public Attrib4fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 4);
@@ -1585,7 +1727,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib4fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Attrib4fve extends ArrayElement<VLArrayFloat>{
 
         public Attrib4fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 4);
@@ -1602,7 +1744,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib3fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Attrib3fvd extends ArrayDirect<VLArrayFloat>{
 
         public Attrib3fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 3);
@@ -1618,7 +1760,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib3fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Attrib3fve extends ArrayElement<VLArrayFloat>{
 
         public Attrib3fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 3);
@@ -1635,7 +1777,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib2fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Attrib2fvd extends ArrayDirect<VLArrayFloat>{
 
         public Attrib2fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 2);
@@ -1651,7 +1793,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib2fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Attrib2fve extends ArrayElement<VLArrayFloat>{
 
         public Attrib2fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 2);
@@ -1668,7 +1810,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib1fvd extends FSConfigArrayDirect<VLArrayFloat>{
+    public static class Attrib1fvd extends ArrayDirect<VLArrayFloat>{
 
         public Attrib1fvd(Policy policy, VLArrayFloat array, int offset){
             super(policy, array, offset, 1);
@@ -1684,7 +1826,7 @@ public class FSP{
         }
     }
 
-    public static class Attrib1fve extends FSConfigArrayElement<VLArrayFloat>{
+    public static class Attrib1fve extends ArrayElement<VLArrayFloat>{
 
         public Attrib1fve(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 1);
@@ -1750,7 +1892,7 @@ public class FSP{
         }
     }
 
-    public static class AttribI4ivd extends FSConfigArrayDirect<VLArrayInt>{
+    public static class AttribI4ivd extends ArrayDirect<VLArrayInt>{
 
         public AttribI4ivd(Policy policy, VLArrayInt array, int offset){
             super(policy, array, offset, 4);
@@ -1766,7 +1908,7 @@ public class FSP{
         }
     }
 
-    public static class AttribI4ive extends FSConfigArrayElement<VLArrayInt>{
+    public static class AttribI4ive extends ArrayElement<VLArrayInt>{
 
         public AttribI4ive(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 4);
@@ -1783,7 +1925,7 @@ public class FSP{
         }
     }
 
-    public static class AttribI4uivd extends FSConfigArrayDirect<VLArrayInt>{
+    public static class AttribI4uivd extends ArrayDirect<VLArrayInt>{
 
         public AttribI4uivd(Policy policy, VLArrayInt array, int offset){
             super(policy, array, offset, 4);
@@ -1799,7 +1941,7 @@ public class FSP{
         }
     }
 
-    public static class AttribI4uive extends FSConfigArrayElement<VLArrayInt>{
+    public static class AttribI4uive extends ArrayElement<VLArrayInt>{
 
         public AttribI4uive(Policy policy, int instance, int element, int offset){
             super(policy, element, instance, offset, 4);
