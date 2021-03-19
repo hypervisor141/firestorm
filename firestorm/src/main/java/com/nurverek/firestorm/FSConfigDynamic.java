@@ -7,19 +7,15 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     private TYPE config;
     private final int glslsize;
 
-    public FSConfigDynamic(Policy policy, TYPE config){
-        super(policy);
+    public FSConfigDynamic(Mode mode, TYPE config){
+        super(mode);
 
         this.config = config;
         glslsize = config.getGLSLSize();
     }
 
-    public FSConfigDynamic(TYPE config){
-        this.config = config;
-        glslsize = config.getGLSLSize();
-    }
-
-    public FSConfigDynamic(int glslsize){
+    public FSConfigDynamic(Mode mode, int glslsize){
+        super(mode);
         this.glslsize = glslsize;
     }
 
@@ -31,15 +27,15 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     @Override
     public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
         config.location(location);
-        config.configure(program, mesh, meshindex, passindex);
+        config.run(program, mesh, meshindex, passindex);
     }
 
     @Override
     public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-        appendDebugHeader(program, mesh);
+        printDebugHeader(program, mesh);
 
         config.location(location);
-        config.configureDebug(program, mesh, meshindex, passindex);
+        config.runDebug(program, mesh, meshindex, passindex);
     }
 
     public void config(TYPE config){
@@ -62,7 +58,9 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
         VLDebug.append("config[");
         VLDebug.append(config.getClass().getSimpleName());
         VLDebug.append("] [ ");
+
         config.debugInfo(program, mesh, debug);
+
         VLDebug.append(" ] ");
     }
 }

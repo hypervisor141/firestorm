@@ -7,17 +7,13 @@ public class FSConfigGroup extends FSConfig{
 
     public VLListType<FSConfig> configs;
 
-    public FSConfigGroup(Policy policy, int capacity, int resizer){
-        super(policy);
+    public FSConfigGroup(Mode mode, int capacity, int resizer){
+        super(mode);
         configs = new VLListType<>(capacity, resizer);
     }
 
-    public FSConfigGroup(Policy policy){
-        super(policy);
-    }
-
-    public FSConfigGroup(){
-
+    public FSConfigGroup(Mode mode){
+        super(mode);
     }
 
     @Override
@@ -34,7 +30,7 @@ public class FSConfigGroup extends FSConfig{
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            configs.get(i).configure(program, mesh, meshindex, passindex);
+            configs.get(i).run(program, mesh, meshindex, passindex);
         }
     }
 
@@ -56,7 +52,7 @@ public class FSConfigGroup extends FSConfig{
             VLDebug.append(size);
             VLDebug.append("] ");
 
-            configs.get(i).configureDebug(program, mesh, meshindex, passindex);
+            configs.get(i).runDebug(program, mesh, meshindex, passindex);
         }
 
         VLDebug.append("EXITING [");

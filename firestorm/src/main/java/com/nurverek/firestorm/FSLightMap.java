@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLListType;
 
-public final class FSLightMap extends FSConfigSequence {
+public final class FSLightMap extends FSConfigSequence{
 
     public static final String[] STRUCT_MEMBERS = new String[]{
             "sampler2D diffuse",

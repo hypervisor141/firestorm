@@ -9,12 +9,16 @@ public class FSConfigSelective extends FSConfigLocated{
     private FSConfig active;
     private int glslsize;
 
-    public FSConfigSelective(VLListType<FSConfig> configs){
+    public FSConfigSelective(Mode mode, VLListType<FSConfig> configs){
+        super(mode);
+
         this.configs = configs;
         glslsize = 0;
     }
 
-    public FSConfigSelective(int size, int resizer){
+    public FSConfigSelective(Mode mode, int size, int resizer){
+        super(mode);
+
         this.configs = new VLListType<>(size, resizer);
         glslsize = 0;
     }
@@ -22,13 +26,13 @@ public class FSConfigSelective extends FSConfigLocated{
     @Override
     public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
         active.location(location());
-        active.configure(program, mesh, meshindex, passindex);
+        active.run(program, mesh, meshindex, passindex);
     }
 
     @Override
     public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
         active.location(location());
-        active.configureDebug(program, mesh, meshindex, passindex);
+        active.runDebug(program, mesh, meshindex, passindex);
     }
 
     @Override

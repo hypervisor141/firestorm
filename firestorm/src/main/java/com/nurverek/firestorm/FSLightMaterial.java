@@ -2,9 +2,8 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLFloat;
-import vanguard.VLListType;
 
-public final class FSLightMaterial extends FSConfigSequence {
+public final class FSLightMaterial{
     
     public static final String[] STRUCT_MEMBERS = new String[]{
             "vec3 ambient",
@@ -23,8 +22,6 @@ public final class FSLightMaterial extends FSConfigSequence {
         this.diffuse = diffuse;
         this.specular = specular;
         this.shininess = shininess;
-
-        setup();
     }
 
     public FSLightMaterial(VLArrayFloat sharedcolor, VLFloat shininess){
@@ -32,8 +29,6 @@ public final class FSLightMaterial extends FSConfigSequence {
         this.diffuse = sharedcolor;
         this.specular = sharedcolor;
         this.shininess = shininess;
-
-        setup();
     }
 
     public FSLightMaterial(){
@@ -41,17 +36,6 @@ public final class FSLightMaterial extends FSConfigSequence {
         specular = new VLArrayFloat(3);
         diffuse = new VLArrayFloat(3);
         shininess = new VLFloat(1);
-
-        setup();
-    }
-    
-    private void setup(){
-        update(new VLListType<>(new FSConfig[]{
-                new FSP.Uniform3fvd(ambient, 0, 1),
-                new FSP.Uniform3fvd(diffuse, 0, 1),
-                new FSP.Uniform3fvd(specular, 0, 1),
-                new FSP.Uniform1f(shininess)
-        }, 0));
     }
 
     public VLArrayFloat ambient(){

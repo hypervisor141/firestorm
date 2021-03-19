@@ -3,6 +3,7 @@ package com.nurverek.firestorm;
 import android.opengl.GLES32;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import vanguard.VLArray;
 import vanguard.VLArrayFloat;
@@ -32,22 +33,23 @@ public class FSP{
 
     protected int uniformlocation;
 
-    public FSP(int debugmode){
+    public FSP(int shadercapacity, int meshcapacity, int debugmode){
         program = -1;
         debug = debugmode;
 
-        shaders = new VLListType<>(5, 1);
-        meshes = new VLListType<>(20, 20);
+        shaders = new VLListType<>(shadercapacity, shadercapacity);
+        meshes = new VLListType<>(meshcapacity, meshcapacity);
 
         uniformlocation = 0;
-        customize(debug);
+
+        customize(shaders, debug);
     }
 
-    public void customize(int debug){
+    public void customize(VLListType<FSShader> shaders, int debug){
 
     }
 
-    public void initializeConfigs(FSConfig setupgroup, FSConfig meshgroup, FSConfig postdrawgroup, FSConfig postframegroup){
+    public void initialize(FSConfig setupgroup, FSConfig meshgroup, FSConfig postdrawgroup, FSConfig postframegroup){
         this.setupconfig = setupgroup;
         this.meshconfig = meshgroup;
         this.postdrawconfig = postdrawgroup;
@@ -241,7 +243,7 @@ public class FSP{
             VLDebug.append("[SetupConfig]");
             VLDebug.printD();
 
-            setupconfig.configureDebugWithPolicy(this, null, -1, passindex);
+            setupconfig.runDebug(this, null, -1, passindex);
 
             VLDebug.printD();
 
@@ -259,7 +261,7 @@ public class FSP{
                 VLDebug.append("]");
                 VLDebug.printD();
 
-                meshconfig.configureDebugWithPolicy(this, meshes.get(i), i, passindex);
+                meshconfig.runDebug(this, meshes.get(i), i, passindex);
 
                 VLDebug.printD();
             }
@@ -267,18 +269,18 @@ public class FSP{
             VLDebug.append("[PostDrawConfig]");
             VLDebug.printD();
 
-            postdrawconfig.configureDebugWithPolicy(this, null, -1, passindex);
+            postdrawconfig.runDebug(this, null, -1, passindex);
 
             VLDebug.printD();
 
         }else{
-            setupconfig.configureWithPolicy(this, null, -1, passindex);
+            setupconfig.run(this, null, -1, passindex);
 
             for(int i = 0; i < meshsize; i++){
-                meshconfig.configureWithPolicy(this, meshes.get(i), i, passindex);
+                meshconfig.run(this, meshes.get(i), i, passindex);
             }
 
-            postdrawconfig.configureWithPolicy(this, null, -1, passindex);
+            postdrawconfig.run(this, null, -1, passindex);
         }
     }
 
@@ -305,12 +307,12 @@ public class FSP{
             VLDebug.append("[PostFrameConfig]");
             VLDebug.printD();
 
-            postframeconfig.configureDebugWithPolicy(this, null, -1, passindex);
+            postframeconfig.runDebug(this, null, -1, passindex);
 
             VLDebug.printD();
 
         }else{
-            postframeconfig.configureWithPolicy(this, null, -1, passindex);
+            postframeconfig.run(this, null, -1, passindex);
         }
     }
 
@@ -411,16 +413,70 @@ public class FSP{
         meshes.clear();
     }
 
+    public static class Clear extends FSConfig{
+
+        public int flag;
+
+        public Clear(Mode mode, int flag){
+            super(mode);
+            this.flag = flag;
+        }
+
+        @Override
+        public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+            GLES32.glClear(flag);
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 0;
+        }
+
+        @Override
+        public void debugInfo(FSP program, FSMesh mesh, int debug){
+            super.debugInfo(program, mesh, debug);
+
+            VLDebug.append(" flag[");
+            VLDebug.append(flag);
+            VLDebug.append("]");
+        }
+    }
+
+    public static class ClearColor extends FSConfig{
+
+        public float[] color;
+
+        public ClearColor(Mode mode, float[] color){
+            super(mode);
+            this.color = color;
+        }
+
+        @Override
+        public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+            GLES32.glClearColor(color[0], color[1], color[2], color[3]);
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 0;
+        }
+
+        @Override
+        public void debugInfo(FSP program, FSMesh mesh, int debug){
+            super.debugInfo(program, mesh, debug);
+
+            VLDebug.append(" color[");
+            VLDebug.append(Arrays.toString(color));
+            VLDebug.append("]");
+        }
+    }
+
     public static class MaterialDynamic extends FSConfigLocated{
 
         private final int glslsize;
 
-        public MaterialDynamic(Policy policy, int glslsize){
-            super(policy);
-            this.glslsize = glslsize;
-        }
-
-        public MaterialDynamic(int glslsize){
+        public MaterialDynamic(Mode mode, int glslsize){
+            super(mode);
             this.glslsize = glslsize;
         }
 
@@ -434,7 +490,7 @@ public class FSP{
 
         @Override
         public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-            appendDebugHeader(program, mesh);
+            printDebugHeader(program, mesh);
 
             FSLightMaterial mat = mesh.first().lightmaterial;
 
@@ -458,12 +514,8 @@ public class FSP{
 
         private final int glslsize;
 
-        public LightMapDynamic(Policy policy, int glslsize){
-            super(policy);
-            this.glslsize = glslsize;
-        }
-
-        public LightMapDynamic(int glslsize){
+        public LightMapDynamic(Mode mode, int glslsize){
+            super(mode);
             this.glslsize = glslsize;
         }
 
@@ -477,7 +529,7 @@ public class FSP{
 
         @Override
         public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-            appendDebugHeader(program, mesh);
+            printDebugHeader(program, mesh);
 
             FSLightMap map = mesh.first().lightmap;
 
@@ -503,14 +555,9 @@ public class FSP{
         private final int glslsize;
         private final int instancecount;
 
-        public MaterialDynamicInstanced(Policy policy, int glslsize, int instancecount){
-            super(policy);
+        public MaterialDynamicInstanced(Mode mode, int glslsize, int instancecount){
+            super(mode);
 
-            this.glslsize = glslsize;
-            this.instancecount = instancecount;
-        }
-
-        public MaterialDynamicInstanced(int glslsize, int instancecount){
             this.glslsize = glslsize;
             this.instancecount = instancecount;
         }
@@ -529,7 +576,7 @@ public class FSP{
 
         @Override
         public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-            appendDebugHeader(program, mesh);
+            printDebugHeader(program, mesh);
 
             int size = mesh.size();
             FSLightMaterial mat;
@@ -564,14 +611,9 @@ public class FSP{
         private final int glslsize;
         private final int instancecount;
 
-        public LightMapDynamicInstanced(Policy policy, int glslsize, int instancecount){
-            super(policy);
+        public LightMapDynamicInstanced(Mode mode, int glslsize, int instancecount){
+            super(mode);
 
-            this.glslsize = glslsize;
-            this.instancecount = instancecount;
-        }
-
-        public LightMapDynamicInstanced(int glslsize, int instancecount){
             this.glslsize = glslsize;
             this.instancecount = instancecount;
         }
@@ -590,7 +632,7 @@ public class FSP{
 
         @Override
         public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-            appendDebugHeader(program, mesh);
+            printDebugHeader(program, mesh);
 
             int size = mesh.size();
             FSLightMap map;
@@ -628,17 +670,9 @@ public class FSP{
         public int width;
         public int height;
 
-        public ViewPort(Policy policy, FSView config, int x, int y, int width, int height){
-            super(policy);
+        public ViewPort(Mode mode, FSView config, int x, int y, int width, int height){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.config = config;
-        }
-
-        public ViewPort(FSView config, int x, int y, int width, int height){
             this.x = x;
             this.y = y;
             this.width = width;
@@ -675,13 +709,8 @@ public class FSP{
 
         public boolean mask;
 
-        public DepthMask(Policy policy, boolean mask){
-            super(policy);
-
-            this.mask = mask;
-        }
-
-        public DepthMask(boolean mask){
+        public DepthMask(Mode mode, boolean mask){
+            super(mode);
             this.mask = mask;
         }
 
@@ -707,20 +736,16 @@ public class FSP{
 
     public static class CullFace extends FSConfig{
 
-        public int mode;
+        public int cullmode;
 
-        public CullFace(Policy policy, int mode){
-            super(policy);
-            this.mode = mode;
-        }
-
-        public CullFace(int mode){
-            this.mode = mode;
+        public CullFace(Mode mode, int cullmode){
+            super(mode);
+            this.cullmode = cullmode;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            GLES32.glCullFace(mode);
+            GLES32.glCullFace(cullmode);
         }
 
         @Override
@@ -733,7 +758,7 @@ public class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("mode[");
-            VLDebug.append(mode);
+            VLDebug.append(cullmode);
             VLDebug.append("] ");
         }
     }
@@ -742,12 +767,8 @@ public class FSP{
 
         public int divisor;
 
-        public AttribDivisor(Policy policy, int divisor){
-            super(policy);
-            this.divisor = divisor;
-        }
-
-        public AttribDivisor(int divisor){
+        public AttribDivisor(Mode mode, int divisor){
+            super(mode);
             this.divisor = divisor;
         }
 
@@ -773,20 +794,16 @@ public class FSP{
 
     public static class ReadBuffer extends FSConfig{
 
-        public int mode;
+        public int readmode;
 
-        public ReadBuffer(Policy policy, int mode){
-            super(policy);
-            this.mode = mode;
-        }
-
-        public ReadBuffer(int mode){
-            this.mode = mode;
+        public ReadBuffer(Mode mode, int readmode){
+            super(mode);
+            this.readmode = readmode;
         }
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            GLES32.glReadBuffer(mode);
+            GLES32.glReadBuffer(readmode);
         }
 
         @Override
@@ -799,19 +816,15 @@ public class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("mode[");
-            VLDebug.append(mode);
+            VLDebug.append(readmode);
             VLDebug.append("] ");
         }
     }
 
     public static class AttribEnable extends FSConfigLocated{
 
-        public AttribEnable(Policy policy, int location){
-            super(policy, location);
-        }
-
-        public AttribEnable(int location){
-            super(location);
+        public AttribEnable(Mode mode, int location){
+            super(mode, location);
         }
 
         @Override
@@ -827,12 +840,8 @@ public class FSP{
 
     public static class AttribDisable extends FSConfigLocated{
 
-        public AttribDisable(Policy policy, int location){
-            super(policy, location);
-        }
-
-        public AttribDisable(int location){
-            super(location);
+        public AttribDisable(Mode mode, int location){
+            super(mode, location);
         }
 
         @Override
@@ -852,15 +861,9 @@ public class FSP{
         protected int offset;
         protected int count;
 
-        public Array(Policy policy, TYPE array, int offset, int count){
-            super(policy);
+        public Array(Mode mode, TYPE array, int offset, int count){
+            super(mode);
 
-            this.array = array;
-            this.offset = offset;
-            this.count = count;
-        }
-
-        public Array(TYPE array, int offset, int count){
             this.array = array;
             this.offset = offset;
             this.count = count;
@@ -910,12 +913,8 @@ public class FSP{
 
     public abstract static class ArrayDirect<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
 
-        public ArrayDirect(Policy policy, TYPE array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public ArrayDirect(TYPE array, int offset, int count){
-            super(array, offset, count);
+        public ArrayDirect(Mode mode, TYPE array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -937,15 +936,8 @@ public class FSP{
         private int instance;
         private int element;
 
-        public ArrayElement(Policy policy, int element, int instance, int offset, int count){
-            super(policy, null, offset, count);
-
-            this.element = element;
-            this.instance = instance;
-        }
-
-        public ArrayElement(int element, int instance, int offset, int count){
-            super(null, offset, count);
+        public ArrayElement(Mode mode, int element, int instance, int offset, int count){
+            super(mode, null, offset, count);
 
             this.element = element;
             this.instance = instance;
@@ -993,14 +985,9 @@ public class FSP{
         public int element;
         public int bufferindex;
 
-        public AttribPointer(Policy policy, int element, int bufferindex){
-            super(policy);
+        public AttribPointer(Mode mode, int element, int bufferindex){
+            super(mode);
 
-            this.element = element;
-            this.bufferindex = bufferindex;
-        }
-
-        public AttribPointer(int element, int bufferindex){
             this.element = element;
             this.bufferindex = bufferindex;
         }
@@ -1041,15 +1028,11 @@ public class FSP{
         public int element;
         public int bufferindex;
 
-        public AttribIPointer(Policy policy, int element, int bufferindex){
-            super(policy);
+        public AttribIPointer(Mode mode, int element, int bufferindex){
+            super(mode);
 
             this.element = element;
             this.bufferindex = bufferindex;
-        }
-
-        public AttribIPointer(int element){
-            this.element = element;
         }
 
         @Override
@@ -1085,12 +1068,8 @@ public class FSP{
 
     public static class UniformMatrix4fvd extends ArrayDirect<VLArrayFloat>{
 
-        public UniformMatrix4fvd(Policy policy, VLArrayFloat array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public UniformMatrix4fvd(VLArrayFloat array, int offset, int count){
-            super(array, offset, count);
+        public UniformMatrix4fvd(Mode mode, VLArrayFloat array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1101,12 +1080,8 @@ public class FSP{
 
     public static class UniformMatrix4fve extends ArrayElement<VLArrayFloat>{
 
-        public UniformMatrix4fve(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public UniformMatrix4fve(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public UniformMatrix4fve(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1118,12 +1093,8 @@ public class FSP{
 
     public static class Uniform4fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Uniform4fvd(Policy policy, VLArrayFloat array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform4fvd(VLArrayFloat array, int offset, int count){
-            super(array, offset, count);
+        public Uniform4fvd(Mode mode, VLArrayFloat array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1134,12 +1105,8 @@ public class FSP{
 
     public static class Uniform4fve extends ArrayElement<VLArrayFloat>{
 
-        public Uniform4fve(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform4fve(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform4fve(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1152,12 +1119,8 @@ public class FSP{
 
     public static class Uniform3fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Uniform3fvd(Policy policy, VLArrayFloat array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform3fvd(VLArrayFloat array, int offset, int count){
-            super(array, offset, count);
+        public Uniform3fvd(Mode mode, VLArrayFloat array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1168,12 +1131,8 @@ public class FSP{
 
     public static class Uniform3fve extends ArrayElement<VLArrayFloat>{
 
-        public Uniform3fve(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform3fve(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform3fve(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1185,12 +1144,8 @@ public class FSP{
 
     public static class Uniform2fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Uniform2fvd(Policy policy, VLArrayFloat array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform2fvd(VLArrayFloat array, int offset, int count){
-            super(array, offset, count);
+        public Uniform2fvd(Mode mode, VLArrayFloat array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1201,12 +1156,8 @@ public class FSP{
 
     public static class Uniform2fve extends ArrayElement<VLArrayFloat>{
 
-        public Uniform2fve(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform2fve(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform2fve(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1218,12 +1169,8 @@ public class FSP{
 
     public static class Uniform1fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Uniform1fvd(Policy policy, VLArrayFloat array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform1fvd(VLArrayFloat array, int offset, int count){
-            super(array, offset, count);
+        public Uniform1fvd(Mode mode, VLArrayFloat array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1234,12 +1181,8 @@ public class FSP{
 
     public static class Uniform1fve extends ArrayElement<VLArrayFloat>{
 
-        public Uniform1fve(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform1fve(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform1fve(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1256,16 +1199,9 @@ public class FSP{
         public VLFloat z;
         public VLFloat w;
 
-        public Uniform4f(Policy policy, VLFloat x, VLFloat y, VLFloat z, VLFloat w){
-            super(policy);
+        public Uniform4f(Mode mode, VLFloat x, VLFloat y, VLFloat z, VLFloat w){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
-        }
-
-        public Uniform4f(VLFloat x, VLFloat y, VLFloat z, VLFloat w){
             this.x = x;
             this.y = y;
             this.z = z;
@@ -1304,15 +1240,9 @@ public class FSP{
         public VLFloat y;
         public VLFloat z;
 
-        public Uniform3f(Policy policy, VLFloat x, VLFloat y, VLFloat z){
-            super(policy);
+        public Uniform3f(Mode mode, VLFloat x, VLFloat y, VLFloat z){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public Uniform3f(VLFloat x, VLFloat y, VLFloat z){
             this.x = x;
             this.y = y;
             this.z = z;
@@ -1347,14 +1277,9 @@ public class FSP{
         public VLFloat x;
         public VLFloat y;
 
-        public Uniform2f(Policy policy, VLFloat x, VLFloat y){
-            super(policy);
+        public Uniform2f(Mode mode, VLFloat x, VLFloat y){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-        }
-
-        public Uniform2f(VLFloat x, VLFloat y){
             this.x = x;
             this.y = y;
         }
@@ -1385,12 +1310,8 @@ public class FSP{
 
         public VLFloat x;
 
-        public Uniform1f(Policy policy, VLFloat x){
-            super(policy);
-            this.x = x;
-        }
-
-        public Uniform1f(VLFloat x){
+        public Uniform1f(Mode mode, VLFloat x){
+            super(mode);
             this.x = x;
         }
 
@@ -1416,12 +1337,8 @@ public class FSP{
 
     public static class Uniform4ivd extends ArrayDirect<VLArrayInt>{
 
-        public Uniform4ivd(Policy policy, VLArrayInt array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform4ivd(VLArrayInt array, int offset, int count){
-            super(array, offset, count);
+        public Uniform4ivd(Mode mode, VLArrayInt array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1432,12 +1349,8 @@ public class FSP{
 
     public static class Uniform4ive extends ArrayElement<VLArrayInt>{
 
-        public Uniform4ive(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform4ive(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform4ive(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1449,12 +1362,8 @@ public class FSP{
 
     public static class Uniform3ivd extends ArrayDirect<VLArrayInt>{
 
-        public Uniform3ivd(Policy policy, VLArrayInt array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform3ivd(VLArrayInt array, int offset, int count){
-            super(array, offset, count);
+        public Uniform3ivd(Mode mode, VLArrayInt array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1465,12 +1374,8 @@ public class FSP{
 
     public static class Uniform3ive extends ArrayElement<VLArrayInt>{
 
-        public Uniform3ive(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform3ive(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform3ive(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1482,12 +1387,8 @@ public class FSP{
 
     public static class Uniform2ivd extends ArrayDirect<VLArrayInt>{
 
-        public Uniform2ivd(Policy policy, VLArrayInt array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform2ivd(VLArrayInt array, int offset, int count){
-            super(array, offset, count);
+        public Uniform2ivd(Mode mode, VLArrayInt array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1498,12 +1399,8 @@ public class FSP{
 
     public static class Uniform2ive extends ArrayElement<VLArrayInt>{
 
-        public Uniform2ive(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform2ive(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform2ive(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1515,12 +1412,8 @@ public class FSP{
 
     public static class Uniform1ivd extends ArrayDirect<VLArrayInt>{
 
-        public Uniform1ivd(Policy policy, VLArrayInt array, int offset, int count){
-            super(policy, array, offset, count);
-        }
-
-        public Uniform1ivd(VLArrayInt array, int offset, int count){
-            super(array, offset, count);
+        public Uniform1ivd(Mode mode, VLArrayInt array, int offset, int count){
+            super(mode, array, offset, count);
         }
 
         @Override
@@ -1531,12 +1424,8 @@ public class FSP{
 
     public static class Uniform1ive extends ArrayElement<VLArrayInt>{
 
-        public Uniform1ive(Policy policy, int instance, int element, int offset, int count){
-            super(policy, element, instance, offset, count);
-        }
-
-        public Uniform1ive(int instance, int element, int offset, int count){
-            super(element, instance, offset, count);
+        public Uniform1ive(Mode mode, int instance, int element, int offset, int count){
+            super(mode, element, instance, offset, count);
         }
 
         @Override
@@ -1553,16 +1442,9 @@ public class FSP{
         public VLInt z;
         public VLInt w;
 
-        public Uniform4i(Policy policy, VLInt x, VLInt y, VLInt z, VLInt w){
-            super(policy);
+        public Uniform4i(Mode mode, VLInt x, VLInt y, VLInt z, VLInt w){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
-        }
-
-        public Uniform4i(VLInt x, VLInt y, VLInt z, VLInt w){
             this.x = x;
             this.y = y;
             this.z = z;
@@ -1601,15 +1483,9 @@ public class FSP{
         public VLInt y;
         public VLInt z;
 
-        public Uniform3i(Policy policy, VLInt x, VLInt y, VLInt z){
-            super(policy);
+        public Uniform3i(Mode mode, VLInt x, VLInt y, VLInt z){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public Uniform3i(VLInt x, VLInt y, VLInt z){
             this.x = x;
             this.y = y;
             this.z = z;
@@ -1644,14 +1520,9 @@ public class FSP{
         public VLInt x;
         public VLInt y;
 
-        public Uniform2i(Policy policy, VLInt x, VLInt y){
-            super(policy);
+        public Uniform2i(Mode mode, VLInt x, VLInt y){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-        }
-
-        public Uniform2i(VLInt x, VLInt y){
             this.x = x;
             this.y = y;
         }
@@ -1682,12 +1553,8 @@ public class FSP{
 
         public VLInt x;
 
-        public Uniform1i(Policy policy, VLInt x){
-            super(policy);
-            this.x = x;
-        }
-
-        public Uniform1i(VLInt x){
+        public Uniform1i(Mode mode, VLInt x){
+            super(mode);
             this.x = x;
         }
 
@@ -1713,12 +1580,8 @@ public class FSP{
 
     public static class Attrib4fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Attrib4fvd(Policy policy, VLArrayFloat array, int offset){
-            super(policy, array, offset, 4);
-        }
-
-        public Attrib4fvd(VLArrayFloat array, int offset){
-            super(array, offset, 4);
+        public Attrib4fvd(Mode mode, VLArrayFloat array, int offset){
+            super(mode, array, offset, 4);
         }
 
         @Override
@@ -1729,12 +1592,8 @@ public class FSP{
 
     public static class Attrib4fve extends ArrayElement<VLArrayFloat>{
 
-        public Attrib4fve(Policy policy, int instance, int element, int offset){
-            super(policy, element, instance, offset, 4);
-        }
-
-        public Attrib4fve(int instance, int element, int offset){
-            super(element, instance, offset, 4);
+        public Attrib4fve(Mode mode, int instance, int element, int offset){
+            super(mode, element, instance, offset, 4);
         }
 
         @Override
@@ -1746,12 +1605,8 @@ public class FSP{
 
     public static class Attrib3fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Attrib3fvd(Policy policy, VLArrayFloat array, int offset){
-            super(policy, array, offset, 3);
-        }
-
-        public Attrib3fvd(VLArrayFloat array, int offset){
-            super(array, offset, 3);
+        public Attrib3fvd(Mode mode, VLArrayFloat array, int offset){
+            super(mode, array, offset, 3);
         }
 
         @Override
@@ -1762,12 +1617,8 @@ public class FSP{
 
     public static class Attrib3fve extends ArrayElement<VLArrayFloat>{
 
-        public Attrib3fve(Policy policy, int instance, int element, int offset){
-            super(policy, element, instance, offset, 3);
-        }
-
-        public Attrib3fve(int instance, int element, int offset){
-            super(element, instance, offset, 3);
+        public Attrib3fve(Mode mode, int instance, int element, int offset){
+            super(mode, element, instance, offset, 3);
         }
 
         @Override
@@ -1779,12 +1630,8 @@ public class FSP{
 
     public static class Attrib2fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Attrib2fvd(Policy policy, VLArrayFloat array, int offset){
-            super(policy, array, offset, 2);
-        }
-
-        public Attrib2fvd(VLArrayFloat array, int offset){
-            super(array, offset, 2);
+        public Attrib2fvd(Mode mode, VLArrayFloat array, int offset){
+            super(mode, array, offset, 2);
         }
 
         @Override
@@ -1795,12 +1642,8 @@ public class FSP{
 
     public static class Attrib2fve extends ArrayElement<VLArrayFloat>{
 
-        public Attrib2fve(Policy policy, int instance, int element, int offset){
-            super(policy, element, instance, offset, 2);
-        }
-
-        public Attrib2fve(int instance, int element, int offset){
-            super(element, instance, offset, 2);
+        public Attrib2fve(Mode mode, int instance, int element, int offset){
+            super(mode, element, instance, offset, 2);
         }
 
         @Override
@@ -1812,12 +1655,8 @@ public class FSP{
 
     public static class Attrib1fvd extends ArrayDirect<VLArrayFloat>{
 
-        public Attrib1fvd(Policy policy, VLArrayFloat array, int offset){
-            super(policy, array, offset, 1);
-        }
-
-        public Attrib1fvd(VLArrayFloat array, int offset){
-            super(array, offset, 1);
+        public Attrib1fvd(Mode mode, VLArrayFloat array, int offset){
+            super(mode, array, offset, 1);
         }
 
         @Override
@@ -1828,12 +1667,8 @@ public class FSP{
 
     public static class Attrib1fve extends ArrayElement<VLArrayFloat>{
 
-        public Attrib1fve(Policy policy, int instance, int element, int offset){
-            super(policy, element, instance, offset, 1);
-        }
-
-        public Attrib1fve(int instance, int element, int offset){
-            super(element, instance, offset, 1);
+        public Attrib1fve(Mode mode, int instance, int element, int offset){
+            super(mode, element, instance, offset, 1);
         }
 
         @Override
@@ -1850,16 +1685,9 @@ public class FSP{
         public VLInt z;
         public VLInt w;
 
-        public AttribI4i(Policy policy, VLInt x, VLInt y, VLInt z, VLInt w){
-            super(policy);
+        public AttribI4i(Mode mode, VLInt x, VLInt y, VLInt z, VLInt w){
+            super(mode);
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
-        }
-
-        public AttribI4i(VLInt x, VLInt y, VLInt z, VLInt w){
             this.x = x;
             this.y = y;
             this.z = z;
@@ -1894,12 +1722,8 @@ public class FSP{
 
     public static class AttribI4ivd extends ArrayDirect<VLArrayInt>{
 
-        public AttribI4ivd(Policy policy, VLArrayInt array, int offset){
-            super(policy, array, offset, 4);
-        }
-
-        public AttribI4ivd(VLArrayInt array, int offset){
-            super(array, offset, 4);
+        public AttribI4ivd(Mode mode, VLArrayInt array, int offset){
+            super(mode, array, offset, 4);
         }
 
         @Override
@@ -1910,12 +1734,8 @@ public class FSP{
 
     public static class AttribI4ive extends ArrayElement<VLArrayInt>{
 
-        public AttribI4ive(Policy policy, int instance, int element, int offset){
-            super(policy, element, instance, offset, 4);
-        }
-
-        public AttribI4ive(int instance, int element, int offset){
-            super(element, instance, offset, 4);
+        public AttribI4ive(Mode mode, int instance, int element, int offset){
+            super(mode, element, instance, offset, 4);
         }
 
         @Override
@@ -1927,12 +1747,8 @@ public class FSP{
 
     public static class AttribI4uivd extends ArrayDirect<VLArrayInt>{
 
-        public AttribI4uivd(Policy policy, VLArrayInt array, int offset){
-            super(policy, array, offset, 4);
-        }
-
-        public AttribI4uivd(VLArrayInt array, int offset){
-            super(array, offset, 4);
+        public AttribI4uivd(Mode mode, VLArrayInt array, int offset){
+            super(mode, array, offset, 4);
         }
 
         @Override
@@ -1943,12 +1759,8 @@ public class FSP{
 
     public static class AttribI4uive extends ArrayElement<VLArrayInt>{
 
-        public AttribI4uive(Policy policy, int instance, int element, int offset){
-            super(policy, element, instance, offset, 4);
-        }
-
-        public AttribI4uive(int instance, int element, int offset){
-            super(element, instance, offset, 4);
+        public AttribI4uive(Mode mode, int instance, int element, int offset){
+            super(mode, element, instance, offset, 4);
         }
 
         @Override
@@ -1965,15 +1777,9 @@ public class FSP{
 
         protected String name;
 
-        public UniformBlockElement(Policy policy, int element, String name, int bufferindex){
-            super(policy);
+        public UniformBlockElement(Mode mode, int element, String name, int bufferindex){
+            super(mode);
 
-            this.element = element;
-            this.bufferindex = bufferindex;
-            this.name = name;
-        }
-
-        public UniformBlockElement(int element, String name, int bufferindex){
             this.element = element;
             this.bufferindex = bufferindex;
             this.name = name;
@@ -2019,14 +1825,9 @@ public class FSP{
         public VLBufferTrackerDetailed<?> tracker;
         protected String name;
 
-        public UniformBlockData(Policy policy, VLBufferTrackerDetailed<?> tracker, String name){
-            super(policy);
+        public UniformBlockData(Mode mode, VLBufferTrackerDetailed<?> tracker, String name){
+            super(mode);
 
-            this.tracker = tracker;
-            this.name = name;
-        }
-
-        public UniformBlockData(VLBufferTrackerDetailed<?> tracker, String name){
             this.tracker = tracker;
             this.name = name;
         }
@@ -2065,12 +1866,8 @@ public class FSP{
 
         public FSTexture texture;
 
-        public TextureBind(Policy policy, FSTexture texture){
-            super(policy);
-            this.texture = texture;
-        }
-
-        public TextureBind(FSTexture texture){
+        public TextureBind(Mode mode, FSTexture texture){
+            super(mode);
             this.texture = texture;
         }
 
@@ -2094,12 +1891,8 @@ public class FSP{
 
     public static class TextureColorBind extends FSConfig{
 
-        public TextureColorBind(Policy policy){
-            super(policy);
-        }
-
-        public TextureColorBind(){
-
+        public TextureColorBind(Mode mode){
+            super(mode);
         }
 
         @Override
@@ -2123,12 +1916,8 @@ public class FSP{
 
     public static class TextureColorUnit extends FSConfigLocated{
 
-        public TextureColorUnit(Policy policy){
-            super(policy);
-        }
-
-        public TextureColorUnit(){
-
+        public TextureColorUnit(Mode mode){
+            super(mode);
         }
 
         @Override
@@ -2150,12 +1939,8 @@ public class FSP{
 
     public static class DrawArrays extends FSConfig{
 
-        public DrawArrays(Policy policy){
-            super(policy);
-        }
-
-        public DrawArrays(){
-
+        public DrawArrays(Mode mode){
+            super(mode);
         }
 
         @Override
@@ -2182,12 +1967,8 @@ public class FSP{
 
     public static class DrawArraysInstanced extends FSConfig{
 
-        public DrawArraysInstanced(Policy policy){
-            super(policy);
-        }
-
-        public DrawArraysInstanced(){
-
+        public DrawArraysInstanced(Mode mode){
+            super(mode);
         }
 
         @Override
@@ -2218,12 +1999,8 @@ public class FSP{
 
         public int bufferindex;
 
-        public DrawElements(Policy policy, int bufferindex){
-            super(policy);
-            this.bufferindex = bufferindex;
-        }
-
-        public DrawElements(int bufferindex){
+        public DrawElements(Mode mode, int bufferindex){
+            super(mode);
             this.bufferindex = bufferindex;
         }
 
@@ -2260,12 +2037,8 @@ public class FSP{
 
         public int bufferindex;
 
-        public DrawElementsInstanced(Policy policy, int bufferindex){
-            super(policy);
-            this.bufferindex = bufferindex;
-        }
-
-        public DrawElementsInstanced(int bufferindex){
+        public DrawElementsInstanced(Mode mode, int bufferindex){
+            super(mode);
             this.bufferindex = bufferindex;
         }
 
@@ -2307,16 +2080,9 @@ public class FSP{
         public int count;
         public int bufferindex;
 
-        public DrawRangeElements(Policy policy, int start, int end, int count, int bufferindex){
-            super(policy);
+        public DrawRangeElements(Mode mode, int start, int end, int count, int bufferindex){
+            super(mode);
 
-            this.start = start;
-            this.end = end;
-            this.count = count;
-            this.bufferindex = bufferindex;
-        }
-
-        public DrawRangeElements(int start, int end, int count, int bufferindex){
             this.start = start;
             this.end = end;
             this.count = count;

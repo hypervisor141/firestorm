@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.opengl.GLES32;
-
 import vanguard.VLListType;
 
 public class FSRPass{
@@ -74,79 +72,6 @@ public class FSRPass{
 
     public int size(){
         return entries.size();
-    }
-
-    public FSRPass build(){
-        orders.add(new Order(){
-
-            @Override
-            public void execute(int orderindex, int passindex){
-
-            }
-        });
-        
-        if(clearcolor || cleardepth || clearstencil){
-            int clearbit = 0;
-
-            if(clearcolor){
-                clearbit |= GLES32.GL_COLOR_BUFFER_BIT;
-            }
-            if(cleardepth){
-                clearbit |= GLES32.GL_DEPTH_BUFFER_BIT;
-            }
-            if(clearstencil){
-                clearbit |= GLES32.GL_STENCIL_BUFFER_BIT;
-            }
-
-            final int clearbitf = clearbit;
-
-            orders.add(new Order(){
-
-                @Override
-                public void execute(int orderindex, int passindex){
-                    GLES32.glClear(clearbitf);
-
-                    if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
-                        try{
-                            FSTools.checkGLError();
-
-                        }catch(Exception ex){
-                            throw new RuntimeException("Error running glClear() for bits[" + clearbitf + "] renderPass[" + passindex + "]", ex);
-                        }
-                    }
-                }
-            });
-
-            if(clearcolor){
-                orders.add(new Order(){
-
-                    @Override
-                    public void execute(int orderindex, int passindex){
-                        GLES32.glClearColor(color[0], color[1], color[2], color[3]);
-
-                        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
-                            try{
-                                FSTools.checkGLError();
-
-                            }catch(Exception ex){
-                                throw new RuntimeException("Error clearing color with glClear() on renderPass[" + passindex + "]", ex);
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        if(draw){
-            orders.add(new Order(){
-
-                @Override
-                public void execute(int orderindex, int passindex){
-                    draw();
-                }
-            });
-        }
-        
-        return this;
     }
 
     protected void noitifyPostFrameSwap(){

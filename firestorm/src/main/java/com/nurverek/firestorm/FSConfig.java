@@ -4,64 +4,60 @@ import vanguard.VLDebug;
 
 public abstract class FSConfig{
 
-    public static final Policy POLICY_ALWAYS = new Policy(){
+    public static final Mode MODE_ALWAYS = new Mode(){
 
         @Override
-        protected void configure(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex){
-            config.configure(program, mesh, meshindex, passindex);
+        public void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configure(program, mesh, meshindex, passindex);
         }
 
         @Override
-        protected void configureDebug(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex){
-            config.configureDebug(program, mesh, meshindex, passindex);
-        }
-    };
-    public static final Policy POLICY_ONCE = new Policy(){
-
-        @Override
-        protected void configure(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex){
-            config.configure(program, mesh, meshindex, passindex);
-            config.policy(POLICY_IDLE);
-        }
-
-        @Override
-        protected void configureDebug(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex){
-            config.configureDebug(program, mesh, meshindex, passindex);
-            config.policy(POLICY_IDLE);
+        public void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configureDebug(program, mesh, meshindex, passindex);
         }
     };
-    public static final Policy POLICY_IDLE = new Policy(){
+    public static final Mode MODE_ONETIME = new Mode(){
 
         @Override
-        protected void configure(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex){ }
+        public void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configure(program, mesh, meshindex, passindex);
+            self.mode = MODE_DISABLED;
+        }
 
         @Override
-        protected void configureDebug(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex){ }
+        public void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configureDebug(program, mesh, meshindex, passindex);
+            self.mode = MODE_DISABLED;
+        }
+    };
+    public static final Mode MODE_DISABLED = new Mode(){
+
+        @Override
+        public void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
+
+        @Override
+        public void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
     };
 
-    private Policy policy;
+    private Mode mode;
 
-    public FSConfig(Policy policy){
-        this.policy = policy;
+    public FSConfig(Mode mode){
+        this.mode = mode;
     }
 
-    public FSConfig(){
-        policy = POLICY_ALWAYS;
+    public void run(FSP program, FSMesh mesh, int meshindex, int passindex){
+        mode.configure(this, program, mesh, meshindex, passindex);
     }
 
-    public final void configureWithPolicy(FSP program, FSMesh mesh, int meshindex, int passindex){
-        policy.configure(this, program, mesh, meshindex, passindex);
+    public void runDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+        mode.configureDebug(this, program, mesh, meshindex, passindex);
     }
 
-    public final void configureDebugWithPolicy(FSP program, FSMesh mesh, int meshindex, int passindex){
-        policy.configureDebug(this, program, mesh, meshindex, passindex);
-    }
+    protected abstract void configure(FSP program, FSMesh mesh, int meshindex, int passindex);
 
-    public abstract void configure(FSP program, FSMesh mesh, int meshindex, int passindex);
-
-    public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+    protected void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
         try{
-            appendDebugHeader(program, mesh);
+            printDebugHeader(program, mesh);
 
             configure(program, mesh, meshindex, passindex);
             FSTools.checkGLError();
@@ -76,15 +72,7 @@ public abstract class FSConfig{
 
     protected void notifyProgramBuilt(FSP program){}
 
-    public void policy(Policy policy){
-        this.policy = policy;
-    }
-
     public void location(int location){ }
-
-    public Policy policy(){
-        return policy;
-    }
 
     public int location(){
         return -Integer.MAX_VALUE;
@@ -92,7 +80,7 @@ public abstract class FSConfig{
 
     public abstract int getGLSLSize();
 
-    protected void appendDebugHeader(FSP program, FSMesh mesh){
+    protected void printDebugHeader(FSP program, FSMesh mesh){
         String classname = getClass().getSimpleName();
 
         VLDebug.append("[");
@@ -115,9 +103,9 @@ public abstract class FSConfig{
         VLDebug.append("] ");
     }
 
-    public abstract static class Policy{
+    public interface Mode{
 
-        protected abstract void configure(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex);
-        protected abstract void configureDebug(FSConfig config, FSP program, FSMesh mesh, int meshindex, int passindex);
+        void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
+        void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
     }
 }

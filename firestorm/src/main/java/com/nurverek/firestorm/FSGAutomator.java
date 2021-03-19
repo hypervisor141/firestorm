@@ -255,7 +255,7 @@ public final class FSGAutomator{
             try{
                 int buffersize = buffers.size();
 
-                for(int i = 0; i < size; i++){
+                for(int i = 0; i < buffersize; i++){
                     buffers.get(i).upload();
                 }
 
@@ -274,11 +274,9 @@ public final class FSGAutomator{
             for(int i = 0; i < buffersize; i++){
                 buffers.get(i).initialize();
             }
-
             for(int i = 0; i < size; i++){
                 entries.get(i).scanner.buffer();
             }
-
             for(int i = 0; i < buffersize; i++){
                 buffers.get(i).upload();
             }

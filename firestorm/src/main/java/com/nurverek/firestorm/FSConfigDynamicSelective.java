@@ -7,15 +7,17 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
     private FSConfigSelective config;
     private int targetindex;
 
-    public FSConfigDynamicSelective(FSConfigSelective config, int targetindex){
+    public FSConfigDynamicSelective(Mode mode, FSConfigSelective config, int targetindex){
+        super(mode);
+
         this.config = config;
         this.targetindex = targetindex;
 
         config.activate(targetindex);
     }
 
-    public FSConfigDynamicSelective(){
-
+    public FSConfigDynamicSelective(Mode mode){
+        super(mode);
     }
 
     public void config(FSConfigSelective config){
@@ -44,16 +46,16 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
     public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
         config.location(location());
         config.activate(targetindex);
-        config.configure(program, mesh, meshindex, passindex);
+        config.run(program, mesh, meshindex, passindex);
     }
 
     @Override
     public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-        appendDebugHeader(program, mesh);
+        printDebugHeader(program, mesh);
 
         config.location(location());
         config.activate(targetindex);
-        config.configureDebug(program, mesh, meshindex, passindex);
+        config.runDebug(program, mesh, meshindex, passindex);
     }
 
     @Override

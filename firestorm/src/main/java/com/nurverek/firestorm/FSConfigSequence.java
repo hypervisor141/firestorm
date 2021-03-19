@@ -8,30 +8,18 @@ public class FSConfigSequence extends FSConfigLocated{
     public VLListType<FSConfig> configs;
     private int glslsize;
 
-    public FSConfigSequence(Policy policy, VLListType<FSConfig> configs){
-        super(policy);
+    public FSConfigSequence(Mode mode, VLListType<FSConfig> configs){
+        super(mode);
         update(configs);
     }
 
-    public FSConfigSequence(Policy policy, int glslsize){
-        super(policy);
+    public FSConfigSequence(Mode mode, int glslsize){
+        super(mode);
         this.glslsize = glslsize;
     }
 
-    public FSConfigSequence(Policy policy){
-        super(policy);
-    }
-
-    public FSConfigSequence(VLListType<FSConfig> configs){
-        update(configs);
-    }
-
-    public FSConfigSequence(int glslsize){
-        this.glslsize = glslsize;
-    }
-
-    public FSConfigSequence(){
-
+    public FSConfigSequence(Mode mode){
+        super(mode);
     }
 
     public void update(VLListType<FSConfig> stages){
@@ -68,7 +56,7 @@ public class FSConfigSequence extends FSConfigLocated{
         for(int i = 0; i < size; i++){
             c = configs.get(i);
             c.location(loc);
-            c.configure(program, mesh, meshindex, passindex);
+            c.run(program, mesh, meshindex, passindex);
 
             loc += c.getGLSLSize();
         }
@@ -101,7 +89,7 @@ public class FSConfigSequence extends FSConfigLocated{
 
             c = configs.get(i);
             c.location(loc);
-            c.configureDebug(program, mesh, meshindex, passindex);
+            c.runDebug(program, mesh, meshindex, passindex);
 
             loc += c.getGLSLSize();
         }

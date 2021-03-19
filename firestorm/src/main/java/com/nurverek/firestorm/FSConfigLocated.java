@@ -6,21 +6,13 @@ public abstract class FSConfigLocated extends FSConfig{
 
     protected int location;
 
-    public FSConfigLocated(Policy policy, int location){
-        super(policy);
+    public FSConfigLocated(Mode mode, int location){
+        super(mode);
         this.location = location;
     }
 
-    public FSConfigLocated(Policy policy){
-        super(policy);
-        location = -Integer.MAX_VALUE;
-    }
-
-    public FSConfigLocated(int location){
-        this.location = location;
-    }
-
-    public FSConfigLocated(){
+    public FSConfigLocated(Mode mode){
+        super(mode);
         location = -Integer.MAX_VALUE;
     }
 
