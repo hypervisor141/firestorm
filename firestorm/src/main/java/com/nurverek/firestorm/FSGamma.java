@@ -2,19 +2,20 @@ package com.nurverek.firestorm;
 
 import vanguard.VLFloat;
 
-public class FSGamma extends FSP.Uniform1f{
+public class FSGamma{
 
-    public static final String FUNCTION =
-            "void correctGamma(inout vec4 fragColor, float gamma){\n" +
-                    "\tfragColor.rgb = pow(fragColor.rgb, vec3(1.0 / gamma));\n" +
-                    "}";
+    private VLFloat level;
 
-    public FSGamma(VLFloat gamma){
-        super(gamma);
+    public FSGamma(VLFloat level){
+        this.level = level;
     }
 
-    public String getGammaFunction(){
-        return FUNCTION;
+    public void level(VLFloat level){
+        this.level = level;
+    }
+
+    public VLFloat level(){
+        return level;
     }
 }
 

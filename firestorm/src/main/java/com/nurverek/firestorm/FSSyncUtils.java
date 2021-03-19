@@ -12,8 +12,8 @@ public class FSSyncUtils{
 
         @Override
         public void sync(Object source){
-            if(target.policy() != FSConfig.POLICY_ALWAYS){
-                target.policy(FSConfig.POLICY_ONCE);
+            if(target.mode() != FSConfig.MODE_ALWAYS){
+                target.mode(FSConfig.MODE_ONETIME);
             }
         }
     }

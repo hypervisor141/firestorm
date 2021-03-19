@@ -5,60 +5,16 @@ import android.opengl.GLES32;
 import vanguard.VLArrayFloat;
 import vanguard.VLFloat;
 import vanguard.VLInt;
-import vanguard.VLListType;
 
 public final class FSShadowDirect extends FSShadow<FSLightDirect>{
-
-    public static final String[] STRUCT_MEMBERS = new String[]{
-            "float minbias",
-            "float maxbias",
-            "float divident",
-            "mat4 lightvp"
-    };
-
-    public static final String FUNCTION_NORMAL =
-            "float shadowMap(vec4 fragPosLightSpace, sampler2DShadow shadowmap, float bias, float divident){\n" +
-                    "\t   vec3 coords = (fragPosLightSpace.xyz / fragPosLightSpace.w) * 0.5 + 0.5;\n" +
-                    "\t   if(coords.z > 1.0){\n" +
-                    "\t       return 0.0;\n" +
-                    "\t   }\n" +
-                    "\t   coords.z -= bias;\n" +
-                    "\t   return texture(shadowmap, coords) / divident;\n" +
-                    "}";
-
-    public static final String FUNCTION_SOFT =
-            "float shadowMap(vec4 fragPosLightSpace, sampler2DShadow shadowmap, float bias, float divident){\n" +
-                    "\t   vec3 coords = (fragPosLightSpace.xyz / fragPosLightSpace.w) * 0.5 + 0.5;\n" +
-                    "\t   if(coords.z > 1.0){\n" +
-                    "\t       return 0.0;\n" +
-                    "\t   }\n" +
-                    "\t   coords.z -= bias;\n" +
-                    "\t   float shadow = 0.0;\n" +
-                    "\t   vec2 texelSize = 1.0 / vec2(textureSize(shadowmap, 0).xy);\n" +
-                    "\t   for(int x = -1; x <= 1; x++){\n" +
-                    "\t       for(int y = -1; y <= 1; y++){\n" +
-                    "\t           shadow += texture(shadowmap, coords.xyz + vec3((vec2(x, y) * texelSize), 0.0)); \n" +
-                    "\t       }\n" +
-                    "\t   }\n" +
-                    "\t   return shadow / divident;\n" +
-                    "}";
-
-    public static final int SELECT_STRUCT_DATA = 0;
 
     protected FSView config;
 
     public FSShadowDirect(FSLightDirect light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident){
-        super(1, 0, light, width, height, minbias, maxbias, divident);
+        super(light, width, height, minbias, maxbias, divident);
 
         config = new FSView();
         config.setOrthographicMode();
-
-        configs().add(new FSConfigSequence(new VLListType<>(new FSConfig[]{
-                new FSP.Uniform1f(minbias),
-                new FSP.Uniform1f(maxbias),
-                new FSP.Uniform1f(divident),
-                new FSP.UniformMatrix4fvd(lightViewProjection(), 0, 1)
-        }, 0)));
     }
 
     @Override
@@ -111,20 +67,5 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
 
     public FSView viewConfig(){
         return config;
-    }
-
-    @Override
-    public String[] getStructMemebers(){
-        return STRUCT_MEMBERS;
-    }
-
-    @Override
-    public String getShadowFunction(){
-        return FUNCTION_NORMAL;
-    }
-
-    @Override
-    public String getSoftShadowFunction(){
-        return FUNCTION_SOFT;
     }
 }

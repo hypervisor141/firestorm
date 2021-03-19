@@ -45,6 +45,22 @@ public abstract class FSConfig{
         this.mode = mode;
     }
 
+    public void location(int location){ }
+
+    public int location(){
+        return -Integer.MAX_VALUE;
+    }
+
+    public Mode mode(){
+        return mode;
+    }
+
+    public void mode(Mode mode){
+        this.mode = mode;
+    }
+
+    public abstract int getGLSLSize();
+
     public void run(FSP program, FSMesh mesh, int meshindex, int passindex){
         mode.configure(this, program, mesh, meshindex, passindex);
     }
@@ -71,14 +87,6 @@ public abstract class FSConfig{
     }
 
     protected void notifyProgramBuilt(FSP program){}
-
-    public void location(int location){ }
-
-    public int location(){
-        return -Integer.MAX_VALUE;
-    }
-
-    public abstract int getGLSLSize();
 
     protected void printDebugHeader(FSP program, FSMesh mesh){
         String classname = getClass().getSimpleName();

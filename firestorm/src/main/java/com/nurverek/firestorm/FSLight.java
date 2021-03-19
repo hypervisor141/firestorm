@@ -2,17 +2,13 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 
-public abstract class FSLight extends FSConfigSequence{
+public abstract class FSLight{
 
     protected long id;
 
     public FSLight(){
         id = FSRFrames.getNextID();
     }
-
-    public abstract String[] getStructMembers();
-
-    public abstract String getLightFunction();
 
     public VLArrayFloat position(){
         return null;

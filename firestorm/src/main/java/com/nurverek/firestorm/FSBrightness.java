@@ -2,9 +2,19 @@ package com.nurverek.firestorm;
 
 import vanguard.VLFloat;
 
-public class FSBrightness extends FSP.Uniform1f{
+public class FSBrightness{
 
-    public FSBrightness(VLFloat brightness){
-        super(brightness);
+    private VLFloat level;
+
+    public FSBrightness(VLFloat level){
+        this.level = level;
+    }
+
+    public void level(VLFloat level){
+        this.level = level;
+    }
+
+    public VLFloat level(){
+        return level;
     }
 }

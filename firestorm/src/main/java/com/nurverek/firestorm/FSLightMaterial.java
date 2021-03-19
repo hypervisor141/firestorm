@@ -4,13 +4,6 @@ import vanguard.VLArrayFloat;
 import vanguard.VLFloat;
 
 public final class FSLightMaterial{
-    
-    public static final String[] STRUCT_MEMBERS = new String[]{
-            "vec3 ambient",
-            "vec3 diffuse",
-            "vec3 specular",
-            "float shininess"
-    };
 
     protected VLArrayFloat ambient;
     protected VLArrayFloat specular;
@@ -52,9 +45,5 @@ public final class FSLightMaterial{
 
     public VLFloat shininess(){
         return shininess;
-    }
-
-    public String[] getStructMembers(){
-        return STRUCT_MEMBERS;
     }
 }

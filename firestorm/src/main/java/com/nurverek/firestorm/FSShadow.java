@@ -3,12 +3,7 @@ package com.nurverek.firestorm;
 import vanguard.VLFloat;
 import vanguard.VLInt;
 
-public abstract class FSShadow<LIGHT extends FSLight> extends FSConfigSelective{
-
-    public static final String FUNCTION_BIAS =
-            "float shadowMapBias(vec3 normal, vec3 lightdir, float minbias, float maxbias){\n" +
-                    "\t   return max(maxbias * (1.0 - dot(normal, lightdir)), minbias);\n" +
-                    "}";
+public abstract class FSShadow<LIGHT extends FSLight>{
 
     public static final float[] PERSPECTIVECACHE = new float[16];
     public static final float[] LOOKCACHE = new float[16];
@@ -23,9 +18,7 @@ public abstract class FSShadow<LIGHT extends FSLight> extends FSConfigSelective{
     protected VLFloat maxbias;
     protected VLFloat divident;
 
-    public FSShadow(int size, int resizer, LIGHT light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident){
-        super(size, resizer);
-
+    public FSShadow(LIGHT light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident){
         this.light = light;
         this.width = width;
         this.height = height;
@@ -94,16 +87,6 @@ public abstract class FSShadow<LIGHT extends FSLight> extends FSConfigSelective{
     public LIGHT light(){
         return light;
     }
-
-    public String getBiasFunction(){
-        return FUNCTION_BIAS;
-    }
-
-    public abstract String[] getStructMemebers();
-
-    public abstract String getShadowFunction();
-
-    public abstract String getSoftShadowFunction();
 
     public void destroy(){
         framebuffer.destroy();

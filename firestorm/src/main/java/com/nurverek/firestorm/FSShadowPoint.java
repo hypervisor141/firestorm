@@ -6,57 +6,15 @@ import android.opengl.Matrix;
 import vanguard.VLArrayFloat;
 import vanguard.VLFloat;
 import vanguard.VLInt;
-import vanguard.VLListType;
 
 public final class FSShadowPoint extends FSShadow<FSLightPoint>{
-
-    public static final String[] STRUCT_MEMBERS = new String[]{
-            "float minbias",
-            "float maxbias",
-            "float divident",
-            "float zfar"
-    };
-
-    public static final String FIELD_CONST_SHADOW_PCF_SAMPLING =
-            "const vec3 sampleOffsetDirections[20] = vec3[]\n" +
-                    "(\n" +
-                    "   vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), \n" +
-                    "   vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),\n" +
-                    "   vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),\n" +
-                    "   vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),\n" +
-                    "   vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)\n" +
-                    ");";
-
-    public static final String FUNCTION_NORMAL =
-            "float shadowMap(vec3 fragPos, vec3 lightPos, samplerCube shadowmap, float zfar, float bias, float divident){\n" +
-                    "\t    vec3 fragToLight = fragPos - lightPos;\n" +
-                    "\t    return 1.0 - ((length(fragToLight) - bias) > (texture(shadowmap, fragToLight).r * zfar) ? 1.0 : 0.0) / divident;\n" +
-                    "}\n";
-
-    public static final String FUNCTION_SOFT =
-            "float shadowMap(vec3 fragPos, vec3 lightPos, vec3 cameraPos, samplerCube shadowmap, float zfar, float bias, int samples, float divident){\n" +
-                    "\t    vec3 fragToLight = fragPos - lightPos;\n" +
-                    "\t    float currentDepth = length(fragToLight) - bias;\n" +
-                    "\t    float shadow = 0.0;\n" +
-                    "\t    float viewDistance = length(cameraPos - fragPos);\n" +
-                    "\t    float diskRadius = (1.0 + (viewDistance / zfar)) / 25.0;\n" +
-                    "\t    for(int i = 0; i < samples; i++){\n" +
-                    "\t        if(currentDepth > (texture(shadowmap, fragToLight + sampleOffsetDirections[i] * diskRadius).r * zfar)){\n" +
-                    "\t            shadow += 1.0;\n" +
-                    "\t        }\n" +
-                    "\t    }\n" +
-                    "\t    return 1.0 - (shadow / float(samples)) / divident;\n" +
-                    "}\n";
-
-    public static final int SELECT_STRUCT_DATA = 0;
-    public static final int SELECT_LIGHT_TRANSFORMS = 1;
 
     private final VLArrayFloat[] lightvp;
     protected VLFloat znear;
     protected VLFloat zfar;
 
     public FSShadowPoint(FSLightPoint light, VLInt width, VLInt height, VLFloat minbias, VLFloat maxbias, VLFloat divident, VLFloat znear, VLFloat zfar){
-        super(2, 0, light, width, height, minbias, maxbias, divident);
+        super(light, width, height, minbias, maxbias, divident);
 
         this.zfar = zfar;
         this.znear = znear;
@@ -68,23 +26,6 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
         }
 
         updateLightVP();
-
-        configs().add(new FSConfigSequence(new VLListType<>(new FSConfig[]{
-                new FSP.Uniform1f(minbias),
-                new FSP.Uniform1f(maxbias),
-                new FSP.Uniform1f(divident),
-                new FSP.Uniform1f(zfar)
-        }, 0)));
-        
-        configs().add(new FSConfigSequence(new VLListType<FSConfig>(new FSConfig[]{
-                new FSP.UniformMatrix4fvd(lightvp[0], 0, 1),
-                new FSP.UniformMatrix4fvd(lightvp[1], 0, 1),
-                new FSP.UniformMatrix4fvd(lightvp[2], 0, 1),
-                new FSP.UniformMatrix4fvd(lightvp[3], 0, 1),
-                new FSP.UniformMatrix4fvd(lightvp[4], 0, 1),
-                new FSP.UniformMatrix4fvd(lightvp[5], 0, 1)
-
-        }, 0)));
     }
 
     @Override
@@ -167,24 +108,5 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
 
     public VLArrayFloat[] lightViewProjection(){
         return lightvp;
-    }
-
-    @Override
-    public String[] getStructMemebers(){
-        return STRUCT_MEMBERS;
-    }
-
-    @Override
-    public String getShadowFunction(){
-        return FUNCTION_NORMAL;
-    }
-
-    @Override
-    public String getSoftShadowFunction(){
-        return FUNCTION_SOFT;
-    }
-
-    public String getShadowPCFSamplingFields(){
-        return FIELD_CONST_SHADOW_PCF_SAMPLING;
     }
 }

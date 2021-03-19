@@ -1,14 +1,6 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLListType;
-
-public final class FSLightMap extends FSConfigSequence{
-
-    public static final String[] STRUCT_MEMBERS = new String[]{
-            "sampler2D diffuse",
-            "sampler2D specular",
-            "sampler2D normal"
-    };
+public final class FSLightMap{
 
     protected FSTexture diffuse;
     protected FSTexture specular;
@@ -18,12 +10,6 @@ public final class FSLightMap extends FSConfigSequence{
         this.diffuse = diffuse;
         this.specular = specular;
         this.normal = normal;
-        
-        update(new VLListType<>(new FSConfig[]{
-                new FSP.Uniform1i(diffuse.unit()),
-                new FSP.Uniform1i(specular.unit()),
-                new FSP.Uniform1i(normal.unit()),
-        }, 0));
     }
 
     public FSTexture diffuse(){
@@ -36,10 +22,6 @@ public final class FSLightMap extends FSConfigSequence{
 
     public FSTexture normal(){
         return normal;
-    }
-
-    public String[] getStructMembers(){
-        return STRUCT_MEMBERS;
     }
 }
 
