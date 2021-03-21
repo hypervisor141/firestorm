@@ -6,15 +6,15 @@ import vanguard.VLDebug;
 
 public abstract class FSGScanner{
 
-    protected FSGBluePrint blueprint;
     protected FSGAssembler assembler;
     protected FSBufferLayout layout;
-
+    protected FSP program;
     protected FSMesh mesh;
     protected String name;
 
-    protected FSGScanner(FSGBluePrint blueprint, FSGAssembler assembler, String name){
-        this.blueprint = blueprint;
+    protected FSGScanner(FSP program, FSBufferLayout layout, FSGAssembler assembler, String name){
+        this.program = program;
+        this.layout = layout;
         this.assembler = assembler;
         this.name = name.toLowerCase();
 
@@ -23,21 +23,14 @@ public abstract class FSGScanner{
 
     protected abstract boolean scan(FSGAutomator automator, FSM.Data data);
 
-    protected void buffer(){
-        layout.buffer();
+    protected void bufferAndFinish(){
+        layout.buffer(mesh);
+        program.meshes().add(mesh);
     }
 
-    protected void bufferDebug(){
-        layout.bufferDebug();
-    }
-
-    protected void signalMeshBuilt(){
-        blueprint.meshComplete(mesh);
-        layout = blueprint.buildBufferLayouts(mesh);
-    }
-
-    protected void signalFinished(){
-        blueprint.finished(mesh);
+    protected void bufferDebugAndFinish(){
+        layout.bufferDebug(mesh);
+        program.meshes().add(mesh);
     }
 
     protected void debugInfo(){
@@ -99,28 +92,24 @@ public abstract class FSGScanner{
 
     public static class Singular extends FSGScanner{
 
-        public Singular(FSGBluePrint blueprint, FSGAssembler assembler, String name, int drawmode){
-            super(blueprint, assembler, name);
+        public Singular(FSP program, FSBufferLayout layout, FSGAssembler assembler, String name, int drawmode){
+            super(program, layout, assembler, name);
             mesh.initialize(drawmode, 1, 0);
         }
 
         @Override
-        protected boolean scan(FSGAutomator automator, FSM.Data fsm){
-            if(fsm.name.equalsIgnoreCase(name)){
+        protected boolean scan(FSGAutomator automator, FSM.Data data){
+            if(data.name.equalsIgnoreCase(name)){
                 mesh.name(name);
 
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.foundNewInstance(mesh, instance);
-
                 if(assembler.LOAD_INDICES){
-                    mesh.indices(new VLArrayShort(fsm.indices.array()));
+                    mesh.indices(new VLArrayShort(data.indices.array()));
                 }
 
-                assembler.buildFirst(instance, this, fsm);
-
-                blueprint.builtNewInstance(mesh, instance);
+                assembler.buildFirst(instance, this, data);
 
                 return true;
             }
@@ -131,30 +120,26 @@ public abstract class FSGScanner{
 
     public static class Instanced extends FSGScanner{
 
-        public Instanced(FSGBluePrint blueprint, FSGAssembler assembler, String prefixname, int drawmode, int estimatedsize){
-            super(blueprint, assembler, prefixname);
+        public Instanced(FSP program, FSBufferLayout layout, FSGAssembler assembler, String prefixname, int drawmode, int estimatedsize){
+            super(program, layout, assembler, prefixname);
             mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
         }
 
         @Override
-        protected boolean scan(FSGAutomator automator, FSM.Data fsm){
-            if(fsm.name.contains(name)){
+        protected boolean scan(FSGAutomator automator, FSM.Data data){
+            if(data.name.contains(name)){
                 mesh.name(name);
 
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.foundNewInstance(mesh, instance);
-
                 if(assembler.LOAD_INDICES && mesh.indices == null){
-                    mesh.indices(new VLArrayShort(fsm.indices.array()));
-                    assembler.buildFirst(instance, this, fsm);
+                    mesh.indices(new VLArrayShort(data.indices.array()));
+                    assembler.buildFirst(instance, this, data);
 
                 }else{
-                    assembler.buildRest(instance, this, fsm);
+                    assembler.buildRest(instance, this, data);
                 }
-
-                blueprint.builtNewInstance(mesh, instance);
 
                 return true;
             }
@@ -167,35 +152,30 @@ public abstract class FSGScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSGBluePrint blueprint, FSGAssembler assembler, String prefixname, int drawmode, int copycount){
-            super(blueprint, assembler, prefixname);
+        public InstancedCopy(FSP program, FSBufferLayout layout, FSGAssembler assembler, String prefixname, int drawmode, int copycount){
+            super(program, layout, assembler, prefixname);
 
             this.copycount = copycount;
             mesh.initialize(drawmode, copycount, 0);
         }
 
         @Override
-        protected boolean scan(FSGAutomator automator, FSM.Data fsm){
-            if(fsm.name.contains(name)){
+        protected boolean scan(FSGAutomator automator, FSM.Data data){
+            if(data.name.contains(name)){
                 mesh.name(name);
 
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.foundNewInstance(mesh, instance);
-
                 if(assembler.LOAD_INDICES && mesh.indices == null){
-                    mesh.indices(new VLArrayShort(fsm.indices.array()));
-                    assembler.buildFirst(instance, this, fsm);
-
-                    blueprint.builtNewInstance(mesh, instance);
-
-                    FSInstance copy;
+                    mesh.indices(new VLArrayShort(data.indices.array()));
+                    assembler.buildFirst(instance, this, data);
 
                     for(int i = 0; i < copycount; i++){
-                        copy = new FSInstance(instance);
-                        mesh.addInstance(copy);
-                        blueprint.builtNewInstance(mesh, copy);
+                        instance = new FSInstance();
+                        mesh.addInstance(instance);
+
+                        assembler.buildFirst(instance, this, data);
                     }
                 }
 

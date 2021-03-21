@@ -26,10 +26,12 @@ public class FSGAssembler implements VLStringify{
 
     private final VLListType<BuildStep> firstfuncs;
     private final VLListType<BuildStep> restfuncs;
+    private final VLListType<BuildStep> customfunc;
 
-    public FSGAssembler(){
+    public FSGAssembler(int customstepcapacity){
         firstfuncs = new VLListType<>(10, 20);
         restfuncs = new VLListType<>(10, 20);
+        customfunc = new VLListType<>(customstepcapacity, customstepcapacity);
 
         setDefaultAll();
     }
@@ -61,6 +63,10 @@ public class FSGAssembler implements VLStringify{
         configureColors();
         configureTexCoords();
         configureNormals();
+    }
+
+    public void addCustomBuildStep(BuildStep step){
+        customfunc.add(step);
     }
 
     private void configureModels(){
@@ -196,8 +202,8 @@ public class FSGAssembler implements VLStringify{
         }
     }
 
-    protected void unIndexPositions(FSInstance.Data data, short[] indices){
-        float[] positions = data.positions().provider();
+    protected void unIndexPositions(FSInstance.Data instancedata, short[] indices){
+        float[] positions = instancedata.positions().provider();
         VLListFloat converted = new VLListFloat(positions.length, positions.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -210,11 +216,11 @@ public class FSGAssembler implements VLStringify{
         }
 
         converted.restrictSize();
-        data.positions().provider(converted.array());
+        instancedata.positions().provider(converted.array());
     }
 
-    protected void unIndexColors(FSInstance.Data data, short[] indices){
-        float[] colors = data.colors().provider();
+    protected void unIndexColors(FSInstance.Data instancedata, short[] indices){
+        float[] colors =instancedata.colors().provider();
         VLListFloat converted = new VLListFloat(colors.length, colors.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -227,11 +233,11 @@ public class FSGAssembler implements VLStringify{
         }
 
         converted.restrictSize();
-        data.colors().provider(converted.array());
+       instancedata.colors().provider(converted.array());
     }
 
-    protected void unIndexTexCoords(FSInstance.Data data, short[] indices){
-        float[] texcoords = data.texCoords().provider();
+    protected void unIndexTexCoords(FSInstance.Data instancedata, short[] indices){
+        float[] texcoords =instancedata.texCoords().provider();
         VLListFloat converted = new VLListFloat(texcoords.length, texcoords.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -242,11 +248,11 @@ public class FSGAssembler implements VLStringify{
         }
 
         converted.restrictSize();
-        data.texCoords().provider(converted.array());
+       instancedata.texCoords().provider(converted.array());
     }
 
-    protected void unIndexNormals(FSInstance.Data data, short[] indices){
-        float[] normals = data.normals().provider();
+    protected void unIndexNormals(FSInstance.Data instancedata, short[] indices){
+        float[] normals =instancedata.normals().provider();
         VLListFloat converted = new VLListFloat(normals.length, normals.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -258,29 +264,30 @@ public class FSGAssembler implements VLStringify{
         }
 
         converted.restrictSize();
-        data.normals().provider(converted.array());
+        instancedata.normals().provider(converted.array());
     }
 
-    protected final void buildFirst(FSInstance instance, FSGScanner scanner, FSM.Data fsm){
-        operate(firstfuncs, instance, scanner, fsm);
+    protected final void buildFirst(FSInstance instance, FSGScanner scanner, FSM.Data data){
+        operate(firstfuncs, instance, scanner, data);
+        operate(customfunc, instance, scanner, data);
     }
 
-    protected final void buildRest(FSInstance instance, FSGScanner scanner, FSM.Data fsm){
-        operate(restfuncs, instance, scanner, fsm);
+    protected final void buildRest(FSInstance instance, FSGScanner scanner, FSM.Data data){
+        operate(restfuncs, instance, scanner, data);
+        operate(customfunc, instance, scanner, data);
     }
 
-    private void operate(VLListType<BuildStep> funcs, FSInstance instance, FSGScanner scanner, FSM.Data fsm){
+    private void operate(VLListType<BuildStep> funcs, FSInstance instance, FSGScanner scanner, FSM.Data data){
         FSMesh mesh = scanner.mesh;
-        FSBufferLayout layout = scanner.layout;
         VLArrayShort indices = mesh.indices;
 
         int newindex = mesh.size();
         int funcsize = funcs.size();
 
-        FSInstance.Data data = instance.data;
+        FSInstance.Data instancedata = instance.data;
 
         for(int i = 0; i < funcsize; i++){
-            funcs.get(i).process(this, mesh, indices, instance, data, fsm, layout);
+            funcs.get(i).process(this, mesh, indices, instance, instancedata, data);
         }
     }
 
@@ -320,7 +327,7 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep MODEL_INITIALIZE = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             instance.data.model(new FSArrayModel());
             instance.modelMatrix(new FSMatrixModel(2, 10));
         }
@@ -329,35 +336,35 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep POSITION_MATRIX_DEFAULT = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.positions(new VLArrayFloat(fsm.positions.array()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+            instancedata.positions(new VLArrayFloat(data.positions.array()));
         }
     };
     private static final BuildStep POSITION_MATRIX_SHARED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.positions(new VLArrayFloat(fsm.positions.array()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+            instancedata.positions(new VLArrayFloat(data.positions.array()));
         }
     };
     private static final BuildStep POSITION_UNINDEX = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            assembler.unIndexPositions(data, indices.provider());
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+            assembler.unIndexPositions(instancedata, indices.provider());
         }
     };
     private static final BuildStep POSITION_BUILD_MODELMATRIX = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             assembler.buildModelClusterFromSchematics(instance);
         }
     };
     private static final BuildStep POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             assembler.buildModelClusterFromSchematics(instance);
             assembler.centralizePositions(instance);
             instance.schematics.updateBoundaries();
@@ -366,7 +373,7 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep POSITION_INIT_SCHEMATICS = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             FSSchematics schematics = instance.schematics;
             schematics.initialize();
             schematics.updateBoundaries();
@@ -375,7 +382,7 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep POSITION_SHARE_SCHEMATICS = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             instance.schematics.updateBoundaries(mesh.first().schematics);
         }
     };
@@ -383,23 +390,23 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep COLOR_FILE_LOADED_INDEXED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.colors(new VLArrayFloat(fsm.colors.array()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.colors(new VLArrayFloat(data.colors.array()));
         }
     };
     private static final BuildStep COLOR_FILE_LOADED_NONE_INDEXED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.colors(new VLArrayFloat(fsm.colors.array()));
-            assembler.unIndexColors(data, indices.provider());
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.colors(new VLArrayFloat(data.colors.array()));
+            assembler.unIndexColors(instancedata, indices.provider());
         }
     };
     private static final BuildStep COLOR_SHARE = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.colors(new VLArrayFloat(mesh.instance(0).colors().provider()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.colors(new VLArrayFloat(mesh.instance(0).colors().provider()));
         }
     };
 
@@ -407,23 +414,23 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep TEXTURE_INDEXED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.texCoords(new VLArrayFloat(fsm.texcoords.array()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.texCoords(new VLArrayFloat(data.texcoords.array()));
         }
     };
     private static final BuildStep TEXTURE_NONE_INDEXED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.texCoords(new VLArrayFloat(fsm.texcoords.array()));
-            assembler.unIndexTexCoords(data, indices.provider());
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.texCoords(new VLArrayFloat(data.texcoords.array()));
+            assembler.unIndexTexCoords(instancedata, indices.provider());
         }
     };
     private static final BuildStep TEXTURE_SHARE = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.texCoords(new VLArrayFloat(mesh.instance(0).texCoords().provider()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.texCoords(new VLArrayFloat(mesh.instance(0).texCoords().provider()));
         }
     };
 
@@ -431,28 +438,28 @@ public class FSGAssembler implements VLStringify{
     private static final BuildStep NORMAL_INDEXED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.normals(new VLArrayFloat(fsm.normals.array()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.normals(new VLArrayFloat(data.normals.array()));
         }
     };
     private static final BuildStep NORMAL_NONE_INDEXED = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.normals(new VLArrayFloat(fsm.normals.array()));
-            assembler.unIndexNormals(data, indices.provider());
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.normals(new VLArrayFloat(data.normals.array()));
+            assembler.unIndexNormals(instancedata, indices.provider());
         }
     };
     private static final BuildStep NORMAL_SHARE = new BuildStep(){
 
         @Override
-        protected void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout){
-            data.normals(new VLArrayFloat(mesh.instance(0).normals().provider()));
+        public void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+           instancedata.normals(new VLArrayFloat(mesh.instance(0).normals().provider()));
         }
     };
 
-    private abstract static class BuildStep{
+    public interface BuildStep{
 
-        protected abstract void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data data, FSM.Data fsm, FSBufferLayout layout);
+        void process(FSGAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data);
     }
 }

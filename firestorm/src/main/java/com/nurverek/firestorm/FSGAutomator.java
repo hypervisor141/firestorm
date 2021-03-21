@@ -29,30 +29,17 @@ public final class FSGAutomator{
         files.add(data);
     }
 
-    public FSMesh register(FSGBluePrint blueprint, String name){
-        FSGScanner entry = blueprint.createScanner(name);
+    public FSMesh register(FSGScanner entry){
         entries.add(entry);
-
         return entry.mesh;
     }
 
-    public void run(int debug){
-        int size = entries.size();
-
-        build(debug);
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).signalMeshBuilt();
-        }
-
+    public void begin(int debug){
+        scan(debug);
         buffer(debug);
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).signalFinished();
-        }
     }
 
-    private void build(int debug){
+    private void scan(int debug){
         int entrysize = entries.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
@@ -171,19 +158,19 @@ public final class FSGAutomator{
             int filesize = files.size();
 
             FSMesh mesh;
-            FSM.Data d;
-            VLListType<FSM.Data> data;
+            FSM.Data data;
+            VLListType<FSM.Data> datalist;
             int datasize;
 
             for(int i = 0; i < filesize; i++){
-                data = files.get(i).data;
-                datasize = data.size();
+                datalist = files.get(i).data;
+                datasize = datalist.size();
 
                 for(int i2 = 0; i2 < datasize; i2++){
-                    d = data.get(i2);
+                    data = datalist.get(i2);
 
                     for(int i3 = 0; i3 < entrysize; i3++){
-                        entries.get(i3).scan(this, d);
+                        entries.get(i3).scan(this, data);
                     }
                 }
             }
@@ -213,7 +200,7 @@ public final class FSGAutomator{
                 }
 
                 try{
-                    entry.bufferDebug();
+                    entry.bufferDebugAndFinish();
 
                 }catch(Exception ex){
                     VLDebug.append("Error buffering \"");
@@ -255,7 +242,7 @@ public final class FSGAutomator{
                 buffers.get(i).initialize();
             }
             for(int i = 0; i < size; i++){
-                entries.get(i).buffer();
+                entries.get(i).bufferAndFinish();
             }
             for(int i = 0; i < buffersize; i++){
                 buffers.get(i).upload();

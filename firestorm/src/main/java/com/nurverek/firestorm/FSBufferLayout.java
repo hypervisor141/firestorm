@@ -24,13 +24,9 @@ public final class FSBufferLayout{
     public static final Mechanism LINK_INTERLEAVED_SINGULAR = new LinkInterleavedSingular();
 
     protected VLListType<Layout> layouts;
-    protected FSMesh targetmesh;
 
-    public FSBufferLayout(FSMesh mesh){
-        this.targetmesh = mesh;
-
-        layouts = new VLListType
-                <>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
+    public FSBufferLayout(){
+        layouts = new VLListType<>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
     }
 
     public Layout add(VLBuffer<?, ?> buffer, int capacity){
@@ -40,20 +36,26 @@ public final class FSBufferLayout{
         return layout;
     }
 
-    public void buffer(){
+    public void accountFor(FSMesh target){
         int size = layouts.size();
 
         for(int i = 0; i < size; i++){
-            layouts.get(i).buffer();
+            layouts.get(i).accountFor(target);
         }
     }
 
-    public void bufferDebug(){
+    public void buffer(FSMesh target){
         int size = layouts.size();
 
-        VLDebug.append("BufferLayout[");
-        VLDebug.append(targetmesh.name);
-        VLDebug.append("]\n");
+        for(int i = 0; i < size; i++){
+            layouts.get(i).buffer(target);
+        }
+    }
+
+    public void bufferDebug(FSMesh target){
+        int size = layouts.size();
+
+        VLDebug.append("[BufferLayout]\n");
 
         for(int i = 0; i < size; i++){
             VLDebug.append("Layout[");
@@ -62,7 +64,7 @@ public final class FSBufferLayout{
             VLDebug.printD();
 
             try{
-                layouts.get(i).bufferDebug();
+                layouts.get(i).bufferDebug(target);
 
             }catch(Exception ex){
                 VLDebug.append(" [FAILED]\n");
@@ -144,7 +146,7 @@ public final class FSBufferLayout{
         }
     }
 
-    public final class Layout{
+    public static final class Layout{
 
         protected VLListType<Entry> entries;
         protected VLBuffer<?, ?> buffer;
@@ -156,11 +158,17 @@ public final class FSBufferLayout{
             entries = new VLListType<>(capacity, capacity / 2);
         }
 
+        public void accountFor(FSMesh target){
+            int size = entries.size();
+
+            for(int i = 0; i < size; i++){
+                buffer.adjustPreInitCapacity(entries.get(i).bufferSizeAdjustment(target));
+            }
+        }
+
         public Layout addElement(EntryElement entry){
             totalstride += entry.strideAdjustment();
             entries.add(entry);
-
-            buffer.adjustPreInitCapacity(entry.bufferSizeAdjustment(targetmesh));
 
             return this;
         }
@@ -169,25 +177,23 @@ public final class FSBufferLayout{
             totalstride += entry.strideAdjustment();
             entries.add(entry);
 
-            buffer.adjustPreInitCapacity(entry.bufferSizeAdjustment(targetmesh));
-
             return this;
         }
 
-        protected void buffer(){
+        protected void buffer(FSMesh target){
             int size = entries.size();
             Entry entry;
 
             for(int i = 0; i < size - 1; i++){
                 entry = entries.get(i);
-                buffer.position(entry.mechanism.buffer(targetmesh, entry, buffer, totalstride));
+                buffer.position(entry.mechanism.buffer(target, entry, buffer, totalstride));
             }
 
             entry = entries.get(entries.size() - 1);
-            entry.mechanism.buffer(targetmesh, entry, buffer, totalstride);
+            entry.mechanism.buffer(target, entry, buffer, totalstride);
         }
 
-        protected void bufferDebug(){
+        protected void bufferDebug(FSMesh target){
             int size = entries.size();
             Entry e;
 
@@ -216,7 +222,7 @@ public final class FSBufferLayout{
 
             buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
-            buffer();
+            buffer(target);
         }
     }
 
