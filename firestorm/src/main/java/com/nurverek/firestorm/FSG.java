@@ -3,7 +3,6 @@ package com.nurverek.firestorm;
 import android.app.Activity;
 import android.opengl.GLES32;
 
-import vanguard.VLArrayFloat;
 import vanguard.VLBuffer;
 import vanguard.VLListType;
 import vanguard.VLVTypeManager;
@@ -78,19 +77,6 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
 
     protected abstract void assemble(Activity act, VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers, VLListType<FSP> programs, VLListType<FSRPass> targets);
     protected abstract void layout(MANAGER rootmanager);
-
-    protected VLArrayFloat createColorArray(float[] basecolor, int count){
-        float[] colors = new float[count * UNIT_SIZE_COLOR];
-
-        for(int i = 0; i < colors.length; i += UNIT_SIZE_COLOR){
-            colors[i] = basecolor[0];
-            colors[i + 1] = basecolor[1];
-            colors[i + 2] = basecolor[2];
-            colors[i + 3] = basecolor[3];
-        }
-
-        return new VLArrayFloat(colors);
-    }
 
     public long id(){
         return id;

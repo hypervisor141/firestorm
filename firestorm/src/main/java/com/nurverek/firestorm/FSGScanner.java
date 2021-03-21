@@ -31,6 +31,15 @@ public abstract class FSGScanner{
         layout.bufferDebug();
     }
 
+    protected void signalMeshBuilt(){
+        blueprint.meshComplete(mesh);
+        layout = blueprint.buildBufferLayouts(mesh);
+    }
+
+    protected void signalFinished(){
+        blueprint.finished(mesh);
+    }
+
     protected void debugInfo(){
         VLDebug.append("[");
         VLDebug.append(getClass().getSimpleName());
@@ -103,15 +112,15 @@ public abstract class FSGScanner{
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.preAssemblyAdjustment(mesh, instance);
+                blueprint.foundNewInstance(mesh, instance);
 
                 if(assembler.LOAD_INDICES){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
-                    assembler.buildFirst(instance, this, fsm);
-
-                }else{
-                    assembler.buildFirst(instance, this, fsm);
                 }
+
+                assembler.buildFirst(instance, this, fsm);
+
+                blueprint.builtNewInstance(mesh, instance);
 
                 return true;
             }
@@ -134,7 +143,8 @@ public abstract class FSGScanner{
 
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
-                blueprint.preAssemblyAdjustment(mesh, instance);
+
+                blueprint.foundNewInstance(mesh, instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
@@ -143,6 +153,8 @@ public abstract class FSGScanner{
                 }else{
                     assembler.buildRest(instance, this, fsm);
                 }
+
+                blueprint.builtNewInstance(mesh, instance);
 
                 return true;
             }
@@ -170,14 +182,20 @@ public abstract class FSGScanner{
                 FSInstance instance = new FSInstance();
                 mesh.addInstance(instance);
 
-                blueprint.preAssemblyAdjustment(mesh, instance);
+                blueprint.foundNewInstance(mesh, instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(fsm.indices.array()));
                     assembler.buildFirst(instance, this, fsm);
 
+                    blueprint.builtNewInstance(mesh, instance);
+
+                    FSInstance copy;
+
                     for(int i = 0; i < copycount; i++){
-                        mesh.addInstance(new FSInstance(instance));
+                        copy = new FSInstance(instance);
+                        mesh.addInstance(copy);
+                        blueprint.builtNewInstance(mesh, copy);
                     }
                 }
 

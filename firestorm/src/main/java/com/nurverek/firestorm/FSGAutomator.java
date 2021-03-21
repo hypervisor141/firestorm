@@ -13,7 +13,7 @@ public final class FSGAutomator{
     private final FSG<?> gen;
 
     protected VLListType<FSM> files;
-    protected VLListType<Entry> entries;
+    protected VLListType<FSGScanner> entries;
 
     public FSGAutomator(FSG<?> gen, int filecapacity, int scancapacity){
         this.gen = gen;
@@ -30,45 +30,25 @@ public final class FSGAutomator{
     }
 
     public FSMesh register(FSGBluePrint blueprint, String name){
-        Entry e = new Entry(blueprint, name);
-        e.register(gen);
+        FSGScanner entry = blueprint.createScanner(name);
+        entries.add(entry);
 
-        entries.add(e);
-
-        return e.scanner.mesh;
+        return entry.mesh;
     }
 
     public void run(int debug){
         int size = entries.size();
 
-        Entry entry;
-        FSGScanner scanner;
-        FSGBluePrint blueprint;
-        FSMesh mesh;
-
         build(debug);
 
         for(int i = 0; i < size; i++){
-            scanner = entries.get(i).scanner;
-
-            blueprint = entries.get(i).blueprint;
-            blueprint.postScanAdjustment(scanner.mesh);
-            blueprint.createLinks(scanner.mesh);
-
-            scanner.layout = blueprint.bufferLayouts(scanner.mesh);
+            entries.get(i).signalMeshBuilt();
         }
 
         buffer(debug);
 
         for(int i = 0; i < size; i++){
-            entry = entries.get(i);
-
-            mesh = entry.scanner.mesh;
-
-            blueprint = entry.blueprint;
-            blueprint.postBufferAdjustment(mesh);
-            blueprint.attachMeshToPrograms(mesh);
-            blueprint.finished(mesh);
+            entries.get(i).signalFinished();
         }
     }
 
@@ -78,21 +58,21 @@ public final class FSGAutomator{
         if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
 
-            FSGScanner s;
+            FSGScanner entry;
             boolean found;
 
             VLDebug.printDirect("[Assembler Check Stage]\n");
 
             for(int i = 0; i < entrysize; i++){
-                s = entries.get(i).scanner;
+                entry = entries.get(i);
 
-                if(s.assembler.checkDebug()){
+                if(entry.assembler.checkDebug()){
                     VLDebug.append("Scanner[");
-                    VLDebug.append(s.name);
+                    VLDebug.append(entry.name);
                     VLDebug.append("] : invalid assembler configuration.");
                     VLDebug.append("[Assembler Configuration]\n");
 
-                    s.assembler.stringify(VLDebug.get(), null);
+                    entry.assembler.stringify(VLDebug.get(), null);
                 }
             }
 
@@ -114,16 +94,16 @@ public final class FSGAutomator{
                     d = data.get(i2);
 
                     for(int i3 = 0; i3 < entrysize; i3++){
-                        s = entries.get(i3).scanner;
-                        mesh = s.mesh;
+                        entry = entries.get(i3);
+                        mesh = entry.mesh;
                         found = false;
 
                         try{
-                            if(s.scan(this, d) && debug >= FSControl.DEBUG_FULL){
+                            if(entry.scan(this, d) && debug >= FSControl.DEBUG_FULL){
                                 VLDebug.append("Built[");
                                 VLDebug.append(i2);
                                 VLDebug.append("] keyword[");
-                                VLDebug.append(s.name);
+                                VLDebug.append(entry.name);
                                 VLDebug.append("] name[");
                                 VLDebug.append(d.name);
                                 VLDebug.append("] ");
@@ -148,10 +128,10 @@ public final class FSGAutomator{
 
                         }catch(Exception ex){
                             VLDebug.append("Error building \"");
-                            VLDebug.append(s.name);
+                            VLDebug.append(entry.name);
                             VLDebug.append("\"\n[Assembler Configuration]\n");
 
-                            s.assembler.stringify(VLDebug.get(), null);
+                            entry.assembler.stringify(VLDebug.get(), null);
                             VLDebug.printE();
 
                             throw new RuntimeException(ex);
@@ -169,15 +149,15 @@ public final class FSGAutomator{
             VLDebug.printDirect("[Checking Scan Results]\n");
 
             for(int i = 0; i < entrysize; i++){
-                s = entries.get(i).scanner;
+                entry = entries.get(i);
 
-                if(s.mesh.size() == 0){
+                if(entry.mesh.size() == 0){
                     VLDebug.append("Scan incomplete : found no instance for mesh with keyword \"");
-                    VLDebug.append(s.name);
+                    VLDebug.append(entry.name);
                     VLDebug.append("\".\n");
                     VLDebug.append("[Assembler Configuration]\n");
 
-                    s.assembler.stringify(VLDebug.get(), null);
+                    entry.assembler.stringify(VLDebug.get(), null);
 
                     VLDebug.printE();
                     throw new RuntimeException("Mesh Scan Error");
@@ -203,7 +183,7 @@ public final class FSGAutomator{
                     d = data.get(i2);
 
                     for(int i3 = 0; i3 < entrysize; i3++){
-                        entries.get(i3).scanner.scan(this, d);
+                        entries.get(i3).scan(this, d);
                     }
                 }
             }
@@ -215,12 +195,12 @@ public final class FSGAutomator{
 
         if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
-            FSGScanner s;
+            FSGScanner entry;
 
             VLDebug.printDirect("[Buffering Stage]\n");
 
             for(int i = 0; i < size; i++){
-                s = entries.get(i).scanner;
+                entry = entries.get(i);
 
                 VLDebug.append("Buffering[");
                 VLDebug.append(i + 1);
@@ -229,19 +209,19 @@ public final class FSGAutomator{
                 VLDebug.append("]\n");
 
                 if(debug >= FSControl.DEBUG_FULL){
-                    s.debugInfo();
+                    entry.debugInfo();
                 }
 
                 try{
-                    s.bufferDebug();
+                    entry.bufferDebug();
 
                 }catch(Exception ex){
                     VLDebug.append("Error buffering \"");
-                    VLDebug.append(s.name);
+                    VLDebug.append(entry.name);
                     VLDebug.append("\"\n");
                     VLDebug.append("[Assembler Configuration]\n");
 
-                    s.assembler.stringify(VLDebug.get(), null);
+                    entry.assembler.stringify(VLDebug.get(), null);
                     VLDebug.printE();
 
                     throw new RuntimeException(ex);
@@ -275,27 +255,11 @@ public final class FSGAutomator{
                 buffers.get(i).initialize();
             }
             for(int i = 0; i < size; i++){
-                entries.get(i).scanner.buffer();
+                entries.get(i).buffer();
             }
             for(int i = 0; i < buffersize; i++){
                 buffers.get(i).upload();
             }
-        }
-    }
-
-    private static final class Entry{
-
-        protected FSGBluePrint blueprint;
-        protected FSGScanner scanner;
-        protected String name;
-
-        protected Entry(FSGBluePrint blueprint, String name){
-            this.blueprint = blueprint;
-            this.name = name;
-        }
-
-        protected void register(FSG<?> gen){
-            scanner = blueprint.register(gen, name);
         }
     }
 }

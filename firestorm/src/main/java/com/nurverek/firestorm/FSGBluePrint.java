@@ -6,12 +6,10 @@ public abstract class FSGBluePrint{
 
     }
 
-    protected abstract FSGScanner register(FSG<?> gen, String name);
-    protected abstract void preAssemblyAdjustment(FSMesh mesh, FSInstance instance);
-    protected abstract void postScanAdjustment(FSMesh mesh);
-    protected abstract void createLinks(FSMesh mesh);
-    protected abstract FSBufferLayout bufferLayouts(FSMesh mesh);
-    protected abstract void postBufferAdjustment(FSMesh mesh);
-    protected abstract void attachMeshToPrograms(FSMesh mesh);
+    protected abstract FSGScanner createScanner(String name);
+    protected abstract void foundNewInstance(FSMesh mesh, FSInstance instance);
+    protected abstract void builtNewInstance(FSMesh mesh, FSInstance instance);
+    protected abstract void meshComplete(FSMesh mesh);
+    protected abstract FSBufferLayout buildBufferLayouts(FSMesh mesh);
     protected abstract void finished(FSMesh mesh);
 }

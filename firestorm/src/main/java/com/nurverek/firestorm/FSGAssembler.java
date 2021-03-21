@@ -34,7 +34,6 @@ public class FSGAssembler implements VLStringify{
         setDefaultAll();
     }
 
-
     public void setDefaultAll(){
         LOAD_MODELS = true;
         LOAD_POSITIONS = true;
