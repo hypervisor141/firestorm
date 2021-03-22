@@ -65,8 +65,8 @@ public class FSGAssembler implements VLStringify{
         configureNormals();
     }
 
-    public void addCustomBuildStep(BuildStep step){
-        customfunc.add(step);
+    public VLListType<BuildStep> customSteps(){
+        return customfunc;
     }
 
     private void configureModels(){

@@ -28,6 +28,10 @@ public abstract class FSGScanner{
         program.meshes().add(mesh);
     }
 
+    protected void accountForBufferSize(){
+        layout.accountFor(mesh);
+    }
+
     protected void bufferDebugAndFinish(){
         layout.bufferDebug(mesh);
         program.meshes().add(mesh);

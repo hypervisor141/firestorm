@@ -8,7 +8,7 @@ import vanguard.VLBuffer;
 import vanguard.VLDebug;
 import vanguard.VLListType;
 
-public final class FSGAutomator{
+public class FSGAutomator{
 
     private final FSG<?> gen;
 
@@ -34,7 +34,7 @@ public final class FSGAutomator{
         return entry.mesh;
     }
 
-    public void begin(int debug){
+    public void run(int debug){
         scan(debug);
         buffer(debug);
     }
@@ -184,7 +184,56 @@ public final class FSGAutomator{
             VLDebug.recreate();
             FSGScanner entry;
 
+            VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers = gen.buffers();
+            int buffersize = buffers.size();
+
             VLDebug.printDirect("[Buffering Stage]\n");
+
+            for(int i = 0; i < size; i++){
+                entry = entries.get(i);
+
+                VLDebug.append("accountingForMesh[");
+                VLDebug.append(i + 1);
+                VLDebug.append("/");
+                VLDebug.append(size);
+                VLDebug.append("]\n");
+
+                if(debug >= FSControl.DEBUG_FULL){
+                    entry.debugInfo();
+                }
+
+                try{
+                    entry.accountForBufferSize();
+
+                }catch(Exception ex){
+                    VLDebug.append("Error accounting for buffer size \"");
+                    VLDebug.append(entry.name);
+                    VLDebug.append("\"\n");
+                    VLDebug.append("[Assembler Configuration]\n");
+
+                    entry.assembler.stringify(VLDebug.get(), null);
+                    VLDebug.printE();
+
+                    throw new RuntimeException(ex);
+                }
+
+                VLDebug.printD();
+            }
+
+            try{
+                VLDebug.append("Initializing buffers...");
+
+                for(int i = 0; i < buffersize; i++){
+                    buffers.get(i).initialize();
+                }
+
+                VLDebug.append("[SUCCESS]");
+
+            }catch(Exception ex){
+                VLDebug.append("[FAILED]");
+                VLDebug.printE();
+                throw new RuntimeException("Failed to initialize buffers", ex);
+            }
 
             for(int i = 0; i < size; i++){
                 entry = entries.get(i);
@@ -217,16 +266,17 @@ public final class FSGAutomator{
                 VLDebug.printD();
             }
 
-            VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers = gen.buffers();
-
             try{
-                int buffersize = buffers.size();
+                VLDebug.append("Uploading buffers...");
 
                 for(int i = 0; i < buffersize; i++){
                     buffers.get(i).upload();
                 }
 
+                VLDebug.append("[SUCCESS]");
+
             }catch(Exception ex){
+                VLDebug.append("[FAILED]");
                 VLDebug.printE();
                 throw new RuntimeException("Failed to upload buffers", ex);
             }
@@ -238,6 +288,9 @@ public final class FSGAutomator{
             VLListType<FSVertexBuffer<VLBuffer<?, ?>>> buffers = gen.buffers();
             int buffersize = buffers.size();
 
+            for(int i = 0; i < size; i++){
+                entries.get(i).accountForBufferSize();
+            }
             for(int i = 0; i < buffersize; i++){
                 buffers.get(i).initialize();
             }
