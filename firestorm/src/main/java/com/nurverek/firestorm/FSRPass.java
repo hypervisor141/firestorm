@@ -131,7 +131,7 @@ public class FSRPass{
         for(int i = 0; i < entries.size(); i++){
             entries.get(i).postFrame(FSR.CURRENT_PASS_INDEX);
 
-            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+            if(debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 
@@ -147,7 +147,7 @@ public class FSRPass{
         GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
 
         if(preconfig != null){
-            if(debug >= FSControl.DEBUG_NORMAL && FSControl.DEBUG_GLOBALLY){
+            if(debug >= FSControl.DEBUG_NORMAL){
                 preconfig.runDebug(null, null, -1, FSR.CURRENT_PASS_INDEX);
 
             }else{
@@ -165,7 +165,7 @@ public class FSRPass{
 
             entry.draw(FSR.CURRENT_PASS_INDEX);
 
-            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+            if(debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 
@@ -176,7 +176,7 @@ public class FSRPass{
         }
 
         if(postconfig != null){
-            if(debug >= FSControl.DEBUG_NORMAL && FSControl.DEBUG_GLOBALLY){
+            if(debug >= FSControl.DEBUG_NORMAL){
                 postconfig.runDebug(null, null, -1, FSR.CURRENT_PASS_INDEX);
 
             }else{
@@ -189,7 +189,7 @@ public class FSRPass{
         for(int i = 0; i < entries.size(); i++){
             entries.get(i).destroy();
 
-            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+            if(debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 

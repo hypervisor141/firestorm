@@ -8,7 +8,6 @@ import vanguard.VLDebug;
 public final class FSControl{
 
     public static final String LOGTAG = "FIRESTORM";
-    public static boolean DEBUG_GLOBALLY = true;
     public static final int DEBUG_DISABLED = 0;
     public static final int DEBUG_NORMAL = 1;
     public static final int DEBUG_FULL = 2;

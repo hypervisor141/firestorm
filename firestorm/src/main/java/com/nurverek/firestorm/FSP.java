@@ -116,7 +116,7 @@ public class FSP{
             s.compile();
             s.attach(this);
 
-            if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
+            if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.append("Compiling and attaching shader type ");
                 VLDebug.append(s.type);
                 VLDebug.append(" for program id ");
@@ -171,7 +171,7 @@ public class FSP{
             throw new RuntimeException();
         }
 
-        if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
+        if(debug > FSControl.DEBUG_DISABLED){
             try{
                 VLDebug.append("[Notifying program built for SetupConfig]");
                 setupconfig.notifyProgramBuilt(this);
@@ -214,7 +214,7 @@ public class FSP{
     }
 
     public void draw(int passindex){
-        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+        if(debug >= FSControl.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
 
@@ -227,7 +227,7 @@ public class FSP{
 
         int meshsize = meshes.size();
 
-        if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
+        if(debug > FSControl.DEBUG_DISABLED){
             VLDebug.recreate();
 
             VLDebug.append("------- PROGRAM[");
@@ -293,7 +293,7 @@ public class FSP{
 
     public void postFrame(int passindex){
         if(postframeconfig != null){
-            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+            if(debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
 
@@ -304,7 +304,7 @@ public class FSP{
 
             use();
 
-            if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
+            if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.recreate();
 
                 VLDebug.append("------- PROGRAM[");
@@ -328,7 +328,7 @@ public class FSP{
     public void use(){
         GLES32.glUseProgram(program);
 
-        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+        if(debug >= FSControl.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
 
