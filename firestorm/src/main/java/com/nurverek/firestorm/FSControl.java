@@ -23,7 +23,6 @@ public final class FSControl{
     public static FSSurface initialize(Activity act, FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive){
         VLDebug.tag(LOGTAG);
 
-        FSControl.isalive = true;
         FSControl.activity = act;
         FSControl.surface = surface;
         FSControl.view = view;
@@ -35,6 +34,10 @@ public final class FSControl{
         FSCThreadManager.initialize();
 
         return FSControl.surface;
+    }
+
+    protected static void setAlive(boolean alive){
+        FSControl.isalive = alive;
     }
 
     public static void setKeepAlive(boolean enabled){

@@ -91,6 +91,9 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         FSR.getRenderThread().order(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).order(FSRThread.SURFACE_CREATED, isalive);
 
         events.GLPostSurfaceCreate(isalive);
+
+        FSControl.setAlive(true);
+
         choreographer.postFrameCallback(this);
     }
 
