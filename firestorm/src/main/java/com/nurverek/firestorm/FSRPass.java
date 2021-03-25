@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.opengl.GLES32;
+
 import vanguard.VLListType;
 
 public class FSRPass{
@@ -7,13 +9,35 @@ public class FSRPass{
     private VLListType<FSP> entries;
     
     private final long id;
-    protected int debug;
+    private int debug;
+
+    private float[] clearcolor;
+    private int clearbits;
+
+    private FSConfig preconfig;
+    private FSConfig postconfig;
     
-    public FSRPass(int capacity, int debug){
-        entries = new VLListType<>(capacity, capacity);
+    public FSRPass(float[] clearcolor, int clearbits, FSConfig preconfig, FSConfig postconfig, int capacity, int debug){
+        this.clearcolor = clearcolor;
+        this.clearbits = clearbits;
+        this.preconfig = preconfig;
+        this.postconfig = postconfig;
         this.debug = debug;
 
+        entries = new VLListType<>(capacity, capacity);
         id = FSCFrames.getNextID();
+    }
+
+    public void color(float[] color){
+        clearcolor = color;
+    }
+
+    public void preConfig(FSConfig config){
+        preconfig = config;
+    }
+
+    public void postConfig(FSConfig config){
+        postconfig = config;
     }
 
     public void addAll(FSG<?> source){
@@ -50,6 +74,18 @@ public class FSRPass{
 
     public VLListType<FSP> get(){
         return entries;
+    }
+
+    public float[] color(){
+        return clearcolor;
+    }
+
+    public FSConfig preConfig(){
+        return preconfig;
+    }
+
+    public FSConfig postConfig(){
+        return postconfig;
     }
 
     public long id(){
@@ -92,6 +128,18 @@ public class FSRPass{
     protected void draw(){
         FSEvents events = FSControl.getSurface().events();
 
+        GLES32.glClear(clearbits);
+        GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
+
+        if(preconfig != null){
+            if(debug >= FSControl.DEBUG_NORMAL && FSControl.DEBUG_GLOBALLY){
+                preconfig.runDebug(null, null, -1, FSR.CURRENT_PASS_INDEX);
+
+            }else{
+                preconfig.run(null, null, -1, FSR.CURRENT_PASS_INDEX);
+            }
+        }
+
         events.GLPreDraw();
 
         int size = entries.size();
@@ -111,6 +159,15 @@ public class FSRPass{
                 }catch(Exception ex){
                     throw new RuntimeException("Error running draw() for Entry[" + index + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
                 }
+            }
+        }
+
+        if(postconfig != null){
+            if(debug >= FSControl.DEBUG_NORMAL && FSControl.DEBUG_GLOBALLY){
+                postconfig.runDebug(null, null, -1, FSR.CURRENT_PASS_INDEX);
+
+            }else{
+                postconfig.run(null, null, -1, FSR.CURRENT_PASS_INDEX);
             }
         }
 
