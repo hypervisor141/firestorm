@@ -41,19 +41,14 @@ public class FSP{
         meshes = new VLListType<>(meshcapacity, meshcapacity);
 
         uniformlocation = 0;
-
-        customize(shaders, debug);
     }
 
-    public void customize(VLListType<FSShader> shaders, int debug){
-
+    public void customize(){
+        customize(meshes, shaders, debug);
     }
 
-    public void initialize(FSConfig setupgroup, FSConfig meshgroup, FSConfig postdrawgroup, FSConfig postframegroup){
-        this.setupconfig = setupgroup;
-        this.meshconfig = meshgroup;
-        this.postdrawconfig = postdrawgroup;
-        this.postframeconfig = postframegroup;
+    protected void customize(VLListType<FSMesh> meshes, VLListType<FSShader> shaders, int debug){
+        
     }
 
     public VLListType<FSShader> shaders(){
