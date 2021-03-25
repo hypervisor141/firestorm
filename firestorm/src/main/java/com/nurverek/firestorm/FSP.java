@@ -240,79 +240,93 @@ public class FSP{
             VLDebug.append("] -------");
             VLDebug.printD();
 
-            VLDebug.append("[SetupConfig]");
-            VLDebug.printD();
-
-            setupconfig.runDebug(this, null, -1, passindex);
-
-            VLDebug.printD();
-
-            FSMesh mesh;
-
-            for(int i = 0; i < meshsize; i++){
-                mesh = meshes.get(i);
-
-                VLDebug.append("[MeshConfig] [");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(meshsize);
-                VLDebug.append("] [");
-                VLDebug.append(mesh.name());
-                VLDebug.append("]");
+            if(setupconfig != null){
+                VLDebug.append("[SetupConfig]");
                 VLDebug.printD();
 
-                meshconfig.runDebug(this, meshes.get(i), i, passindex);
+                setupconfig.runDebug(this, null, -1, passindex);
 
                 VLDebug.printD();
             }
 
-            VLDebug.append("[PostDrawConfig]");
-            VLDebug.printD();
+            if(meshconfig != null){
+                FSMesh mesh;
 
-            postdrawconfig.runDebug(this, null, -1, passindex);
+                for(int i = 0; i < meshsize; i++){
+                    mesh = meshes.get(i);
 
-            VLDebug.printD();
+                    VLDebug.append("[MeshConfig] [");
+                    VLDebug.append(i + 1);
+                    VLDebug.append("/");
+                    VLDebug.append(meshsize);
+                    VLDebug.append("] [");
+                    VLDebug.append(mesh.name());
+                    VLDebug.append("]");
+                    VLDebug.printD();
+
+                    meshconfig.runDebug(this, meshes.get(i), i, passindex);
+
+                    VLDebug.printD();
+                }
+
+                VLDebug.append("[PostDrawConfig]");
+                VLDebug.printD();
+            }
+
+            if(postdrawconfig != null){
+                postdrawconfig.runDebug(this, null, -1, passindex);
+
+                VLDebug.printD();
+            }
 
         }else{
-            setupconfig.run(this, null, -1, passindex);
-
-            for(int i = 0; i < meshsize; i++){
-                meshconfig.run(this, meshes.get(i), i, passindex);
+            if(setupconfig != null){
+                setupconfig.run(this, null, -1, passindex);
             }
 
-            postdrawconfig.run(this, null, -1, passindex);
+            if(meshconfig != null){
+                for(int i = 0; i < meshsize; i++){
+                    meshconfig.run(this, meshes.get(i), i, passindex);
+                }
+            }
+
+            if(postdrawconfig != null){
+                postdrawconfig.run(this, null, -1, passindex);
+            }
         }
     }
 
     public void postFrame(int passindex){
-        if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
-            try{
-                FSTools.checkGLError();
+        if(postframeconfig != null){
+            if(FSControl.DEBUG_GLOBALLY && debug >= FSControl.DEBUG_NORMAL){
+                try{
+                    FSTools.checkGLError();
 
-            }catch(Exception ex){
-                throw new RuntimeException("Pre-program-run error (there is an unchecked error somewhere before in the code)", ex);
+                }catch(Exception ex){
+                    throw new RuntimeException("Pre-program-run error (there is an unchecked error somewhere before in the code)", ex);
+                }
             }
-        }
 
-        use();
+            use();
 
-        if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
-            VLDebug.recreate();
+            if(FSControl.DEBUG_GLOBALLY && debug > FSControl.DEBUG_DISABLED){
+                VLDebug.recreate();
 
-            VLDebug.append("------- PROGRAM[");
-            VLDebug.append(program);
-            VLDebug.append("] -------");
-            VLDebug.printD();
+                VLDebug.append("------- PROGRAM[");
+                VLDebug.append(program);
+                VLDebug.append("] -------");
+                VLDebug.printD();
 
-            VLDebug.append("[PostFrameConfig]");
-            VLDebug.printD();
+                VLDebug.append("[PostFrameConfig]");
+                VLDebug.printD();
 
-            postframeconfig.runDebug(this, null, -1, passindex);
+                postframeconfig.runDebug(this, null, -1, passindex);
 
-            VLDebug.printD();
+                VLDebug.printD();
 
-        }else{
-            postframeconfig.run(this, null, -1, passindex);
+            }else{
+                postframeconfig.run(this, null, -1, passindex);
+            }
         }
     }
 
