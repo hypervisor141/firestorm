@@ -19,7 +19,7 @@ public final class FSControl{
 
     protected static boolean keepalive;
 
-    public static FSSurface initialize(Activity act, FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, float[] clearcolor){
+    public static FSSurface initialize(Activity act, FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive){
         VLDebug.tag(LOGTAG);
 
         FSControl.activity = act;
