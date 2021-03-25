@@ -1,6 +1,8 @@
 package com.nurverek.firestorm;
 
 import android.app.Activity;
+import android.opengl.EGL14;
+import android.opengl.EGLExt;
 import android.view.Choreographer;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -28,6 +30,30 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         this.eglconfig = eglconfig;
         this.events = events;
 
+        initializeFields();
+    }
+
+    public FSSurface(Activity act, FSEvents events){
+        super(act.getApplicationContext());
+
+        this.eglconfig = new int[]{
+                EGL14.EGL_RENDERABLE_TYPE, EGLExt.EGL_OPENGL_ES3_BIT_KHR,
+                EGL14.EGL_LEVEL, 0,
+                EGL14.EGL_SAMPLES, 1,
+                EGL14.EGL_STENCIL_SIZE, 8,
+                EGL14.EGL_DEPTH_SIZE, 16,
+                EGL14.EGL_RED_SIZE, 8,
+                EGL14.EGL_GREEN_SIZE, 8,
+                EGL14.EGL_BLUE_SIZE, 8,
+                EGL14.EGL_ALPHA_SIZE, 8,
+                EGL14.EGL_NONE
+        };
+        this.events = events;
+
+        initializeFields();
+    }
+
+    private void initializeFields(){
         destroyed = false;
 
         gesture = new GestureDetectorCompat(act, this);
