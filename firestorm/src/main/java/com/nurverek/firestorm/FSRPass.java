@@ -134,8 +134,6 @@ public class FSRPass{
     }
 
     protected void draw(){
-        FSEvents events = FSControl.getSurface().events();
-
         GLES32.glClear(clearbits);
         GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
 
@@ -147,8 +145,6 @@ public class FSRPass{
                 preconfig.run(null, null, -1, FSR.CURRENT_PASS_INDEX);
             }
         }
-
-        events.GLPreDraw();
 
         int size = entries.size();
         FSP entry;
@@ -178,8 +174,6 @@ public class FSRPass{
                 postconfig.run(null, null, -1, FSR.CURRENT_PASS_INDEX);
             }
         }
-
-        events.GLPostDraw();
     }
 
     public void destroy(){

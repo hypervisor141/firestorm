@@ -60,9 +60,12 @@ public class FSR{
 
     protected static void onDrawFrame(){
         synchronized(RENDERLOCK){
-            int size = passes.size();
-
             FSCFrames.timeFrameStarted();
+
+            FSEvents events = FSControl.getSurface().events();
+            events.GLPreDraw();
+
+            int size = passes.size();
 
             for(int i = 0; i < size; i++){
                 CURRENT_PASS_INDEX = i;
@@ -70,6 +73,8 @@ public class FSR{
 
                 passes.get(i).draw();
             }
+
+            events.GLPostDraw();
 
             finishFrame();
         }
