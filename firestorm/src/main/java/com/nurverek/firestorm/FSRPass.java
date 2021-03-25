@@ -28,6 +28,15 @@ public class FSRPass{
         id = FSCFrames.getNextID();
     }
 
+    public FSRPass(float[] clearcolor, int clearbits, int capacity, int debug){
+        this.clearcolor = clearcolor;
+        this.clearbits = clearbits;
+        this.debug = debug;
+
+        entries = new VLListType<>(capacity, capacity);
+        id = FSCFrames.getNextID();
+    }
+
     public void clearBit(int bits){
         clearbits = bits;
     }
