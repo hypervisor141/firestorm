@@ -4,7 +4,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-public final class FSInput{
+public final class FSCInput{
 
     private static ArrayList<Entry> LISTENRER_TOUCH;
     private static ArrayList<Entry> LISTENRER_DOWN;

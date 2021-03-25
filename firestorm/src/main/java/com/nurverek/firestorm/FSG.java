@@ -66,7 +66,7 @@ public abstract class FSG<MANAGER extends VLVTypeManager<? extends VLVTypeRunner
         buffers = new VLListType<>(buffercapacity, buffercapacity);
 
         this.rootmanager = rootmanager;
-        id = FSRFrames.getNextID();
+        id = FSCFrames.getNextID();
         touchable = true;
     }
 

@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import java.util.ArrayList;
-
 import vanguard.VLListType;
 
 public class FSR{
@@ -64,7 +62,7 @@ public class FSR{
         synchronized(RENDERLOCK){
             int size = passes.size();
 
-            FSRFrames.timeFrameStarted();
+            FSCFrames.timeFrameStarted();
 
             for(int i = 0; i < size; i++){
                 CURRENT_PASS_INDEX = i;
@@ -119,8 +117,8 @@ public class FSR{
     }
 
     protected static void finishFrame(){
-        FSRFrames.timeFrameEnded();
-        FSEGL.swapBuffers();
+        FSCFrames.timeFrameEnded();
+        FSCEGL.swapBuffers();
 
         int size = passes.size();
 
@@ -128,8 +126,8 @@ public class FSR{
             passes.get(i).noitifyPostFrameSwap();
         }
 
-        FSRFrames.timeBufferSwapped();
-        FSRFrames.processFrameAndSignalNextFrame();
+        FSCFrames.timeBufferSwapped();
+        FSCFrames.processFrameAndSignalNextFrame();
     }
 
     protected static void destroy(){

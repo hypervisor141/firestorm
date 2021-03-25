@@ -9,7 +9,7 @@ import android.opengl.EGLSurface;
 import android.opengl.GLES32;
 import android.view.SurfaceHolder;
 
-public class FSEGL{
+public class FSCEGL{
 
     private static EGLDisplay display;
     private static EGLSurface surface;

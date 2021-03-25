@@ -98,7 +98,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         gesture.onTouchEvent(e);
 
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_TOUCH, e, null, -1, -1);
+            FSCInput.checkInput(FSCInput.TYPE_TOUCH, e, null, -1, -1);
         }
 
         return true;
@@ -107,7 +107,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public boolean onDown(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_DOWN, e, null, -1, -1);
+            FSCInput.checkInput(FSCInput.TYPE_DOWN, e, null, -1, -1);
         }
 
         return true;
@@ -116,7 +116,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public boolean onSingleTapUp(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_SINGLETAP, e, null, -1, -1);
+            FSCInput.checkInput(FSCInput.TYPE_SINGLETAP, e, null, -1, -1);
         }
 
         return false;
@@ -125,14 +125,14 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void onLongPress(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_LONGPRESS, e, null, -1, -1);
+            FSCInput.checkInput(FSCInput.TYPE_LONGPRESS, e, null, -1, -1);
         }
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, final float distanceY){
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_SCROLL, e1, e2, distanceX, distanceY);
+            FSCInput.checkInput(FSCInput.TYPE_SCROLL, e1, e2, distanceX, distanceY);
         }
 
         return true;
@@ -141,7 +141,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY){
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_FLING, e1, e2, velocityX, velocityY);
+            FSCInput.checkInput(FSCInput.TYPE_FLING, e1, e2, velocityX, velocityY);
         }
 
         return true;
@@ -150,7 +150,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void onShowPress(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSInput.checkInput(FSInput.TYPE_SHOWPRESS, e, null, -1, -1);
+            FSCInput.checkInput(FSCInput.TYPE_SHOWPRESS, e, null, -1, -1);
         }
     }
 

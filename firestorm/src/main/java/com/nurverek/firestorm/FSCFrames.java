@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import android.util.Log;
 
-public class FSRFrames{
+public class FSCFrames{
 
     private static int EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = 5;
     private static long GLOBAL_ID = 1000;

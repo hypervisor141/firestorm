@@ -27,10 +27,10 @@ public final class FSControl{
         FSControl.view = view;
         FSControl.keepalive = keepalive;
 
-        FSInput.initialize();
-        FSRFrames.initialize();
+        FSCInput.initialize();
+        FSCFrames.initialize();
         FSR.initialize(threadinterface);
-        FSThreadManager.initialize();
+        FSCThreadManager.initialize();
 
         return FSControl.surface;
     }
@@ -61,11 +61,11 @@ public final class FSControl{
 
     protected static void destroy(){
         FSR.destroy();
-        FSDimensions.destroy();
-        FSEGL.destroy();
-        FSInput.destroy();
-        FSRFrames.destroy();
-        FSThreadManager.destroy();
+        FSCDimensions.destroy();
+        FSCEGL.destroy();
+        FSCInput.destroy();
+        FSCFrames.destroy();
+        FSCThreadManager.destroy();
 
         if(!keepalive){
             activity = null;

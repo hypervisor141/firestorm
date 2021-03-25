@@ -9,7 +9,7 @@ public class FSVThreadTask extends VLVThreadTask{
 
         @Override
         public void completed(int changes){
-            FSRFrames.addExternalChangesForFrame(changes);
+            FSCFrames.addExternalChangesForFrame(changes);
         }
     };
 

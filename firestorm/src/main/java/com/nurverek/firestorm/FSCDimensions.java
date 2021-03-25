@@ -5,7 +5,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.widget.RelativeLayout;
 
-public final class FSDimensions{
+public final class FSCDimensions{
 
     protected static int mainw;
     protected static int mainh;

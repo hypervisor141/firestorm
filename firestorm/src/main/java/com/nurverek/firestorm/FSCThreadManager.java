@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLThreadManager;
 
-public class FSThreadManager{
+public class FSCThreadManager{
 
     private static VLThreadManager manager;
 

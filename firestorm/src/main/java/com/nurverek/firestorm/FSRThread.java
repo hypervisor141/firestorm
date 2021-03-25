@@ -63,7 +63,7 @@ public class FSRThread extends Thread{
                 Object d = data.get(i);
 
                 if(o == CREATE_GL_CONTEXT){
-                    FSEGL.initialize(FSControl.getSurface().getHolder(), (boolean)d);
+                    FSCEGL.initialize(FSControl.getSurface().getHolder(), (boolean)d);
 
                 }else if(o == SURFACE_CREATED){
                     FSR.onSurfaceCreated((boolean)d);

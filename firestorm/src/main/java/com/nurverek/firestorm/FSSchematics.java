@@ -234,7 +234,7 @@ public final class FSSchematics{
             inputbounds.get(i).checkInput(COLLISIONCACHE, near, far);
 
             if(COLLISIONCACHE.collided){
-                if(FSInput.signalCollision(COLLISIONCACHE, i)){
+                if(FSCInput.signalCollision(COLLISIONCACHE, i)){
                     break;
                 }
             }

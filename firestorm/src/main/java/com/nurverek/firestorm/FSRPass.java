@@ -13,7 +13,7 @@ public class FSRPass{
         entries = new VLListType<>(capacity, capacity);
         this.debug = debug;
 
-        id = FSRFrames.getNextID();
+        id = FSCFrames.getNextID();
     }
 
     public void addAll(FSG<?> source){
