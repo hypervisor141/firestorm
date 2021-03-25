@@ -9,7 +9,7 @@ public class FSRPass{
     private VLListType<FSP> entries;
     
     private final long id;
-    private int debug;
+    private final int debug;
 
     private float[] clearcolor;
     private int clearbits;
@@ -26,6 +26,10 @@ public class FSRPass{
 
         entries = new VLListType<>(capacity, capacity);
         id = FSCFrames.getNextID();
+    }
+
+    public void clearBit(int bits){
+        clearbits = bits;
     }
 
     public void color(float[] color){
@@ -86,6 +90,10 @@ public class FSRPass{
 
     public FSConfig postConfig(){
         return postconfig;
+    }
+
+    public int clearBits(){
+        return clearbits;
     }
 
     public long id(){
