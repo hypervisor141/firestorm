@@ -57,22 +57,25 @@ public class FSRThread extends Thread{
             }
 
             int size = orders.size();
+            int order;
+            Object obj;
 
             for(int i = 0; i < size; i++){
-                int o = orders.get(i);
-                Object d = data.get(i);
+                order = orders.get(i);
+                obj = data.get(i);
 
-                if(o == CREATE_GL_CONTEXT){
-                    FSCEGL.initialize(FSControl.getSurface().getHolder(), (boolean)d);
+                if(order == CREATE_GL_CONTEXT){
+                    Object[] msg = (Object[])obj;
+                    FSCEGL.initialize(FSControl.getSurface().getHolder(), (int[])msg[0], (boolean)msg[1]);
 
-                }else if(o == SURFACE_CREATED){
-                    FSR.onSurfaceCreated((boolean)d);
+                }else if(order == SURFACE_CREATED){
+                    FSR.onSurfaceCreated((boolean)obj);
 
-                }else if(o == SURFACE_CHANGED){
-                    int[] a = (int[])d;
+                }else if(order == SURFACE_CHANGED){
+                    int[] a = (int[])obj;
                     FSR.onSurfaceChanged(a[0], a[1]);
 
-                }else if(o == DRAW_FRAME){
+                }else if(order == DRAW_FRAME){
                     FSR.onDrawFrame();
                 }
             }
@@ -109,7 +112,7 @@ public class FSRThread extends Thread{
         return lock;
     }
 
-    public FSRThread task(int code, Object d){
+    public FSRThread order(int code, Object d){
         synchronized(lock){
             orders.add(code);
             data.add(d);

@@ -20,10 +20,12 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     private Activity act;
 
     private boolean destroyed;
+    private final int[] eglconfig;
 
-    public FSSurface(Activity act, FSEvents events){
+    public FSSurface(Activity act, int[] eglconfig, FSEvents events){
         super(act.getApplicationContext());
 
+        this.eglconfig = eglconfig;
         this.events = events;
 
         destroyed = false;
@@ -60,7 +62,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         events.GLPreSurfaceCreate(resume);
 
         FSR.startRenderThread();
-        FSR.getRenderThread().task(FSRThread.CREATE_GL_CONTEXT, resume).task(FSRThread.SURFACE_CREATED, resume);
+        FSR.getRenderThread().order(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, resume }).order(FSRThread.SURFACE_CREATED, resume);
 
         events.GLPostSurfaceCreate(resume);
         choreographer.postFrameCallback(this);
@@ -71,7 +73,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
         events.GLPreSurfaceChange(width, height);
 
-        FSR.getRenderThread().task(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
+        FSR.getRenderThread().order(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
 
         events.GLPostSurfaceChange(width, height);
     }
@@ -90,7 +92,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void doFrame(long frameTimeNanos){
-        FSR.getRenderThread().task(FSRThread.DRAW_FRAME, null);
+        FSR.getRenderThread().order(FSRThread.DRAW_FRAME, null);
     }
 
     @Override
