@@ -83,14 +83,14 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceCreated(SurfaceHolder holder){
         config.setTouchable(true);
 
-        boolean resume = FSControl.getKeepAlive();
+        boolean isalive = FSControl.isAlive();
 
-        events.GLPreSurfaceCreate(resume);
+        events.GLPreSurfaceCreate(isalive);
 
         FSR.startRenderThread();
-        FSR.getRenderThread().order(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, resume }).order(FSRThread.SURFACE_CREATED, resume);
+        FSR.getRenderThread().order(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).order(FSRThread.SURFACE_CREATED, isalive);
 
-        events.GLPostSurfaceCreate(resume);
+        events.GLPostSurfaceCreate(isalive);
         choreographer.postFrameCallback(this);
     }
 

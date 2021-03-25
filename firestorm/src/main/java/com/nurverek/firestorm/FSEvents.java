@@ -2,8 +2,8 @@ package com.nurverek.firestorm;
 
 public class FSEvents{
 
-    public void GLPreSurfaceCreate(boolean continuing){}
-    public void GLPostSurfaceCreate(boolean continuing){}
+    public void GLPreSurfaceCreate(boolean resuming){}
+    public void GLPostSurfaceCreate(boolean resuming){}
     public void GLPreSurfaceChange(int width, int height){}
     public void GLPostSurfaceChange(int width, int height){}
     public void GLPreSurfaceDestroy(){}
