@@ -115,7 +115,7 @@ public abstract class FSHub{
                     if(entry.assembler.checkDebug()){
                         VLDebug.append("Scanner[");
                         VLDebug.append(entry.name);
-                        VLDebug.append("] : invalid assembler configuration.");
+                        VLDebug.append("] [Invalid Assembler Configuration]\n");
                         VLDebug.append("[Assembler Configuration]\n");
 
                         entry.assembler.stringify(VLDebug.get(), null);

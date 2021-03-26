@@ -296,7 +296,7 @@ public class FSHAssembler implements VLStringify{
     }
 
     public final void stringify(StringBuilder info, Object hint){
-        info.append("]\nLOAD_MODELS[");
+        info.append("LOAD_MODELS[");
         info.append(LOAD_MODELS);
         info.append("]\nLOAD_POSITIONS[");
         info.append(LOAD_POSITIONS);
@@ -320,7 +320,7 @@ public class FSHAssembler implements VLStringify{
         info.append(CONVERT_POSITIONS_TO_MODELARRAYS);
         info.append("]\nDRAW_MODE_INDEXED[");
         info.append(DRAW_MODE_INDEXED);
-        info.append("]\n");
+        info.append("]");
     }
 
 

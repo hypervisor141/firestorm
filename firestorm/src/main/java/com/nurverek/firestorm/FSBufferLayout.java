@@ -120,7 +120,7 @@ public final class FSBufferLayout{
             VLDebug.append(unitsubcount);
             VLDebug.append("] strideAdjustment[");
             VLDebug.append(strideadjustment);
-            VLDebug.append("]]");
+            VLDebug.append("]");
         }
     }
 
