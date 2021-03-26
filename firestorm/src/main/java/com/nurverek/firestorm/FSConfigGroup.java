@@ -12,10 +12,6 @@ public class FSConfigGroup extends FSConfig{
         configs = new VLListType<>(capacity, resizer);
     }
 
-    public FSConfigGroup(Mode mode){
-        super(mode);
-    }
-
     public void add(FSConfig config){
         configs.add(config);
     }
