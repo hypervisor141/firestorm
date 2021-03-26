@@ -98,12 +98,7 @@ public abstract class FSHub{
             buffers.add(buffer);
         }
 
-        public void run(int debug){
-            scan(debug);
-            buffer(debug);
-        }
-
-        private void scan(int debug){
+        public void scan(int debug){
             int entrysize = entries.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
@@ -241,7 +236,7 @@ public abstract class FSHub{
             }
         }
 
-        private void buffer(int debug){
+        public void buffer(int debug){
             int size = entries.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
