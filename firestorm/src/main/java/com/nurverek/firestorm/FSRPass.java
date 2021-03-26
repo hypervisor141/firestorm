@@ -53,15 +53,6 @@ public class FSRPass{
         postconfig = config;
     }
 
-    public void addAll(FSG<?> source){
-        VLListType<FSP> programs = source.programs();
-        int size = programs.size();
-
-        for(int i = 0; i < size; i++){
-            entries.add(programs.get(i));
-        }
-    }
-
     public void add(FSP entry){
         entries.add(entry);
     }

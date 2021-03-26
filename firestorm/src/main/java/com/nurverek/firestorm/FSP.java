@@ -784,7 +784,7 @@ public class FSP{
             VLDebug.append("] instance[");
             VLDebug.append(instance);
             VLDebug.append("] element[");
-            VLDebug.append(FSG.ELEMENT_NAMES[element]);
+            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] array[");
 
             if(array == null){
@@ -814,10 +814,10 @@ public class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(element, bufferindex);
 
-            int databytesize = FSG.ELEMENT_BYTES[element];
+            int databytesize = FSHub.ELEMENT_BYTES[element];
 
             ((FSVertexBuffer<?>)tracker.buffer()).bind();
-            GLES32.glVertexAttribPointer(location, tracker.unitsize(), FSG.ELEMENT_GLDATA_TYPES[element], false, tracker.stride() * databytesize, tracker.offset() * databytesize);
+            GLES32.glVertexAttribPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[element], false, tracker.stride() * databytesize, tracker.offset() * databytesize);
         }
 
         @Override
@@ -830,7 +830,7 @@ public class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("element[");
-            VLDebug.append(FSG.ELEMENT_NAMES[element]);
+            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
@@ -857,10 +857,10 @@ public class FSP{
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
             VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(element, bufferindex);
 
-            int databytesize = FSG.ELEMENT_BYTES[element];
+            int databytesize = FSHub.ELEMENT_BYTES[element];
 
             ((FSVertexBuffer<?>)tracker.buffer()).bind();
-            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSG.ELEMENT_GLDATA_TYPES[element], tracker.stride() * databytesize, tracker.offset() * databytesize);
+            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[element], tracker.stride() * databytesize, tracker.offset() * databytesize);
         }
 
         @Override
@@ -873,7 +873,7 @@ public class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("element[");
-            VLDebug.append(FSG.ELEMENT_NAMES[element]);
+            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
@@ -1627,7 +1627,7 @@ public class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("element[");
-            VLDebug.append(FSG.ELEMENT_NAMES[element]);
+            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
@@ -1824,10 +1824,10 @@ public class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex);
 
             ((FSVertexBuffer<?>)tracker.buffer()).bind();
-            GLES32.glDrawElements(mesh.drawmode, tracker.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], tracker.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
+            GLES32.glDrawElements(mesh.drawmode, tracker.count(), FSHub.ELEMENT_GLDATA_TYPES[FSHub.ELEMENT_INDEX], tracker.offset() * FSHub.ELEMENT_BYTES[FSHub.ELEMENT_INDEX]);
         }
 
         @Override
@@ -1840,12 +1840,12 @@ public class FSP{
             super.debugInfo(program, mesh, debug);
 
             VLDebug.append("element[");
-            VLDebug.append(FSG.ELEMENT_NAMES[FSG.ELEMENT_INDEX]);
+            VLDebug.append(FSHub.ELEMENT_NAMES[FSHub.ELEMENT_INDEX]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -1862,10 +1862,10 @@ public class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex);
 
             ((FSVertexBuffer<?>)tracker.buffer()).bind();
-            GLES32.glDrawElementsInstanced(mesh.drawmode, tracker.count(), FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], tracker.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX], mesh.size());
+            GLES32.glDrawElementsInstanced(mesh.drawmode, tracker.count(), FSHub.ELEMENT_GLDATA_TYPES[FSHub.ELEMENT_INDEX], tracker.offset() * FSHub.ELEMENT_BYTES[FSHub.ELEMENT_INDEX], mesh.size());
         }
 
         @Override
@@ -1885,7 +1885,7 @@ public class FSP{
             VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -1909,10 +1909,10 @@ public class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex);
+            VLBufferTrackerDetailed<?> tracker = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex);
 
             ((FSVertexBuffer<?>)tracker.buffer()).bind();
-            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSG.ELEMENT_GLDATA_TYPES[FSG.ELEMENT_INDEX], tracker.offset() * FSG.ELEMENT_BYTES[FSG.ELEMENT_INDEX]);
+            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSHub.ELEMENT_GLDATA_TYPES[FSHub.ELEMENT_INDEX], tracker.offset() * FSHub.ELEMENT_BYTES[FSHub.ELEMENT_INDEX]);
         }
 
         @Override
@@ -1936,7 +1936,7 @@ public class FSP{
             VLDebug.append(bufferindex);
             VLDebug.append("] bufferAddress[");
 
-            mesh.first().bufferBindings().get(FSG.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }

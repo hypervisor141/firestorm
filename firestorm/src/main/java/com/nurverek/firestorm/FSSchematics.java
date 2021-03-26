@@ -75,7 +75,7 @@ public final class FSSchematics{
     }
 
     public void initialize(){
-        bounds = new float[FSG.UNIT_SIZE_POSITION * 2];
+        bounds = new float[FSHub.UNIT_SIZE_POSITION * 2];
         centroid = new float[4];
         centroidmodel = new float[4];
         centroidmvp = new float[4];
@@ -111,7 +111,7 @@ public final class FSSchematics{
         centroid[1] = 0;
         centroid[2] = 0;
 
-        for(int index = 0; index < size; index += FSG.UNIT_SIZE_POSITION){
+        for(int index = 0; index < size; index += FSHub.UNIT_SIZE_POSITION){
             x = vertices[index];
             y = vertices[index + 1];
             z = vertices[index + 2];
@@ -147,7 +147,7 @@ public final class FSSchematics{
             }
         }
 
-        int pointcount = size / FSG.UNIT_SIZE_POSITION;
+        int pointcount = size / FSHub.UNIT_SIZE_POSITION;
 
         centroid[0] /= pointcount;
         centroid[1] /= pointcount;

@@ -8,7 +8,7 @@ public class FSBufferBindings{
     protected VLListType<VLBufferTrackerDetailed<?>>[] trackers;
 
     protected FSBufferBindings(){
-        trackers = new VLListType[FSG.ELEMENT_TOTAL_COUNT];
+        trackers = new VLListType[FSHub.ELEMENT_TOTAL_COUNT];
 
         for(int i = 0; i < trackers.length; i++){
             trackers[i] = new VLListType<>(1, 2);

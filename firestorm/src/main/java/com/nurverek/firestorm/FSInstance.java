@@ -42,7 +42,7 @@ public class FSInstance{
     }
 
     public int elementVertexCount(int element){
-        return element(element).size() / FSG.UNIT_SIZES[element];
+        return element(element).size() / FSHub.UNIT_SIZES[element];
     }
 
     public void colorTexture(FSTexture texture){
@@ -63,7 +63,7 @@ public class FSInstance{
     }
 
     public int vertexSize(){
-        return data.positions().size() / FSG.UNIT_SIZE_POSITION;
+        return data.positions().size() / FSHub.UNIT_SIZE_POSITION;
     }
 
     public FSMesh mesh(){
@@ -138,7 +138,7 @@ public class FSInstance{
 
     public static final class Data{
 
-        public static final int DEFAULT_SIZE = FSG.ELEMENT_TOTAL_COUNT - 1;
+        public static final int DEFAULT_SIZE = FSHub.ELEMENT_TOTAL_COUNT - 1;
 
         protected VLArrayFloat[] elements;
 
@@ -155,23 +155,23 @@ public class FSInstance{
         }
 
         public void model(FSArrayModel array){
-            elements[FSG.ELEMENT_MODEL] = array;
+            elements[FSHub.ELEMENT_MODEL] = array;
         }
 
         public void positions(VLArrayFloat array){
-            elements[FSG.ELEMENT_POSITION] = array;
+            elements[FSHub.ELEMENT_POSITION] = array;
         }
 
         public void colors(VLArrayFloat array){
-            elements[FSG.ELEMENT_COLOR] = array;
+            elements[FSHub.ELEMENT_COLOR] = array;
         }
 
         public void texCoords(VLArrayFloat array){
-            elements[FSG.ELEMENT_TEXCOORD] = array;
+            elements[FSHub.ELEMENT_TEXCOORD] = array;
         }
 
         public void normals(VLArrayFloat array){
-            elements[FSG.ELEMENT_NORMAL] = array;
+            elements[FSHub.ELEMENT_NORMAL] = array;
         }
 
 
@@ -180,22 +180,22 @@ public class FSInstance{
         }
 
         public FSArrayModel model(){
-            return (FSArrayModel)elements[FSG.ELEMENT_MODEL];
+            return (FSArrayModel)elements[FSHub.ELEMENT_MODEL];
         }
 
         public VLArrayFloat positions(){
-            return elements[FSG.ELEMENT_POSITION];
+            return elements[FSHub.ELEMENT_POSITION];
         }
 
         public VLArrayFloat colors(){
-            return elements[FSG.ELEMENT_COLOR];
+            return elements[FSHub.ELEMENT_COLOR];
         }
 
         public VLArrayFloat texCoords(){
-            return elements[FSG.ELEMENT_TEXCOORD];
+            return elements[FSHub.ELEMENT_TEXCOORD];
         }
 
-        public VLArrayFloat normals(){ return elements[FSG.ELEMENT_NORMAL]; }
+        public VLArrayFloat normals(){ return elements[FSHub.ELEMENT_NORMAL]; }
 
         public void copy(Data src){
             elements = new VLArrayFloat[DEFAULT_SIZE];

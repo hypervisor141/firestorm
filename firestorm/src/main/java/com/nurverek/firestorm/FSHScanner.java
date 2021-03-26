@@ -4,15 +4,15 @@ import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLDebug;
 
-public abstract class FSGScanner{
+public abstract class FSHScanner{
 
-    protected FSGAssembler assembler;
+    protected FSHAssembler assembler;
     protected FSBufferLayout layout;
     protected FSP program;
     protected FSMesh mesh;
     protected String name;
 
-    protected FSGScanner(FSP program, FSBufferLayout layout, FSGAssembler assembler, String name){
+    protected FSHScanner(FSP program, FSBufferLayout layout, FSHAssembler assembler, String name){
         this.program = program;
         this.layout = layout;
         this.assembler = assembler;
@@ -21,7 +21,7 @@ public abstract class FSGScanner{
         mesh = new FSMesh();
     }
 
-    protected abstract boolean scan(FSGAutomator automator, FSM.Data data);
+    protected abstract boolean scan(FSHub.Automator automator, FSM.Data data);
 
     protected void bufferAndFinish(){
         layout.buffer(mesh);
@@ -46,10 +46,10 @@ public abstract class FSGScanner{
         int size = mesh.size();
         VLArrayFloat[] data;
         VLArrayFloat array;
-        int[] requirements = new int[FSG.ELEMENT_TOTAL_COUNT];
+        int[] requirements = new int[FSHub.ELEMENT_TOTAL_COUNT];
 
         if(mesh.indices != null){
-            requirements[FSG.ELEMENT_INDEX] = mesh.indices.size();
+            requirements[FSHub.ELEMENT_INDEX] = mesh.indices.size();
         }
 
         for(int i = 0; i < size; i++){
@@ -67,22 +67,22 @@ public abstract class FSGScanner{
         VLDebug.append("storageRequirements[");
 
         if(assembler.INSTANCE_SHARE_POSITIONS){
-            requirements[FSG.ELEMENT_POSITION] /= size;
+            requirements[FSHub.ELEMENT_POSITION] /= size;
         }
         if(assembler.INSTANCE_SHARE_COLORS){
-            requirements[FSG.ELEMENT_COLOR] /= size;
+            requirements[FSHub.ELEMENT_COLOR] /= size;
         }
         if(assembler.INSTANCE_SHARE_TEXCOORDS){
-            requirements[FSG.ELEMENT_TEXCOORD] /= size;
+            requirements[FSHub.ELEMENT_TEXCOORD] /= size;
         }
         if(assembler.INSTANCE_SHARE_NORMALS){
-            requirements[FSG.ELEMENT_NORMAL] /= size;
+            requirements[FSHub.ELEMENT_NORMAL] /= size;
         }
 
-        size = FSG.ELEMENT_NAMES.length;
+        size = FSHub.ELEMENT_NAMES.length;
 
         for(int i = 0; i < size; i++){
-            VLDebug.append(FSG.ELEMENT_NAMES[i]);
+            VLDebug.append(FSHub.ELEMENT_NAMES[i]);
             VLDebug.append("[");
             VLDebug.append(requirements[i]);
 
@@ -94,15 +94,15 @@ public abstract class FSGScanner{
         VLDebug.append("]]\n");
     }
 
-    public static class Singular extends FSGScanner{
+    public static class Singular extends FSHScanner{
 
-        public Singular(FSP program, FSBufferLayout layout, FSGAssembler assembler, String name, int drawmode){
+        public Singular(FSP program, FSBufferLayout layout, FSHAssembler assembler, String name, int drawmode){
             super(program, layout, assembler, name);
             mesh.initialize(drawmode, 1, 0);
         }
 
         @Override
-        protected boolean scan(FSGAutomator automator, FSM.Data data){
+        protected boolean scan(FSHub.Automator automator, FSM.Data data){
             if(data.name.equalsIgnoreCase(name)){
                 mesh.name(name);
 
@@ -122,15 +122,15 @@ public abstract class FSGScanner{
         }
     }
 
-    public static class Instanced extends FSGScanner{
+    public static class Instanced extends FSHScanner{
 
-        public Instanced(FSP program, FSBufferLayout layout, FSGAssembler assembler, String prefixname, int drawmode, int estimatedsize){
+        public Instanced(FSP program, FSBufferLayout layout, FSHAssembler assembler, String prefixname, int drawmode, int estimatedsize){
             super(program, layout, assembler, prefixname);
             mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
         }
 
         @Override
-        protected boolean scan(FSGAutomator automator, FSM.Data data){
+        protected boolean scan(FSHub.Automator automator, FSM.Data data){
             if(data.name.contains(name)){
                 mesh.name(name);
 
@@ -152,11 +152,11 @@ public abstract class FSGScanner{
         }
     }
 
-    public static class InstancedCopy extends FSGScanner{
+    public static class InstancedCopy extends FSHScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSP program, FSBufferLayout layout, FSGAssembler assembler, String prefixname, int drawmode, int copycount){
+        public InstancedCopy(FSP program, FSBufferLayout layout, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
             super(program, layout, assembler, prefixname);
 
             this.copycount = copycount;
@@ -164,7 +164,7 @@ public abstract class FSGScanner{
         }
 
         @Override
-        protected boolean scan(FSGAutomator automator, FSM.Data data){
+        protected boolean scan(FSHub.Automator automator, FSM.Data data){
             if(data.name.contains(name)){
                 mesh.name(name);
 

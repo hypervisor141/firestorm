@@ -26,7 +26,7 @@ public final class FSBufferLayout{
     protected VLListType<Layout> layouts;
 
     public FSBufferLayout(){
-        layouts = new VLListType<>(FSG.ELEMENT_TOTAL_COUNT, FSG.ELEMENT_TOTAL_COUNT);
+        layouts = new VLListType<>(FSHub.ELEMENT_TOTAL_COUNT, FSHub.ELEMENT_TOTAL_COUNT);
     }
 
     public Layout add(VLBuffer<?, ?> buffer, int capacity){
@@ -135,7 +135,7 @@ public final class FSBufferLayout{
         }
 
         public EntryElement(Mechanism mechanism, int element){
-            super(mechanism, element, 0, FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element], FSG.UNIT_SIZES[element]);
+            super(mechanism, element, 0, FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element]);
         }
     }
 
