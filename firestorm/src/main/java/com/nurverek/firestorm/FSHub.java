@@ -287,7 +287,7 @@ public abstract class FSHub{
                         buffer.initialize();
                     }
 
-                    VLDebug.append("[SUCCESS]");
+                    VLDebug.append("[SUCCESS]\n");
 
                 }catch(Exception ex){
                     VLDebug.append("[FAILED]");
@@ -333,7 +333,7 @@ public abstract class FSHub{
                         buffers.get(i).upload();
                     }
 
-                    VLDebug.append("[SUCCESS]");
+                    VLDebug.append("[SUCCESS]\n");
 
                 }catch(Exception ex){
                     VLDebug.append("[FAILED]");
