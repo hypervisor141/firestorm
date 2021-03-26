@@ -291,8 +291,10 @@ public class FSHAssembler implements VLStringify{
         }
     }
 
-    protected final boolean checkDebug(){
-        return firstfuncs.size() == 0;
+    protected final void checkDebug(){
+        if(firstfuncs.size() == 0){
+            throw new RuntimeException("[ERROR] [Assembler not configured]");
+        }
     }
 
     public final void stringify(StringBuilder info, Object hint){

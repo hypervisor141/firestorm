@@ -111,18 +111,17 @@ public abstract class FSHub{
 
                 for(int i = 0; i < entrysize; i++){
                     entry = entries.get(i);
+                    entry.assembler.checkDebug();
 
-                    if(entry.assembler.checkDebug()){
-                        VLDebug.append("Scanner[");
-                        VLDebug.append(entry.name);
-                        VLDebug.append("] [Invalid Assembler Configuration]\n");
-                        VLDebug.append("[Assembler Configuration]\n");
+                    VLDebug.append("Scanner[");
+                    VLDebug.append(entry.name);
+                    VLDebug.append("] [Invalid Assembler Configuration]\n");
+                    VLDebug.append("[Assembler Configuration]\n");
 
-                        entry.assembler.stringify(VLDebug.get(), null);
-                    }
+                    entry.assembler.stringify(VLDebug.get(), null);
                 }
 
-                VLDebug.printDirect("[DONE]\n");
+                VLDebug.printDirect("\n[DONE]\n");
                 VLDebug.printDirect("[Build Stage]\n");
 
                 int filesize = files.size();
