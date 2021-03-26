@@ -9,10 +9,8 @@ import java.nio.ByteOrder;
 
 import vanguard.VLDebug;
 import vanguard.VLListType;
-import vanguard.VLVTypeManager;
-import vanguard.VLVTypeRunner;
 
-public abstract class FSHub<MANAGER extends VLVTypeManager<? extends VLVTypeRunner>>{
+public abstract class FSHub{
 
     public static final int ELEMENT_BYTES_MODEL = Float.SIZE / 8;
     public static final int ELEMENT_BYTES_POSITION = Float.SIZE / 8;
