@@ -279,9 +279,12 @@ public abstract class FSHub{
 
                 try{
                     VLDebug.append("Initializing buffers...");
+                    FSVertexBuffer<?> buffer;
 
                     for(int i = 0; i < buffersize; i++){
-                        buffers.get(i).initialize();
+                        buffer = buffers.get(i);
+                        buffer.provider().initialize(ByteOrder.nativeOrder());
+                        buffer.initialize();
                     }
 
                     VLDebug.append("[SUCCESS]");
@@ -343,12 +346,15 @@ public abstract class FSHub{
 
             }else{
                 int buffersize = buffers.size();
+                FSVertexBuffer<?> buffer;
 
                 for(int i = 0; i < size; i++){
                     entries.get(i).accountForBufferSize();
                 }
                 for(int i = 0; i < buffersize; i++){
-                    buffers.get(i).initialize();
+                    buffer = buffers.get(i);
+                    buffer.provider().initialize(ByteOrder.nativeOrder());
+                    buffer.initialize();
                 }
                 for(int i = 0; i < size; i++){
                     entries.get(i).bufferAndFinish();

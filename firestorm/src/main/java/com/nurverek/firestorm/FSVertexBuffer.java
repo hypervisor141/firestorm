@@ -51,8 +51,6 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
         GLES32.glGenBuffers(1, FSStatic.CACHE_INT, 0);
         id = FSStatic.CACHE_INT[0];
-
-        buffer.initialize(ByteOrder.nativeOrder());
     }
 
     public void bind(){
