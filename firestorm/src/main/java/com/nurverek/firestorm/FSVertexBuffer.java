@@ -21,14 +21,16 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     private boolean mapped;
     private boolean needsupdate;
 
-    public FSVertexBuffer(int target, int accessmode){
+    public FSVertexBuffer(BUFFER buffer, int target, int accessmode){
+        this.buffer = buffer;
         this.target = target;
         this.accessmode = accessmode;
 
         id = -1;
     }
 
-    public FSVertexBuffer(int target, int accessmode, int bindpoint){
+    public FSVertexBuffer(BUFFER buffer, int target, int accessmode, int bindpoint){
+        this.buffer = buffer;
         this.target = target;
         this.accessmode = accessmode;
         this.bindpoint = bindpoint;
@@ -36,7 +38,8 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
         id = -1;
     }
 
-    public FSVertexBuffer(int id, int target, int accessmode, int bindpoint){
+    public FSVertexBuffer(BUFFER buffer, int id, int target, int accessmode, int bindpoint){
+        this.buffer = buffer;
         this.id = id;
         this.target = target;
         this.accessmode = accessmode;
@@ -48,6 +51,8 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
 
         GLES32.glGenBuffers(1, FSStatic.CACHE_INT, 0);
         id = FSStatic.CACHE_INT[0];
+
+        buffer.initialize(ByteOrder.nativeOrder());
     }
 
     public void bind(){
