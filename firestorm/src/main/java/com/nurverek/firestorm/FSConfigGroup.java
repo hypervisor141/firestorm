@@ -16,6 +16,10 @@ public class FSConfigGroup extends FSConfig{
         super(mode);
     }
 
+    public void add(FSConfig config){
+        configs.add(config);
+    }
+
     @Override
     protected void notifyProgramBuilt(FSP program){
         int size = configs.size();
