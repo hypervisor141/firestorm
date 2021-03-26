@@ -16,7 +16,7 @@ import vanguard.VLInt;
 import vanguard.VLListType;
 import vanguard.VLStringify;
 
-public class FSP{
+public abstract class FSP{
 
     private static final int BUFFER_PRINT_LIMIT = 50;
 
@@ -43,13 +43,7 @@ public class FSP{
         uniformlocation = 0;
     }
 
-    public void customize(){
-        customize(meshes, shaders, debug);
-    }
-
-    protected void customize(VLListType<FSMesh> meshes, VLListType<FSShader> shaders, int debug){
-        
-    }
+    protected abstract void customize(VLListType<FSMesh> meshes, VLListType<FSShader> shaders, int debug);
 
     public VLListType<FSShader> shaders(){
         return shaders;
@@ -102,6 +96,8 @@ public class FSP{
     }
 
     public FSP build(){
+        customize(meshes, shaders, debug);
+
         VLDebug.recreate();
 
         program = GLES32.glCreateProgram();
@@ -173,14 +169,18 @@ public class FSP{
 
         if(debug > FSControl.DEBUG_DISABLED){
             try{
-                VLDebug.append("[Notifying program built for SetupConfig]");
-                setupconfig.notifyProgramBuilt(this);
-
-                VLDebug.append("[Notifying program built for MeshConfig]");
-                meshconfig.notifyProgramBuilt(this);
-
-                VLDebug.append("[Notifying program built for PostDrawConfig]");
-                postdrawconfig.notifyProgramBuilt(this);
+                if(setupconfig != null){
+                    VLDebug.append("[Notifying program built for SetupConfig]");
+                    setupconfig.notifyProgramBuilt(this);
+                }
+                if(meshconfig != null){
+                    VLDebug.append("[Notifying program built for MeshConfig]");
+                    meshconfig.notifyProgramBuilt(this);
+                }
+                if(postdrawconfig != null){
+                    VLDebug.append("[Notifying program built for PostDrawConfig]");
+                    postdrawconfig.notifyProgramBuilt(this);
+                }
 
             }catch(Exception ex){
                 VLDebug.append("Failed.\n");
@@ -195,9 +195,15 @@ public class FSP{
             VLDebug.printD();
 
         }else{
-            setupconfig.notifyProgramBuilt(this);
-            meshconfig.notifyProgramBuilt(this);
-            postdrawconfig.notifyProgramBuilt(this);
+            if(setupconfig != null){
+                setupconfig.notifyProgramBuilt(this);
+            }
+            if(meshconfig != null){
+                meshconfig.notifyProgramBuilt(this);
+            }
+            if(postdrawconfig != null){
+                postdrawconfig.notifyProgramBuilt(this);
+            }
         }
 
         return this;
