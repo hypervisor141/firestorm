@@ -170,15 +170,15 @@ public abstract class FSP{
         if(debug > FSControl.DEBUG_DISABLED){
             try{
                 if(setupconfig != null){
-                    VLDebug.append("[Notifying program built for SetupConfig]");
+                    VLDebug.append("[Notifying program built for SetupConfig]\n");
                     setupconfig.notifyProgramBuilt(this);
                 }
                 if(meshconfig != null){
-                    VLDebug.append("[Notifying program built for MeshConfig]");
+                    VLDebug.append("[Notifying program built for MeshConfig]\n");
                     meshconfig.notifyProgramBuilt(this);
                 }
                 if(postdrawconfig != null){
-                    VLDebug.append("[Notifying program built for PostDrawConfig]");
+                    VLDebug.append("[Notifying program built for PostDrawConfig]\n");
                     postdrawconfig.notifyProgramBuilt(this);
                 }
 
@@ -189,9 +189,6 @@ public abstract class FSP{
                 throw new RuntimeException("Error during program configuration setup", ex);
             }
 
-            VLDebug.append("ProgramID[");
-            VLDebug.append(program);
-            VLDebug.append("]\n");
             VLDebug.printD();
 
         }else{
