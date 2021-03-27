@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import vanguard.VLBuffer;
 import vanguard.VLBufferTracker;
 
-public abstract class FSLinkBuffered<DATA, BUFFER extends VLBuffer<?, ?>, TRACKER extends VLBufferTracker<BUFFER>> extends FSLink<DATA>{
+public abstract class FSLinkBuffered<DATA, BUFFER extends VLBuffer<?, ?>, TRACKER extends VLBufferTracker> extends FSLink<DATA>{
 
     public TRACKER tracker;
 

@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import java.nio.Buffer;
-
 import vanguard.VLArrayFloat;
 import vanguard.VLBuffer;
 import vanguard.VLBufferTrackerDetailed;
@@ -23,16 +21,14 @@ public final class FSBufferLayout{
     public static final Mechanism LINK_SEQUENTIAL_SINGULAR = new LinkSequentialSingular();
     public static final Mechanism LINK_INTERLEAVED_SINGULAR = new LinkInterleavedSingular();
 
-    protected VLListType<Layout> layouts;
+    protected VLListType<Layout<?>> layouts;
 
     public FSBufferLayout(){
         layouts = new VLListType<>(FSHub.ELEMENT_TOTAL_COUNT, FSHub.ELEMENT_TOTAL_COUNT);
     }
 
-    public Layout add(VLBuffer<?, ?> buffer, int capacity){
-        Layout layout = new Layout(buffer, capacity);
+    public <BUFFER extends VLBuffer<?, ?>> Layout<BUFFER> add(Layout<BUFFER> layout){
         layouts.add(layout);
-
         return layout;
     }
 
@@ -146,14 +142,23 @@ public final class FSBufferLayout{
         }
     }
 
-    public static final class Layout{
+    public static final class Layout<BUFFER extends VLBuffer<?, ?>>{
 
         protected VLListType<Entry> entries;
-        protected VLBuffer<?, ?> buffer;
+
+        protected FSVertexBuffer<BUFFER> vbuffer;
+        protected BUFFER buffer;
 
         protected int totalstride;
 
-        private Layout(VLBuffer<?, ?> buffer, int capacity){
+        private Layout(FSVertexBuffer<BUFFER> vbuffer, int capacity){
+            this.vbuffer = vbuffer;
+            this.buffer = vbuffer.provider();
+
+            entries = new VLListType<>(capacity, capacity / 2);
+        }
+
+        private Layout(BUFFER buffer, int capacity){
             this.buffer = buffer;
             entries = new VLListType<>(capacity, capacity / 2);
         }
@@ -186,11 +191,11 @@ public final class FSBufferLayout{
 
             for(int i = 0; i < size - 1; i++){
                 entry = entries.get(i);
-                buffer.position(entry.mechanism.buffer(target, entry, buffer, totalstride));
+                buffer.position(entry.mechanism.buffer(target, entry, vbuffer, buffer, totalstride));
             }
 
             entry = entries.get(entries.size() - 1);
-            entry.mechanism.buffer(target, entry, buffer, totalstride);
+            entry.mechanism.buffer(target, entry, vbuffer, buffer, totalstride);
         }
 
         protected void bufferDebug(FSMesh target){
@@ -228,7 +233,7 @@ public final class FSBufferLayout{
 
     public interface Mechanism{
 
-        <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride);
+        <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride);
         int getTargetSize(Entry entry, FSMesh mesh);
     }
 
@@ -239,7 +244,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -247,16 +252,16 @@ public final class FSBufferLayout{
 
             FSInstance instance;
             VLArrayFloat array;
-            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker;
+            VLBufferTrackerDetailed tracker;
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                tracker = new VLBufferTrackerDetailed<>();
+                tracker = new VLBufferTrackerDetailed();
                 buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
-                instance.bufferBindings().add(element, tracker);
+                instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
             return buffer.position();
@@ -281,7 +286,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -290,16 +295,16 @@ public final class FSBufferLayout{
             int element = entry.element;
             int mainoffset = buffer.position();
 
-            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker;
+            VLBufferTrackerDetailed tracker;
 
             for(int i = 0; i < size; i++){
                 instance = instances.get(i);
                 array = instance.element(element);
 
-                tracker = new VLBufferTrackerDetailed<>();
+                tracker = new VLBufferTrackerDetailed();
                 buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
-                instance.bufferBindings().add(element, tracker);
+                instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
             return mainoffset + entry.unitsubcount;
@@ -324,7 +329,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
 
             int element = entry.element;
@@ -332,16 +337,16 @@ public final class FSBufferLayout{
 
             FSInstance instance;
             VLArrayFloat array;
-            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker;
+            VLBufferTrackerDetailed tracker;
 
             instance = instances.get(0);
             array = instance.element(element);
 
             for(int i = 0; i < size; i++){
-                tracker = new VLBufferTrackerDetailed<>();
+                tracker = new VLBufferTrackerDetailed();
                 buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
-                instances.get(i).bufferBindings().add(element, tracker);
+                instances.get(i).bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
             return buffer.position();
@@ -359,7 +364,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -371,11 +376,11 @@ public final class FSBufferLayout{
             instance = instances.get(0);
             array = instance.element(element);
 
-            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker = new VLBufferTrackerDetailed<>();
+            VLBufferTrackerDetailed tracker = new VLBufferTrackerDetailed();
             buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
-                instances.get(i).bufferBindings().add(element, tracker);
+                instances.get(i).bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
             return mainoffset + entry.unitsubcount;
@@ -393,16 +398,16 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             int element = entry.element;
 
-            VLBufferTrackerDetailed<VLBuffer<ELEMENT, BUFFER>> tracker = new VLBufferTrackerDetailed<>();
+            VLBufferTrackerDetailed tracker = new VLBufferTrackerDetailed();
             buffer.put(tracker, mesh.indices.provider(), 0, mesh.indices.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             int size = mesh.size();
 
             for(int i = 0; i < size; i++){
-                mesh.instance(i).bufferBindings().add(element, tracker);
+                mesh.instance(i).bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
             return buffer.position();
@@ -420,8 +425,8 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
-            ((FSLinkBuffered<?, VLBuffer<ELEMENT, BUFFER>, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+            ((FSLinkBuffered<?, BUFFER, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return buffer.position();
         }
@@ -439,9 +444,9 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <ELEMENT extends Number, BUFFER extends Buffer> int buffer(FSMesh mesh, Entry entry, VLBuffer<ELEMENT, BUFFER> buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             int firstpos = buffer.position();
-            ((FSLinkBuffered<?, VLBuffer<ELEMENT, BUFFER>, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            ((FSLinkBuffered<?, BUFFER, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return firstpos + entry.unitsubcount;
         }

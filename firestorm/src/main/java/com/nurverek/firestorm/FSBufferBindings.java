@@ -1,11 +1,12 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLBuffer;
 import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLListType;
 
 public class FSBufferBindings{
 
-    protected VLListType<VLBufferTrackerDetailed<?>>[] trackers;
+    protected VLListType<Binding<?>>[] trackers;
 
     protected FSBufferBindings(){
         trackers = new VLListType[FSHub.ELEMENT_TOTAL_COUNT];
@@ -15,23 +16,36 @@ public class FSBufferBindings{
         }
     }
 
-    public void add(int element, VLBufferTrackerDetailed<?> entry){
+    public void add(int element, Binding<?> entry){
         trackers[element].add(entry);
     }
 
-    public void set(int element, int index, VLBufferTrackerDetailed<?> entry){
+    public void set(int element, int index, Binding<?> entry){
         trackers[element].set(index, entry);
     }
 
-    public VLListType<VLBufferTrackerDetailed<?>> get(int element){
+    public VLListType<Binding<?>> get(int element){
         return trackers[element];
     }
 
-    public VLBufferTrackerDetailed<?> get(int element, int index){
+    public Binding<?> get(int element, int index){
         return trackers[element].get(index);
     }
 
     public int size(int element){
         return trackers[element].size();
+    }
+
+    public static final class Binding<BUFFER extends VLBuffer<?, ?>>{
+
+        public VLBufferTrackerDetailed tracker;
+        public BUFFER buffer;
+        public FSVertexBuffer<BUFFER> vbuffer;
+
+        public Binding(VLBufferTrackerDetailed tracker, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer){
+            this.tracker = tracker;
+            this.buffer = buffer;
+            this.vbuffer = vbuffer;
+        }
     }
 }
