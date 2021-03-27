@@ -73,75 +73,6 @@ public final class FSBufferLayout{
         VLDebug.append("\n");
     }
 
-
-    public static abstract class Entry{
-
-        public Mechanism mechanism;
-
-        public int element;
-        public int unitoffset;
-        public int unitsize;
-        public int unitsubcount;
-        public int strideadjustment;
-
-        public Entry(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int strideadjustment){
-            this.mechanism = mechanism;
-            this.element = element;
-            this.unitoffset = unitoffset;
-            this.unitsize = unitsize;
-            this.unitsubcount = unitsubcount;
-            this.strideadjustment = strideadjustment;
-        }
-
-        public int strideAdjustment(){
-            return strideadjustment;
-        }
-
-        public int bufferSizeAdjustment(FSMesh mesh){
-            return (mechanism.getTargetSize(this, mesh) / unitsize) * strideadjustment;
-        }
-
-        public void debugInfo(){
-            VLDebug.append("[");
-            VLDebug.append(getClass().getSimpleName());
-            VLDebug.append("] element[");
-            VLDebug.append(element);
-            VLDebug.append("] mechanism[");
-            VLDebug.append(mechanism.getClass().getSimpleName());
-            VLDebug.append("] unitOffset[");
-            VLDebug.append(unitoffset);
-            VLDebug.append("] unitSize[");
-            VLDebug.append(unitsize);
-            VLDebug.append("] unitSubCount[");
-            VLDebug.append(unitsubcount);
-            VLDebug.append("] strideAdjustment[");
-            VLDebug.append(strideadjustment);
-            VLDebug.append("]");
-        }
-    }
-
-    public static class EntryElement extends Entry{
-
-        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
-            super(mechanism, element, unitoffset, unitsize, unitsubcount, stride);
-        }
-
-        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
-            super(mechanism, element, unitoffset, unitsize, unitsubcount, unitsubcount);
-        }
-
-        public EntryElement(Mechanism mechanism, int element){
-            super(mechanism, element, 0, FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element]);
-        }
-    }
-
-    public static class EntryLink extends Entry{
-
-        public EntryLink(Mechanism mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount, int stride){
-            super(mechanism, linkindex, unitoffset, unitsize, unitsubcount, stride);
-        }
-    }
-
     public static final class Layout<BUFFER extends VLBuffer<?, ?>>{
 
         protected VLListType<Entry> entries;
@@ -151,14 +82,14 @@ public final class FSBufferLayout{
 
         protected int totalstride;
 
-        private Layout(FSVertexBuffer<BUFFER> vbuffer, int capacity){
+        public Layout(FSVertexBuffer<BUFFER> vbuffer, int capacity){
             this.vbuffer = vbuffer;
             this.buffer = vbuffer.provider();
 
             entries = new VLListType<>(capacity, capacity / 2);
         }
 
-        private Layout(BUFFER buffer, int capacity){
+        public Layout(BUFFER buffer, int capacity){
             this.buffer = buffer;
             entries = new VLListType<>(capacity, capacity / 2);
         }
@@ -228,6 +159,75 @@ public final class FSBufferLayout{
             buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             buffer(target);
+        }
+    }
+
+
+    public static abstract class Entry{
+
+        public Mechanism mechanism;
+
+        public int element;
+        public int unitoffset;
+        public int unitsize;
+        public int unitsubcount;
+        public int strideadjustment;
+
+        public Entry(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int strideadjustment){
+            this.mechanism = mechanism;
+            this.element = element;
+            this.unitoffset = unitoffset;
+            this.unitsize = unitsize;
+            this.unitsubcount = unitsubcount;
+            this.strideadjustment = strideadjustment;
+        }
+
+        public int strideAdjustment(){
+            return strideadjustment;
+        }
+
+        public int bufferSizeAdjustment(FSMesh mesh){
+            return (mechanism.getTargetSize(this, mesh) / unitsize) * strideadjustment;
+        }
+
+        public void debugInfo(){
+            VLDebug.append("[");
+            VLDebug.append(getClass().getSimpleName());
+            VLDebug.append("] element[");
+            VLDebug.append(element);
+            VLDebug.append("] mechanism[");
+            VLDebug.append(mechanism.getClass().getSimpleName());
+            VLDebug.append("] unitOffset[");
+            VLDebug.append(unitoffset);
+            VLDebug.append("] unitSize[");
+            VLDebug.append(unitsize);
+            VLDebug.append("] unitSubCount[");
+            VLDebug.append(unitsubcount);
+            VLDebug.append("] strideAdjustment[");
+            VLDebug.append(strideadjustment);
+            VLDebug.append("]");
+        }
+    }
+
+    public static class EntryElement extends Entry{
+
+        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
+            super(mechanism, element, unitoffset, unitsize, unitsubcount, stride);
+        }
+
+        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
+            super(mechanism, element, unitoffset, unitsize, unitsubcount, unitsubcount);
+        }
+
+        public EntryElement(Mechanism mechanism, int element){
+            super(mechanism, element, 0, FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element]);
+        }
+    }
+
+    public static class EntryLink extends Entry{
+
+        public EntryLink(Mechanism mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount, int stride){
+            super(mechanism, linkindex, unitoffset, unitsize, unitsubcount, stride);
         }
     }
 
