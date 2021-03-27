@@ -66,7 +66,7 @@ public class FSView{
     }
 
     public void settingsLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
-        float[] settings = settingsperspective.provider();
+        float[] settings = settingsview.provider();
 
         settings[0] = eyeX;
         settings[1] = eyeY;
@@ -89,7 +89,7 @@ public class FSView{
     }
 
     public void settingsOrthographic(float left, float right, float bottom, float top, float znear, float zfar){
-        float[] settings = settingsperspective.provider();
+        float[] settings = settingsorthographic.provider();
 
         settings[0] = left;
         settings[1] = right;
