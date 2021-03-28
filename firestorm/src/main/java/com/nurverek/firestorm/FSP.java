@@ -23,14 +23,10 @@ public abstract class FSP{
     protected VLListType<FSShader> shaders;
     protected VLListType<FSMesh> meshes;
 
-    protected FSConfig setupconfig;
-    protected FSConfig meshconfig;
-    protected FSConfig postdrawconfig;
-    protected FSConfig postframeconfig;
+    protected CoreConfig coreconfigs;
 
-    private int program;
+    protected int program;
     protected int debug;
-
     protected int uniformlocation;
 
     public FSP(int shadercapacity, int meshcapacity, int debugmode){
@@ -43,22 +39,14 @@ public abstract class FSP{
         uniformlocation = 0;
     }
 
-    protected abstract void customize(VLListType<FSMesh> meshes, VLListType<FSShader> shaders, int debug);
+    protected abstract CoreConfig customize(VLListType<FSMesh> meshes, int debug);
 
     public VLListType<FSMesh> meshes(){
         return meshes;
     }
 
-    public FSConfig setupConfigs(){
-        return setupconfig;
-    }
-
-    public FSConfig meshConfigs(){
-        return meshconfig;
-    }
-
-    public FSConfig postDrawConfigs(){
-        return postdrawconfig;
+    public CoreConfig coreConfigs(){
+        return coreconfigs;
     }
 
     public int id(){
@@ -66,7 +54,7 @@ public abstract class FSP{
     }
 
     public FSP build(){
-        customize(meshes, shaders, debug);
+        coreconfigs = customize(meshes, debug);
 
         VLDebug.recreate();
 
@@ -139,17 +127,17 @@ public abstract class FSP{
 
         if(debug > FSControl.DEBUG_DISABLED){
             try{
-                if(setupconfig != null){
+                if(coreconfigs.setupconfig != null){
                     VLDebug.append("[Notifying program built for SetupConfig]\n");
-                    setupconfig.notifyProgramBuilt(this);
+                    coreconfigs.setupconfig.notifyProgramBuilt(this);
                 }
-                if(meshconfig != null){
+                if(coreconfigs.meshconfig != null){
                     VLDebug.append("[Notifying program built for MeshConfig]\n");
-                    meshconfig.notifyProgramBuilt(this);
+                    coreconfigs.meshconfig.notifyProgramBuilt(this);
                 }
-                if(postdrawconfig != null){
+                if(coreconfigs.postdrawconfig != null){
                     VLDebug.append("[Notifying program built for PostDrawConfig]\n");
-                    postdrawconfig.notifyProgramBuilt(this);
+                    coreconfigs.postdrawconfig.notifyProgramBuilt(this);
                 }
 
             }catch(Exception ex){
@@ -162,14 +150,14 @@ public abstract class FSP{
             VLDebug.printD();
 
         }else{
-            if(setupconfig != null){
-                setupconfig.notifyProgramBuilt(this);
+            if(coreconfigs.setupconfig != null){
+                coreconfigs.setupconfig.notifyProgramBuilt(this);
             }
-            if(meshconfig != null){
-                meshconfig.notifyProgramBuilt(this);
+            if(coreconfigs.meshconfig != null){
+                coreconfigs.meshconfig.notifyProgramBuilt(this);
             }
-            if(postdrawconfig != null){
-                postdrawconfig.notifyProgramBuilt(this);
+            if(coreconfigs.postdrawconfig != null){
+                coreconfigs.postdrawconfig.notifyProgramBuilt(this);
             }
         }
 
@@ -208,16 +196,16 @@ public abstract class FSP{
             VLDebug.append("] -------");
             VLDebug.printD();
 
-            if(setupconfig != null){
+            if(coreconfigs.setupconfig != null){
                 VLDebug.append("[SetupConfig]");
                 VLDebug.printD();
 
-                setupconfig.runDebug(this, null, -1, passindex);
+                coreconfigs.setupconfig.runDebug(this, null, -1, passindex);
 
                 VLDebug.printD();
             }
 
-            if(meshconfig != null){
+            if(coreconfigs.meshconfig != null){
                 FSMesh mesh;
 
                 for(int i = 0; i < meshsize; i++){
@@ -232,7 +220,7 @@ public abstract class FSP{
                     VLDebug.append("]");
                     VLDebug.printD();
 
-                    meshconfig.runDebug(this, meshes.get(i), i, passindex);
+                    coreconfigs.meshconfig.runDebug(this, meshes.get(i), i, passindex);
 
                     VLDebug.printD();
                 }
@@ -241,31 +229,31 @@ public abstract class FSP{
                 VLDebug.printD();
             }
 
-            if(postdrawconfig != null){
-                postdrawconfig.runDebug(this, null, -1, passindex);
+            if(coreconfigs.postdrawconfig != null){
+                coreconfigs.postdrawconfig.runDebug(this, null, -1, passindex);
 
                 VLDebug.printD();
             }
 
         }else{
-            if(setupconfig != null){
-                setupconfig.run(this, null, -1, passindex);
+            if(coreconfigs.setupconfig != null){
+                coreconfigs.setupconfig.run(this, null, -1, passindex);
             }
 
-            if(meshconfig != null){
+            if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
-                    meshconfig.run(this, meshes.get(i), i, passindex);
+                    coreconfigs.meshconfig.run(this, meshes.get(i), i, passindex);
                 }
             }
 
-            if(postdrawconfig != null){
-                postdrawconfig.run(this, null, -1, passindex);
+            if(coreconfigs.postdrawconfig != null){
+                coreconfigs.postdrawconfig.run(this, null, -1, passindex);
             }
         }
     }
 
     public void postFrame(int passindex){
-        if(postframeconfig != null){
+        if(coreconfigs.postframeconfig != null){
             if(debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
@@ -288,12 +276,12 @@ public abstract class FSP{
                 VLDebug.append("[PostFrameConfig]");
                 VLDebug.printD();
 
-                postframeconfig.runDebug(this, null, -1, passindex);
+                coreconfigs.postframeconfig.runDebug(this, null, -1, passindex);
 
                 VLDebug.printD();
 
             }else{
-                postframeconfig.run(this, null, -1, passindex);
+                coreconfigs.postframeconfig.run(this, null, -1, passindex);
             }
         }
     }
@@ -387,12 +375,24 @@ public abstract class FSP{
         GLES32.glDeleteProgram(program);
         releaseShaders();
 
-        setupconfig = null;
-        meshconfig = null;
-        postdrawconfig = null;
-        postframeconfig = null;
+        coreconfigs = null;
 
         meshes.clear();
+    }
+
+    public static class CoreConfig{
+
+        public FSConfig setupconfig;
+        public FSConfig meshconfig;
+        public FSConfig postdrawconfig;
+        public FSConfig postframeconfig;
+
+        public CoreConfig(FSConfig setupconfig, FSConfig meshconfig, FSConfig postdrawconfig, FSConfig postframeconfig){
+            this.setupconfig = setupconfig;
+            this.meshconfig = meshconfig;
+            this.postdrawconfig = postdrawconfig;
+            this.postframeconfig = postframeconfig;
+        }
     }
 
     public static class Clear extends FSConfig{
