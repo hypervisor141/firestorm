@@ -60,34 +60,33 @@ public abstract class FSP{
 
         program = GLES32.glCreateProgram();
 
-        FSShader s;
-        String src;
+        FSShader shader;
         int size = shaders.size();
 
         for(int i = 0; i < size; i++){
-            s = shaders.get(i);
-            s.buildSource();
-            s.compile();
-            s.attach(this);
+            shader = shaders.get(i);
+            shader.buildSource();
+            shader.compile();
+            shader.attach();
 
             if(debug > FSControl.DEBUG_DISABLED){
                 VLDebug.append("Compiling and attaching shader type ");
-                VLDebug.append(s.type);
+                VLDebug.append(shader.type);
                 VLDebug.append(" for program id ");
                 VLDebug.append(program);
                 VLDebug.append(" : \n");
 
-                s.stringify(VLDebug.get(), null);
+                shader.stringify(VLDebug.get(), null);
             }
 
-            s.logDebugInfo(this);
+            shader.logDebugInfo(this);
         }
 
         GLES32.glLinkProgram(program);
         FSTools.checkGLError();
 
         for(int i = 0; i < size; i++){
-            shaders.get(i).detach(this);
+            shaders.get(i).detach();
         }
 
         int[] results = new int[1];
@@ -101,7 +100,7 @@ public abstract class FSP{
             size = shaders.size();
 
             for(int i = 0; i < size; i++){
-                s = shaders.get(i);
+                shader = shaders.get(i);
 
                 VLDebug.append("[");
                 VLDebug.append(i + 1);
@@ -109,11 +108,11 @@ public abstract class FSP{
                 VLDebug.append(size);
                 VLDebug.append("]");
                 VLDebug.append(" shaderType[");
-                VLDebug.append(s.type);
+                VLDebug.append(shader.type);
                 VLDebug.append("]");
                 VLDebug.printE();
 
-                s.stringify(VLDebug.get(), null);
+                shader.stringify(VLDebug.get(), null);
             }
 
             VLDebug.append("Program[");

@@ -363,12 +363,12 @@ public final class FSShader implements VLStringify{
         }
     }
 
-    public void attach(FSP program){
+    public void attach(){
         GLES32.glAttachShader(program.id(), shaderid);
         FSTools.checkGLError();
     }
 
-    public void detach(FSP program){
+    public void detach(){
         GLES32.glDetachShader(program.id(), shaderid);
         FSTools.checkGLError();
     }
