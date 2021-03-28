@@ -29,7 +29,10 @@ public final class FSShader implements VLStringify{
 
     protected boolean compiled;
 
-    public FSShader(int type){
+    protected FSP program;
+
+    public FSShader(FSP program, int type){
+        this.program = program;
         this.type = type;
 
         compiled = false;
@@ -44,8 +47,9 @@ public final class FSShader implements VLStringify{
         attriblocation = 0;
 
         shadername = resolveShaderName(type);
-    }
 
+        program.shaders.add(this);
+    }
 
     public void stringify(StringBuilder src, Object hint){
         buildSource();
@@ -70,6 +74,10 @@ public final class FSShader implements VLStringify{
         }
     }
 
+    public FSP program(){
+        return program;
+    }
+
     public int type(){
         return type;
     }
@@ -82,17 +90,18 @@ public final class FSShader implements VLStringify{
         return finalsrc;
     }
 
-
-    public final int nextAttribLocation(int glslsize){
+    protected final int nextAttribLocation(int glslsize){
         int location = attriblocation;
         attriblocation += glslsize;
 
         return location;
     }
 
-    public void addAttribute(int location, String type, String name){
+    public void addAttribute(FSConfig config, String type, String name){
+        config.location(nextAttribLocation(config.getGLSLSize()));
+
         fields.append("layout(location=");
-        fields.append(location);
+        fields.append(config.location());
         fields.append(") in ");
         fields.append(type);
         fields.append(" ");
@@ -100,9 +109,11 @@ public final class FSShader implements VLStringify{
         fields.append(";\n");
     }
 
-    public void addUniform(int location, String type, String name){
+    public void addUniform(FSConfig config, String type, String name){
+        config.location(program.nextUniformLocation(config.getGLSLSize()));
+
         fields.append("layout(location=");
-        fields.append(location);
+        fields.append(config.location());
         fields.append(") uniform ");
         fields.append(type);
         fields.append(" ");
@@ -110,9 +121,11 @@ public final class FSShader implements VLStringify{
         fields.append(";\n");
     }
 
-    public void addUniformArray(int location, String type, String name, int arraysize){
+    public void addUniformArray(FSConfig config, String type, String name, int arraysize){
+        config.location(program.nextUniformLocation(config.getGLSLSize() * arraysize));
+
         fields.append("layout(location=");
-        fields.append(location);
+        fields.append(config.location());
         fields.append(") uniform ");
         fields.append(type);
         fields.append("[");
@@ -122,9 +135,11 @@ public final class FSShader implements VLStringify{
         fields.append(";\n");
     }
 
-    public void addAttributeArray(int location, String type, String name, int arraysize){
+    public void addAttributeArray(FSConfig config, String type, String name, int arraysize){
+        config.location(nextAttribLocation(config.getGLSLSize() * arraysize));
+
         fields.append("layout(location=");
-        fields.append(location);
+        fields.append(config.location());
         fields.append(") in ");
         fields.append(type);
         fields.append("[");

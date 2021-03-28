@@ -20,7 +20,7 @@ public abstract class FSP{
 
     private static final int BUFFER_PRINT_LIMIT = 50;
 
-    private VLListType<FSShader> shaders;
+    protected VLListType<FSShader> shaders;
     protected VLListType<FSMesh> meshes;
 
     protected FSConfig setupconfig;
@@ -45,10 +45,6 @@ public abstract class FSP{
 
     protected abstract void customize(VLListType<FSMesh> meshes, VLListType<FSShader> shaders, int debug);
 
-    public VLListType<FSShader> shaders(){
-        return shaders;
-    }
-
     public VLListType<FSMesh> meshes(){
         return meshes;
     }
@@ -67,32 +63,6 @@ public abstract class FSP{
 
     public int id(){
         return program;
-    }
-
-    public void registerAttributeLocation(FSShader shader, FSConfig config){
-        checkRegistrable(config);
-        config.location(shader.nextAttribLocation(config.getGLSLSize()));
-    }
-
-    public void registerUniformLocation(FSShader shader, FSConfig config){
-        checkRegistrable(config);
-        config.location(nextUniformLocation(config.getGLSLSize()));
-    }
-
-    public void registerAttributeArrayLocation(FSShader shader, int arraysize, FSConfig config){
-        checkRegistrable(config);
-        config.location(shader.nextAttribLocation(config.getGLSLSize() * arraysize));
-    }
-
-    public void registerUniformArrayLocation(FSShader shader, int arraysize, FSConfig config){
-        checkRegistrable(config);
-        config.location(nextUniformLocation(config.getGLSLSize() * arraysize));
-    }
-
-    private void checkRegistrable(FSConfig config){
-        if(!(config instanceof FSConfigLocated)){
-            throw new RuntimeException("All location-based configs need to be a subclass of FSConfigLocated.");
-        }
     }
 
     public FSP build(){
@@ -346,7 +316,7 @@ public abstract class FSP{
         }
     }
 
-    public int nextUniformLocation(int glslsize){
+    protected int nextUniformLocation(int glslsize){
         int location = uniformlocation;
         uniformlocation += glslsize;
 
