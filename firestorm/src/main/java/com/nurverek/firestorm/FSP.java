@@ -381,7 +381,7 @@ public abstract class FSP{
     }
 
     public static class CoreConfig{
-
+        
         public FSConfig setupconfig;
         public FSConfig meshconfig;
         public FSConfig postdrawconfig;
