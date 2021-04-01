@@ -14,14 +14,10 @@ public class FSVThreadTask extends VLVThreadTask{
     };
 
     public FSVThreadTask(VLVTypeRunner root, long freqmillis, long freqextrananos, boolean debug){
-        super(root, FSR.RENDERLOCK, freqmillis, freqextrananos, debug, REPORTER);
+        super(root, freqmillis, freqextrananos, debug, REPORTER);
     }
 
-    public FSVThreadTask(VLVTypeRunner root, Object lock, long freqmillis, long freqextrananos, boolean debug){
-        super(root, lock, freqmillis, freqextrananos, debug, REPORTER);
-    }
-
-    public FSVThreadTask(VLVTypeRunner root, Object lock, long freqmillis, long freqextrananos, boolean debug, PostReporter reporter){
-        super(root, lock, freqmillis, freqextrananos, debug, reporter);
+    public FSVThreadTask(VLVTypeRunner root, long freqmillis, long freqextrananos, boolean debug, PostReporter reporter){
+        super(root, freqmillis, freqextrananos, debug, reporter);
     }
 }
