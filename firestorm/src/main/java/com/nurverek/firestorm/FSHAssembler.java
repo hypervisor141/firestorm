@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.util.Log;
+
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLListFloat;
@@ -82,7 +84,7 @@ public class FSHAssembler implements VLStringify{
             firstfuncs.add(POSITION_INIT_SCHEMATICS);
 
             if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                firstfuncs.add(POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE);
+                firstfuncs.add(POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE);
             }
 
             if(INSTANCE_SHARE_POSITIONS){
@@ -108,7 +110,7 @@ public class FSHAssembler implements VLStringify{
                     restfuncs.add(POSITION_UNINDEX);
                 }
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                    restfuncs.add(POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE);
+                    restfuncs.add(POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE);
                 }
             }
         }
@@ -363,12 +365,13 @@ public class FSHAssembler implements VLStringify{
             assembler.buildModelClusterFromSchematics(instance);
         }
     };
-    private static final BuildStep POSITION_BUILD_MODELMATRIX_AND_ALL_ELSE = new BuildStep(){
+    private static final BuildStep POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE = new BuildStep(){
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             assembler.buildModelClusterFromSchematics(instance);
             assembler.centralizePositions(instance);
+
             instance.schematics.updateBoundaries();
         }
     };
