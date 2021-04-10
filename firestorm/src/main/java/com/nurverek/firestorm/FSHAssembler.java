@@ -1,13 +1,9 @@
 package com.nurverek.firestorm;
 
-import android.util.Log;
-
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLListFloat;
 import vanguard.VLListType;
-import vanguard.VLSMapsArray;
-import vanguard.VLSMapsMatrix;
 import vanguard.VLStringify;
 import vanguard.VLV;
 
@@ -132,7 +128,7 @@ public class FSHAssembler implements VLStringify{
             firstfuncs.add(step);
 
             if(INSTANCE_SHARE_COLORS){
-                restfuncs.add(COLOR_SHARE);
+                restfuncs.add(COLOR_SHARED);
 
             }else{
                 restfuncs.add(step);
@@ -154,7 +150,7 @@ public class FSHAssembler implements VLStringify{
             firstfuncs.add(step);
 
             if(INSTANCE_SHARE_TEXCOORDS){
-                restfuncs.add(TEXTURE_SHARE);
+                restfuncs.add(TEXTURE_SHARED);
 
             }else{
                 restfuncs.add(step);
@@ -176,7 +172,7 @@ public class FSHAssembler implements VLStringify{
             firstfuncs.add(step);
 
             if(INSTANCE_SHARE_NORMALS){
-                restfuncs.add(NORMAL_SHARE);
+                restfuncs.add(NORMAL_SHARED);
 
             }else{
                 restfuncs.add(step);
@@ -354,7 +350,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
-            instancedata.positions(new VLArrayFloat(data.positions.array()));
+            instancedata.positions(new VLArrayFloat(mesh.instance(0).positions().provider()));
         }
     };
     private static final BuildStep POSITION_UNINDEX = new BuildStep(){
@@ -411,7 +407,7 @@ public class FSHAssembler implements VLStringify{
             assembler.unIndexColors(instancedata, indices.provider());
         }
     };
-    private static final BuildStep COLOR_SHARE = new BuildStep(){
+    private static final BuildStep COLOR_SHARED = new BuildStep(){
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
@@ -435,7 +431,7 @@ public class FSHAssembler implements VLStringify{
             assembler.unIndexTexCoords(instancedata, indices.provider());
         }
     };
-    private static final BuildStep TEXTURE_SHARE = new BuildStep(){
+    private static final BuildStep TEXTURE_SHARED = new BuildStep(){
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
@@ -459,7 +455,7 @@ public class FSHAssembler implements VLStringify{
             assembler.unIndexNormals(instancedata, indices.provider());
         }
     };
-    private static final BuildStep NORMAL_SHARE = new BuildStep(){
+    private static final BuildStep NORMAL_SHARED = new BuildStep(){
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
