@@ -202,6 +202,8 @@ public class FSHAssembler implements VLStringify{
             positions[i + 1] = positions[i + 1] - y;
             positions[i + 2] = positions[i + 2] - z;
         }
+
+        schematics.updateBoundaries();
     }
 
     protected void unIndexPositions(FSInstance.Data instancedata, short[] indices){
@@ -371,8 +373,6 @@ public class FSHAssembler implements VLStringify{
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
             assembler.buildModelClusterFromSchematics(instance);
             assembler.centralizePositions(instance);
-
-            instance.schematics.updateBoundaries();
         }
     };
     private static final BuildStep POSITION_INIT_SCHEMATICS = new BuildStep(){
