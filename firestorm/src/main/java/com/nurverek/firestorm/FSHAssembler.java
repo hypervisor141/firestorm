@@ -6,6 +6,8 @@ import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLListFloat;
 import vanguard.VLListType;
+import vanguard.VLSMapsArray;
+import vanguard.VLSMapsMatrix;
 import vanguard.VLStringify;
 import vanguard.VLV;
 
@@ -184,7 +186,9 @@ public class FSHAssembler implements VLStringify{
 
     private void buildModelClusterFromSchematics(FSInstance instance){
         FSSchematics schematics = instance.schematics;
+
         instance.modelMatrix().addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
+        instance.model().transform(0, instance.modelmatrix, true);
     }
 
     private void centralizePositions(FSInstance instance){
