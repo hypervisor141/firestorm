@@ -28,6 +28,10 @@ public class FSTexture{
         initialize(target, texunit);
     }
 
+    public FSTexture(){
+
+    }
+
     public void initialize(VLInt target, VLInt texunit){
         this.target = target;
         this.texunit = texunit;
