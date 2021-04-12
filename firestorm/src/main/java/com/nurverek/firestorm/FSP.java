@@ -806,7 +806,7 @@ public abstract class FSP{
             VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
-            VLDebug.append("] bufferAddress[");
+            VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(element, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
@@ -850,7 +850,7 @@ public abstract class FSP{
             VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
-            VLDebug.append("] bufferAddress[");
+            VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(element, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
@@ -1593,7 +1593,7 @@ public abstract class FSP{
 
         @Override
         public int getGLSLSize(){
-            return 1;
+            return 0;
         }
 
         @Override
@@ -1604,7 +1604,7 @@ public abstract class FSP{
             VLDebug.append(FSHub.ELEMENT_NAMES[element]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
-            VLDebug.append("] bufferAddress[");
+            VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(element, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
@@ -1638,7 +1638,7 @@ public abstract class FSP{
 
         @Override
         public int getGLSLSize(){
-            return 1;
+            return 0;
         }
 
         @Override
@@ -1725,6 +1725,54 @@ public abstract class FSP{
         public void debugInfo(FSP program, FSMesh mesh, int debug){
             super.debugInfo(program, mesh, debug);
             VLDebug.append("[DYNAMIC]");
+        }
+    }
+
+    public static class UniformBlockLink extends FSConfigLocated{
+
+        public int linkindex;
+        protected String name;
+
+        public UniformBlockLink(Mode mode, String name, int linkindex){
+            super(mode);
+
+            this.name = name;
+            this.linkindex = linkindex;
+            this.name = name;
+        }
+
+        @Override
+        protected void notifyProgramBuilt(FSP program){
+            location = program.getUniformBlockIndex(name);
+            name = null;
+        }
+
+        @Override
+        public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+            FSVertexBuffer<?> buffer = ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).buffer;
+
+            program.uniformBlockBinding(location, buffer.bindPoint());
+            buffer.bindBufferBase();
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 0;
+        }
+
+        @Override
+        public void debugInfo(FSP program, FSMesh mesh, int debug){
+            super.debugInfo(program, mesh, debug);
+
+            VLDebug.append("linkIndex[");
+            VLDebug.append(linkindex);
+            VLDebug.append("] link[");
+            VLDebug.append(mesh.link(linkindex));
+            VLDebug.append("] buffer[");
+
+            ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
         }
     }
 
@@ -1817,7 +1865,7 @@ public abstract class FSP{
             VLDebug.append(FSHub.ELEMENT_NAMES[FSHub.ELEMENT_INDEX]);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
-            VLDebug.append("] bufferAddress[");
+            VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
@@ -1858,7 +1906,7 @@ public abstract class FSP{
             VLDebug.append(mesh.size());
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
-            VLDebug.append("] bufferAddress[");
+            VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
@@ -1910,7 +1958,7 @@ public abstract class FSP{
             VLDebug.append(count);
             VLDebug.append("] bufferIndex[");
             VLDebug.append(bufferindex);
-            VLDebug.append("] bufferAddress[");
+            VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
