@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 public final class FSCInput{
 
-    private static ArrayList<MeshEntry> LISTENRER_TOUCH;
-    private static ArrayList<MeshEntry> LISTENRER_DOWN;
-    private static ArrayList<MeshEntry> LISTENRER_SINGLETAP;
-    private static ArrayList<MeshEntry> LISTENRER_LONGPRESS;
-    private static ArrayList<MeshEntry> LISTENRER_SHOWPRESS;
-    private static ArrayList<MeshEntry> LISTENRER_SCROLL;
-    private static ArrayList<MeshEntry> LISTENRER_FLING;
+    private static ArrayList<Entry> LISTENRER_TOUCH;
+    private static ArrayList<Entry> LISTENRER_DOWN;
+    private static ArrayList<Entry> LISTENRER_SINGLETAP;
+    private static ArrayList<Entry> LISTENRER_LONGPRESS;
+    private static ArrayList<Entry> LISTENRER_SHOWPRESS;
+    private static ArrayList<Entry> LISTENRER_SCROLL;
+    private static ArrayList<Entry> LISTENRER_FLING;
 
     private static Listener LISTENER_MAIN;
 
@@ -22,7 +22,7 @@ public final class FSCInput{
     private static final float[] NEARCACHE = new float[4];
     private static final float[] FARCACHE = new float[4];
 
-    private static MeshEntry CURRENT_ENTRY;
+    private static Entry CURRENT_ENTRY;
     private static MotionEvent CURRENT_ME1;
     private static MotionEvent CURRENT_ME2;
     private static float CURRENT_F1;
@@ -31,43 +31,43 @@ public final class FSCInput{
 
     public static final Type TYPE_TOUCH = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_TOUCH;
         }
     };
     public static final Type TYPE_DOWN = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_DOWN;
         }
     };
     public static final Type TYPE_SINGLETAP = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_SINGLETAP;
         }
     };
     public static final Type TYPE_LONGPRESS = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_LONGPRESS;
         }
     };
     public static final Type TYPE_SHOWPRESS = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_SHOWPRESS;
         }
     };
     public static final Type TYPE_SCROLL = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_SCROLL;
         }
     };
     public static final Type TYPE_FLING = new Type(){
         @Override
-        public ArrayList<MeshEntry> get(){
+        public ArrayList<Entry> get(){
             return LISTENRER_FLING;
         }
     };
@@ -107,7 +107,7 @@ public final class FSCInput{
         }
     }
 
-    public static void add(Type type, MeshEntry entry){
+    public static void add(Type type, Entry entry){
         synchronized(FSR.RENDERLOCK){
             type.get().add(entry);
         }
@@ -119,27 +119,13 @@ public final class FSCInput{
         }
     }
 
-    public static void removeAllMatching(Type type, long id){
-        synchronized(FSR.RENDERLOCK){
-            ArrayList<MeshEntry> entries = type.get();
-            int size = entries.size();
-
-            for(int i = 0; i < size; i++){
-                if(entries.get(i).mesh.id() == id){
-                    entries.remove(i);
-                    i--;
-                }
-            }
-        }
-    }
-
-    public static MeshEntry get(Type type, int index){
+    public static Entry get(Type type, int index){
         synchronized(FSR.RENDERLOCK){
             return type.get().get(index);
         }
     }
 
-    public static ArrayList<MeshEntry> get(Type type){
+    public static ArrayList<Entry> get(Type type){
         synchronized(FSR.RENDERLOCK){
             return type.get();
         }
@@ -169,7 +155,7 @@ public final class FSCInput{
             FSView config = FSControl.getView();
             config.unProject2DPoint(e1.getX(), e1.getY(), NEARCACHE, 0, FARCACHE, 0);
 
-            ArrayList<MeshEntry> entries = type.get();
+            ArrayList<Entry> entries = type.get();
             int size = entries.size();
 
             for(int i = 0; i < size; i++){
@@ -185,7 +171,9 @@ public final class FSCInput{
     }
 
     protected static boolean signalCollision(FSBounds.Collision results, int boundsindex){
-        CURRENT_STATUS = CURRENT_ENTRY.listener.activated(results, CURRENT_ENTRY, boundsindex, CURRENT_ME1, CURRENT_ME2, CURRENT_F1, CURRENT_F2, NEARCACHE, FARCACHE);
+        MeshEntry entry = (MeshEntry)CURRENT_ENTRY;
+
+        CURRENT_STATUS = entry.listener.activated(results, entry, boundsindex, CURRENT_ME1, CURRENT_ME2, CURRENT_F1, CURRENT_F2, NEARCACHE, FARCACHE);
         return CURRENT_STATUS == INPUT_CHECK_STOP;
     }
 
@@ -221,7 +209,9 @@ public final class FSCInput{
 
         @Override
         public boolean processInput(){
-            CURRENT_ENTRY.mesh.instance(CURRENT_ENTRY.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
+            MeshEntry entry = (MeshEntry)CURRENT_ENTRY;
+
+            entry.mesh.instance(entry.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
             return CURRENT_STATUS == INPUT_CHECK_STOP;
         }
     }
@@ -233,7 +223,7 @@ public final class FSCInput{
         }
 
         @Override
-        public boolean processInput(){
+        public final boolean processInput(){
             return processInput(CURRENT_ME1, CURRENT_ME2, CURRENT_F1, CURRENT_F2);
         }
 
@@ -257,6 +247,6 @@ public final class FSCInput{
 
         }
         
-        protected abstract ArrayList<MeshEntry> get();
+        protected abstract ArrayList<Entry> get();
     }
 }
