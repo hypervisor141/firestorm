@@ -29,7 +29,7 @@ public class FSTexture{
     }
 
     public FSTexture(){
-
+        id = -1;
     }
 
     public void initialize(VLInt target, VLInt texunit){
