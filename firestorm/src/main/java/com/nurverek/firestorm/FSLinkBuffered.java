@@ -12,15 +12,7 @@ public abstract class FSLinkBuffered<DATA, BUFFER extends VLBuffer<?, ?>, TRACKE
         this.tracker = tracker;
     }
 
-    public FSLinkBuffered(){
-
-    }
-
     public abstract void buffer(BUFFER buffer, int unitoffset, int unitsize, int unitsubcount, int stride);
-
-    public TRACKER tracker(){
-        return tracker;
-    }
 
     public abstract int size();
 }
