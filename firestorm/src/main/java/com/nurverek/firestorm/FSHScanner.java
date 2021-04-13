@@ -106,7 +106,7 @@ public abstract class FSHScanner{
             if(data.name.equalsIgnoreCase(name)){
                 mesh.name(name);
 
-                FSInstance instance = new FSInstance();
+                FSInstance instance = new FSInstance(data.name);
                 mesh.addInstance(instance);
 
                 if(assembler.LOAD_INDICES){
@@ -134,7 +134,7 @@ public abstract class FSHScanner{
             if(data.name.contains(name)){
                 mesh.name(name);
 
-                FSInstance instance = new FSInstance();
+                FSInstance instance = new FSInstance(data.name);
                 mesh.addInstance(instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
@@ -168,7 +168,7 @@ public abstract class FSHScanner{
             if(data.name.contains(name)){
                 mesh.name(name);
 
-                FSInstance instance = new FSInstance();
+                FSInstance instance = new FSInstance(data.name);
                 mesh.addInstance(instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
@@ -176,7 +176,7 @@ public abstract class FSHScanner{
                     assembler.buildFirst(instance, this, data);
 
                     for(int i = 0; i < copycount; i++){
-                        instance = new FSInstance();
+                        instance = new FSInstance(data.name);
                         mesh.addInstance(instance);
 
                         assembler.buildFirst(instance, this, data);

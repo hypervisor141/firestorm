@@ -18,9 +18,13 @@ public class FSInstance{
     protected States states;
     protected Data data;
 
+    protected String name;
+
     protected long id;
 
-    public FSInstance(){
+    public FSInstance(String name){
+        this.name = name;
+
         id = FSCFrames.getNextID();
 
         data = new Data();
@@ -129,6 +133,7 @@ public class FSInstance{
     public void copy(FSInstance src){
         id = FSCFrames.getNextID();
 
+        name = src.name;
         data = new Data(src.data);
         states = new States(src.states);
         schematics = new FSSchematics(this, src.schematics);
