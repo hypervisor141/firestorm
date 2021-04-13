@@ -426,7 +426,7 @@ public final class FSBufferLayout{
 
         @Override
         public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
-            ((FSLinkBuffered<?, BUFFER, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            ((FSLinkBuffered<?, BUFFER, ?>)mesh.link(entry.element)).buffer(entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return buffer.position();
         }
@@ -446,7 +446,7 @@ public final class FSBufferLayout{
         @Override
         public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             int firstpos = buffer.position();
-            ((FSLinkBuffered<?, BUFFER, ?>)mesh.link(entry.element)).buffer(buffer, entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
+            ((FSLinkBuffered<?, BUFFER, ?>)mesh.link(entry.element)).buffer(entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return firstpos + entry.unitsubcount;
         }
