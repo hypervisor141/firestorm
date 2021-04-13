@@ -1749,7 +1749,7 @@ public abstract class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer<?> buffer = ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).buffer;
+            FSVertexBuffer<?> buffer = ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).vbuffer;
 
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
@@ -1770,7 +1770,7 @@ public abstract class FSP{
             VLDebug.append(mesh.link(linkindex));
             VLDebug.append("] buffer[");
 
-            ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }

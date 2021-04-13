@@ -2,17 +2,20 @@ package com.nurverek.firestorm;
 
 import vanguard.VLBuffer;
 import vanguard.VLBufferTracker;
+import vanguard.VLBufferTrackerDetailed;
 
-public abstract class FSLinkBuffered<DATA, BUFFER extends VLBuffer<?, ?>, TRACKER extends VLBufferTracker> extends FSLink<DATA>{
+public abstract class FSLinkBuffered<DATA, BUFFER extends VLBuffer<?, ?>, TRACKER extends VLBufferTrackerDetailed> extends FSLink<DATA>{
 
     public TRACKER tracker;
+    public BUFFER buffer;
 
-    public FSLinkBuffered(DATA data, TRACKER tracker){
+    public FSLinkBuffered(DATA data, TRACKER tracker, BUFFER buffer){
         super(data);
+
         this.tracker = tracker;
+        this.buffer = buffer;
     }
 
-    public abstract void buffer(BUFFER buffer, int unitoffset, int unitsize, int unitsubcount, int stride);
-
+    public abstract void buffer(int unitoffset, int unitsize, int unitsubcount, int stride);
     public abstract int size();
 }
