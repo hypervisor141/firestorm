@@ -12,7 +12,9 @@ public abstract class FSLinkBufferedGL<DATA, BUFFER extends VLBuffer<?, ?>, TRAC
         this.vbuffer = vbuffer;
     }
 
+    @Override
     public void updateBuffer(){
-        buffer(tracker.unitoffset(), tracker.unitsize(), tracker.unitsubcount(), tracker.stride());
+        super.updateBuffer();
+        vbuffer.update();
     }
 }
