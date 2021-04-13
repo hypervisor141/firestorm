@@ -37,8 +37,14 @@ public class FSInstance{
         copy(src);
     }
 
+
+
     public void modelMatrix(FSMatrixModel set){
         modelmatrix = set;
+    }
+
+    public void name(String name){
+        this.name = name;
     }
 
     public VLArrayFloat element(int element){
@@ -61,6 +67,11 @@ public class FSInstance{
         this.lightmap = map;
     }
 
+
+
+    public String name(){
+        return name;
+    }
 
     public long id(){
         return id;
