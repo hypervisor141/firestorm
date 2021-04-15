@@ -2,6 +2,7 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
+import vanguard.VLDebug;
 import vanguard.VLListType;
 
 public class FSRPass{
@@ -136,6 +137,8 @@ public class FSRPass{
     protected void draw(){
         GLES32.glClear(clearbits);
         GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
+
+        VLDebug.recreate();
 
         if(preconfig != null){
             if(debug >= FSControl.DEBUG_NORMAL){
