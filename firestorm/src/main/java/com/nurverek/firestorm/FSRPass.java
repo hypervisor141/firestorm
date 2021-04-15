@@ -14,10 +14,10 @@ public class FSRPass{
     private float[] clearcolor;
     private int clearbits;
 
-    private FSConfig preconfig;
-    private FSConfig postconfig;
+    private FSConfigGroup preconfig;
+    private FSConfigGroup postconfig;
     
-    public FSRPass(float[] clearcolor, int clearbits, FSConfig preconfig, FSConfig postconfig, int capacity, int debug){
+    public FSRPass(float[] clearcolor, int clearbits, FSConfigGroup preconfig, FSConfigGroup postconfig, int capacity, int debug){
         this.clearcolor = clearcolor;
         this.clearbits = clearbits;
         this.preconfig = preconfig;
@@ -45,11 +45,11 @@ public class FSRPass{
         clearcolor = color;
     }
 
-    public void preConfig(FSConfig config){
+    public void preConfig(FSConfigGroup config){
         preconfig = config;
     }
 
-    public void postConfig(FSConfig config){
+    public void postConfig(FSConfigGroup config){
         postconfig = config;
     }
 
@@ -84,11 +84,11 @@ public class FSRPass{
         return clearcolor;
     }
 
-    public FSConfig preConfig(){
+    public FSConfigGroup preConfig(){
         return preconfig;
     }
 
-    public FSConfig postConfig(){
+    public FSConfigGroup postConfig(){
         return postconfig;
     }
 
