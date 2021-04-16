@@ -117,10 +117,9 @@ public final class FSWaveFront{
         int separator2  = line.indexOf("/", separator1 + 1);
         int start = 0;
         int space = line.indexOf(" ", separator2);
-        VertexData data;
 
         for(int i = 0; i < 3; i++){
-            data = new VertexData(
+            VertexData data = new VertexData(
                     Integer.parseInt(line.substring(start, separator1)),
                     o.texcoords.size() == 0 ? -1 : Integer.parseInt(line.substring(separator1 + 1, separator2)),
                     o.normals.size() == 0 ? -1 : Integer.parseInt(line.substring(separator2 + 1, space)));
