@@ -748,7 +748,7 @@ public abstract class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            array = (TYPE)mesh.instance(instance).element(element);
+            array = (TYPE)mesh.get(instance).element(element);
         }
 
         @Override
@@ -760,7 +760,7 @@ public abstract class FSP{
             VLDebug.append("] array[");
 
             if(array == null){
-                mesh.instance(instance).element(element).stringify(VLDebug.get(), null);
+                mesh.get(instance).element(element).stringify(VLDebug.get(), null);
 
             }else{
                 array.stringify(VLDebug.get(), null);
@@ -1749,7 +1749,7 @@ public abstract class FSP{
 
         @Override
         public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer<?> buffer = ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).vbuffer;
+            FSVertexBuffer<?> buffer = ((FSLinkBufferedGL<?, ?, ?>)mesh.getLink(linkindex)).vbuffer;
 
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
@@ -1767,10 +1767,10 @@ public abstract class FSP{
             VLDebug.append("linkIndex[");
             VLDebug.append(linkindex);
             VLDebug.append("] link[");
-            VLDebug.append(mesh.link(linkindex));
+            VLDebug.append(mesh.getLink(linkindex));
             VLDebug.append("] buffer[");
 
-            ((FSLinkBufferedGL<?, ?, ?>)mesh.link(linkindex)).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            ((FSLinkBufferedGL<?, ?, ?>)mesh.getLink(linkindex)).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }

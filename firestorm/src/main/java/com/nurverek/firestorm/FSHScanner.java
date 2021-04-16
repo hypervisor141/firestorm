@@ -53,7 +53,7 @@ public abstract class FSHScanner{
         }
 
         for(int i = 0; i < size; i++){
-            data = mesh.instance(i).data.elements;
+            data = mesh.get(i).data.elements;
 
             for(int i2 = 0; i2 < data.length; i2++){
                 array = data[i2];
@@ -107,7 +107,7 @@ public abstract class FSHScanner{
                 mesh.name(name);
 
                 FSInstance instance = new FSInstance(data.name);
-                mesh.addInstance(instance);
+                mesh.add(instance);
 
                 if(assembler.LOAD_INDICES){
                     mesh.indices(new VLArrayShort(data.indices.array()));
@@ -135,7 +135,7 @@ public abstract class FSHScanner{
                 mesh.name(name);
 
                 FSInstance instance = new FSInstance(data.name);
-                mesh.addInstance(instance);
+                mesh.add(instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(data.indices.array()));
@@ -169,7 +169,7 @@ public abstract class FSHScanner{
                 mesh.name(name);
 
                 FSInstance instance = new FSInstance(data.name);
-                mesh.addInstance(instance);
+                mesh.add(instance);
 
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(data.indices.array()));
@@ -177,7 +177,7 @@ public abstract class FSHScanner{
 
                     for(int i = 0; i < copycount; i++){
                         instance = new FSInstance(data.name);
-                        mesh.addInstance(instance);
+                        mesh.add(instance);
 
                         assembler.buildFirst(instance, this, data);
                     }

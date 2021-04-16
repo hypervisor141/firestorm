@@ -49,6 +49,7 @@ public abstract class FSHub{
 
     public static final int ELEMENT_TOTAL_COUNT = 6;
 
+    public static final int[] ELEMENTS_LIST_INSTANCE_BASED = new int[]{ ELEMENT_MODEL, ELEMENT_POSITION, ELEMENT_COLOR, ELEMENT_TEXCOORD, ELEMENT_NORMAL };
     public static final int[] ELEMENT_BYTES = new int[]{ ELEMENT_BYTES_MODEL, ELEMENT_BYTES_POSITION, ELEMENT_BYTES_COLOR, ELEMENT_BYTES_TEXCOORD, ELEMENT_BYTES_NORMAL, ELEMENT_BYTES_INDEX };
     public static final int[] UNIT_SIZES = new int[]{ UNIT_SIZE_MODEL, UNIT_SIZE_POSITION, UNIT_SIZE_COLOR, UNIT_SIZE_TEXCOORD, UNIT_SIZE_NORMAL, UNIT_SIZE_INDEX };
     public static final int[] UNIT_BYTES = new int[]{ UNIT_BYTES_MODEL, UNIT_BYTES_POSITION, UNIT_BYTES_COLOR, UNIT_BYTES_TEXCOORD, UNIT_BYTES_NORMAL, UNIT_BYTES_INDEX };
@@ -158,7 +159,7 @@ public abstract class FSHub{
 
                                 if(found && mesh.size() > 1){
                                     FSInstance instance1 = mesh.first();
-                                    FSInstance instance2 = mesh.instance(mesh.size() - 1);
+                                    FSInstance instance2 = mesh.get(mesh.size() - 1);
 
                                     if(instance1.positions().size() != instance2.positions().size()){
                                         VLDebug.printD();

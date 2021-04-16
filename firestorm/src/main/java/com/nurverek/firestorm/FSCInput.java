@@ -211,7 +211,7 @@ public final class FSCInput{
         public boolean processInput(){
             MeshEntry entry = (MeshEntry)CURRENT_ENTRY;
 
-            entry.mesh.instance(entry.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
+            entry.mesh.get(entry.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
             return CURRENT_STATUS == INPUT_CHECK_STOP;
         }
     }

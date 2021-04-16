@@ -2,6 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
+import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLListType;
 
 public class FSInstance{
@@ -9,7 +10,7 @@ public class FSInstance{
     protected FSMesh mesh;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
-    protected FSBufferBindings buffers;
+    protected FSBufferBindings bufferbindings;
 
     protected FSTexture colortexture;
     protected FSLightMaterial lightmaterial;
@@ -21,22 +22,23 @@ public class FSInstance{
     protected String name;
 
     protected long id;
+    protected int activatestate;
 
     public FSInstance(String name){
         this.name = name;
 
         id = FSCFrames.getNextID();
+        activatestate = 0;
 
         data = new Data();
         states = new States();
         schematics = new FSSchematics(this);
-        buffers = new FSBufferBindings();
+        bufferbindings = new FSBufferBindings();
     }
 
     public FSInstance(FSInstance src){
         copy(src);
     }
-
 
 
     public void modelMatrix(FSMatrixModel set){
@@ -67,7 +69,150 @@ public class FSInstance{
         this.lightmap = map;
     }
 
+    public void activateState(int index){
+        activatestate = index;
+        data = states.get(index);
+    }
 
+    public void activateStateClone(int index){
+        activatestate = index;
+        data = new Data(states.get(index));
+    }
+
+    public void applyModelMatrix(){
+        model().transform(0, modelmatrix, true);
+    }
+
+    public void updateBufferDirectAll(){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferDirectAll(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i]);
+        }
+    }
+
+    public void updateVertexBufferAll(){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateVertexBufferAll(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i]);
+        }
+    }
+
+    public void updateBufferPipelineAll(){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferPipelineAll(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i]);
+        }
+    }
+
+    public void updateBufferPipelineStrictAll(){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferPipelineStrictAll(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i]);
+        }
+    }
+
+    public void updateBufferPipeline(int bufferindex){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferPipeline(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i], bufferindex);
+        }
+    }
+
+    public void updateBufferPipelineStrict(int bufferindex){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferPipelineStrict(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i], bufferindex);
+        }
+    }
+
+    public void updateBufferDirect(int bufferindex){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferDirect(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i], bufferindex);
+        }
+    }
+
+    public void updateBufferVertex(int bufferindex){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferVertex(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i], bufferindex);
+        }
+    }
+
+    public void updateBufferVertexStrict(int bufferindex){
+        int size = FSHub.ELEMENTS_LIST_INSTANCE_BASED.length;
+
+        for(int i = 0; i < size; i++){
+            updateBufferVertexStrict(FSHub.ELEMENTS_LIST_INSTANCE_BASED[i], bufferindex);
+        }
+    }
+
+    public void updateBufferDirectAll(int element){
+        int size = bufferbindings.get(element).size();
+
+        for(int i = 0; i < size; i++){
+            updateBufferDirect(element, i);
+        }
+    }
+
+    public void updateVertexBufferAll(int element){
+        int size = bufferbindings.get(element).size();
+
+        for(int i = 0; i < size; i++){
+            updateBufferVertex(element, i);
+        }
+    }
+
+    public void updateBufferPipelineAll(int element){
+        int size = bufferbindings.get(element).size();
+
+        for(int i = 0; i < size; i++){
+            updateBufferPipeline(element, i);
+        }
+    }
+
+    public void updateBufferPipelineStrictAll(int element){
+        int size = bufferbindings.get(element).size();
+
+        for(int i = 0; i < size; i++){
+            updateBufferPipelineStrict(element, i);
+        }
+    }
+
+    public void updateBufferPipeline(int element, int bufferindex){
+        updateBufferDirect(element, bufferindex);
+        updateBufferVertex(element, bufferindex);
+    }
+
+    public void updateBufferPipelineStrict(int element, int bufferindex){
+        updateBufferDirect(element, bufferindex);
+        updateBufferVertexStrict(element, bufferindex);
+    }
+
+    public void updateBufferDirect(int element, int bufferindex){
+        FSBufferBindings.Binding<?> binding = bufferbindings.get(element).get(bufferindex);
+        binding.buffer.update(binding.tracker, element(element).provider());
+    }
+
+    public void updateBufferVertex(int element, int bufferindex){
+        bufferbindings.get(element).get(bufferindex).vbuffer.update();
+    }
+
+    public void updateBufferVertexStrict(int element, int bufferindex){
+        FSBufferBindings.Binding<?> binding = bufferbindings.get(element).get(bufferindex);
+        VLBufferTrackerDetailed tracker = binding.tracker;
+        int offset = tracker.offset();
+
+        binding.vbuffer.update(offset, offset + tracker.stride() * tracker.count());
+    }
 
     public String name(){
         return name;
@@ -102,7 +247,7 @@ public class FSInstance{
     }
 
     public FSBufferBindings bufferBindings(){
-        return buffers;
+        return bufferbindings;
     }
 
     public FSMatrixModel modelMatrix(){
@@ -148,7 +293,7 @@ public class FSInstance{
         data = new Data(src.data);
         states = new States(src.states);
         schematics = new FSSchematics(this, src.schematics);
-        buffers = new FSBufferBindings();
+        bufferbindings = new FSBufferBindings();
     }
 
 
@@ -216,10 +361,8 @@ public class FSInstance{
         public void copy(Data src){
             elements = new VLArrayFloat[DEFAULT_SIZE];
 
-            VLArrayFloat array;
-
             for(int i = 0; i < elements.length; i++){
-                array = src.elements[i];
+                VLArrayFloat array = src.elements[i];
 
                 if(array != null){
                     elements[i] = new VLArrayFloat(array.provider().clone());
@@ -229,13 +372,12 @@ public class FSInstance{
 
     }
 
-    public final class States{
+    public static final class States{
 
         protected VLListType<Data> vault;
-        protected int activeindex;
 
         protected States(){
-            activeindex = 0;
+
         }
 
         protected States(States src){
@@ -247,27 +389,12 @@ public class FSInstance{
         }
 
         public void initialize(States src){
-            activeindex = src.activeindex;
-
             int size = src.vault.size();
             vault = new VLListType<>(size, src.vault.resizerCount());
 
             for(int i = 0; i < size; i++){
                 vault.add(new Data(src.vault.get(i)));
             }
-        }
-
-        public int currentActiveIndex(){
-            return activeindex;
-        }
-
-        public void activateElement(int index, int element){
-            data.element(element, vault.get(index).element(element));
-        }
-
-        public void activateData(int index){
-            data = vault.get(index);
-            activeindex = index;
         }
 
         public void add(Data state){

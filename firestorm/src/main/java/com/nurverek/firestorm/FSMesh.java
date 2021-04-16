@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLArrayShort;
+import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLListType;
 
 public class FSMesh{
@@ -37,9 +38,161 @@ public class FSMesh{
         links.add(link);
     }
 
-    public void addInstance(FSInstance instance){
+    public void add(FSInstance instance){
         instances.add(instance);
         instance.mesh = this;
+    }
+
+    public void applyModelMatrices(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).applyModelMatrix();
+        }
+    }
+
+    public void updateBufferDirectAll(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferDirectAll();
+        }
+    }
+
+    public void updateVertexBufferAll(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateVertexBufferAll();
+        }
+    }
+
+    public void updateBufferPipelineAll(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipelineAll();
+        }
+    }
+
+    public void updateBufferPipelineStrictAll(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipelineStrictAll();
+        }
+    }
+
+    public void updateBufferPipeline(int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipeline(bufferindex);
+        }
+    }
+
+    public void updateBufferPipelineStrict(int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipelineStrict(bufferindex);
+        }
+    }
+
+    public void updateBufferDirect(int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferDirect(bufferindex);
+        }
+    }
+
+    public void updateBufferVertex(int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferVertex(bufferindex);
+        }
+    }
+
+    public void updateBufferVertexStrict(int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferVertexStrict(bufferindex);
+        }
+    }
+
+    public void updateBufferDirectAll(int element){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferDirectAll(element);
+        }
+    }
+
+    public void updateVertexBufferAll(int element){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateVertexBufferAll(element);
+        }
+    }
+
+    public void updateBufferPipelineAll(int element){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipelineAll(element);
+        }
+    }
+
+    public void updateBufferPipelineStrictAll(int element){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipelineStrictAll(element);
+        }
+    }
+
+    public void updateBufferPipeline(int element, int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipeline(element, bufferindex);
+        }
+    }
+
+    public void updateBufferPipelineStrict(int element, int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferPipelineStrict(element, bufferindex);
+        }
+    }
+
+    public void updateBufferDirect(int element, int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferDirect(element, bufferindex);
+        }
+    }
+
+    public void updateBufferVertex(int element, int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferVertex(element, bufferindex);
+        }
+    }
+
+    public void updateBufferVertexStrict(int element, int bufferindex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateBufferVertexStrict(element, bufferindex);
+        }
     }
 
     public void drawMode(int mode){
@@ -58,11 +211,11 @@ public class FSMesh{
         return instances.get(0);
     }
 
-    public FSInstance instance(int index){
+    public FSInstance get(int index){
         return instances.get(index);
     }
 
-    public FSLink<?> link(int index){
+    public FSLink<?> getLink(int index){
         return links.get(index);
     }
 
