@@ -73,7 +73,7 @@ public abstract class FSConfig{
 
     protected void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         try{
-            printDebugHeader(program, mesh);
+            printDebugHeader(pass, program, mesh);
 
             configure(pass, program, mesh, meshindex, passindex);
             FSTools.checkGLError();
@@ -88,7 +88,7 @@ public abstract class FSConfig{
 
     protected void notifyProgramBuilt(FSP program){}
 
-    protected void printDebugHeader(FSP program, FSMesh mesh){
+    protected void printDebugHeader(FSRPass pass, FSP program, FSMesh mesh){
         String classname = getClass().getSimpleName();
 
         VLDebug.append("[");
@@ -97,7 +97,7 @@ public abstract class FSConfig{
 
         if(program != null && program.debug >= FSControl.DEBUG_FULL){
             VLDebug.append(" [");
-            debugInfo(program, mesh, program.debug);
+            debugInfo(pass, program, mesh, program.debug);
             VLDebug.append("]\n");
 
         }else{
@@ -105,7 +105,7 @@ public abstract class FSConfig{
         }
     }
 
-    public void debugInfo(FSP program, FSMesh mesh, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
         VLDebug.append("GLSLSize[");
         VLDebug.append(getGLSLSize());
         VLDebug.append("] ");

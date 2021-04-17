@@ -65,8 +65,8 @@ public class FSConfigSelective extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSP program, FSMesh mesh, int debug){
-        super.debugInfo(program, mesh, debug);
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+        super.debugInfo(pass, program, mesh, debug);
 
         VLDebug.append("activeConfig[");
         VLDebug.append(active == null ? "NULL" : active.getClass().getSimpleName());
@@ -76,14 +76,14 @@ public class FSConfigSelective extends FSConfigLocated{
             VLDebug.append("NULL");
 
         }else{
-            active.debugInfo(program, mesh, debug);
+            active.debugInfo(pass, program, mesh, debug);
         }
 
         VLDebug.append("] configs[  ");
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            configs.get(i).debugInfo(program, mesh, debug);
+            configs.get(i).debugInfo(pass, program, mesh, debug);
             VLDebug.append("  ");
         }
 

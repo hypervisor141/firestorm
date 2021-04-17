@@ -32,7 +32,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
     @Override
     public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-        printDebugHeader(program, mesh);
+        printDebugHeader(pass, program, mesh);
 
         config.location(location);
         config.runDebug(pass, program, mesh, meshindex, passindex);
@@ -52,14 +52,14 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSP program, FSMesh mesh, int debug){
-        super.debugInfo(program, mesh, debug);
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+        super.debugInfo(pass, program, mesh, debug);
 
         VLDebug.append("config[");
         VLDebug.append(config.getClass().getSimpleName());
         VLDebug.append("] [ ");
 
-        config.debugInfo(program, mesh, debug);
+        config.debugInfo(pass, program, mesh, debug);
 
         VLDebug.append(" ] ");
     }

@@ -66,7 +66,7 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public void debugInfo(FSP program, FSMesh mesh, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 
@@ -86,7 +86,7 @@ public class FSConfigGroup extends FSConfig{
 
             if(debug >= FSControl.DEBUG_FULL){
                 data.append("] [");
-                c.debugInfo(program, mesh, debug);
+                c.debugInfo(pass, program, mesh, debug);
                 data.append("]");
             }
 
