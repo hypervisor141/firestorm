@@ -14,9 +14,9 @@ public class FSArrayModel extends VLArrayFloat{
     private static final int ROTATE = 8942;
     private static final int SCALE = 8943;
 
-    public static final VLV TRANSLATE_FLAG = new VLV(TRANSLATE);
-    public static final VLV ROTATE_FLAG = new VLV(ROTATE);
-    public static final VLV SCALE_FLAG = new VLV(SCALE);
+    public static final VLV FLAG_TRANSLATE = new VLV(TRANSLATE);
+    public static final VLV FLAG_ROTATE = new VLV(ROTATE);
+    public static final VLV FLAG_SCALE = new VLV(SCALE);
 
     public FSArrayModel(float[] s){
         super(s);
