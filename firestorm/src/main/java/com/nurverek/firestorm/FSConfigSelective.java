@@ -24,15 +24,15 @@ public class FSConfigSelective extends FSConfigLocated{
     }
 
     @Override
-    public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         active.location(location());
-        active.run(program, mesh, meshindex, passindex);
+        active.run(pass, program, mesh, meshindex, passindex);
     }
 
     @Override
-    public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         active.location(location());
-        active.runDebug(program, mesh, meshindex, passindex);
+        active.runDebug(pass, program, mesh, meshindex, passindex);
     }
 
     @Override

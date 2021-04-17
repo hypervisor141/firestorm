@@ -26,16 +26,16 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public final void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            configs.get(i).run(program, mesh, meshindex, passindex);
+            configs.get(i).run(pass, program, mesh, meshindex, passindex);
         }
     }
 
     @Override
-    public final void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         String classname = getClass().getSimpleName();
         int size = configs.size();
 
@@ -52,7 +52,7 @@ public class FSConfigGroup extends FSConfig{
             VLDebug.append(size);
             VLDebug.append("] ");
 
-            configs.get(i).runDebug(program, mesh, meshindex, passindex);
+            configs.get(i).runDebug(pass, program, mesh, meshindex, passindex);
         }
 
         VLDebug.append("EXITING [");

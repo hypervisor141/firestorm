@@ -43,19 +43,19 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
     }
 
     @Override
-    public void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         config.location(location());
         config.activate(targetindex);
-        config.run(program, mesh, meshindex, passindex);
+        config.run(pass, program, mesh, meshindex, passindex);
     }
 
     @Override
-    public void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         printDebugHeader(program, mesh);
 
         config.location(location());
         config.activate(targetindex);
-        config.runDebug(program, mesh, meshindex, passindex);
+        config.runDebug(pass, program, mesh, meshindex, passindex);
     }
 
     @Override

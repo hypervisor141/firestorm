@@ -121,7 +121,7 @@ public class FSRPass{
 
     protected void noitifyPostFrameSwap(){
         for(int i = 0; i < entries.size(); i++){
-            entries.get(i).postFrame(FSR.CURRENT_PASS_INDEX);
+            entries.get(i).postFrame(this, FSR.CURRENT_PASS_INDEX);
 
             if(debug >= FSControl.DEBUG_NORMAL){
                 try{
@@ -142,10 +142,10 @@ public class FSRPass{
 
         if(preconfig != null){
             if(debug >= FSControl.DEBUG_NORMAL){
-                preconfig.runDebug(null, null, -1, FSR.CURRENT_PASS_INDEX);
+                preconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
 
             }else{
-                preconfig.run(null, null, -1, FSR.CURRENT_PASS_INDEX);
+                preconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
             }
         }
 
@@ -154,10 +154,9 @@ public class FSRPass{
 
         for(int index = 0; index < size; index++){
             entry = entries.get(index);
+            FSR.CURRENT_PASS_ENTRY_INDEX = index;
 
-            FSR.CURRENT_ENTRY_INDEX = index;
-
-            entry.draw(FSR.CURRENT_PASS_INDEX);
+            entry.draw(this, FSR.CURRENT_PASS_INDEX);
 
             if(debug >= FSControl.DEBUG_NORMAL){
                 try{
@@ -171,10 +170,10 @@ public class FSRPass{
 
         if(postconfig != null){
             if(debug >= FSControl.DEBUG_NORMAL){
-                postconfig.runDebug(null, null, -1, FSR.CURRENT_PASS_INDEX);
+                postconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
 
             }else{
-                postconfig.run(null, null, -1, FSR.CURRENT_PASS_INDEX);
+                postconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
             }
         }
     }

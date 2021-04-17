@@ -7,36 +7,36 @@ public abstract class FSConfig{
     public static final Mode MODE_ALWAYS = new Mode(){
 
         @Override
-        public void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
-            self.configure(program, mesh, meshindex, passindex);
+        public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configure(pass, program, mesh, meshindex, passindex);
         }
 
         @Override
-        public void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
-            self.configureDebug(program, mesh, meshindex, passindex);
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configureDebug(pass, program, mesh, meshindex, passindex);
         }
     };
     public static final Mode MODE_ONETIME = new Mode(){
 
         @Override
-        public void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
-            self.configure(program, mesh, meshindex, passindex);
+        public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configure(pass, program, mesh, meshindex, passindex);
             self.mode = MODE_DISABLED;
         }
 
         @Override
-        public void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
-            self.configureDebug(program, mesh, meshindex, passindex);
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
+            self.configureDebug(pass, program, mesh, meshindex, passindex);
             self.mode = MODE_DISABLED;
         }
     };
     public static final Mode MODE_DISABLED = new Mode(){
 
         @Override
-        public void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
+        public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
 
         @Override
-        public void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
     };
 
     private Mode mode;
@@ -61,21 +61,21 @@ public abstract class FSConfig{
 
     public abstract int getGLSLSize();
 
-    public void run(FSP program, FSMesh mesh, int meshindex, int passindex){
-        mode.configure(this, program, mesh, meshindex, passindex);
+    public void run(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+        mode.configure(pass, this, program, mesh, meshindex, passindex);
     }
 
-    public void runDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
-        mode.configureDebug(this, program, mesh, meshindex, passindex);
+    public void runDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+        mode.configureDebug(pass, this, program, mesh, meshindex, passindex);
     }
 
-    protected abstract void configure(FSP program, FSMesh mesh, int meshindex, int passindex);
+    protected abstract void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex);
 
-    protected void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+    protected void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         try{
             printDebugHeader(program, mesh);
 
-            configure(program, mesh, meshindex, passindex);
+            configure(pass, program, mesh, meshindex, passindex);
             FSTools.checkGLError();
 
         }catch(Exception ex){
@@ -113,7 +113,7 @@ public abstract class FSConfig{
 
     public interface Mode{
 
-        void configure(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
-        void configureDebug(FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
+        void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
+        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
     }
 }

@@ -20,8 +20,8 @@ public class FSR{
 
     protected static boolean isInitialized;
 
-    protected static int CURRENT_PASS_INDEX;
-    protected static int CURRENT_ENTRY_INDEX;
+    public static int CURRENT_PASS_INDEX;
+    public static int CURRENT_PASS_ENTRY_INDEX;
 
     protected static void initialize(FSRInterface threadsrc){
         threadinterface = threadsrc;
@@ -31,7 +31,7 @@ public class FSR{
         isInitialized = true;
 
         CURRENT_PASS_INDEX = 0;
-        CURRENT_ENTRY_INDEX = 0;
+        CURRENT_PASS_ENTRY_INDEX = 0;
     }
 
     public static void setFSRThreadInterface(FSRInterface threadsrc){
@@ -69,7 +69,7 @@ public class FSR{
 
             for(int i = 0; i < size; i++){
                 CURRENT_PASS_INDEX = i;
-                CURRENT_ENTRY_INDEX = -1;
+                CURRENT_PASS_ENTRY_INDEX = -1;
 
                 passes.get(i).draw();
             }
@@ -146,7 +146,7 @@ public class FSR{
             }
 
             CURRENT_PASS_INDEX = -1;
-            CURRENT_ENTRY_INDEX = -1;
+            CURRENT_PASS_ENTRY_INDEX = -1;
 
             isInitialized = false;
 

@@ -47,7 +47,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configure(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         int size = configs.size();
         FSConfig c;
 
@@ -56,14 +56,14 @@ public class FSConfigSequence extends FSConfigLocated{
         for(int i = 0; i < size; i++){
             c = configs.get(i);
             c.location(loc);
-            c.run(program, mesh, meshindex, passindex);
+            c.run(pass, program, mesh, meshindex, passindex);
 
             loc += c.getGLSLSize();
         }
     }
 
     @Override
-    public final void configureDebug(FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         String classname = getClass().getSimpleName();
         int size = configs.size();
         FSConfig c;
@@ -89,7 +89,7 @@ public class FSConfigSequence extends FSConfigLocated{
 
             c = configs.get(i);
             c.location(loc);
-            c.runDebug(program, mesh, meshindex, passindex);
+            c.runDebug(pass, program, mesh, meshindex, passindex);
 
             loc += c.getGLSLSize();
         }
