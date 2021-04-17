@@ -98,19 +98,19 @@ public final class FSBufferLayout{
             int size = entries.size();
 
             for(int i = 0; i < size; i++){
-                buffer.adjustPreInitCapacity(entries.get(i).bufferSizeAdjustment(target));
+                buffer.adjustPreInitCapacity(entries.get(i).calculateNeededSize(target));
             }
         }
 
         public Layout addElement(EntryElement entry){
-            totalstride += entry.strideAdjustment();
+            totalstride += entry.unitsubcount;
             entries.add(entry);
 
             return this;
         }
 
         public Layout addLink(EntryLink entry){
-            totalstride += entry.strideAdjustment();
+            totalstride += entry.unitsubcount;
             entries.add(entry);
 
             return this;
@@ -171,23 +171,17 @@ public final class FSBufferLayout{
         public int unitoffset;
         public int unitsize;
         public int unitsubcount;
-        public int strideadjustment;
 
-        public Entry(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int strideadjustment){
+        public Entry(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
             this.mechanism = mechanism;
             this.element = element;
             this.unitoffset = unitoffset;
             this.unitsize = unitsize;
             this.unitsubcount = unitsubcount;
-            this.strideadjustment = strideadjustment;
         }
 
-        public int strideAdjustment(){
-            return strideadjustment;
-        }
-
-        public int bufferSizeAdjustment(FSMesh mesh){
-            return (mechanism.getTargetSize(this, mesh) / unitsize) * strideadjustment;
+        public int calculateNeededSize(FSMesh mesh){
+            return (mechanism.calculateNeededSize(this, mesh) / unitsize) * unitsubcount;
         }
 
         public void debugInfo(){
@@ -203,38 +197,32 @@ public final class FSBufferLayout{
             VLDebug.append(unitsize);
             VLDebug.append("] unitSubCount[");
             VLDebug.append(unitsubcount);
-            VLDebug.append("] strideAdjustment[");
-            VLDebug.append(strideadjustment);
             VLDebug.append("]");
         }
     }
 
     public static class EntryElement extends Entry{
 
-        public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount, int stride){
-            super(mechanism, element, unitoffset, unitsize, unitsubcount, stride);
-        }
-
         public EntryElement(Mechanism mechanism, int element, int unitoffset, int unitsize, int unitsubcount){
-            super(mechanism, element, unitoffset, unitsize, unitsubcount, unitsubcount);
+            super(mechanism, element, unitoffset, unitsize, unitsubcount);
         }
 
         public EntryElement(Mechanism mechanism, int element){
-            super(mechanism, element, 0, FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element]);
+            super(mechanism, element, 0, FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element]);
         }
     }
 
     public static class EntryLink extends Entry{
 
-        public EntryLink(Mechanism mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount, int stride){
-            super(mechanism, linkindex, unitoffset, unitsize, unitsubcount, stride);
+        public EntryLink(Mechanism mechanism, int linkindex, int unitoffset, int unitsize, int unitsubcount){
+            super(mechanism, linkindex, unitoffset, unitsize, unitsubcount);
         }
     }
 
     public interface Mechanism{
 
         <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride);
-        int getTargetSize(Entry entry, FSMesh mesh);
+        int calculateNeededSize(Entry entry, FSMesh mesh);
     }
 
     private static final class ElementSequentialInstanced implements Mechanism{
@@ -267,7 +255,7 @@ public final class FSBufferLayout{
             return buffer.position();
         }
 
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -310,7 +298,7 @@ public final class FSBufferLayout{
             return mainoffset + entry.unitsubcount;
         }
 
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -352,7 +340,7 @@ public final class FSBufferLayout{
             return buffer.position();
         }
 
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return mesh.get(0).element(entry.element).size();
         }
     }
@@ -386,7 +374,7 @@ public final class FSBufferLayout{
             return mainoffset + entry.unitsubcount;
         }
 
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return mesh.get(0).element(entry.element).size();
         }
     }
@@ -413,7 +401,7 @@ public final class FSBufferLayout{
             return buffer.position();
         }
 
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return mesh.indices().size();
         }
     }
@@ -432,7 +420,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return (((FSLinkBuffered<?, ?, ?>)mesh.getLink(entry.element)).size() / entry.unitsize) * entry.unitsubcount;
         }
     }
@@ -452,7 +440,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public int getTargetSize(Entry entry, FSMesh mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return ((FSLinkBuffered<?, ?, ?>)mesh.getLink(entry.element)).size();
         }
     }

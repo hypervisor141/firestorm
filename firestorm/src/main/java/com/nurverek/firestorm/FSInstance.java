@@ -209,9 +209,11 @@ public class FSInstance{
     public void updateBufferVertexStrict(int element, int bufferindex){
         FSBufferBindings.Binding<?> binding = bufferbindings.get(element).get(bufferindex);
         VLBufferTrackerDetailed tracker = binding.tracker;
-        int offset = tracker.offset();
 
-        binding.vbuffer.update(offset, tracker.stride() * tracker.count());
+        int offset = tracker.offset();
+        int count = tracker.count();
+
+        binding.vbuffer.update(offset,  count + (tracker.stride() - tracker.unitsize()) * count);
     }
 
     public String name(){
