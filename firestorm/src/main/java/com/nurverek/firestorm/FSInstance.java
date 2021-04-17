@@ -211,7 +211,7 @@ public class FSInstance{
         VLBufferTrackerDetailed tracker = binding.tracker;
         int offset = tracker.offset();
 
-        binding.vbuffer.update(offset, offset + tracker.stride() * tracker.count());
+        binding.vbuffer.update(offset, tracker.stride() * tracker.count());
     }
 
     public String name(){

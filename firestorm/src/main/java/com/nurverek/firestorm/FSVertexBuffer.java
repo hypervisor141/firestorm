@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -71,12 +72,14 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
         needsupdate = false;
     }
 
-    public void update(int offset, int size){
+    public void update(int offset, int count){
         bind();
 
         int bytes = buffer.getTypeBytes();
+
         buffer.position(offset);
-        GLES32.glBufferSubData(target, offset * bytes, size * bytes, buffer.provider());
+        Log.d("wtf", offset + "  " + count  + " " + bytes + "  " + buffer.provider().capacity());
+        GLES32.glBufferSubData(target, offset * bytes, count * bytes, buffer.provider());
 
         needsupdate = false;
     }
