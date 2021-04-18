@@ -82,14 +82,17 @@ public class FSR{
             events.GLPostDraw();
 
             synchronized(tasks){
-                size = tasks.size();
                 taskcache.add(tasks);
                 tasks.clear();
             }
 
+            size = taskcache.size();
+
             for(int i = 0; i < size; i++){
                 taskcache.get(i).run();
             }
+
+            taskcache.clear();
         }
 
         finishFrame();
