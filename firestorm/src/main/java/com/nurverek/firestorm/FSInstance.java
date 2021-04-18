@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.util.Log;
+
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLBufferTrackerDetailed;
@@ -211,9 +213,8 @@ public class FSInstance{
         VLBufferTrackerDetailed tracker = binding.tracker;
 
         int offset = tracker.offset();
-        int count = tracker.count();
 
-        binding.vbuffer.update(offset,  count + (tracker.stride() - tracker.unitsize()) * count);
+        binding.vbuffer.update(offset,  tracker.endposition() - offset);
     }
 
     public String name(){
@@ -297,7 +298,6 @@ public class FSInstance{
         schematics = new FSSchematics(this, src.schematics);
         bufferbindings = new FSBufferBindings();
     }
-
 
     public static final class Data{
 
