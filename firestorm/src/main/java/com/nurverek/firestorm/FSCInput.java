@@ -230,7 +230,7 @@ public final class FSCInput{
         int activated(FSBounds.Collision results, MeshEntry entry, int boundindex, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     }
 
-    protected static abstract class Type{
+    public static abstract class Type{
 
         public Type(){
 
