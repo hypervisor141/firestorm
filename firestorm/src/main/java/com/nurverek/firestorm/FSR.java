@@ -16,6 +16,7 @@ public class FSR{
 
     private static VLListType<FSRPass> passes;
     private static VLListType<FSRTask> tasks;
+    private static VLListType<FSRTask> taskcache;
 
     private static FSRInterface threadinterface;
     private static FSRThread renderthread;
@@ -30,6 +31,7 @@ public class FSR{
 
         passes = new VLListType<>(10, 10);
         tasks = new VLListType<>(10, 100);
+        taskcache = new VLListType<>(10, 100);
 
         isInitialized = true;
 
@@ -78,8 +80,6 @@ public class FSR{
             }
 
             events.GLPostDraw();
-
-            VLListType<FSRTask> taskcache = new VLListType<>(size, 0);
 
             synchronized(tasks){
                 size = tasks.size();
@@ -173,6 +173,7 @@ public class FSR{
 
             passes = null;
             tasks = null;
+            taskcache = null;
             threadinterface = null;
             renderthread = null;
         }
