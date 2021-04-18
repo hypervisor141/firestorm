@@ -112,7 +112,7 @@ public class FSRThread extends Thread{
         return lock;
     }
 
-    public FSRThread order(int code, Object d){
+    public FSRThread post(int code, Object d){
         synchronized(lock){
             orders.add(code);
             data.add(d);

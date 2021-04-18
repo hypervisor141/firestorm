@@ -227,18 +227,20 @@ public final class FSSchematics{
         return -1;
     }
 
-    protected void checkInputCollision(float[] near, float[] far){
+    protected FSBounds.Collision checkInputCollision(float[] near, float[] far){
         int size = inputbounds.size();
 
         for(int i = 0; i < size; i++){
             inputbounds.get(i).checkInput(COLLISIONCACHE, near, far);
 
             if(COLLISIONCACHE.collided){
-                if(FSCInput.signalCollision(COLLISIONCACHE, i)){
-                    break;
-                }
+                COLLISIONCACHE.boundsindex = i;
+
+                return COLLISIONCACHE;
             }
         }
+
+        return null;
     }
 
     public void markForNewUpdates(){

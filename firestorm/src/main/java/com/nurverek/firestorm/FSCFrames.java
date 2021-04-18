@@ -18,6 +18,8 @@ public class FSCFrames{
     private static volatile boolean EFFICIENT_RENDER;
     private static volatile boolean PERFORMANCE_MONITOR;
 
+    private static final Object LOCK = new Object();
+
     protected static void initialize(){
         FPS = 0;
         FRAME_TIME = 0;
@@ -32,19 +34,21 @@ public class FSCFrames{
     }
 
     public static void setEfficientRenderMode(boolean enable){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             EFFICIENT_RENDER = enable;
         }
     }
 
     public static void setPerformanceMonitorMode(boolean enabled){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             PERFORMANCE_MONITOR = enabled;
         }
     }
 
     public static void setEfficientModeUnChangedFramesThreshold(int threshold){
-        EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = threshold;
+        synchronized(LOCK){
+            EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = threshold;
+        }
     }
 
     public static long getNextID(){
@@ -88,10 +92,12 @@ public class FSCFrames{
     }
 
     public static void signalFrameRender(boolean continuous){
-        FSControl.surface.config().setRenderContinuously(continuous);
+        synchronized(FSControl.surface){
+            FSControl.surface.config().setRenderContinuously(continuous);
 
-        if(continuous){
-            FSControl.surface.postFrame();
+            if(continuous){
+                FSControl.surface.postFrame();
+            }
         }
     }
 
@@ -101,13 +107,18 @@ public class FSCFrames{
 
         if(EFFICIENT_RENDER){
             if(EXTERNAL_CHANGES == 0){
-
                 if(UNCHANGED_FRAMES >= EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD){
-                    UNCHANGED_FRAMES = 0;
+                    synchronized(LOCK){
+                        UNCHANGED_FRAMES = 0;
+                    }
+
                     signalFrameRender(false);
 
                 }else{
-                    UNCHANGED_FRAMES++;
+                    synchronized(LOCK){
+                        UNCHANGED_FRAMES++;
+                    }
+
                     surface.postFrame();
                 }
 

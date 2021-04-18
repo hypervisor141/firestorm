@@ -231,6 +231,7 @@ public abstract class FSBounds{
 
         public float distance;
         public boolean collided;
+        public int boundsindex;
 
         public Collision(){
 

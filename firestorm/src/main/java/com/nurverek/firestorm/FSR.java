@@ -4,7 +4,6 @@ import vanguard.VLListType;
 
 public class FSR{
 
-    public static final Object RENDERLOCK = new Object();
     public static final FSRInterface DEFAULT_INTERFACE = new FSRInterface(){
 
         @Override
@@ -14,6 +13,7 @@ public class FSR{
     };
 
     private static VLListType<FSRPass> passes;
+    private static VLListType<FSRTask> tasks;
 
     private static FSRInterface threadinterface;
     private static FSRThread renderthread;
@@ -27,6 +27,7 @@ public class FSR{
         threadinterface = threadsrc;
 
         passes = new VLListType<>(10, 10);
+        tasks = new VLListType<>(10, 100);
 
         isInitialized = true;
 
@@ -59,25 +60,35 @@ public class FSR{
     }
 
     protected static void onDrawFrame(){
-        synchronized(RENDERLOCK){
-            FSCFrames.timeFrameStarted();
+        FSCFrames.timeFrameStarted();
 
-            FSEvents events = FSControl.getSurface().events();
-            events.GLPreDraw();
+        FSEvents events = FSControl.getSurface().events();
+        events.GLPreDraw();
 
-            int size = passes.size();
+        int size = passes.size();
 
-            for(int i = 0; i < size; i++){
-                CURRENT_PASS_INDEX = i;
-                CURRENT_PASS_ENTRY_INDEX = -1;
+        for(int i = 0; i < size; i++){
+            CURRENT_PASS_INDEX = i;
+            CURRENT_PASS_ENTRY_INDEX = -1;
 
-                passes.get(i).draw();
-            }
-
-            events.GLPostDraw();
-
-            finishFrame();
+            passes.get(i).draw();
         }
+
+        events.GLPostDraw();
+
+        VLListType<FSRTask> taskcache = new VLListType<>(size, 0);
+
+        synchronized(tasks){
+            size = tasks.size();
+            taskcache.add(tasks);
+            tasks.clear();
+        }
+
+        for(int i = 0; i < size; i++){
+            taskcache.get(i).run();
+        }
+
+        finishFrame();
     }
 
     public static void addRenderPass(FSRPass pass){
@@ -98,6 +109,12 @@ public class FSR{
 
     public static VLListType<FSRPass> getRenderPasses(){
         return passes;
+    }
+
+    public static void post(FSRTask task){
+        synchronized(tasks){
+            tasks.add(task);
+        }
     }
 
     public static void removeRenderPass(FSRPass pass){
@@ -151,6 +168,9 @@ public class FSR{
             isInitialized = false;
 
             passes = null;
+            tasks = null;
+            threadinterface = null;
+            renderthread = null;
         }
     }
 }

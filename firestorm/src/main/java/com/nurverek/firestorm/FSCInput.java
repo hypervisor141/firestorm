@@ -14,21 +14,6 @@ public final class FSCInput{
     private static ArrayList<Entry> LISTENRER_SCROLL;
     private static ArrayList<Entry> LISTENRER_FLING;
 
-    private static Listener LISTENER_MAIN;
-
-    public static final int INPUT_CHECK_CONTINUE = 9174;
-    public static final int INPUT_CHECK_STOP = 9175;
-
-    private static final float[] NEARCACHE = new float[4];
-    private static final float[] FARCACHE = new float[4];
-
-    private static Entry CURRENT_ENTRY;
-    private static MotionEvent CURRENT_ME1;
-    private static MotionEvent CURRENT_ME2;
-    private static float CURRENT_F1;
-    private static float CURRENT_F2;
-    private static int CURRENT_STATUS;
-
     public static final Type TYPE_TOUCH = new Type(){
         @Override
         public ArrayList<Entry> get(){
@@ -72,6 +57,16 @@ public final class FSCInput{
         }
     };
 
+    private static Listener LISTENER_MAIN;
+    private static final CheckInput POST_INPUT_CHECK = new CheckInput();
+
+    public static final int INPUT_CHECK_CONTINUE = 9174;
+    public static final int INPUT_CHECK_STOP = 9175;
+
+    private static final float[] NEARCACHE = new float[4];
+    private static final float[] FARCACHE = new float[4];
+
+    private static final Object LOCK = new Object();
 
     protected static void initialize(){
         LISTENER_MAIN = new Listener(){
@@ -102,79 +97,55 @@ public final class FSCInput{
             throw new RuntimeException("ProcessListener can't be null.");
         }
 
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             LISTENER_MAIN = listener;
         }
     }
 
     public static void add(Type type, Entry entry){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             type.get().add(entry);
         }
     }
 
     public static void remove(Type type, int index){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             type.get().remove(index);
         }
     }
 
     public static Entry get(Type type, int index){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             return type.get().get(index);
         }
     }
 
     public static ArrayList<Entry> get(Type type){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             return type.get();
         }
     }
 
     public static int size(Type type){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             return type.get().size();
         }
     }
 
     public static void clear(Type type){
-        synchronized(FSR.RENDERLOCK){
+        synchronized(LOCK){
             type.get().clear();
         }
     }
 
-    public static void checkInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        synchronized(FSR.RENDERLOCK){
-            CURRENT_ME1 = e1;
-            CURRENT_ME2 = e2;
-            CURRENT_F1 = f1;
-            CURRENT_F2 = f2;
+    protected static void checkInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+        POST_INPUT_CHECK.type = type;
+        POST_INPUT_CHECK.e1 = e1;
+        POST_INPUT_CHECK.e2 = e2;
+        POST_INPUT_CHECK.f1 = f1;
+        POST_INPUT_CHECK.f2 = f2;
 
-            LISTENER_MAIN.preProcess();
-
-            FSView config = FSControl.getView();
-            config.unProject2DPoint(e1.getX(), e1.getY(), NEARCACHE, 0, FARCACHE, 0);
-
-            ArrayList<Entry> entries = type.get();
-            int size = entries.size();
-
-            for(int i = 0; i < size; i++){
-                CURRENT_ENTRY = entries.get(i);
-
-                if(CURRENT_ENTRY.processInput()){
-                    break;
-                }
-            }
-
-            LISTENER_MAIN.postProcess();
-        }
-    }
-
-    protected static boolean signalCollision(FSBounds.Collision results, int boundsindex){
-        MeshEntry entry = (MeshEntry)CURRENT_ENTRY;
-
-        CURRENT_STATUS = entry.listener.activated(results, entry, boundsindex, CURRENT_ME1, CURRENT_ME2, CURRENT_F1, CURRENT_F2, NEARCACHE, FARCACHE);
-        return CURRENT_STATUS == INPUT_CHECK_STOP;
+        FSR.post(POST_INPUT_CHECK);
     }
 
     protected static void destroy(){
@@ -190,9 +161,37 @@ public final class FSCInput{
         }
     }
 
+    private static final class CheckInput implements FSRTask{
+
+        protected Type type;
+        protected MotionEvent e1;
+        protected MotionEvent e2;
+        protected float f1;
+        protected float f2;
+
+        @Override
+        public void run(){
+            LISTENER_MAIN.preProcess();
+
+            FSView config = FSControl.getView();
+            config.unProject2DPoint(e1.getX(), e1.getY(), NEARCACHE, 0, FARCACHE, 0);
+
+            ArrayList<Entry> entries = type.get();
+            int size = entries.size();
+
+            for(int i = 0; i < size; i++){
+                if(entries.get(i).processInput(type, e1, e2, f1, f2)){
+                    break;
+                }
+            }
+
+            LISTENER_MAIN.postProcess();
+        }
+    }
+
     public interface Entry{
 
-        boolean processInput();
+        boolean processInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2);
     }
 
     public static class MeshEntry implements Entry{
@@ -208,26 +207,16 @@ public final class FSCInput{
         }
 
         @Override
-        public boolean processInput(){
-            MeshEntry entry = (MeshEntry)CURRENT_ENTRY;
+        public boolean processInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+            FSBounds.Collision results = mesh.get(instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
+            int status = -1;
 
-            entry.mesh.get(entry.instanceindex).schematics().checkInputCollision(NEARCACHE, FARCACHE);
-            return CURRENT_STATUS == INPUT_CHECK_STOP;
+            if(results != null){
+                status = listener.activated(results, this, results.boundsindex, e1, e2, f1, f2, NEARCACHE, FARCACHE);
+            }
+
+            return status == INPUT_CHECK_STOP;
         }
-    }
-
-    public abstract static class BasicEntry implements Entry{
-
-        public BasicEntry(){
-
-        }
-
-        @Override
-        public final boolean processInput(){
-            return processInput(CURRENT_ME1, CURRENT_ME2, CURRENT_F1, CURRENT_F2);
-        }
-
-        public abstract boolean processInput(MotionEvent e1, MotionEvent e2, float f1, float f2);
     }
 
     public static interface Listener{

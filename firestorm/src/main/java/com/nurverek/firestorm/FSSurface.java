@@ -88,7 +88,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         events.GLPreSurfaceCreate(isalive);
 
         FSR.startRenderThread();
-        FSR.getRenderThread().order(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).order(FSRThread.SURFACE_CREATED, isalive);
+        FSR.getRenderThread().post(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).post(FSRThread.SURFACE_CREATED, isalive);
 
         events.GLPostSurfaceCreate(isalive);
 
@@ -102,7 +102,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
         events.GLPreSurfaceChange(width, height);
 
-        FSR.getRenderThread().order(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
+        FSR.getRenderThread().post(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
 
         events.GLPostSurfaceChange(width, height);
     }
@@ -121,7 +121,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void doFrame(long frameTimeNanos){
-        FSR.getRenderThread().order(FSRThread.DRAW_FRAME, null);
+        FSR.getRenderThread().post(FSRThread.DRAW_FRAME, null);
     }
 
     @Override
