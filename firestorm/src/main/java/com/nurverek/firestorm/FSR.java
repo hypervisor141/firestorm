@@ -12,6 +12,8 @@ public class FSR{
         }
     };
 
+    public static final Object RENDERLOCK = new Object();
+
     private static VLListType<FSRPass> passes;
     private static VLListType<FSRTask> tasks;
 
@@ -62,30 +64,32 @@ public class FSR{
     protected static void onDrawFrame(){
         FSCFrames.timeFrameStarted();
 
-        FSEvents events = FSControl.getSurface().events();
-        events.GLPreDraw();
+        synchronized(RENDERLOCK){
+            FSEvents events = FSControl.getSurface().events();
+            events.GLPreDraw();
 
-        int size = passes.size();
+            int size = passes.size();
 
-        for(int i = 0; i < size; i++){
-            CURRENT_PASS_INDEX = i;
-            CURRENT_PASS_ENTRY_INDEX = -1;
+            for(int i = 0; i < size; i++){
+                CURRENT_PASS_INDEX = i;
+                CURRENT_PASS_ENTRY_INDEX = -1;
 
-            passes.get(i).draw();
-        }
+                passes.get(i).draw();
+            }
 
-        events.GLPostDraw();
+            events.GLPostDraw();
 
-        VLListType<FSRTask> taskcache = new VLListType<>(size, 0);
+            VLListType<FSRTask> taskcache = new VLListType<>(size, 0);
 
-        synchronized(tasks){
-            size = tasks.size();
-            taskcache.add(tasks);
-            tasks.clear();
-        }
+            synchronized(tasks){
+                size = tasks.size();
+                taskcache.add(tasks);
+                tasks.clear();
+            }
 
-        for(int i = 0; i < size; i++){
-            taskcache.get(i).run();
+            for(int i = 0; i < size; i++){
+                taskcache.get(i).run();
+            }
         }
 
         finishFrame();
