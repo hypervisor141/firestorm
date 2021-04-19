@@ -154,20 +154,25 @@ public class FSHAssembler implements VLStringify{
 
             firstfuncs.add(step);
 
+            if(FLIP_TEXTURE_U){
+                firstfuncs.add(TEXTURE_FLIP_U);
+            }
+            if(FLIP_TEXTURE_V){
+                firstfuncs.add(TEXTURE_FLIP_V);
+            }
+
             if(INSTANCE_SHARE_TEXCOORDS){
                 restfuncs.add(TEXTURE_SHARED);
 
             }else{
                 restfuncs.add(step);
-            }
 
-            if(FLIP_TEXTURE_U){
-                firstfuncs.add(TEXTURE_FLIP_U);
-                restfuncs.add(TEXTURE_FLIP_U);
-            }
-            if(FLIP_TEXTURE_V){
-                firstfuncs.add(TEXTURE_FLIP_V);
-                restfuncs.add(TEXTURE_FLIP_V);
+                if(FLIP_TEXTURE_U){
+                    restfuncs.add(TEXTURE_FLIP_U);
+                }
+                if(FLIP_TEXTURE_V){
+                    restfuncs.add(TEXTURE_FLIP_V);
+                }
             }
         }
     }
