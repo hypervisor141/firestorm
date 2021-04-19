@@ -21,6 +21,9 @@ public class FSHAssembler implements VLStringify{
     public boolean INSTANCE_SHARE_COLORS = false;
     public boolean INSTANCE_SHARE_NORMALS = false;
 
+    public boolean FLIP_TEXTURE_U = false;
+    public boolean FLIP_TEXTURE_V = false;
+
     public boolean CONVERT_POSITIONS_TO_MODELARRAYS = false;
     public boolean DRAW_MODE_INDEXED = false;
 
@@ -49,8 +52,10 @@ public class FSHAssembler implements VLStringify{
         INSTANCE_SHARE_TEXCOORDS = false;
         INSTANCE_SHARE_NORMALS = false;
 
-        CONVERT_POSITIONS_TO_MODELARRAYS = true;
+        FLIP_TEXTURE_U = false;
+        FLIP_TEXTURE_V = false;
 
+        CONVERT_POSITIONS_TO_MODELARRAYS = true;
         DRAW_MODE_INDEXED = true;
     }
 
@@ -154,6 +159,15 @@ public class FSHAssembler implements VLStringify{
 
             }else{
                 restfuncs.add(step);
+            }
+
+            if(FLIP_TEXTURE_U){
+                firstfuncs.add(TEXTURE_FLIP_U);
+                restfuncs.add(TEXTURE_FLIP_U);
+            }
+            if(FLIP_TEXTURE_V){
+                firstfuncs.add(TEXTURE_FLIP_V);
+                restfuncs.add(TEXTURE_FLIP_V);
             }
         }
     }
@@ -436,6 +450,30 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
            instancedata.texCoords(new VLArrayFloat(mesh.get(0).texCoords().provider()));
+        }
+    };
+    private static final BuildStep TEXTURE_FLIP_U = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+            float[] array = instancedata.texCoords().provider();
+            int size = array.length;
+
+            for(int i = 0; i < size; i += 2){
+                array[i] = 1F - array[i];
+            }
+        }
+    };
+    private static final BuildStep TEXTURE_FLIP_V = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSMesh mesh, VLArrayShort indices, FSInstance instance, FSInstance.Data instancedata, FSM.Data data){
+            float[] array = instancedata.texCoords().provider();
+            int size = array.length;
+
+            for(int i = 1; i < size; i += 2){
+                array[i] = 1F - array[i];
+            }
         }
     };
 
