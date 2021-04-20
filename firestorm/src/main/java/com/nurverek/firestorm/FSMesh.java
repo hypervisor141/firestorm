@@ -16,10 +16,6 @@ public class FSMesh{
     protected long id;
     protected int drawmode;
 
-    public FSMesh(int drawmode, int capacity, int resizer){
-        initialize(drawmode, capacity, resizer);
-    }
-
     public FSMesh(){
 
     }

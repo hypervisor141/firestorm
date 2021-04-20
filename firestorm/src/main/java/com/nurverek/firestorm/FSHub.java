@@ -90,9 +90,8 @@ public abstract class FSHub{
             files.add(data);
         }
 
-        public FSMesh addScanner(FSHScanner entry){
+        public void addScanner(FSHScanner entry){
             entries.add(entry);
-            return entry.mesh;
         }
 
         public void addBuffer(FSVertexBuffer<?> buffer){
