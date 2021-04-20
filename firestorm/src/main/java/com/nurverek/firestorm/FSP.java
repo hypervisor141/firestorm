@@ -195,6 +195,26 @@ public abstract class FSP{
             VLDebug.append("] -------");
             VLDebug.printD();
 
+            for(int i = 0; i < meshsize; i++){
+                FSMesh mesh = meshes.get(i);
+
+                VLDebug.append("[InternalMeshConfig] [");
+                VLDebug.append(i + 1);
+                VLDebug.append("/");
+                VLDebug.append(meshsize);
+                VLDebug.append("] [");
+                VLDebug.append(mesh.name());
+                VLDebug.append("]");
+                VLDebug.printD();
+
+                mesh.configure(pass, this, i, passindex);
+
+                VLDebug.printD();
+            }
+
+            VLDebug.append("[PostDrawConfig]");
+            VLDebug.printD();
+
             if(coreconfigs.setupconfig != null){
                 VLDebug.append("[SetupConfig]");
                 VLDebug.printD();
@@ -205,10 +225,8 @@ public abstract class FSP{
             }
 
             if(coreconfigs.meshconfig != null){
-                FSMesh mesh;
-
                 for(int i = 0; i < meshsize; i++){
-                    mesh = meshes.get(i);
+                    FSMesh mesh = meshes.get(i);
 
                     VLDebug.append("[MeshConfig] [");
                     VLDebug.append(i + 1);
@@ -220,7 +238,6 @@ public abstract class FSP{
                     VLDebug.printD();
 
                     coreconfigs.meshconfig.runDebug(pass, this, meshes.get(i), i, passindex);
-                    mesh.configure(pass, this, i, passindex);
 
                     VLDebug.printD();
                 }
@@ -236,6 +253,10 @@ public abstract class FSP{
             }
 
         }else{
+            for(int i = 0; i < meshsize; i++){
+                meshes.get(i).configure(pass, this, i, passindex);
+            }
+
             if(coreconfigs.setupconfig != null){
                 coreconfigs.setupconfig.run(pass, this, null, -1, passindex);
             }
