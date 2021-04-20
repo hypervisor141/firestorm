@@ -202,6 +202,8 @@ public abstract class FSHub{
                         VLDebug.printE();
                         throw new RuntimeException("Mesh Scan Error");
                     }
+
+                    entry.scanComplete();
                 }
 
                 VLDebug.printDirect("[DONE]\n");
@@ -221,6 +223,10 @@ public abstract class FSHub{
                             entries.get(i3).scan(this, data);
                         }
                     }
+                }
+
+                for(int i = 0; i < entrysize; i++){
+                    entries.get(i).scanComplete();
                 }
             }
         }
@@ -331,6 +337,10 @@ public abstract class FSHub{
                     throw new RuntimeException("Failed to upload buffers", ex);
                 }
 
+                for(int i = 0; i < size; i++){
+                    entries.get(i).bufferComplete();
+                }
+
                 VLDebug.printDirect("[DONE]\n");
                 VLDebug.printD();
 
@@ -350,6 +360,9 @@ public abstract class FSHub{
                 }
                 for(int i = 0; i < buffersize; i++){
                     buffers.get(i).upload();
+                }
+                for(int i = 0; i < size; i++){
+                    entries.get(i).bufferComplete();
                 }
             }
         }
