@@ -1,14 +1,13 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLArrayShort;
-import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLListType;
 
-public class FSMesh<INSTANCE extends FSInstance>{
+public class FSMesh{
 
     protected String name;
 
-    protected VLListType<INSTANCE> instances;
+    protected VLListType<FSInstance> instances;
     protected VLListType<FSLink<?>> links;
     protected FSConfigGroup configs;
     protected VLArrayShort indices;
@@ -39,8 +38,8 @@ public class FSMesh<INSTANCE extends FSInstance>{
 
     public void bufferComplete(){}
 
-    public INSTANCE generateInstance(String name){
-        INSTANCE instance = (INSTANCE)new FSInstance(name);
+    public FSInstance generateInstance(String name){
+        FSInstance instance = new FSInstance(name);
         add(instance);
 
         return instance;
@@ -54,9 +53,9 @@ public class FSMesh<INSTANCE extends FSInstance>{
         configs.add(config);
     }
 
-    public void add(INSTANCE instance){
+    public void add(FSInstance instance){
         instances.add(instance);
-        instance.mesh = (FSMesh<FSInstance>)this;
+        instance.mesh = (FSMesh)this;
     }
 
     public void configure(FSRPass pass, FSP program, int meshindex, int passindex){
@@ -237,11 +236,11 @@ public class FSMesh<INSTANCE extends FSInstance>{
         indices = array;
     }
 
-    public INSTANCE first(){
+    public FSInstance first(){
         return instances.get(0);
     }
 
-    public INSTANCE get(int index){
+    public FSInstance get(int index){
         return instances.get(index);
     }
 
@@ -261,8 +260,8 @@ public class FSMesh<INSTANCE extends FSInstance>{
         return configs;
     }
 
-    public INSTANCE remove(int index){
-        INSTANCE instance = instances.get(index);
+    public FSInstance remove(int index){
+        FSInstance instance = instances.get(index);
         instances.remove(index);
         instance.mesh = null;
 
@@ -281,7 +280,7 @@ public class FSMesh<INSTANCE extends FSInstance>{
         return name;
     }
 
-    public VLListType<INSTANCE> instances(){
+    public VLListType<FSInstance> instances(){
         return instances;
     }
 

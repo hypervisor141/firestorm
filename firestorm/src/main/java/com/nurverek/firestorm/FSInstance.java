@@ -7,7 +7,7 @@ import vanguard.VLListType;
 
 public class FSInstance{
 
-    protected FSMesh<FSInstance> mesh;
+    protected FSMesh mesh;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
     protected FSBufferBindings bufferbindings;
@@ -222,7 +222,7 @@ public class FSInstance{
         return data.positions().size() / FSHub.UNIT_SIZE_POSITION;
     }
 
-    public FSMesh<FSInstance> mesh(){
+    public FSMesh mesh(){
         return mesh;
     }
 

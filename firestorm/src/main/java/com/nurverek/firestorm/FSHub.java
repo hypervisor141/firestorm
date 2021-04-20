@@ -135,7 +135,7 @@ public abstract class FSHub{
 
                         for(int i3 = 0; i3 < entrysize; i3++){
                             entry = entries.get(i3);
-                            FSMesh<?> mesh = entry.mesh;
+                            FSMesh mesh = entry.mesh;
                             found = false;
 
                             try{

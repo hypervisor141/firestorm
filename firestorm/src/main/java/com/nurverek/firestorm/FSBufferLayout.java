@@ -180,7 +180,7 @@ public final class FSBufferLayout{
             this.unitsubcount = unitsubcount;
         }
 
-        public int calculateNeededSize(FSMesh<?> mesh){
+        public int calculateNeededSize(FSMesh mesh){
             return (mechanism.calculateNeededSize(this, mesh) / unitsize) * unitsubcount;
         }
 
@@ -221,8 +221,8 @@ public final class FSBufferLayout{
 
     public interface Mechanism{
 
-        <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride);
-        int calculateNeededSize(Entry entry, FSMesh<?> mesh);
+        <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride);
+        int calculateNeededSize(Entry entry, FSMesh mesh);
     }
 
     private static final class ElementSequentialInstanced implements Mechanism{
@@ -232,7 +232,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = (VLListType<FSInstance>)mesh.instances;
 
             int element = entry.element;
@@ -255,7 +255,7 @@ public final class FSBufferLayout{
             return buffer.position();
         }
 
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -274,7 +274,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = (VLListType<FSInstance>)mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -298,7 +298,7 @@ public final class FSBufferLayout{
             return mainoffset + entry.unitsubcount;
         }
 
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             int size = mesh.size();
             int total = 0;
 
@@ -317,7 +317,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = (VLListType<FSInstance>)mesh.instances;
 
             int element = entry.element;
@@ -340,7 +340,7 @@ public final class FSBufferLayout{
             return buffer.position();
         }
 
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return mesh.get(0).element(entry.element).size();
         }
     }
@@ -352,7 +352,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             VLListType<FSInstance> instances = (VLListType<FSInstance>)mesh.instances;
             FSInstance instance;
             VLArrayFloat array;
@@ -374,7 +374,7 @@ public final class FSBufferLayout{
             return mainoffset + entry.unitsubcount;
         }
 
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return mesh.get(0).element(entry.element).size();
         }
     }
@@ -386,7 +386,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             int element = entry.element;
 
             VLBufferTrackerDetailed tracker = new VLBufferTrackerDetailed();
@@ -401,7 +401,7 @@ public final class FSBufferLayout{
             return buffer.position();
         }
 
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return mesh.indices().size();
         }
     }
@@ -413,14 +413,14 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             ((FSLinkBuffered<?, BUFFER, ?>)mesh.getLink(entry.element)).buffer(entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
             return buffer.position();
         }
 
         @Override
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return (((FSLinkBuffered<?, ?, ?>)mesh.getLink(entry.element)).size() / entry.unitsize) * entry.unitsubcount;
         }
     }
@@ -432,7 +432,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh<?> mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
+        public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
             int firstpos = buffer.position();
             ((FSLinkBuffered<?, BUFFER, ?>)mesh.getLink(entry.element)).buffer(entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
@@ -440,7 +440,7 @@ public final class FSBufferLayout{
         }
 
         @Override
-        public int calculateNeededSize(Entry entry, FSMesh<?> mesh){
+        public int calculateNeededSize(Entry entry, FSMesh mesh){
             return ((FSLinkBuffered<?, ?, ?>)mesh.getLink(entry.element)).size();
         }
     }

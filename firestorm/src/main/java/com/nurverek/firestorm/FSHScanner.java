@@ -9,10 +9,10 @@ public abstract class FSHScanner{
     protected FSHAssembler assembler;
     protected FSBufferLayout layout;
     protected FSP program;
-    protected FSMesh<?> mesh;
+    protected FSMesh mesh;
     protected String name;
 
-    protected FSHScanner(FSMesh<?> mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String name){
+    protected FSHScanner(FSMesh mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String name){
         this.mesh = mesh;
         this.program = program;
         this.layout = layout;
@@ -103,7 +103,7 @@ public abstract class FSHScanner{
 
     public static class Singular extends FSHScanner{
 
-        public Singular(FSMesh<?> mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String name, int drawmode){
+        public Singular(FSMesh mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String name, int drawmode){
             super(mesh, program, layout, assembler, name);
             mesh.initialize(drawmode, 1, 0);
         }
@@ -130,7 +130,7 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh<?> mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String prefixname, int drawmode, int estimatedsize){
+        public Instanced(FSMesh mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String prefixname, int drawmode, int estimatedsize){
             super(mesh, program, layout, assembler, prefixname);
             mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
         }
@@ -161,7 +161,7 @@ public abstract class FSHScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSMesh<?> mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
+        public InstancedCopy(FSMesh mesh, FSP program, FSBufferLayout layout, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
             super(mesh, program, layout, assembler, prefixname);
 
             this.copycount = copycount;
