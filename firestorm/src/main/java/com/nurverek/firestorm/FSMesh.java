@@ -53,7 +53,17 @@ public class FSMesh{
     }
 
     public void configure(FSRPass pass, FSP program, int meshindex, int passindex){
-        configs.configure(pass, program, this, meshindex, passindex);
+        if(configs != null){
+            configs.configure(pass, program, this, meshindex, passindex);
+        }
+    }
+
+    public void lightMaterial(FSLightMaterial material){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).lightMaterial(material);
+        }
     }
 
     public void applyModelMatrices(){
