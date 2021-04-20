@@ -220,6 +220,7 @@ public abstract class FSP{
                     VLDebug.printD();
 
                     coreconfigs.meshconfig.runDebug(pass, this, meshes.get(i), i, passindex);
+                    mesh.configure(pass, this, i, passindex);
 
                     VLDebug.printD();
                 }
