@@ -126,21 +126,16 @@ public abstract class FSHub{
 
                 int filesize = files.size();
 
-                FSMesh mesh;
-                FSM.Data d;
-                VLListType<FSM.Data> data;
-                int datasize;
-
                 for(int i = 0; i < filesize; i++){
-                    data = files.get(i).data;
-                    datasize = data.size();
+                    VLListType<FSM.Data> data = files.get(i).data;
+                    int datasize = data.size();
 
                     for(int i2 = 0; i2 < datasize; i2++){
-                        d = data.get(i2);
+                        FSM.Data d = data.get(i2);
 
                         for(int i3 = 0; i3 < entrysize; i3++){
                             entry = entries.get(i3);
-                            mesh = entry.mesh;
+                            FSMesh<?> mesh = entry.mesh;
                             found = false;
 
                             try{
@@ -215,17 +210,12 @@ public abstract class FSHub{
             }else{
                 int filesize = files.size();
 
-                FSMesh mesh;
-                FSM.Data data;
-                VLListType<FSM.Data> datalist;
-                int datasize;
-
                 for(int i = 0; i < filesize; i++){
-                    datalist = files.get(i).data;
-                    datasize = datalist.size();
+                    VLListType<FSM.Data> datalist = files.get(i).data;
+                    int datasize = datalist.size();
 
                     for(int i2 = 0; i2 < datasize; i2++){
-                        data = datalist.get(i2);
+                        FSM.Data data = datalist.get(i2);
 
                         for(int i3 = 0; i3 < entrysize; i3++){
                             entries.get(i3).scan(this, data);
@@ -346,13 +336,12 @@ public abstract class FSHub{
 
             }else{
                 int buffersize = buffers.size();
-                FSVertexBuffer<?> buffer;
 
                 for(int i = 0; i < size; i++){
                     entries.get(i).accountForBufferSize();
                 }
                 for(int i = 0; i < buffersize; i++){
-                    buffer = buffers.get(i);
+                    FSVertexBuffer<?>  buffer = buffers.get(i);
                     buffer.provider().initialize(ByteOrder.nativeOrder());
                     buffer.initialize();
                 }

@@ -47,7 +47,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configure(FSRPass pass, FSP program, FSMesh<?> mesh, int meshindex, int passindex){
         int size = configs.size();
         FSConfig c;
 
@@ -63,7 +63,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configureDebug(FSRPass pass, FSP program, FSMesh<?> mesh, int meshindex, int passindex){
         String classname = getClass().getSimpleName();
         int size = configs.size();
         FSConfig c;
@@ -105,7 +105,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh<?> mesh, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 

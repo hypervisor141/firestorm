@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.util.Log;
-
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLBufferTrackerDetailed;
@@ -9,7 +7,7 @@ import vanguard.VLListType;
 
 public class FSInstance{
 
-    protected FSMesh mesh;
+    protected FSMesh<FSInstance> mesh;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
     protected FSBufferBindings bufferbindings;
@@ -24,24 +22,19 @@ public class FSInstance{
     protected String name;
 
     protected long id;
-    protected int activatestate;
+    protected int activestate;
 
-    public FSInstance(String name){
+    protected FSInstance(String name){
         this.name = name;
 
         id = FSCFrames.getNextID();
-        activatestate = 0;
+        activestate = 0;
 
         data = new Data();
         states = new States();
         schematics = new FSSchematics(this);
         bufferbindings = new FSBufferBindings();
     }
-
-    public FSInstance(FSInstance src){
-        copy(src);
-    }
-
 
     public void modelMatrix(FSMatrixModel set){
         modelmatrix = set;
@@ -72,12 +65,12 @@ public class FSInstance{
     }
 
     public void activateState(int index){
-        activatestate = index;
+        activestate = index;
         data = states.get(index);
     }
 
     public void activateStateClone(int index){
-        activatestate = index;
+        activestate = index;
         data = new Data(states.get(index));
     }
 
@@ -229,7 +222,7 @@ public class FSInstance{
         return data.positions().size() / FSHub.UNIT_SIZE_POSITION;
     }
 
-    public FSMesh mesh(){
+    public FSMesh<FSInstance> mesh(){
         return mesh;
     }
 
@@ -291,8 +284,29 @@ public class FSInstance{
 
     public void copy(FSInstance src){
         id = FSCFrames.getNextID();
+        this.activestate = src.activestate;
 
         name = src.name;
+        lightmap = src.lightmap;
+        lightmaterial = src.lightmaterial;
+        colortexture = src.colortexture;
+
+        data = src.data;
+        states = src.states;
+        schematics = schematics;
+
+        bufferbindings = new FSBufferBindings();
+    }
+
+    public void copyDeep(FSInstance src){
+        id = FSCFrames.getNextID();
+        this.activestate = src.activestate;
+
+        name = src.name;
+        lightmap = src.lightmap;
+        lightmaterial = src.lightmaterial;
+        colortexture = src.colortexture;
+
         data = new Data(src.data);
         states = new States(src.states);
         schematics = new FSSchematics(this, src.schematics);

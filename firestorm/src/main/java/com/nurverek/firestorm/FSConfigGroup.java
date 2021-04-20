@@ -26,7 +26,7 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public final void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configure(FSRPass pass, FSP program, FSMesh<?> mesh, int meshindex, int passindex){
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
@@ -35,7 +35,7 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configureDebug(FSRPass pass, FSP program, FSMesh<?> mesh, int meshindex, int passindex){
         String classname = getClass().getSimpleName();
         int size = configs.size();
 
@@ -66,7 +66,7 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh<?> mesh, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 

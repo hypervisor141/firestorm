@@ -4,11 +4,11 @@ import vanguard.VLArrayShort;
 import vanguard.VLBufferTrackerDetailed;
 import vanguard.VLListType;
 
-public class FSMesh{
+public class FSMesh<INSTANCE extends FSInstance>{
 
     protected String name;
 
-    protected VLListType<FSInstance> instances;
+    protected VLListType<INSTANCE> instances;
     protected VLListType<FSLink<?>> links;
     protected FSConfigGroup configs;
     protected VLArrayShort indices;
@@ -35,6 +35,17 @@ public class FSMesh{
         this.configs = new FSConfigGroup(mode, capacity, resizer);
     }
 
+    public void scanComplete(){}
+
+    public void bufferComplete(){}
+
+    public INSTANCE generateInstance(String name){
+        INSTANCE instance = (INSTANCE)new FSInstance(name);
+        add(instance);
+
+        return instance;
+    }
+
     public void add(FSLink<?> link){
         links.add(link);
     }
@@ -43,9 +54,9 @@ public class FSMesh{
         configs.add(config);
     }
 
-    public void add(FSInstance instance){
+    public void add(INSTANCE instance){
         instances.add(instance);
-        instance.mesh = this;
+        instance.mesh = (FSMesh<FSInstance>)this;
     }
 
     public void configure(FSRPass pass, FSP program, int meshindex, int passindex){
@@ -226,11 +237,11 @@ public class FSMesh{
         indices = array;
     }
 
-    public FSInstance first(){
+    public INSTANCE first(){
         return instances.get(0);
     }
 
-    public FSInstance get(int index){
+    public INSTANCE get(int index){
         return instances.get(index);
     }
 
@@ -250,8 +261,8 @@ public class FSMesh{
         return configs;
     }
 
-    public FSInstance remove(int index){
-        FSInstance instance = instances.get(index);
+    public INSTANCE remove(int index){
+        INSTANCE instance = instances.get(index);
         instances.remove(index);
         instance.mesh = null;
 
@@ -270,7 +281,7 @@ public class FSMesh{
         return name;
     }
 
-    public VLListType<FSInstance> instances(){
+    public VLListType<INSTANCE> instances(){
         return instances;
     }
 
