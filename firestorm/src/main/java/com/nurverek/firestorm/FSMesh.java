@@ -10,6 +10,7 @@ public class FSMesh{
 
     protected VLListType<FSInstance> instances;
     protected VLListType<FSLink<?>> links;
+    protected FSConfigGroup configs;
     protected VLArrayShort indices;
 
     protected long id;
@@ -30,17 +31,29 @@ public class FSMesh{
         id = FSCFrames.getNextID();
     }
 
-    public void initLinks(VLListType<FSLink<?>> links){
-        this.links = links;
+    public void initLinks(int capacity, int resizer){
+        this.links = new VLListType<>(capacity, resizer);
     }
 
-    public void addLink(FSLink<?> link){
+    public void initConfigs(FSConfig.Mode mode, int capacity, int resizer){
+        this.configs = new FSConfigGroup(mode, capacity, resizer);
+    }
+
+    public void add(FSLink<?> link){
         links.add(link);
+    }
+
+    public void add(FSConfig config){
+        configs.add(config);
     }
 
     public void add(FSInstance instance){
         instances.add(instance);
         instance.mesh = this;
+    }
+
+    public void configure(FSRPass pass, FSP program, int meshindex, int passindex){
+        configs.configure(pass, program, this, meshindex, passindex);
     }
 
     public void applyModelMatrices(){
@@ -217,6 +230,18 @@ public class FSMesh{
 
     public FSLink<?> getLink(int index){
         return links.get(index);
+    }
+
+    public FSConfig getConfig(int index){
+        return configs.configs.get(index);
+    }
+
+    public VLListType<FSLink<?>> links(int index){
+        return links;
+    }
+
+    public FSConfigGroup configGroup(int index){
+        return configs;
     }
 
     public FSInstance remove(int index){
