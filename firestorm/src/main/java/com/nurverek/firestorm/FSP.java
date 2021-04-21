@@ -195,21 +195,6 @@ public abstract class FSP{
             VLDebug.append("] -------");
             VLDebug.printD();
 
-            for(int i = 0; i < meshsize; i++){
-                FSMesh mesh = meshes.get(i);
-
-                VLDebug.append("[InternalMeshConfig] [");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(meshsize);
-                VLDebug.append("] [");
-                VLDebug.append(mesh.name());
-                VLDebug.append("]");
-                VLDebug.printD();
-
-                mesh.configureDebug(pass, this, i, passindex);
-            }
-
             if(coreconfigs.setupconfig != null){
                 VLDebug.append("[SetupConfig]");
                 VLDebug.printD();
@@ -222,6 +207,17 @@ public abstract class FSP{
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
                     FSMesh mesh = meshes.get(i);
+
+                    VLDebug.append("[InternalMeshConfig] [");
+                    VLDebug.append(i + 1);
+                    VLDebug.append("/");
+                    VLDebug.append(meshsize);
+                    VLDebug.append("] [");
+                    VLDebug.append(mesh.name());
+                    VLDebug.append("]");
+                    VLDebug.printD();
+
+                    mesh.configureDebug(pass, this, i, passindex);
 
                     VLDebug.append("[MeshConfig] [");
                     VLDebug.append(i + 1);
@@ -248,16 +244,14 @@ public abstract class FSP{
             }
 
         }else{
-            for(int i = 0; i < meshsize; i++){
-                meshes.get(i).configure(pass, this, i, passindex);
-            }
-
             if(coreconfigs.setupconfig != null){
                 coreconfigs.setupconfig.run(pass, this, null, -1, passindex);
             }
 
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
+                    FSMesh mesh = meshes.get(i);
+                    mesh.configure(pass, this, i, passindex);
                     coreconfigs.meshconfig.run(pass, this, meshes.get(i), i, passindex);
                 }
             }
