@@ -78,6 +78,22 @@ public class FSMesh{
         }
     }
 
+    public void lightMap(FSLightMap map){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).lightMap(map);
+        }
+    }
+
+    public void colorTexture(FSTexture tex){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).colorTexture(tex);
+        }
+    }
+
     public void applyModelMatrices(){
         int size = instances.size();
 
