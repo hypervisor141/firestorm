@@ -207,13 +207,8 @@ public abstract class FSP{
                 VLDebug.append("]");
                 VLDebug.printD();
 
-                mesh.configure(pass, this, i, passindex);
-
-                VLDebug.printD();
+                mesh.configureDebug(pass, this, i, passindex);
             }
-
-            VLDebug.append("[PostDrawConfig]");
-            VLDebug.printD();
 
             if(coreconfigs.setupconfig != null){
                 VLDebug.append("[SetupConfig]");

@@ -64,6 +64,12 @@ public class FSMesh{
         }
     }
 
+    public void configureDebug(FSRPass pass, FSP program, int meshindex, int passindex){
+        if(configs != null){
+            configs.configureDebug(pass, program, this, meshindex, passindex);
+        }
+    }
+
     public void lightMaterial(FSLightMaterial material){
         int size = instances.size();
 
