@@ -781,12 +781,12 @@ public abstract class FSP{
         }
     }
 
-    public static class AttribPointer extends FSConfigLocated{
+    public static class AttribPointerElement extends FSConfigLocated{
 
         public int element;
         public int bufferindex;
 
-        public AttribPointer(Mode mode, int element, int bufferindex){
+        public AttribPointerElement(Mode mode, int element, int bufferindex){
             super(mode);
 
             this.element = element;
@@ -825,12 +825,52 @@ public abstract class FSP{
         }
     }
 
-    public static class AttribIPointer extends FSConfigLocated{
+    public static class AttribPointerLink extends FSConfigLocated{
+
+        public int linkindex;
+
+        public AttribPointerLink(Mode mode, int linkindex){
+            super(mode);
+
+            this.linkindex = linkindex;
+        }
+
+        @Override
+        public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+            FSLinkGLBuffered<?, ?, ?> link = (FSLinkGLBuffered<?, ?, ?>)mesh.links.get(linkindex);
+            VLBufferTrackerDetailed tracker = link.tracker;
+
+            int databytesize = tracker.typebytesize();
+
+            link.vbuffer.bind();
+            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[linkindex], tracker.stride() * databytesize, tracker.offset() * databytesize);
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 1;
+        }
+
+        @Override
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+            super.debugInfo(pass, program, mesh, debug);
+
+            VLDebug.append("linkIndex[");
+            VLDebug.append(linkindex);
+            VLDebug.append("] buffer[");
+
+            ((FSLinkGLBuffered<?, ?, ?>)mesh.links.get(linkindex)).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
+        }
+    }
+
+    public static class AttribIPointerElement extends FSConfigLocated{
 
         public int element;
         public int bufferindex;
 
-        public AttribIPointer(Mode mode, int element, int bufferindex){
+        public AttribIPointerElement(Mode mode, int element, int bufferindex){
             super(mode);
 
             this.element = element;
@@ -864,6 +904,45 @@ public abstract class FSP{
             VLDebug.append("] buffer[");
 
             mesh.first().bufferBindings().get(element, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+
+            VLDebug.append("] ");
+        }
+    }
+
+    public static class AttribIPointerLink extends FSConfigLocated{
+
+        public int linkindex;
+
+        public AttribIPointerLink(Mode mode, int linkindex){
+            super(mode);
+            this.linkindex = linkindex;
+        }
+
+        @Override
+        public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+            FSLinkGLBuffered<?, ?, ?> link = (FSLinkGLBuffered<?, ?, ?>)mesh.links.get(linkindex);
+            VLBufferTrackerDetailed tracker = link.tracker;
+
+            int databytesize = tracker.typebytesize();
+
+            link.vbuffer.bind();
+            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[linkindex], tracker.stride() * databytesize, tracker.offset() * databytesize);
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 1;
+        }
+
+        @Override
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+            super.debugInfo(pass, program, mesh, debug);
+
+            VLDebug.append("linkIndex[");
+            VLDebug.append(linkindex);
+            VLDebug.append("] buffer[");
+
+            ((FSLinkGLBuffered<?, ?, ?>)mesh.links.get(linkindex)).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
