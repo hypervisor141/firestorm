@@ -46,14 +46,14 @@ public final class FSBufferLayout<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    public FSBufferLayout addElement(EntryElement entry){
+    public FSBufferLayout<BUFFER> addElement(EntryElement entry){
         totalstride += entry.unitsubcount;
         entries.add(entry);
 
         return this;
     }
 
-    public FSBufferLayout addLink(EntryLink entry){
+    public FSBufferLayout<BUFFER> addLink(EntryLink entry){
         totalstride += entry.unitsubcount;
         entries.add(entry);
 

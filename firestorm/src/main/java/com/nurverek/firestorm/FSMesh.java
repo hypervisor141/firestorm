@@ -38,6 +38,8 @@ public class FSMesh{
 
     public void bufferComplete(){}
 
+    public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
+
     public FSInstance generateInstance(String name){
         FSInstance instance = new FSInstance(name);
         add(instance);

@@ -56,12 +56,18 @@ public abstract class FSP{
     public FSP build(){
         coreconfigs = customize(meshes, debug);
 
+        int size = meshes.size();
+
+        for(int i = 0; i < size; i++){
+            meshes.get(i).programPreBuild(this, coreconfigs, debug);
+        }
+
         VLDebug.recreate();
 
         program = GLES32.glCreateProgram();
 
         FSShader shader;
-        int size = shaders.size();
+        size = shaders.size();
 
         for(int i = 0; i < size; i++){
             shader = shaders.get(i);
@@ -781,61 +787,56 @@ public abstract class FSP{
         }
     }
 
-    public static class AttribPointerElement extends FSConfigLocated{
+    public static class AttribPointer extends FSConfigLocated{
 
-        public int element;
-        public int bufferindex;
+        public FSVertexBuffer<?> buffer;
+        public int unitsize;
+        public int datatype;
+        public boolean normalized;
+        public int stridebytes;
+        public int offsetbytes;
+        public int glslsize;
 
-        public AttribPointerElement(Mode mode, int element, int bufferindex){
+        public AttribPointer(Mode mode, FSVertexBuffer<?> buffer, int unitsize, int datatype, boolean normalized, int stridebytes, int offsetbytes, int glslsize){
             super(mode);
 
-            this.element = element;
-            this.bufferindex = bufferindex;
+            this.buffer = buffer;
+            this.unitsize = unitsize;
+            this.datatype = datatype;
+            this.normalized = normalized;
+            this.stridebytes = stridebytes;
+            this.offsetbytes = offsetbytes;
+            this.glslsize = glslsize;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
-            VLBufferTrackerDetailed tracker = binding.tracker;
-
-            int databytesize = FSHub.ELEMENT_BYTES[this.element];
-            int unitsize = tracker.unitsize();
-
-            binding.vbuffer.bind();
-
-            if(tracker.unitsize() > 4){
-                int count = unitsize / 4;
-                int offset = tracker.offset();
-
-                unitsize *= databytesize;
-                offset *= databytesize;
-
-                for(int i = 0; i < count; i++){
-                    GLES32.glVertexAttribPointer(this.location + i, 4, GLES32.GL_FLOAT, false, unitsize, offset + (i * 4 * databytesize));
-                }
-
-            }else{
-                GLES32.glVertexAttribPointer(this.location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[this.element],
-                        false, tracker.stride() * databytesize, tracker.offset() * databytesize);
-            }
+            buffer.bind();
+            GLES32.glVertexAttribPointer(this.location, unitsize, datatype, normalized, stridebytes, offsetbytes);
         }
 
         @Override
         public int getGLSLSize(){
-            return (int)Math.ceil(FSHub.UNIT_SIZES[element] / 4F);
+            return glslsize;
         }
 
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
             super.debugInfo(pass, program, mesh, debug);
 
-            VLDebug.append("element[");
-            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
-            VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("unitSize[");
+            VLDebug.append(unitsize);
+            VLDebug.append("] dataType[");
+            VLDebug.append(datatype);
+            VLDebug.append("] normalized[");
+            VLDebug.append(normalized);
+            VLDebug.append("] stride[");
+            VLDebug.append(stridebytes);
+            VLDebug.append("] offset[");
+            VLDebug.append(offsetbytes);
             VLDebug.append("] buffer[");
 
-            mesh.first().bufferBindings().get(element, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -865,12 +866,12 @@ public abstract class FSP{
             if(tracker.unitsize() > 4){
                 int count = unitsize / 4;
                 int offset = tracker.offset();
+                int stride = tracker.stride() * databytesize;
 
-                unitsize *= databytesize;
                 offset *= databytesize;
 
                 for(int i = 0; i < count; i++){
-                    GLES32.glVertexAttribPointer(this.location + i, 4, GLES32.GL_FLOAT, false, unitsize, offset + (i * 4 * databytesize));
+                    GLES32.glVertexAttribPointer(this.location + i, unitsize, GLES32.GL_FLOAT, false, stride, offset + (i * 4 * databytesize));
                 }
 
             }else{
@@ -923,12 +924,12 @@ public abstract class FSP{
             if(tracker.unitsize() > 4){
                 int count = unitsize / 4;
                 int offset = tracker.offset();
+                int stride = tracker.stride() * databytesize;
 
-                unitsize *= databytesize;
                 offset *= databytesize;
 
                 for(int i = 0; i < count; i++){
-                    GLES32.glVertexAttribIPointer(this.location + i, 4, GLES32.GL_FLOAT, unitsize, offset + (i * 4 * databytesize));
+                    GLES32.glVertexAttribIPointer(this.location + i, unitsize, GLES32.GL_FLOAT, stride, offset + (i * 4 * databytesize));
                 }
 
             }else{
@@ -982,12 +983,12 @@ public abstract class FSP{
             if(tracker.unitsize() > 4){
                 int count = unitsize / 4;
                 int offset = tracker.offset();
+                int stride = tracker.stride() * databytesize;
 
-                unitsize *= databytesize;
                 offset *= databytesize;
 
                 for(int i = 0; i < count; i++){
-                    GLES32.glVertexAttribIPointer(this.location + i, 4, GLES32.GL_FLOAT, unitsize, offset + (i * 4 * databytesize));
+                    GLES32.glVertexAttribIPointer(this.location + i, unitsize, GLES32.GL_FLOAT, stride, offset + (i * 4 * databytesize));
                 }
 
             }else{
