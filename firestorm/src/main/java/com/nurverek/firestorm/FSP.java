@@ -806,7 +806,7 @@ public abstract class FSP{
 
         @Override
         public int getGLSLSize(){
-            return 1;
+            return (int)Math.ceil(FSHub.UNIT_SIZES[element] / 4F);
         }
 
         @Override
@@ -828,11 +828,12 @@ public abstract class FSP{
     public static class AttribPointerLink extends FSConfigLocated{
 
         public int linkindex;
+        public int glslsize;
 
-        public AttribPointerLink(Mode mode, int linkindex){
+        public AttribPointerLink(Mode mode, int linkindex, int glslsize){
             super(mode);
-
             this.linkindex = linkindex;
+            this.glslsize = glslsize;
         }
 
         @Override
@@ -843,12 +844,12 @@ public abstract class FSP{
             int databytesize = tracker.typebytesize();
 
             link.vbuffer.bind();
-            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[linkindex], tracker.stride() * databytesize, tracker.offset() * databytesize);
+            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), link.gldatatype, tracker.stride() * databytesize, tracker.offset() * databytesize);
         }
 
         @Override
         public int getGLSLSize(){
-            return 1;
+            return glslsize;
         }
 
         @Override
@@ -890,7 +891,7 @@ public abstract class FSP{
 
         @Override
         public int getGLSLSize(){
-            return 1;
+            return (int)Math.ceil(FSHub.UNIT_SIZES[element] / 4F);
         }
 
         @Override
@@ -912,10 +913,12 @@ public abstract class FSP{
     public static class AttribIPointerLink extends FSConfigLocated{
 
         public int linkindex;
+        public int glslsize;
 
-        public AttribIPointerLink(Mode mode, int linkindex){
+        public AttribIPointerLink(Mode mode, int linkindex, int glslsize){
             super(mode);
             this.linkindex = linkindex;
+            this.glslsize = glslsize;
         }
 
         @Override
@@ -926,12 +929,12 @@ public abstract class FSP{
             int databytesize = tracker.typebytesize();
 
             link.vbuffer.bind();
-            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[linkindex], tracker.stride() * databytesize, tracker.offset() * databytesize);
+            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), link.gldatatype, tracker.stride() * databytesize, tracker.offset() * databytesize);
         }
 
         @Override
         public int getGLSLSize(){
-            return 1;
+            return glslsize;
         }
 
         @Override
