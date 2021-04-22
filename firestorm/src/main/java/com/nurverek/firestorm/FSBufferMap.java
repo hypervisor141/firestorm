@@ -6,35 +6,35 @@ import vanguard.VLListType;
 
 public final class FSBufferMap{
 
-    protected VLListType<FSBufferLayout<?>> layouts;
+    protected VLListType<FSBufferSegment<?>> segments;
 
     public FSBufferMap(){
-        layouts = new VLListType<>(FSHub.ELEMENT_TOTAL_COUNT, FSHub.ELEMENT_TOTAL_COUNT);
+        segments = new VLListType<>(FSHub.ELEMENT_TOTAL_COUNT, FSHub.ELEMENT_TOTAL_COUNT);
     }
 
-    public <BUFFER extends VLBuffer<?, ?>> FSBufferLayout<BUFFER> add(FSBufferLayout<BUFFER> layout){
-        layouts.add(layout);
-        return layout;
+    public <BUFFER extends VLBuffer<?, ?>> FSBufferSegment<BUFFER> add(FSBufferSegment<BUFFER> segment){
+        segments.add(segment);
+        return segment;
     }
 
     public void accountFor(FSMesh target){
-        int size = layouts.size();
+        int size = segments.size();
 
         for(int i = 0; i < size; i++){
-            layouts.get(i).accountFor(target);
+            segments.get(i).accountFor(target);
         }
     }
 
     public void buffer(FSMesh target){
-        int size = layouts.size();
+        int size = segments.size();
 
         for(int i = 0; i < size; i++){
-            layouts.get(i).buffer(target);
+            segments.get(i).buffer(target);
         }
     }
 
     public void bufferDebug(FSMesh target){
-        int size = layouts.size();
+        int size = segments.size();
 
         VLDebug.append("[BufferLayout]\n");
 
@@ -45,7 +45,7 @@ public final class FSBufferMap{
             VLDebug.printD();
 
             try{
-                layouts.get(i).bufferDebug(target);
+                segments.get(i).bufferDebug(target);
 
             }catch(Exception ex){
                 VLDebug.append(" [FAILED]\n");

@@ -4,7 +4,7 @@ import vanguard.VLBuffer;
 import vanguard.VLDebug;
 import vanguard.VLListType;
 
-public final class FSBufferLayout<BUFFER extends VLBuffer<?, ?>>{
+public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
     private static final int BUFFER_PRINT_LIMIT = 100;
 
@@ -26,14 +26,14 @@ public final class FSBufferLayout<BUFFER extends VLBuffer<?, ?>>{
 
     protected int totalstride;
 
-    public FSBufferLayout(FSVertexBuffer<BUFFER> vbuffer, int capacity){
+    public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, int capacity){
         this.vbuffer = vbuffer;
         this.buffer = vbuffer.provider();
 
         entries = new VLListType<>(capacity, capacity / 2);
     }
 
-    public FSBufferLayout(BUFFER buffer, int capacity){
+    public FSBufferSegment(BUFFER buffer, int capacity){
         this.buffer = buffer;
         entries = new VLListType<>(capacity, capacity / 2);
     }
@@ -46,14 +46,14 @@ public final class FSBufferLayout<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    public FSBufferLayout<BUFFER> addElement(EntryElement entry){
+    public FSBufferSegment<BUFFER> addElement(EntryElement entry){
         totalstride += entry.unitsubcount;
         entries.add(entry);
 
         return this;
     }
 
-    public FSBufferLayout<BUFFER> addLink(EntryLink entry){
+    public FSBufferSegment<BUFFER> addLink(EntryLink entry){
         totalstride += entry.unitsubcount;
         entries.add(entry);
 
