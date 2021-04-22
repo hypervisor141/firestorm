@@ -228,7 +228,7 @@ public abstract class FSP{
                     VLDebug.append("]");
                     VLDebug.printD();
 
-                    coreconfigs.meshconfig.runDebug(pass, this, meshes.get(i), i, passindex);
+                    coreconfigs.meshconfig.runDebug(pass, this, mesh, i, passindex);
 
                     VLDebug.printD();
                 }
@@ -252,7 +252,7 @@ public abstract class FSP{
                 for(int i = 0; i < meshsize; i++){
                     FSMesh mesh = meshes.get(i);
                     mesh.configure(pass, this, i, passindex);
-                    coreconfigs.meshconfig.run(pass, this, meshes.get(i), i, passindex);
+                    coreconfigs.meshconfig.run(pass, this, mesh, i, passindex);
                 }
             }
 
