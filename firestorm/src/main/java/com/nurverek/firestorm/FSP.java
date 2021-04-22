@@ -795,13 +795,29 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(element, bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
-            int databytesize = FSHub.ELEMENT_BYTES[element];
+            int databytesize = FSHub.ELEMENT_BYTES[this.element];
+            int unitsize = tracker.unitsize();
 
             binding.vbuffer.bind();
-            GLES32.glVertexAttribPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[element], false, tracker.stride() * databytesize, tracker.offset() * databytesize);
+
+            if(tracker.unitsize() > 4){
+                int count = unitsize / 4;
+                int offset = tracker.offset();
+
+                unitsize *= databytesize;
+                offset *= databytesize;
+
+                for(int i = 0; i < count; i++){
+                    GLES32.glVertexAttribPointer(this.location + i, 4, GLES32.GL_FLOAT, false, unitsize, offset + (i * 4 * databytesize));
+                }
+
+            }else{
+                GLES32.glVertexAttribPointer(this.location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[this.element],
+                        false, tracker.stride() * databytesize, tracker.offset() * databytesize);
+            }
         }
 
         @Override
@@ -842,9 +858,25 @@ public abstract class FSP{
             VLBufferTrackerDetailed tracker = link.tracker;
 
             int databytesize = tracker.typebytesize();
+            int unitsize = tracker.unitsize();
 
             link.vbuffer.bind();
-            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), link.gldatatype, tracker.stride() * databytesize, tracker.offset() * databytesize);
+
+            if(tracker.unitsize() > 4){
+                int count = unitsize / 4;
+                int offset = tracker.offset();
+
+                unitsize *= databytesize;
+                offset *= databytesize;
+
+                for(int i = 0; i < count; i++){
+                    GLES32.glVertexAttribPointer(this.location + i, 4, GLES32.GL_FLOAT, false, unitsize, offset + (i * 4 * databytesize));
+                }
+
+            }else{
+                GLES32.glVertexAttribPointer(this.location, tracker.unitsize(), link.gldatatype,
+                        false, tracker.stride() * databytesize, tracker.offset() * databytesize);
+            }
         }
 
         @Override
@@ -880,13 +912,29 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(element, bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
-            int databytesize = FSHub.ELEMENT_BYTES[element];
+            int databytesize = FSHub.ELEMENT_BYTES[this.element];
+            int unitsize = tracker.unitsize();
 
             binding.vbuffer.bind();
-            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[element], tracker.stride() * databytesize, tracker.offset() * databytesize);
+
+            if(tracker.unitsize() > 4){
+                int count = unitsize / 4;
+                int offset = tracker.offset();
+
+                unitsize *= databytesize;
+                offset *= databytesize;
+
+                for(int i = 0; i < count; i++){
+                    GLES32.glVertexAttribIPointer(this.location + i, 4, GLES32.GL_FLOAT, unitsize, offset + (i * 4 * databytesize));
+                }
+
+            }else{
+                GLES32.glVertexAttribIPointer(this.location, tracker.unitsize(), FSHub.ELEMENT_GLDATA_TYPES[this.element],
+                        tracker.stride() * databytesize, tracker.offset() * databytesize);
+            }
         }
 
         @Override
@@ -927,9 +975,24 @@ public abstract class FSP{
             VLBufferTrackerDetailed tracker = link.tracker;
 
             int databytesize = tracker.typebytesize();
+            int unitsize = tracker.unitsize();
 
             link.vbuffer.bind();
-            GLES32.glVertexAttribIPointer(location, tracker.unitsize(), link.gldatatype, tracker.stride() * databytesize, tracker.offset() * databytesize);
+
+            if(tracker.unitsize() > 4){
+                int count = unitsize / 4;
+                int offset = tracker.offset();
+
+                unitsize *= databytesize;
+                offset *= databytesize;
+
+                for(int i = 0; i < count; i++){
+                    GLES32.glVertexAttribIPointer(this.location + i, 4, GLES32.GL_FLOAT, unitsize, offset + (i * 4 * databytesize));
+                }
+
+            }else{
+                GLES32.glVertexAttribIPointer(this.location, tracker.unitsize(), link.gldatatype, tracker.stride() * databytesize, tracker.offset() * databytesize);
+            }
         }
 
         @Override
