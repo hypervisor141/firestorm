@@ -791,51 +791,49 @@ public abstract class FSP{
     public static class AttribPointer extends FSConfigLocated{
 
         public int element;
-        public int bufferindex;
-        public int unitsize;
+        public int bindingindex;
         public boolean normalized;
-        public int glslsize;
 
-        public AttribPointer(Mode mode, int element, int bufferindex, int unitsize, boolean normalized, int glslsize){
+        public AttribPointer(Mode mode, int element, int bindingindex, boolean normalized){
             super(mode);
 
             this.element = element;
-            this.bufferindex = bufferindex;
-            this.unitsize = unitsize;
+            this.bindingindex = bindingindex;
             this.normalized = normalized;
-            this.glslsize = glslsize;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             int bytesize = tracker.typebytesize();
 
             binding.vbuffer.bind();
 
-            GLES32.glVertexAttribPointer(location, unitsize, FSHub.ELEMENT_GLDATA_TYPES[element], normalized, tracker.stride() * bytesize, tracker.offset() * bytesize);
+            GLES32.glVertexAttribPointer(location, tracker.unitsubcount(), FSHub.ELEMENT_GLDATA_TYPES[element], normalized, tracker.stride() * bytesize, tracker.offset() * bytesize);
         }
 
         @Override
         public int getGLSLSize(){
-            return glslsize;
+            return 1;
         }
 
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
             super.debugInfo(pass, program, mesh, debug);
 
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             VLDebug.append("element[");
             VLDebug.append(element);
-            VLDebug.append("bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("bindingIndex[");
+            VLDebug.append(bindingindex);
             VLDebug.append("unitSize[");
-            VLDebug.append(unitsize);
+            VLDebug.append(tracker.unitsize());
+            VLDebug.append("unitSubCount[");
+            VLDebug.append(tracker.unitsubcount());
             VLDebug.append("] normalized[");
             VLDebug.append(normalized);
             VLDebug.append("] stride[");
@@ -855,17 +853,13 @@ public abstract class FSP{
     public static class AttribPointerLink extends FSConfigLocated{
 
         public int linkindex;
-        public int unitsize;
         public boolean normalized;
-        public int glslsize;
 
-        public AttribPointerLink(Mode mode, int linkindex, int unitsize, boolean normalized, int glslsize){
+        public AttribPointerLink(Mode mode, int linkindex, boolean normalized){
             super(mode);
 
             this.linkindex = linkindex;
-            this.unitsize = unitsize;
             this.normalized = normalized;
-            this.glslsize = glslsize;
         }
 
         @Override
@@ -876,12 +870,12 @@ public abstract class FSP{
 
             link.vbuffer.bind();
 
-            GLES32.glVertexAttribPointer(location, unitsize, link.gldatatype, normalized, tracker.stride() * bytesize, tracker.offset() * bytesize);
+            GLES32.glVertexAttribPointer(location, tracker.unitsubcount(), link.gldatatype, normalized, tracker.stride() * bytesize, tracker.offset() * bytesize);
         }
 
         @Override
         public int getGLSLSize(){
-            return glslsize;
+            return 1;
         }
 
         @Override
@@ -894,7 +888,9 @@ public abstract class FSP{
             VLDebug.append("linkIndex[");
             VLDebug.append(linkindex);
             VLDebug.append("unitSize[");
-            VLDebug.append(unitsize);
+            VLDebug.append(tracker.unitsize());
+            VLDebug.append("unitSubCount[");
+            VLDebug.append(tracker.unitsubcount());
             VLDebug.append("] normalized[");
             VLDebug.append(normalized);
             VLDebug.append("] stride[");
@@ -914,54 +910,47 @@ public abstract class FSP{
     public static class AttribIPointer extends FSConfigLocated{
 
         public int element;
-        public int bufferindex;
-        public int unitsize;
-        public int glslsize;
+        public int bindingindex;
 
-        public AttribIPointer(Mode mode, int element, int bufferindex, int unitsize, int glslsize){
+        public AttribIPointer(Mode mode, int element, int bindingindex){
             super(mode);
 
             this.element = element;
-            this.bufferindex = bufferindex;
-            this.unitsize = unitsize;
-            this.glslsize = glslsize;
+            this.bindingindex = bindingindex;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             int bytesize = tracker.typebytesize();
-            int offset = (tracker.offset() + tracker.unitoffset()) * bytesize;
-            int stride = tracker.stride() * bytesize;
-            int count = tracker.unitsubcount() / unitsize;
 
             binding.vbuffer.bind();
 
-            for(int i = 0; i < count; i++){
-                GLES32.glVertexAttribIPointer(location + i, unitsize, FSHub.ELEMENT_GLDATA_TYPES[element], stride, offset);
-            }
+            GLES32.glVertexAttribIPointer(location, tracker.unitsubcount(), FSHub.ELEMENT_GLDATA_TYPES[element], tracker.stride() * bytesize, tracker.offset() * bytesize);
         }
 
         @Override
         public int getGLSLSize(){
-            return glslsize;
+            return 1;
         }
 
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
             super.debugInfo(pass, program, mesh, debug);
 
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             VLDebug.append("element[");
             VLDebug.append(element);
-            VLDebug.append("bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("bindingIndex[");
+            VLDebug.append(bindingindex);
             VLDebug.append("unitSize[");
-            VLDebug.append(unitsize);
+            VLDebug.append(tracker.unitsize());
+            VLDebug.append("unitSubCount[");
+            VLDebug.append(tracker.unitsubcount());
             VLDebug.append("] stride[");
             VLDebug.append(tracker.stride());
             VLDebug.append("] offset[");
@@ -979,37 +968,27 @@ public abstract class FSP{
     public static class AttribIPointerLink extends FSConfigLocated{
 
         public int linkindex;
-        public int unitsize;
-        public int glslsize;
 
-        public AttribIPointerLink(Mode mode, int linkindex, int unitsize, int glslsize){
+        public AttribIPointerLink(Mode mode, int linkindex){
             super(mode);
 
             this.linkindex = linkindex;
-            this.unitsize = unitsize;
-            this.glslsize = glslsize;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             FSLinkGLBuffered<?, ?, ?> link = (FSLinkGLBuffered<?, ?, ?>)mesh.links.get(linkindex);
             VLBufferTrackerDetailed tracker = link.tracker;
-
             int bytesize = tracker.typebytesize();
-            int offset = (tracker.offset() + tracker.unitoffset()) * bytesize;
-            int stride = tracker.stride() * bytesize;
-            int count = tracker.unitsubcount() / unitsize;
 
             link.vbuffer.bind();
 
-            for(int i = 0; i < count; i++){
-                GLES32.glVertexAttribIPointer(location + i, unitsize, link.gldatatype, stride, offset);
-            }
+            GLES32.glVertexAttribIPointer(location, tracker.unitsubcount(), link.gldatatype, tracker.stride() * bytesize, tracker.offset() * bytesize);
         }
 
         @Override
         public int getGLSLSize(){
-            return glslsize;
+            return 1;
         }
 
         @Override
@@ -1022,7 +1001,9 @@ public abstract class FSP{
             VLDebug.append("linkIndex[");
             VLDebug.append(linkindex);
             VLDebug.append("unitSize[");
-            VLDebug.append(unitsize);
+            VLDebug.append(tracker.unitsize());
+            VLDebug.append("unitSubCount[");
+            VLDebug.append(tracker.unitsubcount());
             VLDebug.append("] stride[");
             VLDebug.append(tracker.stride());
             VLDebug.append("] offset[");
@@ -1744,15 +1725,15 @@ public abstract class FSP{
     public static class UniformBlockElement extends FSConfigLocated{
 
         public int element;
-        public int bufferindex;
+        public int bindingindex;
 
         protected String name;
 
-        public UniformBlockElement(Mode mode, int element, String name, int bufferindex){
+        public UniformBlockElement(Mode mode, int element, String name, int bindingindex){
             super(mode);
 
             this.element = element;
-            this.bufferindex = bufferindex;
+            this.bindingindex = bindingindex;
             this.name = name;
         }
 
@@ -1764,7 +1745,7 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer<?> buffer = mesh.first().bufferBindings().get(element, bufferindex).vbuffer;
+            FSVertexBuffer<?> buffer = mesh.first().bufferBindings().get(element, bindingindex).vbuffer;
 
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
@@ -1781,11 +1762,11 @@ public abstract class FSP{
 
             VLDebug.append("element[");
             VLDebug.append(FSHub.ELEMENT_NAMES[element]);
-            VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("] bindingIndex[");
+            VLDebug.append(bindingindex);
             VLDebug.append("] buffer[");
 
-            mesh.first().bufferBindings().get(element, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(element, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2015,16 +1996,16 @@ public abstract class FSP{
 
     public static class DrawElements extends FSConfig{
 
-        public int bufferindex;
+        public int bindingindex;
 
-        public DrawElements(Mode mode, int bufferindex){
+        public DrawElements(Mode mode, int bindingindex){
             super(mode);
-            this.bufferindex = bufferindex;
+            this.bindingindex = bindingindex;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             binding.vbuffer.bind();
@@ -2042,11 +2023,11 @@ public abstract class FSP{
 
             VLDebug.append("element[");
             VLDebug.append(FSHub.ELEMENT_NAMES[FSHub.ELEMENT_INDEX]);
-            VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("] bindingIndex[");
+            VLDebug.append(bindingindex);
             VLDebug.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2054,16 +2035,16 @@ public abstract class FSP{
 
     public static class DrawElementsInstanced extends FSConfig{
 
-        public int bufferindex;
+        public int bindingindex;
 
-        public DrawElementsInstanced(Mode mode, int bufferindex){
+        public DrawElementsInstanced(Mode mode, int bindingindex){
             super(mode);
-            this.bufferindex = bufferindex;
+            this.bindingindex = bindingindex;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             binding.vbuffer.bind();
@@ -2083,11 +2064,11 @@ public abstract class FSP{
             VLDebug.append(mesh.drawmode);
             VLDebug.append("] instanceCount[");
             VLDebug.append(mesh.size());
-            VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("] bindingIndex[");
+            VLDebug.append(bindingindex);
             VLDebug.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
@@ -2098,20 +2079,20 @@ public abstract class FSP{
         public int start;
         public int end;
         public int count;
-        public int bufferindex;
+        public int bindingindex;
 
-        public DrawRangeElements(Mode mode, int start, int end, int count, int bufferindex){
+        public DrawRangeElements(Mode mode, int start, int end, int count, int bindingindex){
             super(mode);
 
             this.start = start;
             this.end = end;
             this.count = count;
-            this.bufferindex = bufferindex;
+            this.bindingindex = bindingindex;
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex);
             VLBufferTrackerDetailed tracker = binding.tracker;
 
             binding.vbuffer.bind();
@@ -2135,11 +2116,11 @@ public abstract class FSP{
             VLDebug.append(end);
             VLDebug.append("] count[");
             VLDebug.append(count);
-            VLDebug.append("] bufferIndex[");
-            VLDebug.append(bufferindex);
+            VLDebug.append("] bindingIndex[");
+            VLDebug.append(bindingindex);
             VLDebug.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bufferindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
 
             VLDebug.append("] ");
         }
