@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
-import vanguard.VLBufferTrackerDetailed;
+import vanguard.VLBufferTracker;
 import vanguard.VLListType;
 
 public class FSInstance{
@@ -203,11 +203,11 @@ public class FSInstance{
 
     public void updateBufferVertexStrict(int element, int bufferindex){
         FSBufferBindings.Binding<?> binding = bufferbindings.get(element).get(bufferindex);
-        VLBufferTrackerDetailed tracker = binding.tracker;
+        VLBufferTracker tracker = binding.tracker;
 
-        int offset = tracker.offset();
+        int offset = tracker.offset;
 
-        binding.vbuffer.update(offset,  tracker.endposition() - offset);
+        binding.vbuffer.update(offset,  tracker.endposition - offset);
     }
 
     public String name(){

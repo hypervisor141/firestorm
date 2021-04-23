@@ -248,6 +248,18 @@ public class FSMesh{
         }
     }
 
+    public void updateLinkBufferDirect(int linkindex){
+        ((FSLinkBuffered<?, ?>)links.get(linkindex)).update();
+    }
+
+    public void updateLinkBufferVertex(int linkindex){
+        ((FSLinkGLBuffered<?, ?>)links.get(linkindex)).updateVertexBuffer();
+    }
+
+    public void updateLinkBufferVertexStrict(int linkindex){
+        ((FSLinkGLBuffered<?, ?>)links.get(linkindex)).updateVertexBufferStrict();
+    }
+
     public void drawMode(int mode){
         drawmode = mode;
     }

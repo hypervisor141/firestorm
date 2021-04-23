@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLBuffer;
-import vanguard.VLBufferTrackerDetailed;
+import vanguard.VLBufferTracker;
 import vanguard.VLListType;
 
 public class FSBufferBindings{
@@ -38,11 +38,11 @@ public class FSBufferBindings{
 
     public static final class Binding<BUFFER extends VLBuffer<?, ?>>{
 
-        public VLBufferTrackerDetailed tracker;
+        public VLBufferTracker tracker;
         public BUFFER buffer;
         public FSVertexBuffer<BUFFER> vbuffer;
 
-        public Binding(VLBufferTrackerDetailed tracker, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer){
+        public Binding(VLBufferTracker tracker, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer){
             this.tracker = tracker;
             this.buffer = buffer;
             this.vbuffer = vbuffer;

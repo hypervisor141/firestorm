@@ -36,11 +36,11 @@ public final class FSBufferMap{
     public void bufferDebug(FSMesh target){
         int size = segments.size();
 
-        VLDebug.append("[BufferLayout]\n");
-
         for(int i = 0; i < size; i++){
-            VLDebug.append("Layout[");
+            VLDebug.append("Segment[");
             VLDebug.append(i);
+            VLDebug.append("/");
+            VLDebug.append(size);
             VLDebug.append("] ");
             VLDebug.printD();
 
