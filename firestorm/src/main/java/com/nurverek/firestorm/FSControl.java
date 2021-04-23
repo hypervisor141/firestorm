@@ -17,7 +17,7 @@ public final class FSControl{
     protected static boolean keepalive;
     protected static boolean isalive;
 
-    public static FSSurface initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive){
+    public static FSSurface initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int efficientmodeunchangedframesthreshold){
         VLDebug.tag(LOGTAG);
 
         FSControl.surface = surface;
@@ -25,7 +25,7 @@ public final class FSControl{
         FSControl.keepalive = keepalive;
 
         FSCInput.initialize();
-        FSCFrames.initialize();
+        FSCFrames.initialize(efficientmodeunchangedframesthreshold);
         FSR.initialize(threadinterface);
         FSCThreadManager.initialize();
 

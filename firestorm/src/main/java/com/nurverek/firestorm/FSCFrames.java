@@ -4,9 +4,9 @@ import android.util.Log;
 
 public class FSCFrames{
 
-    private static int EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = 5;
-    private static long GLOBAL_ID = 1000;
-    private static long TOTAL_FRAMES = 0;
+    private static int EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD;
+    private static long GLOBAL_ID;
+    private static long TOTAL_FRAMES;
     private static long FRAME_TIME;
     private static long AVERAGE_FRAMESWAP_TIME;
     private static long AVERAGE_PROCESS_TIME;
@@ -19,11 +19,14 @@ public class FSCFrames{
 
     private static final Object LOCK = new Object();
 
-    protected static void initialize(){
+    protected static void initialize(int efficientmodeunchangedframesthreshold){
         FPS = 0;
         FRAME_TIME = 0;
         UNCHANGED_FRAMES = 0;
         EXTERNAL_CHANGES = 1;
+        GLOBAL_ID = 1000;
+        EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = efficientmodeunchangedframesthreshold;
+        TOTAL_FRAMES = 0;
         EFFICIENT_RENDER = true;
     }
 
