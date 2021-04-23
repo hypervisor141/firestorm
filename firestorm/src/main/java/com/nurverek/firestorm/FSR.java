@@ -31,6 +31,7 @@ public class FSR{
         threadinterface = threadsrc;
 
         passes = new VLListType<>(10, 10);
+        hubs = new VLListType<>(10, 100);
         tasks = new VLListType<>(10, 100);
         taskcache = new VLListType<>(10, 100);
 
