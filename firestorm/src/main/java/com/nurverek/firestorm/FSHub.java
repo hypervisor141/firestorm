@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import android.app.Activity;
+import android.content.Context;
 import android.opengl.GLES32;
 
 import java.io.IOException;
@@ -60,15 +61,15 @@ public abstract class FSHub{
 
     }
 
-    public void initialize(Activity act){
-        assemble(act, FSR.getRenderPasses());
+    public void initialize(){
+        assemble(FSControl.getContext(), FSR.getRenderPasses());
     }
 
     public Automator createAutomator(int filecapacity, int scancapacity, int buffercapacity){
         return new Automator(filecapacity, scancapacity, buffercapacity);
     }
 
-    protected abstract void assemble(Activity act, VLListType<FSRPass> targets);
+    protected abstract void assemble(Context context, VLListType<FSRPass> targets);
     public abstract void destroy();
 
     public static class Automator{
