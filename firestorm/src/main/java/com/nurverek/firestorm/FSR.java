@@ -15,6 +15,7 @@ public class FSR{
     public static final Object RENDERLOCK = new Object();
 
     private static VLListType<FSRPass> passes;
+    private static VLListType<FSHub> hubs;
     private static VLListType<FSRTask> tasks;
     private static VLListType<FSRTask> taskcache;
 
@@ -102,6 +103,10 @@ public class FSR{
         passes.add(pass);
     }
 
+    public static void addHub(FSHub hub){
+        hubs.add(hub);
+    }
+
     protected static FSRThread getRenderThread(){
         return renderthread;
     }
@@ -112,6 +117,10 @@ public class FSR{
 
     public static FSRPass getRenderPass(int index){
         return passes.get(index);
+    }
+
+    public static FSHub getHub(int index){
+        return hubs.get(index);
     }
 
     public static VLListType<FSRPass> getRenderPasses(){
@@ -141,8 +150,19 @@ public class FSR{
         return item;
     }
 
+    public static FSHub removeHub(int index){
+        FSHub item = hubs.get(index);
+        hubs.remove(index);
+
+        return item;
+    }
+
     public static int getRenderPassesSize(){
         return passes.size();
+    }
+
+    public static int getHubsSize(){
+        return hubs.size();
     }
 
     protected static void finishFrame(){
@@ -159,14 +179,30 @@ public class FSR{
         FSCFrames.processFrameAndSignalNextFrame();
     }
 
+    protected static void paused(){
+        int size = hubs.size();
+
+        for(int i = 0; i < size; i++){
+            hubs.get(i).paused();
+        }
+    }
+
+    protected static void resumed(){
+        int size = hubs.size();
+
+        for(int i = 0; i < size; i++){
+            hubs.get(i).resumed();
+        }
+    }
+
     protected static void destroy(){
         renderthread.shutdown();
 
         if(!FSControl.getKeepAlive()){
-            int size = passes.size();
+            int size = hubs.size();
 
             for(int i = 0; i < size; i++){
-                passes.get(i).destroy();
+                hubs.get(i).destroy();
             }
 
             CURRENT_PASS_INDEX = -1;

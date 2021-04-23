@@ -70,6 +70,9 @@ public abstract class FSHub{
     }
 
     protected abstract void assemble(Context context, VLListType<FSRPass> targets);
+
+    public abstract void paused();
+    public abstract void resumed();
     public abstract void destroy();
 
     public static class Automator{

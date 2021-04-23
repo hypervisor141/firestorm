@@ -177,21 +177,4 @@ public class FSRPass{
             }
         }
     }
-
-    public void destroy(){
-        for(int i = 0; i < entries.size(); i++){
-            entries.get(i).destroy();
-
-            if(debug >= FSControl.DEBUG_NORMAL){
-                try{
-                    FSTools.checkGLError();
-
-                }catch(Exception ex){
-                    throw new RuntimeException("Error running destroy() for Entry[" + i + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
-                }
-            }
-        }
-
-        entries = null;
-    }
 }
