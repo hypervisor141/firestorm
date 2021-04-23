@@ -16,7 +16,6 @@ public class FSCFrames{
     protected static int EXTERNAL_CHANGES = 0;
 
     private static volatile boolean EFFICIENT_RENDER;
-    private static volatile boolean PERFORMANCE_MONITOR;
 
     private static final Object LOCK = new Object();
 
@@ -24,24 +23,23 @@ public class FSCFrames{
         FPS = 0;
         FRAME_TIME = 0;
         UNCHANGED_FRAMES = 0;
-        EXTERNAL_CHANGES = 0;
+        EXTERNAL_CHANGES = 1;
         EFFICIENT_RENDER = true;
-        PERFORMANCE_MONITOR = false;
     }
 
     public static void addExternalChangesForFrame(int changes){
-        EXTERNAL_CHANGES += changes;
+        synchronized(LOCK){
+            EXTERNAL_CHANGES += changes;
+        }
+
+        if(changes > 0){
+            FSCFrames.signalFrameRender();
+        }
     }
 
     public static void setEfficientRenderMode(boolean enable){
         synchronized(LOCK){
             EFFICIENT_RENDER = enable;
-        }
-    }
-
-    public static void setPerformanceMonitorMode(boolean enabled){
-        synchronized(LOCK){
-            PERFORMANCE_MONITOR = enabled;
         }
     }
 
@@ -87,47 +85,24 @@ public class FSCFrames{
         return EFFICIENT_RENDER;
     }
 
-    public static boolean getPerformanceMonitorMode(){
-        return PERFORMANCE_MONITOR;
-    }
-
-    public static void signalFrameRender(boolean continuous){
-        synchronized(FSControl.surface){
-            FSControl.surface.config().setRenderContinuously(continuous);
-
-            if(continuous){
-                FSControl.surface.postFrame();
-            }
+    public static void signalFrameRender(){
+        synchronized(LOCK){
+            UNCHANGED_FRAMES = 0;
+            FSControl.surface.postFrame();
         }
     }
 
     protected static void processFrameAndSignalNextFrame(){
-        FSSurface surface = FSControl.getSurface();
-        FSSurface.Config config = FSControl.getSurface().config();
-
-        if(EFFICIENT_RENDER){
-            if(EXTERNAL_CHANGES == 0){
-                if(UNCHANGED_FRAMES >= EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD){
-                    synchronized(LOCK){
-                        UNCHANGED_FRAMES = 0;
-                    }
-
-                    signalFrameRender(false);
-
-                }else{
-                    synchronized(LOCK){
-                        UNCHANGED_FRAMES++;
-                    }
-
-                    surface.postFrame();
+        synchronized(LOCK){
+            if(EFFICIENT_RENDER){
+                if(EXTERNAL_CHANGES == 0 && UNCHANGED_FRAMES < EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD){
+                    UNCHANGED_FRAMES++;
+                    FSControl.surface.postFrame();
                 }
 
-            }else if(config.getRenderContinuously()){
-                surface.postFrame();
+            }else{
+                FSControl.surface.postFrame();
             }
-
-        }else if(config.getRenderContinuously()){
-            surface.postFrame();
         }
     }
 
@@ -173,7 +148,6 @@ public class FSCFrames{
             UNCHANGED_FRAMES = 0;
 
             EFFICIENT_RENDER = false;
-            PERFORMANCE_MONITOR = false;
         }
     }
 }

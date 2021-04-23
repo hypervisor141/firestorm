@@ -202,24 +202,14 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
 
     public static class Config{
 
-        private boolean dirtyrender;
         private boolean touchable;
 
         public Config(){
-            dirtyrender = false;
             touchable = true;
         }
 
         public void setTouchable(boolean s){
             touchable = s;
-        }
-
-        public void setRenderContinuously(boolean s){
-            dirtyrender = s;
-        }
-
-        public boolean getRenderContinuously(){
-            return dirtyrender;
         }
 
         public boolean getTouchable(){
