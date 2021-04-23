@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.util.Log;
+
 import vanguard.VLArrayFloat;
 import vanguard.VLBuffer;
 import vanguard.VLBufferTrackerDetailed;
@@ -34,6 +36,14 @@ public interface FSBufferMechanism{
                 tracker = new VLBufferTrackerDetailed();
                 buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
 
+                int newpos = buffer.position() + stride - entry.unitsubcount;
+
+                Log.d("wtf", buffer.position() + "  " + newpos + "  " + buffer.size() + "  " + stride + "  " + entry.unitoffset + "  " + entry.unitsize + "  " + entry.unitsubcount + "  " + instance.name + "  ");
+
+                if(array.size() <= entry.unitsize && newpos < buffer.size() && i < size - 1){
+                    buffer.position(newpos);
+                }
+
                 instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
@@ -52,7 +62,7 @@ public interface FSBufferMechanism{
         }
     }
 
-    class ElementInterleavedInstanced implements FSBufferMechanism{
+    class ElementInterleavedInstanced extends ElementSequentialInstanced{
 
         public ElementInterleavedInstanced(){
 
@@ -60,38 +70,11 @@ public interface FSBufferMechanism{
 
         @Override
         public <BUFFER extends VLBuffer<?, ?>> int buffer(FSMesh mesh, FSBufferSegment.Entry entry, FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int stride){
-            VLListType<FSInstance> instances = (VLListType<FSInstance>)mesh.instances;
-            FSInstance instance;
-            VLArrayFloat array;
+            int initialoffset = buffer.position();
 
-            int size = instances.size();
-            int element = entry.element;
-            int mainoffset = buffer.position();
+            super.buffer(mesh, entry, vbuffer, buffer, stride);
 
-            VLBufferTrackerDetailed tracker;
-
-            for(int i = 0; i < size; i++){
-                instance = instances.get(i);
-                array = instance.element(element);
-
-                tracker = new VLBufferTrackerDetailed();
-                buffer.put(tracker, array.provider(), 0, array.size(), entry.unitoffset, entry.unitsize, entry.unitsubcount, stride);
-
-                instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
-            }
-
-            return mainoffset + entry.unitsubcount;
-        }
-
-        public int calculateNeededSize(FSBufferSegment.Entry entry, FSMesh mesh){
-            int size = mesh.size();
-            int total = 0;
-
-            for(int i = 0; i < size; i++){
-                total += mesh.get(i).element(entry.element).size();
-            }
-
-            return total;
+            return initialoffset + entry.unitsubcount;
         }
     }
 
@@ -144,7 +127,7 @@ public interface FSBufferMechanism{
 
             int size = instances.size();
             int element = entry.element;
-            int mainoffset = buffer.position();
+            int initialoffset = buffer.position();
 
             instance = instances.get(0);
             array = instance.element(element);
@@ -156,7 +139,7 @@ public interface FSBufferMechanism{
                 instances.get(i).bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
             }
 
-            return mainoffset + entry.unitsubcount;
+            return initialoffset + entry.unitsubcount;
         }
 
         public int calculateNeededSize(FSBufferSegment.Entry entry, FSMesh mesh){
