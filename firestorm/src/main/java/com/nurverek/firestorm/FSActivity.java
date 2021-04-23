@@ -1,6 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +29,6 @@ public abstract class FSActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig){
-        super.onConfigurationChanged(newConfig);
-    }
-
     protected abstract FSSurface createSurface();
 
     protected abstract void modifyUI(RelativeLayout base);
@@ -47,7 +41,16 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onPause(){
         super.onPause();
 
-        if(!FSControl.getKeepAlive()){
+        if(!FSControl.getKeepAlive() && FSControl.isAlive()){
+            destroy();
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+
+        if(!FSControl.getKeepAlive() && FSControl.isAlive()){
             destroy();
         }
     }
