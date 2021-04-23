@@ -41,18 +41,9 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onPause(){
         super.onPause();
 
-        FSR.paused();
-
         if(!FSControl.getKeepAlive() && FSControl.isAlive()){
             destroy();
         }
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-
-        FSR.resumed();
     }
 
     @Override

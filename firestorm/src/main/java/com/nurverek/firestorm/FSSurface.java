@@ -85,6 +85,10 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         boolean isalive = FSControl.isAlive();
 
+        if(isalive){
+            FSR.resumed();
+        }
+
         events.GLPreSurfaceCreate(isalive);
 
         FSR.startRenderThread();
@@ -188,7 +192,10 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     private void destroy(){
         FSControl.destroy();
 
-        if(!FSControl.getKeepAlive()){
+        if(FSControl.getKeepAlive()){
+            FSR.paused();
+
+        }else{
             getHolder().removeCallback(this);
 
             gesture = null;
