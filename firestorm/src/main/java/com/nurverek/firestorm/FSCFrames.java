@@ -122,7 +122,7 @@ public class FSCFrames{
             }
         }
 
-        signalFrame();
+        FSR.postFrame();
     }
 
     protected static void timeFrameStarted(){

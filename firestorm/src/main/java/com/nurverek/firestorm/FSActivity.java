@@ -40,10 +40,7 @@ public abstract class FSActivity extends AppCompatActivity{
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        destroy();
-    }
 
-    protected void destroy(){
         if(BASE != null){
             BASE.removeAllViews();
             BASE = null;

@@ -111,18 +111,16 @@ public class FSRThread extends Thread{
         return lock;
     }
 
-    public FSRThread post(int code, Object d){
+    public void post(int code, Object d){
         synchronized(lock){
             orders.add(code);
             data.add(d);
 
             lock.notify();
         }
-
-        return this;
     }
 
-    protected void shutdown(){
+    public void shutdown(){
         try{
             running = false;
 

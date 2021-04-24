@@ -88,6 +88,8 @@ public class FSR{
 
         events.GLPreChange(width, height);
         events.GLPostChange(width, height);
+
+        postFrame();
     }
 
     protected static void onDrawFrame(){
@@ -133,7 +135,7 @@ public class FSR{
         hubs.add(hub);
     }
 
-    protected static FSRThread getRenderThread(){
+    public static FSRThread getRenderThread(){
         return renderthread;
     }
 
@@ -200,7 +202,7 @@ public class FSR{
         for(int i = 0; i < size; i++){
             passes.get(i).noitifyPostFrameSwap();
         }
-        
+
         FSCFrames.finalizeFrame();
     }
 
