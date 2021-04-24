@@ -17,19 +17,21 @@ public final class FSControl{
     protected static boolean keepalive;
     protected static boolean isalive;
 
-    public static FSSurface initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int efficientmodeunchangedframesthreshold){
-        VLDebug.tag(LOGTAG);
-
+    public static FSSurface initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int maxunchangedframes, int maxqueuedframes){
         FSControl.surface = surface;
         FSControl.view = view;
         FSControl.keepalive = keepalive;
 
-        FSCInput.initialize();
-        FSCFrames.initialize(efficientmodeunchangedframesthreshold);
-        FSR.initialize(threadinterface);
-        FSCThreadManager.initialize();
+        if(!isAlive()){
+            VLDebug.tag(LOGTAG);
 
-        return FSControl.surface;
+            FSCInput.initialize();
+            FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
+            FSR.initialize(threadinterface);
+            FSCThreads.initialize();
+        }
+
+        return surface;
     }
 
     protected static void setAlive(boolean alive){
@@ -66,7 +68,7 @@ public final class FSControl{
         FSCEGL.destroy();
         FSCInput.destroy();
         FSCFrames.destroy();
-        FSCThreadManager.destroy();
+        FSCThreads.destroy();
 
         if(!keepalive){
             FSControl.isalive = false;

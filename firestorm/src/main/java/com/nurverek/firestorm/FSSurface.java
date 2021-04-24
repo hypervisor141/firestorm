@@ -1,9 +1,8 @@
 package com.nurverek.firestorm;
 
-import android.app.Activity;
+import android.content.Context;
 import android.opengl.EGL14;
 import android.opengl.EGLExt;
-import android.view.Choreographer;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -12,20 +11,17 @@ import android.view.SurfaceView;
 import androidx.core.view.GestureDetectorCompat;
 
 
-public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
-        Choreographer.FrameCallback, GestureDetector.OnGestureListener{
+public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, GestureDetector.OnGestureListener{
 
     private GestureDetectorCompat gesture;
-    private Choreographer choreographer;
     private Config config;
     private FSEvents events;
-    private Activity act;
 
     private boolean destroyed;
     private final int[] eglconfig;
 
-    public FSSurface(Activity act, int[] eglconfig, FSEvents events){
-        super(act.getApplicationContext());
+    public FSSurface(Context context, int[] eglconfig, FSEvents events){
+        super(context);
 
         this.eglconfig = eglconfig;
         this.events = events;
@@ -33,8 +29,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         initializeFields();
     }
 
-    public FSSurface(Activity act, FSEvents events){
-        super(act.getApplicationContext());
+    public FSSurface(Context context, FSEvents events){
+        super(context);
 
         this.eglconfig = new int[]{
                 EGL14.EGL_RENDERABLE_TYPE, EGLExt.EGL_OPENGL_ES3_BIT_KHR,
@@ -56,15 +52,10 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     private void initializeFields(){
         destroyed = false;
 
-        gesture = new GestureDetectorCompat(act, this);
-        choreographer = Choreographer.getInstance();
+        gesture = new GestureDetectorCompat(getContext(), this);
         config = new Config();
 
         getHolder().addCallback(this);
-    }
-
-    protected void postFrame(){
-        choreographer.postFrameCallback(this);
     }
 
     public Config config(){
@@ -85,20 +76,19 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         boolean isalive = FSControl.isAlive();
 
+        events.GLPreSurfaceCreate(isalive);
+
         if(isalive){
             FSR.resumed();
         }
 
-        events.GLPreSurfaceCreate(isalive);
-
         FSR.startRenderThread();
-        FSR.getRenderThread().post(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).post(FSRThread.SURFACE_CREATED, isalive);
+        FSR.post(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).post(FSRThread.SURFACE_CREATED, isalive);
 
         events.GLPostSurfaceCreate(isalive);
 
         FSControl.setAlive(true);
-
-        choreographer.postFrameCallback(this);
+        FSCFrames.signalFrame();
     }
 
 
@@ -106,7 +96,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
         events.GLPreSurfaceChange(width, height);
 
-        FSR.getRenderThread().post(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
+        FSR.post(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
 
         events.GLPostSurfaceChange(width, height);
     }
@@ -121,11 +111,6 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
         if(events != null){
             events.GLPostSurfaceDestroy();
         }
-    }
-
-    @Override
-    public void doFrame(long frameTimeNanos){
-        FSR.getRenderThread().post(FSRThread.DRAW_FRAME, null);
     }
 
     @Override
@@ -192,14 +177,10 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback,
     private void destroy(){
         FSControl.destroy();
 
-        if(FSControl.getKeepAlive()){
-            FSR.paused();
-
-        }else{
+        if(!FSControl.getKeepAlive()){
             getHolder().removeCallback(this);
 
             gesture = null;
-            choreographer = null;
             config = null;
             events = null;
 

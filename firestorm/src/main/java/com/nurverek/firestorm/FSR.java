@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.view.Choreographer;
+
 import vanguard.VLListType;
 
 public class FSR{
@@ -11,6 +13,13 @@ public class FSR{
             return new FSRThread();
         }
     };
+    private static final Choreographer.FrameCallback CHOREOGRAPHER_CALLBACK = new Choreographer.FrameCallback(){
+
+        @Override
+        public void doFrame(long frameTimeNanos){
+            post(FSRThread.DRAW_FRAME, null);
+        }
+    };
 
     public static final Object RENDERLOCK = new Object();
 
@@ -20,7 +29,8 @@ public class FSR{
     private static VLListType<FSRTask> taskcache;
 
     private static FSRInterface threadinterface;
-    private static FSRThread renderthread;
+    private static Choreographer choreographer;
+    private static volatile FSRThread renderthread;
 
     protected static boolean isInitialized;
 
@@ -29,6 +39,7 @@ public class FSR{
 
     protected static void initialize(FSRInterface threadsrc){
         threadinterface = threadsrc;
+        choreographer = Choreographer.getInstance();
 
         passes = new VLListType<>(10, 10);
         hubs = new VLListType<>(10, 100);
@@ -49,6 +60,20 @@ public class FSR{
         renderthread = threadinterface.create();
         renderthread.setPriority(Thread.MAX_PRIORITY);
         renderthread.initialize();
+    }
+
+    protected static void postFrame(){
+        if(renderthread != null && renderthread.running()){
+            choreographer.postFrameCallback(CHOREOGRAPHER_CALLBACK);
+        }
+    }
+
+    protected static FSRThread post(int code, Object d){
+        if(renderthread != null){
+            renderthread.post(code, d);
+        }
+
+        return renderthread;
     }
 
     protected static void onSurfaceCreated(boolean continuing){
@@ -175,9 +200,8 @@ public class FSR{
         for(int i = 0; i < size; i++){
             passes.get(i).noitifyPostFrameSwap();
         }
-
-        FSCFrames.timeBufferSwapped();
-        FSCFrames.processFrameAndSignalNextFrame();
+        
+        FSCFrames.finalizeFrame();
     }
 
     protected static void paused(){
@@ -198,24 +222,30 @@ public class FSR{
 
     protected static void destroy(){
         renderthread.shutdown();
+        renderthread = null;
 
         if(!FSControl.getKeepAlive()){
-            int size = hubs.size();
+            synchronized(RENDERLOCK){
+                int size = hubs.size();
 
-            for(int i = 0; i < size; i++){
-                hubs.get(i).destroy();
+                for(int i = 0; i < size; i++){
+                    hubs.get(i).destroy();
+                }
+
+                CURRENT_PASS_INDEX = -1;
+                CURRENT_PASS_ENTRY_INDEX = -1;
+
+                isInitialized = false;
+
+                threadinterface = null;
+                choreographer = null;
+                passes = null;
+                tasks = null;
+                taskcache = null;
             }
 
-            CURRENT_PASS_INDEX = -1;
-            CURRENT_PASS_ENTRY_INDEX = -1;
-
-            isInitialized = false;
-
-            passes = null;
-            tasks = null;
-            taskcache = null;
-            threadinterface = null;
-            renderthread = null;
+        }else{
+            FSR.paused();
         }
     }
 }

@@ -13,6 +13,8 @@ public abstract class FSActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
         BASE = new RelativeLayout(this);
 
         FSSurface surface = createSurface();
@@ -25,8 +27,6 @@ public abstract class FSActivity extends AppCompatActivity{
 
         modifyUI(BASE);
         setContentView(BASE);
-
-        super.onCreate(savedInstanceState);
     }
 
     protected abstract FSSurface createSurface();
@@ -38,25 +38,15 @@ public abstract class FSActivity extends AppCompatActivity{
     }
 
     @Override
-    protected void onPause(){
-        super.onPause();
-
-        if(!FSControl.getKeepAlive() && FSControl.isAlive()){
-            destroy();
-        }
-    }
-
-    @Override
     protected void onDestroy(){
         super.onDestroy();
-
-        if(!FSControl.getKeepAlive() && FSControl.isAlive()){
-            destroy();
-        }
+        destroy();
     }
 
     protected void destroy(){
-        BASE.removeAllViews();
-        BASE = null;
+        if(BASE != null){
+            BASE.removeAllViews();
+            BASE = null;
+        }
     }
 }

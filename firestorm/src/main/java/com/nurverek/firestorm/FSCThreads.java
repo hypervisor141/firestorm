@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLThreadManager;
 
-public class FSCThreadManager{
+public class FSCThreads{
 
     private static VLThreadManager manager;
 
@@ -15,6 +15,8 @@ public class FSCThreadManager{
     }
 
     public static void destroy(){
-        manager.destroy();
+        if(!FSControl.getKeepAlive()){
+            manager.destroy();
+        }
     }
 }

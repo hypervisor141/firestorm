@@ -4,7 +4,8 @@ import android.util.Log;
 
 public class FSCFrames{
 
-    private static int EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD;
+    private static int MAX_UNCHANGED_FRAMES;
+    private static int MAX_QUEUED_FRAMES;
     private static long GLOBAL_ID;
     private static long TOTAL_FRAMES;
     private static long FRAME_TIME;
@@ -13,19 +14,22 @@ public class FSCFrames{
     private static long FRAME_SECOND_TRACKER;
     private static int FPS;
     private static int UNCHANGED_FRAMES;
-    protected static int EXTERNAL_CHANGES = 0;
+    private static int QUEUED_FRAMES_COUNT;
+    protected static int EXTERNAL_CHANGES;
 
     private static volatile boolean EFFICIENT_RENDER;
 
     private static final Object LOCK = new Object();
 
-    protected static void initialize(int efficientmodeunchangedframesthreshold){
+    protected static void initialize(int maxunchangedframes, int maxqueuedframes){
+        MAX_UNCHANGED_FRAMES = maxunchangedframes;
+        MAX_QUEUED_FRAMES = maxqueuedframes;
         FPS = 0;
         FRAME_TIME = 0;
         UNCHANGED_FRAMES = 0;
+        QUEUED_FRAMES_COUNT = 0;
         EXTERNAL_CHANGES = 1;
         GLOBAL_ID = 1000;
-        EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = efficientmodeunchangedframesthreshold;
         TOTAL_FRAMES = 0;
         EFFICIENT_RENDER = true;
     }
@@ -36,7 +40,7 @@ public class FSCFrames{
         }
 
         if(changes > 0){
-            FSCFrames.signalFrameRender();
+            signalFrame();
         }
     }
 
@@ -48,7 +52,7 @@ public class FSCFrames{
 
     public static void setEfficientModeUnChangedFramesThreshold(int threshold){
         synchronized(LOCK){
-            EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = threshold;
+            MAX_UNCHANGED_FRAMES = threshold;
         }
     }
 
@@ -81,32 +85,44 @@ public class FSCFrames{
     }
 
     public static long getEfficientModeUnChangedFramesThreshold(){
-        return EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD;
+        return MAX_UNCHANGED_FRAMES;
     }
 
     public static boolean getEfficientRenderMode(){
         return EFFICIENT_RENDER;
     }
 
-    public static void signalFrameRender(){
+    public static void signalFrame(){
         synchronized(LOCK){
+            if(QUEUED_FRAMES_COUNT >= MAX_QUEUED_FRAMES){
+                return;
+            }
+
             UNCHANGED_FRAMES = 0;
-            FSControl.surface.postFrame();
+            QUEUED_FRAMES_COUNT++;
         }
+
+        FSR.postFrame();
     }
 
-    protected static void processFrameAndSignalNextFrame(){
+    protected static void finalizeFrame(){
+        timeBufferSwapped();
+
         synchronized(LOCK){
+            QUEUED_FRAMES_COUNT--;
+
             if(EFFICIENT_RENDER){
-                if(EXTERNAL_CHANGES == 0 && UNCHANGED_FRAMES < EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD){
+                if(EXTERNAL_CHANGES == 0 && UNCHANGED_FRAMES < MAX_UNCHANGED_FRAMES){
                     UNCHANGED_FRAMES++;
-                    FSControl.surface.postFrame();
+
+                    FSR.postFrame();
                 }
 
-            }else{
-                FSControl.surface.postFrame();
+                return;
             }
         }
+
+        signalFrame();
     }
 
     protected static void timeFrameStarted(){
@@ -140,7 +156,7 @@ public class FSCFrames{
 
     protected static void destroy(){
         if(!FSControl.getKeepAlive()){
-            EFFICIENT_MODE_UNCHANGED_FRAMES_THRESHOLD = 0;
+            MAX_UNCHANGED_FRAMES = 0;
             GLOBAL_ID = -1;
             TOTAL_FRAMES = 0;
             AVERAGE_FRAMESWAP_TIME = 0;

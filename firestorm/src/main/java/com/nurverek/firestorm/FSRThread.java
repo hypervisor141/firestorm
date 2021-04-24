@@ -12,8 +12,8 @@ public class FSRThread extends Thread{
     protected static final int DRAW_FRAME = 7438;
 
     private final Object lock;
-    private boolean ready;
 
+    private volatile boolean ready;
     private volatile boolean running;
 
     private final ArrayList<Integer> orders;
@@ -24,7 +24,9 @@ public class FSRThread extends Thread{
         data = new ArrayList<>();
 
         lock = new Object();
+
         running = false;
+        ready = false;
     }
 
     @Override
@@ -36,12 +38,12 @@ public class FSRThread extends Thread{
             lock.notify();
         }
 
-        ArrayList<Object> data = new ArrayList<>();
-        ArrayList<Integer> orders = new ArrayList<>();
+        ArrayList<Object> datacache = new ArrayList<>();
+        ArrayList<Integer> orderscache = new ArrayList<>();
 
-        while(running){
+        while(running()){
             synchronized(lock){
-                while(this.orders.isEmpty() && running){
+                while(orders.isEmpty() && running()){
                     try{
                         lock.wait();
                     }catch(InterruptedException ex){
@@ -49,20 +51,19 @@ public class FSRThread extends Thread{
                     }
                 }
 
-                orders.addAll(this.orders);
-                data.addAll(this.data);
-
-                this.orders.clear();
-                this.data.clear();
+                orderscache.addAll(orders);
+                datacache.addAll(data);
+                orders.clear();
+                data.clear();
             }
 
-            int size = orders.size();
+            int size = orderscache.size();
             int order;
             Object obj;
 
             for(int i = 0; i < size; i++){
-                order = orders.get(i);
-                obj = data.get(i);
+                order = orderscache.get(i);
+                obj = datacache.get(i);
 
                 if(order == CREATE_GL_CONTEXT){
                     Object[] msg = (Object[])obj;
@@ -80,13 +81,11 @@ public class FSRThread extends Thread{
                 }
             }
 
-            orders.clear();
-            data.clear();
+            orderscache.clear();
+            datacache.clear();
         }
 
-        synchronized(lock){
-            ready = false;
-        }
+        ready = false;
     }
 
     protected void initialize(){
@@ -123,18 +122,18 @@ public class FSRThread extends Thread{
         return this;
     }
 
-    protected FSRThread shutdown(){
-        synchronized(lock){
-            running = false;
-            lock.notify();
-        }
-
+    protected void shutdown(){
         try{
+            running = false;
+
+            synchronized(lock){
+                lock.notify();
+            }
+
             join();
+
         }catch(InterruptedException ex){
             ex.printStackTrace();
         }
-
-        return this;
     }
 }
