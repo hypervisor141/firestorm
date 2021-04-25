@@ -1,9 +1,9 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLVThreadTask;
+import vanguard.VLVRunnerThreadTask;
 import vanguard.VLVTypeRunner;
 
-public class FSVThreadTask extends VLVThreadTask{
+public class FSVRunnerThreadTask extends VLVRunnerThreadTask{
 
     private static final PostReporter REPORTER = new PostReporter(){
 
@@ -13,11 +13,11 @@ public class FSVThreadTask extends VLVThreadTask{
         }
     };
 
-    public FSVThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean debug, boolean enablecomensator){
+    public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean debug, boolean enablecomensator){
         super(root, freqmillis, freqextrananos, debug, enablecomensator, REPORTER);
     }
 
-    public FSVThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean debug, boolean enablecomensator, PostReporter reporter){
+    public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean debug, boolean enablecomensator, PostReporter reporter){
         super(root, freqmillis, freqextrananos, debug, enablecomensator, reporter);
     }
 }

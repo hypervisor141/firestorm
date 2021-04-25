@@ -23,11 +23,6 @@ public class FSRThread extends VLThread{
         public void run(VLThread thread){
             FSCEGL.initialize(FSControl.getSurface().getHolder(), attributes, continuing);
         }
-
-        @Override
-        public void requestDestruction(){
-
-        }
     }
 
     public static class TaskSignalSurfaceCreated implements VLThreadTaskType{
@@ -41,11 +36,6 @@ public class FSRThread extends VLThread{
         @Override
         public void run(VLThread thread){
             FSR.surfaceCreated(continuing);
-        }
-
-        @Override
-        public void requestDestruction(){
-
         }
     }
 
@@ -65,11 +55,6 @@ public class FSRThread extends VLThread{
         public void run(VLThread thread){
             FSR.surfaceChanged(format, width, height);
         }
-
-        @Override
-        public void requestDestruction(){
-
-        }
     }
 
     public static class TaskSignalFrameDraw implements VLThreadTaskType{
@@ -81,11 +66,6 @@ public class FSRThread extends VLThread{
         @Override
         public void run(VLThread thread){
             FSR.drawFrame();
-        }
-
-        @Override
-        public void requestDestruction(){
-
         }
     }
 }

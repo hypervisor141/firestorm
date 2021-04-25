@@ -71,15 +71,15 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
         events.GLPreSurfaceCreate(isalive);
 
-        if(isalive){
-            FSR.resumed();
-        }
-
         FSR.requestStart();
         FSR.post(new FSRThread.TaskCreateContext(eglconfig, isalive));
         FSR.post(new FSRThread.TaskSignalSurfaceCreated(isalive));
 
         events.GLPostSurfaceCreate(isalive);
+
+        if(isalive){
+            FSR.resumed();
+        }
 
         FSControl.setAlive(true);
     }

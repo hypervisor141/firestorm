@@ -68,7 +68,6 @@ public final class FSControl{
         FSCEGL.destroy();
         FSCInput.destroy();
         FSCFrames.destroy();
-        FSCThreads.destroy();
 
         if(!keepalive){
             isalive = false;

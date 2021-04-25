@@ -232,11 +232,16 @@ public class FSR{
     protected static void destroy(){
         renderthread.lockdown();
 
-        if(!FSControl.getKeepAlive()){
-            renderthread.requestDestruction();
-            renderthread = null;
+        if(FSControl.getKeepAlive()){
+            FSR.paused();
 
+        }else{
             synchronized(RENDERLOCK){
+                renderthread.requestDestruction();
+                renderthread = null;
+
+                FSCThreads.destroy();
+
                 int size = hubs.size();
 
                 for(int i = 0; i < size; i++){
@@ -254,9 +259,6 @@ public class FSR{
                 tasks = null;
                 taskcache = null;
             }
-
-        }else{
-            FSR.paused();
         }
     }
 }
