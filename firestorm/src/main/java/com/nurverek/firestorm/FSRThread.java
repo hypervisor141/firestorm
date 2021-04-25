@@ -88,7 +88,7 @@ public class FSRThread extends Thread{
         ready = false;
     }
 
-    protected void initialize(){
+    protected void initiate(){
         synchronized(lock){
             running = true;
             start();

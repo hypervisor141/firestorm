@@ -56,13 +56,13 @@ public class FSR{
         threadinterface = threadsrc;
     }
 
-    protected static void startRenderThread(){
+    protected static void prepare(){
         renderthread = threadinterface.create();
-        renderthread.setPriority(Thread.MAX_PRIORITY);
-        renderthread.initialize();
+        renderthread.setPriority(8);
+        renderthread.initiate();
     }
 
-    protected static void postFrame(){
+    protected static void requestFrame(){
         if(renderthread != null && renderthread.running()){
             choreographer.postFrameCallback(CHOREOGRAPHER_CALLBACK);
         }
@@ -89,7 +89,7 @@ public class FSR{
         events.GLPreChange(width, height);
         events.GLPostChange(width, height);
 
-        postFrame();
+        requestFrame();
     }
 
     protected static void onDrawFrame(){

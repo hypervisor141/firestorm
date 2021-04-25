@@ -4,8 +4,6 @@ import android.util.Log;
 
 public class FSCFrames{
 
-    private static int MAX_UNCHANGED_FRAMES;
-    private static int MAX_QUEUED_FRAMES;
     private static long GLOBAL_ID;
     private static long TOTAL_FRAMES;
     private static long FRAME_TIME;
@@ -13,24 +11,31 @@ public class FSCFrames{
     private static long AVERAGE_PROCESS_TIME;
     private static long FRAME_SECOND_TRACKER;
     private static int FPS;
+
+    private volatile static int MAX_UNCHANGED_FRAMES;
+    private volatile static int MAX_QUEUED_FRAMES;
     private static int UNCHANGED_FRAMES;
     private static int QUEUED_FRAMES_COUNT;
-    protected static int EXTERNAL_CHANGES;
+    private static int EXTERNAL_CHANGES;
+    private volatile static boolean EFFICIENT_RENDER;
 
-    private static volatile boolean EFFICIENT_RENDER;
-
-    private static final Object LOCK = new Object();
+    private final static Object LOCK = new Object();
 
     protected static void initialize(int maxunchangedframes, int maxqueuedframes){
+        GLOBAL_ID = 1000;
+        TOTAL_FRAMES = 0;
+        FRAME_TIME = 0;
+        AVERAGE_FRAMESWAP_TIME = 0;
+        AVERAGE_PROCESS_TIME = 0;
+        FRAME_SECOND_TRACKER = 0;
+        FPS = 0;
+
         MAX_UNCHANGED_FRAMES = maxunchangedframes;
         MAX_QUEUED_FRAMES = maxqueuedframes;
-        FPS = 0;
-        FRAME_TIME = 0;
         UNCHANGED_FRAMES = 0;
         QUEUED_FRAMES_COUNT = 0;
         EXTERNAL_CHANGES = 1;
-        GLOBAL_ID = 1000;
-        TOTAL_FRAMES = 0;
+
         EFFICIENT_RENDER = true;
     }
 
@@ -40,19 +45,21 @@ public class FSCFrames{
         }
 
         if(changes > 0){
-            signalFrame();
+            requestFrame();
         }
     }
 
     public static void setEfficientRenderMode(boolean enable){
-        synchronized(LOCK){
-            EFFICIENT_RENDER = enable;
-        }
+        EFFICIENT_RENDER = enable;
     }
 
     public static void setEfficientModeUnChangedFramesThreshold(int threshold){
+        MAX_UNCHANGED_FRAMES = threshold;
+    }
+
+    public static void resetUnchangedFrames(){
         synchronized(LOCK){
-            MAX_UNCHANGED_FRAMES = threshold;
+            UNCHANGED_FRAMES = 0;
         }
     }
 
@@ -80,11 +87,23 @@ public class FSCFrames{
         return FPS;
     }
 
-    public static long getCurrentUnchangedFrames(){
-        return UNCHANGED_FRAMES;
+    public static long getUnchangedFrames(){
+        synchronized(LOCK){
+            return UNCHANGED_FRAMES;
+        }
     }
 
-    public static long getEfficientModeUnChangedFramesThreshold(){
+    public static long getQueuedFrames(){
+        synchronized(LOCK){
+            return QUEUED_FRAMES_COUNT;
+        }
+    }
+
+    public static long getMaxQueuedFrames(){
+        return MAX_QUEUED_FRAMES;
+    }
+
+    public static long getMaxUnchangedFrames(){
         return MAX_UNCHANGED_FRAMES;
     }
 
@@ -92,7 +111,7 @@ public class FSCFrames{
         return EFFICIENT_RENDER;
     }
 
-    public static void signalFrame(){
+    public static void requestFrame(){
         synchronized(LOCK){
             if(QUEUED_FRAMES_COUNT >= MAX_QUEUED_FRAMES){
                 return;
@@ -102,7 +121,7 @@ public class FSCFrames{
             QUEUED_FRAMES_COUNT++;
         }
 
-        FSR.postFrame();
+        FSR.requestFrame();
     }
 
     protected static void finalizeFrame(){
@@ -115,14 +134,12 @@ public class FSCFrames{
                 if(EXTERNAL_CHANGES == 0 && UNCHANGED_FRAMES < MAX_UNCHANGED_FRAMES){
                     UNCHANGED_FRAMES++;
 
-                    FSR.postFrame();
+                    FSR.requestFrame();
                 }
-
-                return;
             }
         }
 
-        FSR.postFrame();
+        requestFrame();
     }
 
     protected static void timeFrameStarted(){
@@ -156,7 +173,6 @@ public class FSCFrames{
 
     protected static void destroy(){
         if(!FSControl.getKeepAlive()){
-            MAX_UNCHANGED_FRAMES = 0;
             GLOBAL_ID = -1;
             TOTAL_FRAMES = 0;
             AVERAGE_FRAMESWAP_TIME = 0;
@@ -164,7 +180,12 @@ public class FSCFrames{
             FRAME_SECOND_TRACKER = 0;
             FRAME_TIME = 0;
             FPS = 0;
+
+            MAX_UNCHANGED_FRAMES = -1;
+            MAX_QUEUED_FRAMES = -1;
             UNCHANGED_FRAMES = 0;
+            QUEUED_FRAMES_COUNT = 0;
+            EXTERNAL_CHANGES = 0;
 
             EFFICIENT_RENDER = false;
         }
