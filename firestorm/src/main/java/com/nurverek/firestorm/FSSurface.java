@@ -168,8 +168,6 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     }
 
     private void destroy(){
-        FSControl.setKeepAlive(false);
-
         FSControl.destroy();
 
         if(!FSControl.getKeepAlive()){
