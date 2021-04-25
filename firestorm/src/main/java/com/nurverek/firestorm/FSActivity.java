@@ -41,6 +41,8 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onDestroy(){
         super.onDestroy();
 
+        FSControl.setKeepAlive(false);
+
         if(BASE != null){
             BASE.removeAllViews();
             BASE = null;
