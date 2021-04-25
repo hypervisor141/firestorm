@@ -1,188 +1,91 @@
 package com.nurverek.firestorm;
 
-import android.os.Looper;
+import vanguard.VLThread;
+import vanguard.VLThreadTaskType;
 
-import java.util.ArrayList;
-
-public class FSRThread extends Thread{
-
-    protected static final int CREATE_GL_CONTEXT = 7435;
-    protected static final int SURFACE_CREATED = 7436;
-    protected static final int SURFACE_CHANGED = 7437;
-    protected static final int DRAW_FRAME = 7438;
-
-    private final Object lock;
-
-    private boolean enabled;
-    private boolean lockdown;
-    private boolean waiting;
-
-    private final ArrayList<Integer> orders;
-    private final ArrayList<Object> data;
+public class FSRThread extends VLThread{
 
     public FSRThread(){
-        orders = new ArrayList<>();
-        data = new ArrayList<>();
-
-        lock = new Object();
-
-        enabled = false;
-        lockdown = false;
-        waiting = false;
+        super(50);
     }
 
-    @Override
-    public void run(){
-        Looper.prepare();
+    public static class TaskCreateContext implements VLThreadTaskType{
 
-        synchronized(lock){
-            enabled = true;
-            lock.notifyAll();
+        private final boolean continuing;
+        private final int[] attributes;
+
+        protected TaskCreateContext(int[] attributes, boolean continuing){
+            this.attributes = attributes;
+            this.continuing = continuing;
         }
 
-        ArrayList<Object> datacache = new ArrayList<>();
-        ArrayList<Integer> orderscache = new ArrayList<>();
+        @Override
+        public void run(VLThread thread){
+            FSCEGL.initialize(FSControl.getSurface().getHolder(), attributes, continuing);
+        }
 
-        while(true){
-            synchronized(lock){
-                if(!enabled){
-                    orders.clear();
-                    data.clear();
-                    return;
+        @Override
+        public void requestDestruction(){
 
-                }else{
-                    while(lockdown || orders.isEmpty()){
-                        try{
-                            waiting = true;
-
-                            lock.notifyAll();
-                            lock.wait();
-
-                            waiting = false;
-
-                        }catch(InterruptedException ex){
-                            //
-                        }
-
-                        if(!enabled){
-                            orders.clear();
-                            data.clear();
-                            return;
-                        }
-                    }
-
-                    orderscache.addAll(orders);
-                    datacache.addAll(data);
-
-                    orders.clear();
-                    data.clear();
-                }
-            }
-
-            int size = orderscache.size();
-            int order;
-            Object obj;
-
-            for(int i = 0; i < size; i++){
-                order = orderscache.get(i);
-                obj = datacache.get(i);
-
-                if(order == CREATE_GL_CONTEXT){
-                    Object[] msg = (Object[])obj;
-                    FSCEGL.initialize(FSControl.getSurface().getHolder(), (int[])msg[0], (boolean)msg[1]);
-
-                }else if(order == SURFACE_CREATED){
-                    FSR.onSurfaceCreated((boolean)obj);
-
-                }else if(order == SURFACE_CHANGED){
-                    int[] a = (int[])obj;
-                    FSR.onSurfaceChanged(a[0], a[1]);
-
-                }else if(order == DRAW_FRAME){
-                    FSR.onDrawFrame();
-                }
-            }
-
-            orderscache.clear();
-            datacache.clear();
         }
     }
 
-    protected void initiate(){
-        start();
+    public static class TaskSignalSurfaceCreated implements VLThreadTaskType{
 
-        synchronized(lock){
-            while(!enabled){
-                try{
-                    lock.wait();
-                }catch(InterruptedException ex){
-                    ex.printStackTrace();
-                }
-            }
+        private final boolean continuing;
+
+        protected TaskSignalSurfaceCreated(boolean continuing){
+            this.continuing = continuing;
+        }
+
+        @Override
+        public void run(VLThread thread){
+            FSR.surfaceCreated(continuing);
+        }
+
+        @Override
+        public void requestDestruction(){
+
         }
     }
 
-    public boolean enabled(){
-        synchronized(lock){
-            return enabled;
+    public static class TaskSignalSurfaceChanged implements VLThreadTaskType{
+
+        private final int format;
+        private final int width;
+        private final int height;
+
+        protected TaskSignalSurfaceChanged(int format, int width, int height){
+            this.format = format;
+            this.width = width;
+            this.height = height;
+        }
+
+        @Override
+        public void run(VLThread thread){
+            FSR.surfaceChanged(format, width, height);
+        }
+
+        @Override
+        public void requestDestruction(){
+
         }
     }
 
-    public Object lock(){
-        return lock;
-    }
+    public static class TaskSignalFrameDraw implements VLThreadTaskType{
 
-    public void post(int code, Object d){
-        synchronized(lock){
-            orders.add(code);
-            data.add(d);
+        protected TaskSignalFrameDraw(){
 
-            lock.notifyAll();
         }
-    }
 
-    public void lockdown(){
-        synchronized(lock){
-            lockdown = true;
-
-            orders.clear();
-            data.clear();
-
-            while(!waiting){
-                try{
-                    lock.wait();
-
-                }catch(InterruptedException ex){
-                    ex.printStackTrace();
-                }
-            }
+        @Override
+        public void run(VLThread thread){
+            FSR.drawFrame();
         }
-    }
 
-    public void unlock(){
-        synchronized(lock){
-            lockdown = false;
+        @Override
+        public void requestDestruction(){
 
-            orders.clear();
-            data.clear();
-
-            lock.notifyAll();
-        }
-    }
-
-    public void shutdown(){
-        try{
-            synchronized(lock){
-                lockdown = false;
-                enabled = false;
-
-                lock.notifyAll();
-            }
-
-            join();
-
-        }catch(InterruptedException ex){
-            ex.printStackTrace();
         }
     }
 }

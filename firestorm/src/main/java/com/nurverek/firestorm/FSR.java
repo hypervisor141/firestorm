@@ -3,6 +3,7 @@ package com.nurverek.firestorm;
 import android.view.Choreographer;
 
 import vanguard.VLListType;
+import vanguard.VLThreadTaskType;
 
 public class FSR{
 
@@ -17,7 +18,7 @@ public class FSR{
 
         @Override
         public void doFrame(long frameTimeNanos){
-            post(FSRThread.DRAW_FRAME, null);
+            post(new FSRThread.TaskSignalFrameDraw());
         }
     };
 
@@ -64,7 +65,7 @@ public class FSR{
             renderthread = threadinterface.create();
             renderthread.setDaemon(true);
             renderthread.setPriority(8);
-            renderthread.initiate();
+            renderthread.requestStart();
         }
     }
 
@@ -74,31 +75,31 @@ public class FSR{
         }
     }
 
-    protected static FSRThread post(int code, Object d){
+    protected static FSRThread post(VLThreadTaskType task){
         if(renderthread != null){
-            renderthread.post(code, d);
+            renderthread.post(task);
         }
 
         return renderthread;
     }
 
-    protected static void onSurfaceCreated(boolean continuing){
+    protected static void surfaceCreated(boolean continuing){
         FSEvents events = FSControl.getSurface().events();
 
         events.GLPreCreated(continuing);
         events.GLPostCreated(continuing);
     }
 
-    protected static void onSurfaceChanged(int width, int height){
+    protected static void surfaceChanged(int format, int width, int height){
         FSEvents events = FSControl.getSurface().events();
 
-        events.GLPreChange(width, height);
-        events.GLPostChange(width, height);
+        events.GLPreChange(format, width, height);
+        events.GLPostChange(format, width, height);
 
         requestFrame();
     }
 
-    protected static void onDrawFrame(){
+    protected static void drawFrame(){
         FSCFrames.timeFrameStarted();
 
         synchronized(RENDERLOCK){
@@ -232,7 +233,7 @@ public class FSR{
         renderthread.lockdown();
 
         if(!FSControl.getKeepAlive()){
-            renderthread.shutdown();
+            renderthread.requestDestruction();
             renderthread = null;
 
             synchronized(RENDERLOCK){

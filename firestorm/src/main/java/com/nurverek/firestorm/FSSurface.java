@@ -76,7 +76,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
         }
 
         FSR.requestStart();
-        FSR.post(FSRThread.CREATE_GL_CONTEXT, new Object[]{ eglconfig, isalive }).post(FSRThread.SURFACE_CREATED, isalive);
+        FSR.post(new FSRThread.TaskCreateContext(eglconfig, isalive));
+        FSR.post(new FSRThread.TaskSignalSurfaceCreated(isalive));
 
         events.GLPostSurfaceCreate(isalive);
 
@@ -86,11 +87,11 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
-        events.GLPreSurfaceChange(width, height);
+        events.GLPreSurfaceChange(format, width, height);
 
-        FSR.post(FSRThread.SURFACE_CHANGED, new int[]{ width, height });
+        FSR.post(new FSRThread.TaskSignalSurfaceChanged(format, width, height));
 
-        events.GLPostSurfaceChange(width, height);
+        events.GLPostSurfaceChange(format, width, height);
     }
 
 
