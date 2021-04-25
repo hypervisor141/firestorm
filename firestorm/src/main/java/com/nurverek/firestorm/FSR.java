@@ -57,9 +57,15 @@ public class FSR{
     }
 
     protected static void prepare(){
-        renderthread = threadinterface.create();
-        renderthread.setPriority(8);
-        renderthread.initiate();
+        if(renderthread != null){
+            renderthread.unlock();
+
+        }else{
+            renderthread = threadinterface.create();
+            renderthread.setDaemon(true);
+            renderthread.setPriority(8);
+            renderthread.initiate();
+        }
     }
 
     protected static void requestFrame(){
@@ -223,10 +229,12 @@ public class FSR{
     }
 
     protected static void destroy(){
-        renderthread.shutdown();
-        renderthread = null;
+        renderthread.lockdown();
 
         if(!FSControl.getKeepAlive()){
+            renderthread.shutdown();
+            renderthread = null;
+
             synchronized(RENDERLOCK){
                 int size = hubs.size();
 

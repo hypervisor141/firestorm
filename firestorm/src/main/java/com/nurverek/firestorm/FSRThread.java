@@ -13,8 +13,9 @@ public class FSRThread extends Thread{
 
     private final Object lock;
 
-    private volatile boolean ready;
-    private volatile boolean running;
+    private boolean running;
+    private boolean lockdown;
+    private boolean waiting;
 
     private final ArrayList<Integer> orders;
     private final ArrayList<Object> data;
@@ -26,7 +27,8 @@ public class FSRThread extends Thread{
         lock = new Object();
 
         running = false;
-        ready = false;
+        lockdown = false;
+        waiting = false;
     }
 
     @Override
@@ -34,8 +36,8 @@ public class FSRThread extends Thread{
         Looper.prepare();
 
         synchronized(lock){
-            ready = true;
-            lock.notify();
+            running = true;
+            lock.notifyAll();
         }
 
         ArrayList<Object> datacache = new ArrayList<>();
@@ -43,9 +45,14 @@ public class FSRThread extends Thread{
 
         while(running()){
             synchronized(lock){
-                while(orders.isEmpty() && running()){
+                while(lockdown || (orders.isEmpty() && running())){
                     try{
+                        lock.notifyAll();
+                        waiting = true;
+
                         lock.wait();
+                        waiting = false;
+
                     }catch(InterruptedException ex){
                         ex.printStackTrace();
                     }
@@ -53,6 +60,7 @@ public class FSRThread extends Thread{
 
                 orderscache.addAll(orders);
                 datacache.addAll(data);
+
                 orders.clear();
                 data.clear();
             }
@@ -85,15 +93,14 @@ public class FSRThread extends Thread{
             datacache.clear();
         }
 
-        ready = false;
+        running = false;
     }
 
     protected void initiate(){
-        synchronized(lock){
-            running = true;
-            start();
+        start();
 
-            while(!ready){
+        synchronized(lock){
+            while(!running){
                 try{
                     lock.wait();
                 }catch(InterruptedException ex){
@@ -104,7 +111,9 @@ public class FSRThread extends Thread{
     }
 
     public boolean running(){
-        return running;
+        synchronized(lock){
+            return running;
+        }
     }
 
     public Object lock(){
@@ -116,7 +125,36 @@ public class FSRThread extends Thread{
             orders.add(code);
             data.add(d);
 
-            lock.notify();
+            lock.notifyAll();
+        }
+    }
+
+    public void lockdown(){
+        synchronized(lock){
+            lockdown = true;
+
+            orders.clear();
+            data.clear();
+
+            while(!waiting){
+                try{
+                    lock.wait();
+
+                }catch(InterruptedException ex){
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void unlock(){
+        synchronized(lock){
+            lockdown = false;
+
+            orders.clear();
+            data.clear();
+
+            lock.notifyAll();
         }
     }
 
@@ -125,7 +163,7 @@ public class FSRThread extends Thread{
             running = false;
 
             synchronized(lock){
-                lock.notify();
+                lock.notifyAll();
             }
 
             join();
