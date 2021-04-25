@@ -56,7 +56,7 @@ public class FSR{
         threadinterface = threadsrc;
     }
 
-    protected static void prepare(){
+    protected static void requestStart(){
         if(renderthread != null){
             renderthread.unlock();
 

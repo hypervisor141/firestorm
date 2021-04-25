@@ -53,10 +53,11 @@ public class FSRThread extends Thread{
                 }else{
                     while(lockdown || orders.isEmpty()){
                         try{
-                            lock.notifyAll();
                             waiting = true;
 
+                            lock.notifyAll();
                             lock.wait();
+
                             waiting = false;
 
                         }catch(InterruptedException ex){
