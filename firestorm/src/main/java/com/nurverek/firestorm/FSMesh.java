@@ -339,4 +339,21 @@ public class FSMesh{
     public int sizeLinks(){
         return links.size();
     }
+
+    public void destroy(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).destroy();
+        }
+
+        name = null;
+        instances = null;
+        links = null;
+        configs = null;
+        indices = null;
+
+        id = -1;
+        drawmode = -1;
+    }
 }

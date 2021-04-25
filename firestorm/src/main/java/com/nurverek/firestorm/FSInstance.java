@@ -313,6 +313,22 @@ public class FSInstance{
         bufferbindings = new FSBufferBindings();
     }
 
+    public void destroy(){
+        mesh = null;
+        schematics = null;
+        modelmatrix = null;
+        bufferbindings = null;
+
+        colortexture = null;
+        lightmaterial = null;
+        lightmap = null;
+
+        states = null;
+        data = null;
+
+        name = null;
+    }
+
     public static final class Data{
 
         public static final int DEFAULT_SIZE = FSHub.ELEMENT_TOTAL_COUNT - 1;
