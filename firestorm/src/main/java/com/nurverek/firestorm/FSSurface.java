@@ -17,7 +17,6 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     private Config config;
     private FSEvents events;
 
-    private boolean destroyed;
     private final int[] eglconfig;
 
     public FSSurface(Context context, int[] eglconfig, FSEvents events){
@@ -50,8 +49,6 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     }
 
     private void initializeFields(){
-        destroyed = false;
-
         gesture = new GestureDetectorCompat(getContext(), this);
         config = new Config();
 
@@ -64,10 +61,6 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     protected FSEvents events(){
         return events;
-    }
-
-    public boolean isDestroyed(){
-        return destroyed;
     }
 
     @Override
@@ -174,6 +167,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     }
 
     private void destroy(){
+        FSControl.setKeepAlive(false);
+
         FSControl.destroy();
 
         if(!FSControl.getKeepAlive()){
@@ -182,8 +177,6 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
             gesture = null;
             config = null;
             events = null;
-
-            destroyed = true;
         }
     }
 

@@ -17,6 +17,12 @@ public abstract class FSActivity extends AppCompatActivity{
 
         BASE = new RelativeLayout(this);
 
+        generateSurface();
+        modifyUI(BASE);
+        setContentView(BASE);
+    }
+
+    private void generateSurface(){
         FSSurface surface = createSurface();
         surface.setId(View.generateViewId());
         surface.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -24,9 +30,6 @@ public abstract class FSActivity extends AppCompatActivity{
         surface.setY(0);
 
         BASE.addView(surface, 0);
-
-        modifyUI(BASE);
-        setContentView(BASE);
     }
 
     protected abstract FSSurface createSurface();
@@ -35,6 +38,16 @@ public abstract class FSActivity extends AppCompatActivity{
 
     public RelativeLayout getBaseLayout(){
         return BASE;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        if(!FSControl.getKeepAlive() && !FSControl.isAlive()){
+            BASE.removeAllViews();
+            generateSurface();
+        }
     }
 
     @Override

@@ -43,26 +43,39 @@ public class FSRThread extends Thread{
         ArrayList<Object> datacache = new ArrayList<>();
         ArrayList<Integer> orderscache = new ArrayList<>();
 
-        while(enabled()){
+        while(true){
             synchronized(lock){
-                while(lockdown || (orders.isEmpty() && enabled())){
-                    try{
-                        lock.notifyAll();
-                        waiting = true;
+                if(!enabled){
+                    orders.clear();
+                    data.clear();
+                    return;
 
-                        lock.wait();
-                        waiting = false;
+                }else{
+                    while(lockdown || orders.isEmpty()){
+                        try{
+                            lock.notifyAll();
+                            waiting = true;
 
-                    }catch(InterruptedException ex){
-                        ex.printStackTrace();
+                            lock.wait();
+                            waiting = false;
+
+                        }catch(InterruptedException ex){
+                            //
+                        }
+
+                        if(!enabled){
+                            orders.clear();
+                            data.clear();
+                            return;
+                        }
                     }
+
+                    orderscache.addAll(orders);
+                    datacache.addAll(data);
+
+                    orders.clear();
+                    data.clear();
                 }
-
-                orderscache.addAll(orders);
-                datacache.addAll(data);
-
-                orders.clear();
-                data.clear();
             }
 
             int size = orderscache.size();
@@ -92,8 +105,6 @@ public class FSRThread extends Thread{
             orderscache.clear();
             datacache.clear();
         }
-
-        enabled = false;
     }
 
     protected void initiate(){
@@ -163,9 +174,6 @@ public class FSRThread extends Thread{
             synchronized(lock){
                 lockdown = false;
                 enabled = false;
-
-                orders.clear();
-                data.clear();
 
                 lock.notifyAll();
             }

@@ -71,7 +71,7 @@ public final class FSControl{
         FSCThreads.destroy();
 
         if(!keepalive){
-            FSControl.isalive = false;
+            isalive = false;
 
             view = null;
             surface = null;
