@@ -13,7 +13,7 @@ public class FSRThread extends Thread{
 
     private final Object lock;
 
-    private boolean running;
+    private boolean enabled;
     private boolean lockdown;
     private boolean waiting;
 
@@ -26,7 +26,7 @@ public class FSRThread extends Thread{
 
         lock = new Object();
 
-        running = false;
+        enabled = false;
         lockdown = false;
         waiting = false;
     }
@@ -36,16 +36,16 @@ public class FSRThread extends Thread{
         Looper.prepare();
 
         synchronized(lock){
-            running = true;
+            enabled = true;
             lock.notifyAll();
         }
 
         ArrayList<Object> datacache = new ArrayList<>();
         ArrayList<Integer> orderscache = new ArrayList<>();
 
-        while(running()){
+        while(enabled()){
             synchronized(lock){
-                while(lockdown || (orders.isEmpty() && running())){
+                while(lockdown || (orders.isEmpty() && enabled())){
                     try{
                         lock.notifyAll();
                         waiting = true;
@@ -93,14 +93,14 @@ public class FSRThread extends Thread{
             datacache.clear();
         }
 
-        running = false;
+        enabled = false;
     }
 
     protected void initiate(){
         start();
 
         synchronized(lock){
-            while(!running){
+            while(!enabled){
                 try{
                     lock.wait();
                 }catch(InterruptedException ex){
@@ -110,9 +110,9 @@ public class FSRThread extends Thread{
         }
     }
 
-    public boolean running(){
+    public boolean enabled(){
         synchronized(lock){
-            return running;
+            return enabled;
         }
     }
 
@@ -160,9 +160,13 @@ public class FSRThread extends Thread{
 
     public void shutdown(){
         try{
-            running = false;
-
             synchronized(lock){
+                lockdown = false;
+                enabled = false;
+
+                orders.clear();
+                data.clear();
+
                 lock.notifyAll();
             }
 

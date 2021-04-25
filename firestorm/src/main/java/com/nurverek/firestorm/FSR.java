@@ -69,7 +69,7 @@ public class FSR{
     }
 
     protected static void requestFrame(){
-        if(renderthread != null && renderthread.running()){
+        if(renderthread != null && renderthread.enabled()){
             choreographer.postFrameCallback(CHOREOGRAPHER_CALLBACK);
         }
     }
