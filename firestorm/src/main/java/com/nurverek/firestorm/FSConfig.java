@@ -53,7 +53,7 @@ public abstract class FSConfig{
 
         @Override
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
-            self.printDebugHeader(pass, program, mesh, log, debug);
+            self.printHeader(log);
         }
 
         @Override
@@ -96,7 +96,7 @@ public abstract class FSConfig{
 
     protected void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         try{
-            printDebugHeader(pass, program, mesh, log, debug);
+            printDebugInfo(pass, program, mesh, log, debug);
 
             configure(pass, program, mesh, meshindex, passindex);
             FSTools.checkGLError();
@@ -111,7 +111,7 @@ public abstract class FSConfig{
 
     protected void notifyProgramBuilt(FSP program){}
 
-    protected void printDebugHeader(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+    protected void printHeader(VLLog log){
         if(log != null){
             String classname = getClass().getSimpleName();
 
@@ -120,10 +120,18 @@ public abstract class FSConfig{
             log.append("] [");
             log.append(classname.equals("") ? "Anonymous" : classname);
             log.append("]");
+        }
+    }
+
+    protected void printDebugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+        if(log != null){
+            printHeader(log);
 
             if(debug >= FSControl.DEBUG_FULL){
                 log.append(" [");
+
                 debugInfo(pass, program, mesh, log, debug);
+
                 log.append("]\n");
 
             }else{

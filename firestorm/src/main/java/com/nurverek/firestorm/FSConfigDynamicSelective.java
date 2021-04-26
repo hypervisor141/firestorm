@@ -51,7 +51,7 @@ public class FSConfigDynamicSelective extends FSConfigLocated{
 
     @Override
     public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
-        printDebugHeader(pass, program, mesh, log, debug);
+        printDebugInfo(pass, program, mesh, log, debug);
 
         config.location(location());
         config.activate(targetindex);
