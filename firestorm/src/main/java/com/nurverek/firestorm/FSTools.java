@@ -346,11 +346,11 @@ public final class FSTools{
         }
     }
 
-    public static void checkEGLError(String name){
+    public static void checkEGLError(){
         int error = EGL14.eglGetError();
 
         if(error != EGL14.EGL_SUCCESS){
-            throw new RuntimeException(name + " : EGLError " + error);
+            throw new RuntimeException("EGLError[" + error + "]");
         }
     }
 

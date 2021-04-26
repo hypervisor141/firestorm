@@ -22,62 +22,62 @@ public class FSCEGL{
             int[] numConfig = new int[1];
 
             display = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
-            FSTools.checkEGLError("eglGetDisplay");
+            FSTools.checkEGLError();
 
             EGL14.eglInitialize(display, vers, 0, vers, 1);
-            FSTools.checkEGLError("eglInitialize");
+            FSTools.checkEGLError();
 
             EGL14.eglChooseConfig(display, attributes, 0, configs, 0, 1, numConfig, 0);
-            FSTools.checkEGLError("eglChooseConfig");
+            FSTools.checkEGLError();
 
             if(numConfig[0] == 0){
-                throw new RuntimeException("Error loading a GL Configuration.");
+                throw new RuntimeException("[Error loading a GL Configuration]");
             }
 
             config = configs[0];
-            FSTools.checkEGLError("eglCreateWindowSurface");
+            FSTools.checkEGLError();
 
             context = EGL14.eglCreateContext(display, config, EGL14.EGL_NO_CONTEXT, new int[]{
                     EGL14.EGL_CONTEXT_CLIENT_VERSION, 3,
                     EGL14.EGL_NONE
             }, 0);
-            FSTools.checkEGLError("eglCreateContext");
+            FSTools.checkEGLError();
 
         }else{
             EGL14.eglDestroySurface(display, surface);
-            FSTools.checkEGLError("eglDestroySurface");
+            FSTools.checkEGLError();
         }
 
         surface = EGL14.eglCreateWindowSurface(display, config, holder, new int[]{ EGL14.EGL_NONE }, 0);
-        FSTools.checkEGLError("eglCreateWindowSurface");
+        FSTools.checkEGLError();
 
         EGL14.eglMakeCurrent(display, surface, surface, context);
-        FSTools.checkEGLError("eglMakeCurrent");
+        FSTools.checkEGLError();
     }
 
     public static void swapBuffers(){
         EGL14.eglSwapBuffers(display, surface);
-        FSTools.checkEGLError("eglSwapBuffers");
+        FSTools.checkEGLError();
 
         GLES32.glGetError();
     }
 
     public static void destroy(){
         EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
-        FSTools.checkEGLError("eglMakeCurrent");
+        FSTools.checkEGLError();
 
         if(!FSControl.getKeepAlive()){
             EGL14.eglDestroySurface(display, surface);
-            FSTools.checkEGLError("eglDestroySurface");
+            FSTools.checkEGLError();
 
             EGL14.eglDestroyContext(display, context);
-            FSTools.checkEGLError("eglDestroyContext");
+            FSTools.checkEGLError();
 
             EGL14.eglReleaseThread();
-            FSTools.checkEGLError("eglMakeCurrent");
+            FSTools.checkEGLError();
 
             EGL14.eglTerminate(display);
-            FSTools.checkEGLError("eglTerminate");
+            FSTools.checkEGLError();
 
             display = null;
             surface = null;
