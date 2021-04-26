@@ -96,7 +96,7 @@ public abstract class FSConfig{
             log.append(classname == "" ? "Anonymous" : classname);
             log.append("]");
 
-            if(program.debug >= FSControl.DEBUG_FULL){
+            if(debug >= FSControl.DEBUG_FULL){
                 log.append(" [");
                 debugInfo(pass, program, mesh, log, debug);
                 log.append("]\n");
