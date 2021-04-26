@@ -1,10 +1,10 @@
 package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import vanguard.VLLog;
 import vanguard.VLStringify;
 
 public final class FSShader implements VLStringify{
@@ -378,9 +378,16 @@ public final class FSShader implements VLStringify{
         FSTools.checkGLError();
     }
 
-    public void logDebugInfo(FSP program){
+    public void debugInfo(FSP program, VLLog log, int debug){
         String info = GLES32.glGetShaderInfoLog(shaderid);
-        Log.d(FSControl.LOGTAG, "Shader " + shaderid + " info for type " + type + " for program " + program.id() + " : " + (info.isEmpty() ? "Success" : info));
+        
+        log.append("shaderID[");
+        log.append(shaderid);
+        log.append("] type[");
+        log.append(type);
+        log.append("] [");
+        log.append(info.isEmpty() ? "Success" : info);
+        log.append("]");
     }
 
     private static String resolveShaderName(int gltype){

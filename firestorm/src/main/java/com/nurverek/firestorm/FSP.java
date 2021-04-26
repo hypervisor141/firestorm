@@ -93,7 +93,7 @@ public abstract class FSP{
                 shader.stringify(log.get(), null);
             }
 
-            shader.logDebugInfo(this);
+            shader.debugInfo(this, log, debug);
         }
 
         GLES32.glLinkProgram(program);

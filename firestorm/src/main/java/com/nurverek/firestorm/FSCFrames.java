@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import android.util.Log;
+import vanguard.VLLog;
 
 public class FSCFrames{
 
@@ -18,10 +18,13 @@ public class FSCFrames{
     private static int QUEUED_FRAMES_COUNT;
     private static int EXTERNAL_CHANGES;
     private volatile static boolean EFFICIENT_RENDER;
-
+    
+    private static VLLog LOG;
     private final static Object LOCK = new Object();
 
     protected static void initialize(int maxunchangedframes, int maxqueuedframes){
+        LOG = new VLLog(FSControl.LOGTAG, 1);
+        
         GLOBAL_ID = 1000;
         TOTAL_FRAMES = 0;
         FRAME_TIME = 0;
@@ -164,7 +167,18 @@ public class FSCFrames{
         AVERAGE_PROCESS_TIME = (AVERAGE_PROCESS_TIME + now - FRAME_TIME) / 2;
 
         if(tracker / 1000F >= 1){
-            Log.d(FSControl.LOGTAG, "FPS[" + FPS + "] time[" + (tracker / 1000f) + "sec] totalFrames[" + TOTAL_FRAMES + "] averageProcessingTime[" + AVERAGE_FRAMESWAP_TIME + "ms] averageFullFrameTime[" + AVERAGE_PROCESS_TIME + "ms]");
+            LOG.append("FPS[");
+            LOG.append(FPS);
+            LOG.append("] window[");
+            LOG.append((tracker / 1000f));
+            LOG.append("sec] totalFrames[");
+            LOG.append(TOTAL_FRAMES);
+            LOG.append("] avgFrameProcessing[");
+            LOG.append(AVERAGE_FRAMESWAP_TIME);
+            LOG.append("ms] avgFullFrame[");
+            LOG.append(AVERAGE_PROCESS_TIME);
+            LOG.append("ms]");
+            LOG.printInfo();
 
             FRAME_SECOND_TRACKER = now;
             FPS = 0;
