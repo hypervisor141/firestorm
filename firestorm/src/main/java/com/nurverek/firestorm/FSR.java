@@ -65,7 +65,7 @@ public class FSR{
             renderthread = threadinterface.create();
             renderthread.setDaemon(true);
             renderthread.setPriority(8);
-            renderthread.requestStart();
+            renderthread.requestStart(0);
         }
     }
 
@@ -230,7 +230,7 @@ public class FSR{
     }
 
     protected static void destroy(){
-        renderthread.lockdown();
+        renderthread.lockdown(0);
 
         if(FSControl.getKeepAlive()){
             FSR.paused();
