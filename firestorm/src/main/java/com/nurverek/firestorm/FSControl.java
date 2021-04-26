@@ -10,12 +10,14 @@ public final class FSControl{
 
     protected static FSView view;
     protected static FSEvents events;
+    protected static FSSurface surface;
 
     protected static boolean destroyonpause;
     protected static boolean isalive;
 
-    public static void initialize(FSEvents events, FSView view, FSRInterface threadinterface, boolean keepalive, int maxunchangedframes, int maxqueuedframes){
-        FSControl.events = events;
+    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int maxunchangedframes, int maxqueuedframes){
+        FSControl.surface = surface;
+        FSControl.events = surface.events();
         FSControl.view = view;
         FSControl.destroyonpause = keepalive;
 
@@ -37,6 +39,10 @@ public final class FSControl{
 
     public static boolean getDestroyOnPause(){
         return destroyonpause;
+    }
+
+    protected static FSSurface surface(){
+        return surface;
     }
 
     protected static FSEvents events(){
@@ -61,6 +67,7 @@ public final class FSControl{
         if(!destroyonpause){
             isalive = false;
 
+            surface = null;
             events = null;
             view = null;
         }
