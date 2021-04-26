@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.content.Context;
-
 public final class FSControl{
 
     public static final String LOGTAG = "FIRESTORM";
@@ -10,16 +8,16 @@ public final class FSControl{
     public static final int DEBUG_NORMAL = 1;
     public static final int DEBUG_FULL = 2;
 
-    protected static FSSurface surface;
     protected static FSView view;
+    protected static FSEvents events;
 
-    protected static boolean keepalive;
+    protected static boolean destroyonpause;
     protected static boolean isalive;
 
-    public static FSSurface initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int maxunchangedframes, int maxqueuedframes){
-        FSControl.surface = surface;
+    public static void initialize(FSEvents events, FSView view, FSRInterface threadinterface, boolean keepalive, int maxunchangedframes, int maxqueuedframes){
+        FSControl.events = events;
         FSControl.view = view;
-        FSControl.keepalive = keepalive;
+        FSControl.destroyonpause = keepalive;
 
         if(!isAlive()){
             FSCInput.initialize();
@@ -27,32 +25,26 @@ public final class FSControl{
             FSR.initialize(threadinterface);
             FSCThreads.initialize();
         }
-
-        return surface;
     }
 
     protected static void setAlive(boolean alive){
         FSControl.isalive = alive;
     }
 
-    public static void setKeepAlive(boolean enabled){
-        keepalive = enabled;
+    public static void setDestroyOnPause(boolean enabled){
+        destroyonpause = enabled;
     }
 
-    public static boolean getKeepAlive(){
-        return keepalive;
+    public static boolean getDestroyOnPause(){
+        return destroyonpause;
+    }
+
+    protected static FSEvents events(){
+        return events;
     }
 
     public static boolean isAlive(){
         return isalive;
-    }
-
-    public static Context getContext(){
-        return surface.getContext();
-    }
-
-    public static FSSurface getSurface(){
-        return surface;
     }
 
     public static FSView getView(){
@@ -66,11 +58,11 @@ public final class FSControl{
         FSCInput.destroy();
         FSCFrames.destroy();
 
-        if(!keepalive){
+        if(!destroyonpause){
             isalive = false;
 
+            events = null;
             view = null;
-            surface = null;
         }
     }
 }

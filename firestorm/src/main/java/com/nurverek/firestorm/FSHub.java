@@ -60,8 +60,8 @@ public abstract class FSHub{
 
     }
 
-    public void initialize(){
-        assemble(FSControl.getContext(), FSR.getRenderPasses());
+    public void initialize(Context context){
+        assemble(context, FSR.getRenderPasses());
     }
 
     public Automator createAutomator(int filecapacity, int scancapacity, int buffercapacity){

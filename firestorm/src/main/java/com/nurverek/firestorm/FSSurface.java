@@ -68,14 +68,15 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
         config.setTouchable(true);
 
         boolean isalive = FSControl.isAlive();
+        Context context = getContext();
 
-        events.GLPreSurfaceCreate(isalive);
+        events.GLPreSurfaceCreate(this, context, isalive);
 
         FSR.requestStart();
-        FSR.post(new FSRThread.TaskCreateContext(eglconfig, isalive));
-        FSR.post(new FSRThread.TaskSignalSurfaceCreated(isalive));
+        FSR.post(new FSRThread.TaskCreateContext(getHolder(), eglconfig, isalive));
+        FSR.post(new FSRThread.TaskSignalSurfaceCreated(this, context, isalive));
 
-        events.GLPostSurfaceCreate(isalive);
+        events.GLPostSurfaceCreate(this, context, isalive);
 
         FSControl.setAlive(true);
     }
@@ -83,22 +84,26 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
-        events.GLPreSurfaceChange(format, width, height);
+        Context context = getContext();
 
-        FSR.post(new FSRThread.TaskSignalSurfaceChanged(format, width, height));
+        events.GLPreSurfaceChange(this, context, format, width, height);
 
-        events.GLPostSurfaceChange(format, width, height);
+        FSR.post(new FSRThread.TaskSignalSurfaceChanged(this, context, format, width, height));
+
+        events.GLPostSurfaceChange(this, context, format, width, height);
     }
 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder){
-        events.GLPreSurfaceDestroy();
+        Context context = getContext();
+
+        events.GLPreSurfaceDestroy(this, context);
 
         destroy();
 
         if(events != null){
-            events.GLPostSurfaceDestroy();
+            events.GLPostSurfaceDestroy(this, context);
         }
     }
 
@@ -166,7 +171,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     private void destroy(){
         FSControl.destroy();
 
-        if(!FSControl.getKeepAlive()){
+        if(!FSControl.getDestroyOnPause()){
             getHolder().removeCallback(this);
 
             gesture = null;

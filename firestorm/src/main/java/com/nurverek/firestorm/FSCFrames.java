@@ -214,7 +214,7 @@ public class FSCFrames{
     }
 
     protected static void destroy(){
-        if(!FSControl.getKeepAlive()){
+        if(!FSControl.getDestroyOnPause()){
             synchronized(IDLOCK){
                 GLOBAL_ID = -1;
             }

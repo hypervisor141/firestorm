@@ -1,5 +1,6 @@
 package com.nurverek.firestorm;
 
+import android.content.Context;
 import android.view.Choreographer;
 
 import vanguard.VLListType;
@@ -84,22 +85,22 @@ public class FSR{
         return renderthread;
     }
 
-    protected static void surfaceCreated(boolean continuing){
-        FSEvents events = FSControl.getSurface().events();
+    protected static void surfaceCreated(FSSurface surface, Context context, boolean continuing){
+        FSEvents events = FSControl.events();
 
-        events.GLPreCreated(continuing);
-        events.GLPostCreated(continuing);
+        events.GLPreCreated(surface, context, continuing);
+        events.GLPostCreated(surface, context, continuing);
 
         if(continuing){
             FSR.resumed();
         }
     }
 
-    protected static void surfaceChanged(int format, int width, int height){
-        FSEvents events = FSControl.getSurface().events();
+    protected static void surfaceChanged(FSSurface surface, Context context, int format, int width, int height){
+        FSEvents events = FSControl.events();
 
-        events.GLPreChange(format, width, height);
-        events.GLPostChange(format, width, height);
+        events.GLPreChange(surface, context, format, width, height);
+        events.GLPostChange(surface, context, format, width, height);
 
         requestFrame();
     }
@@ -108,7 +109,7 @@ public class FSR{
         FSCFrames.timeFrameStarted();
 
         synchronized(RENDERLOCK){
-            FSEvents events = FSControl.getSurface().events();
+            FSEvents events = FSControl.events();
             events.GLPreDraw();
 
             int size = passes.size();
@@ -119,8 +120,6 @@ public class FSR{
 
                 passes.get(i).draw();
             }
-
-            events.GLPostDraw();
 
             synchronized(tasks){
                 taskcache.add(tasks);
@@ -134,6 +133,8 @@ public class FSR{
             }
 
             taskcache.clear();
+
+            events.GLPostDraw();
         }
 
         finishFrame();
@@ -237,7 +238,7 @@ public class FSR{
     protected static void destroy(){
         renderthread.lockdown(0);
 
-        if(FSControl.getKeepAlive()){
+        if(FSControl.getDestroyOnPause()){
             FSR.paused();
 
         }else{

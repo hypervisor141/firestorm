@@ -15,7 +15,7 @@ public class FSCThreads{
     }
 
     public static void destroy(){
-        if(!FSControl.getKeepAlive()){
+        if(!FSControl.getDestroyOnPause()){
             manager.destroy();
         }
     }

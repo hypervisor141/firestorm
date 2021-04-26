@@ -44,7 +44,7 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onResume(){
         super.onResume();
 
-        if(!FSControl.getKeepAlive() && !FSControl.isAlive()){
+        if(!FSControl.getDestroyOnPause() && !FSControl.isAlive()){
             BASE.removeAllViews();
             generateSurface();
         }
@@ -54,7 +54,7 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onDestroy(){
         super.onDestroy();
 
-        FSControl.setKeepAlive(false);
+        FSControl.setDestroyOnPause(false);
 
         if(BASE != null){
             BASE.removeAllViews();
