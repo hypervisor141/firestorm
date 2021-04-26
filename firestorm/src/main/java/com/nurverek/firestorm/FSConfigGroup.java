@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public class FSConfigGroup extends FSConfig{
 
@@ -35,29 +35,29 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         String classname = getClass().getSimpleName();
         int size = configs.size();
 
-        VLDebug.append("ENTERING [");
-        VLDebug.append(classname);
-        VLDebug.append("] configs[");
-        VLDebug.append(size);
-        VLDebug.append("]\n");
+        log.append("ENTERING [");
+        log.append(classname);
+        log.append("] configs[");
+        log.append(size);
+        log.append("]\n");
 
         for(int i = 0; i < size; i++){
-            VLDebug.append("[");
-            VLDebug.append(i + 1);
-            VLDebug.append("/");
-            VLDebug.append(size);
-            VLDebug.append("] ");
+            log.append("[");
+            log.append(i + 1);
+            log.append("/");
+            log.append(size);
+            log.append("] ");
 
-            configs.get(i).runDebug(pass, program, mesh, meshindex, passindex);
+            configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
         }
 
-        VLDebug.append("EXITING [");
-        VLDebug.append(classname);
-        VLDebug.append("]\n");
+        log.append("EXITING [");
+        log.append(classname);
+        log.append("]\n");
     }
 
     @Override
@@ -66,7 +66,7 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 
@@ -84,9 +84,9 @@ public class FSConfigGroup extends FSConfig{
             data.append("] [");
             data.append(c.getClass().getSimpleName());
 
-            if(debug >= FSControl.DEBUG_FULL){
+            if(program.debug >= FSControl.DEBUG_FULL){
                 data.append("] [");
-                c.debugInfo(pass, program, mesh, debug);
+                c.debugInfo(pass, program, mesh, log, debug);
                 data.append("]");
             }
 

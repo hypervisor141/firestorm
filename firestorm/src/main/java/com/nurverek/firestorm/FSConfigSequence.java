@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public class FSConfigSequence extends FSConfigLocated{
 
@@ -63,40 +63,40 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         String classname = getClass().getSimpleName();
         int size = configs.size();
         FSConfig c;
 
         int loc = location;
 
-        VLDebug.append("ENTERING [");
-        VLDebug.append(classname);
-        VLDebug.append("] configs[");
-        VLDebug.append(size);
-        VLDebug.append("] location[");
-        VLDebug.append(loc);
-        VLDebug.append("] GLSLSize[");
-        VLDebug.append(glslsize);
-        VLDebug.append("]\n");
+        log.append("ENTERING [");
+        log.append(classname);
+        log.append("] configs[");
+        log.append(size);
+        log.append("] location[");
+        log.append(loc);
+        log.append("] GLSLSize[");
+        log.append(glslsize);
+        log.append("]\n");
 
         for(int i = 0; i < size; i++){
-            VLDebug.append("[");
-            VLDebug.append(i + 1);
-            VLDebug.append("/");
-            VLDebug.append(size);
-            VLDebug.append("] ");
+            log.append("[");
+            log.append(i + 1);
+            log.append("/");
+            log.append(size);
+            log.append("] ");
 
             c = configs.get(i);
             c.location(loc);
-            c.runDebug(pass, program, mesh, meshindex, passindex);
+            c.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
 
             loc += c.getGLSLSize();
         }
 
-        VLDebug.append("EXITING [");
-        VLDebug.append(classname);
-        VLDebug.append("]\n");
+        log.append("EXITING [");
+        log.append(classname);
+        log.append("]\n");
     }
 
     @Override
@@ -105,7 +105,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 
@@ -125,7 +125,7 @@ public class FSConfigSequence extends FSConfigLocated{
 
             if(debug >= FSControl.DEBUG_FULL){
                 data.append("] [");
-                c.debugInfo(pass, program, mesh, debug);
+                c.debugInfo(pass, program, mesh, log, debug);
                 data.append("]");
             }
 

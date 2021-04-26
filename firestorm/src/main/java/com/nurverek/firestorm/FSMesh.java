@@ -2,6 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayShort;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public class FSMesh{
 
@@ -66,9 +67,9 @@ public class FSMesh{
         }
     }
 
-    public void configureDebug(FSRPass pass, FSP program, int meshindex, int passindex){
+    public void configureDebug(FSRPass pass, FSP program, int meshindex, int passindex, VLLog log, int debug){
         if(configs != null){
-            configs.configureDebug(pass, program, this, meshindex, passindex);
+            configs.configureDebug(pass, program, this, meshindex, passindex, log, debug);
         }
     }
 

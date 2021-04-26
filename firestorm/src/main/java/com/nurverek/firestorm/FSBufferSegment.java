@@ -4,15 +4,14 @@ import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLBuffer;
 import vanguard.VLBufferTracker;
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
     private static final int BUFFER_PRINT_LIMIT = 100;
 
     protected VLListType<Entry<BUFFER>> entries;
-
     protected FSVertexBuffer<BUFFER> vbuffer;
     protected BUFFER buffer;
 
@@ -63,21 +62,21 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         entries.get(size - 1).buffer(target, buffer, vbuffer, totalstride, interleaved);
     }
 
-    protected void bufferDebug(FSMesh target){
+    protected void bufferDebug(FSMesh target, VLLog log){
         int size = entries.size();
         Entry<BUFFER> entry;
 
         if(!debuggedsegmentstructure){
             if(totalstride <= 0){
-                VLDebug.append("[Invalid stride value] stride[");
-                VLDebug.append(totalstride);
-                VLDebug.append("]");
+                log.append("[Invalid stride value] stride[");
+                log.append(totalstride);
+                log.append("]");
 
                 throw new RuntimeException();
             }
             if(interleaved){
                 if(size <= 1){
-                    VLDebug.append("[Segment is set to interleaved mode but there is less than 1 entry]");
+                    log.append("[Segment is set to interleaved mode but there is less than 1 entry]");
                     throw new RuntimeException();
                 }
             }
@@ -89,31 +88,31 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             entry = entries.get(0);
             int referencevalue = entry.getInterleaveDebugReferenceValue(target);
 
-            VLDebug.append("[Testing reference value from first entry] entry[");
-            VLDebug.append(entry.getClass().getSimpleName());
-            VLDebug.append("]");
+            log.append("[Testing reference value from first entry] entry[");
+            log.append(entry.getClass().getSimpleName());
+            log.append("]");
 
             for(int i = 0; i < size; i++){
                 entry = entries.get(i);
-                entry.debugInterleaved(target, referencevalue);
+                entry.debugInterleaved(target, referencevalue, log);
             }
         }
 
-        VLDebug.append("stride[");
-        VLDebug.append(totalstride);
-        VLDebug.append("] entries[");
+        log.append("stride[");
+        log.append(totalstride);
+        log.append("] entries[");
 
         for(int i = 0; i < size; i++){
-            entries.get(i).debugInfo();
+            entries.get(i).debugInfo(log);
 
             if(i < size - 1){
-                VLDebug.append(", ");
+                log.append(", ");
             }
         }
 
-        VLDebug.append("] ");
+        log.append("] ");
 
-        buffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+        buffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
         buffer(target);
     }
@@ -135,18 +134,18 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         public abstract int calculateNeededSize(FSMesh target);
         protected abstract int getInterleaveDebugReferenceValue(FSMesh target);
         public abstract int buffer(FSMesh target, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride, boolean interleaved);
-        public abstract void debugInterleaved(FSMesh target, int referencesize);
+        public abstract void debugInterleaved(FSMesh target, int referencesize, VLLog log);
 
-        public void debugInfo(){
-            VLDebug.append("[");
-            VLDebug.append(getClass().getSimpleName());
-            VLDebug.append("] unitOffset[");
-            VLDebug.append(unitoffset);
-            VLDebug.append("] unitSize[");
-            VLDebug.append(unitsize);
-            VLDebug.append("] unitSubCount[");
-            VLDebug.append(unitsubcount);
-            VLDebug.append("]");
+        public void debugInfo(VLLog log){
+            log.append("[");
+            log.append(getClass().getSimpleName());
+            log.append("] unitOffset[");
+            log.append(unitoffset);
+            log.append("] unitSize[");
+            log.append(unitsize);
+            log.append("] unitSubCount[");
+            log.append(unitsubcount);
+            log.append("]");
         }
     }
 
@@ -248,32 +247,32 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public void debugInterleaved(FSMesh target, int referencesize){
+        public void debugInterleaved(FSMesh target, int referencesize, VLLog log){
             if(instanced){
                 int size = target.size();
 
                 for(int i = 0; i < size; i++){
-                    debugInstance(target, target.get(i), referencesize);
+                    debugInstance(target, target.get(i), referencesize, log);
                 }
 
             }else{
-                debugInstance(target, target.first(), referencesize);
+                debugInstance(target, target.first(), referencesize, log);
             }
         }
 
-        private void debugInstance(FSMesh target, FSInstance instance, int referencesize){
+        private void debugInstance(FSMesh target, FSInstance instance, int referencesize, VLLog log){
             if((instance.element(element).size() / unitsize) != referencesize){
-                VLDebug.append("[Segment is set to interleaved mode has an instance whose count does not match with other entries] element[");
-                VLDebug.append(element);
-                VLDebug.append("] instanceVertexSize[");
-                VLDebug.append(instance.vertexSize());
-                VLDebug.append("] referenceSize[");
-                VLDebug.append(referencesize);
-                VLDebug.append("] mesh[");
-                VLDebug.append(target.name);
-                VLDebug.append("] instance[");
-                VLDebug.append(instance.name);
-                VLDebug.append("]");
+                log.append("[Segment is set to interleaved mode has an instance whose count does not match with other entries] element[");
+                log.append(element);
+                log.append("] instanceVertexSize[");
+                log.append(instance.vertexSize());
+                log.append("] referenceSize[");
+                log.append(referencesize);
+                log.append("] mesh[");
+                log.append(target.name);
+                log.append("] instance[");
+                log.append(instance.name);
+                log.append("]");
 
                 throw new RuntimeException();
             }
@@ -313,8 +312,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public void debugInterleaved(FSMesh target, int referencesize){
-            VLDebug.append("[Can't interleave for Index element type]");
+        public void debugInterleaved(FSMesh target, int referencesize, VLLog log){
+            log.append("[Can't interleave for Index element type]");
             throw new RuntimeException();
         }
     }
@@ -357,17 +356,17 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public void debugInterleaved(FSMesh target, int referencesize){
+        public void debugInterleaved(FSMesh target, int referencesize, VLLog log){
             if((((FSLinkBuffered<?, BUFFER>)target.links().get(linkindex)).size() / unitsize) != referencesize){
-                VLDebug.append("[Segment is set to interleaved mode has an link whose count does not match with other entries] linkindex[");
-                VLDebug.append(linkindex);
-                VLDebug.append("] linkSize[");
-                VLDebug.append(getInterleaveDebugReferenceValue(target));
-                VLDebug.append("] referenceSize[");
-                VLDebug.append(referencesize);
-                VLDebug.append("] mesh[");
-                VLDebug.append(target.name);
-                VLDebug.append("]");
+                log.append("[Segment is set to interleaved mode has an link whose count does not match with other entries] linkindex[");
+                log.append(linkindex);
+                log.append("] linkSize[");
+                log.append(getInterleaveDebugReferenceValue(target));
+                log.append("] referenceSize[");
+                log.append(referencesize);
+                log.append("] mesh[");
+                log.append(target.name);
+                log.append("]");
 
                 throw new RuntimeException();
             }

@@ -1,8 +1,8 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLBuffer;
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public final class FSBufferMap{
 
@@ -33,28 +33,28 @@ public final class FSBufferMap{
         }
     }
 
-    public void bufferDebug(FSMesh target){
+    public void bufferDebug(FSMesh target, VLLog log){
         int size = segments.size();
 
         for(int i = 0; i < size; i++){
-            VLDebug.append("Segment[");
-            VLDebug.append(i);
-            VLDebug.append("/");
-            VLDebug.append(size);
-            VLDebug.append("] ");
-            VLDebug.printD();
+            log.append("Segment[");
+            log.append(i);
+            log.append("/");
+            log.append(size);
+            log.append("] ");
+            log.printInfo();
 
             try{
-                segments.get(i).bufferDebug(target);
+                segments.get(i).bufferDebug(target, log);
 
             }catch(Exception ex){
-                VLDebug.append(" [FAILED]\n");
+                log.append(" [FAILED]\n");
                 throw ex;
             }
 
-            VLDebug.append(" [SUCCESS]\n");
+            log.append(" [SUCCESS]\n");
         }
 
-        VLDebug.append("\n");
+        log.append("\n");
     }
 }

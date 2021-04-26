@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLDebug;
+import vanguard.VLLog;
 
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
@@ -31,11 +31,11 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-        printDebugHeader(pass, program, mesh);
+    public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
+        printDebugHeader(pass, program, mesh, log, debug);
 
         config.location(location);
-        config.runDebug(pass, program, mesh, meshindex, passindex);
+        config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
     }
 
     public void config(TYPE config){
@@ -52,15 +52,15 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-        super.debugInfo(pass, program, mesh, debug);
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+        super.debugInfo(pass, program, mesh, log, debug);
 
-        VLDebug.append("config[");
-        VLDebug.append(config.getClass().getSimpleName());
-        VLDebug.append("] [ ");
+        log.append("config[");
+        log.append(config.getClass().getSimpleName());
+        log.append("] [ ");
 
-        config.debugInfo(pass, program, mesh, debug);
+        config.debugInfo(pass, program, mesh, log, debug);
 
-        VLDebug.append(" ] ");
+        log.append(" ] ");
     }
 }

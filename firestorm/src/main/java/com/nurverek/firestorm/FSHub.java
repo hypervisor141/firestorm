@@ -1,6 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.app.Activity;
 import android.content.Context;
 import android.opengl.GLES32;
 
@@ -8,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public abstract class FSHub{
 
@@ -80,6 +79,7 @@ public abstract class FSHub{
         protected VLListType<FSM> files;
         protected VLListType<FSHScanner> entries;
         protected VLListType<FSVertexBuffer<?>> buffers;
+        protected VLLog log;
 
         protected Automator(int filecapacity, int scancapacity, int buffercapacity){
             files = new VLListType<>(filecapacity, filecapacity);
@@ -106,27 +106,29 @@ public abstract class FSHub{
             int entrysize = entries.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
-                VLDebug.recreate();
+                log = new VLLog(new String[]{
+                        FSControl.LOGTAG, getClass().getSimpleName()
+                });
 
                 FSHScanner entry;
                 boolean found;
 
-                VLDebug.printDirect("[Assembler Check Stage]\n");
+                log.printInfo("[Assembler Check Stage]\n");
 
                 for(int i = 0; i < entrysize; i++){
                     entry = entries.get(i);
                     entry.assembler.checkDebug();
 
-                    VLDebug.append("Scanner[");
-                    VLDebug.append(entry.name);
-                    VLDebug.append("] [Invalid Assembler Configuration]\n");
-                    VLDebug.append("[Assembler Configuration]\n");
+                    log.append("Scanner[");
+                    log.append(entry.name);
+                    log.append("] [Invalid Assembler Configuration]\n");
+                    log.append("[Assembler Configuration]\n");
 
-                    entry.assembler.stringify(VLDebug.get(), null);
+                    entry.assembler.stringify(log.get(), null);
                 }
 
-                VLDebug.printDirect("\n[DONE]\n");
-                VLDebug.printDirect("[Build Stage]\n");
+                log.printInfo("\n[DONE]\n");
+                log.printInfo("[Build Stage]\n");
 
                 int filesize = files.size();
 
@@ -144,13 +146,13 @@ public abstract class FSHub{
 
                             try{
                                 if(entry.scan(this, d) && debug >= FSControl.DEBUG_FULL){
-                                    VLDebug.append("Built[");
-                                    VLDebug.append(i2);
-                                    VLDebug.append("] keyword[");
-                                    VLDebug.append(entry.name);
-                                    VLDebug.append("] name[");
-                                    VLDebug.append(d.name);
-                                    VLDebug.append("] ");
+                                    log.append("Built[");
+                                    log.append(i2);
+                                    log.append("] keyword[");
+                                    log.append(entry.name);
+                                    log.append("] name[");
+                                    log.append(d.name);
+                                    log.append("] ");
 
                                     found = true;
                                 }
@@ -160,58 +162,56 @@ public abstract class FSHub{
                                     FSInstance instance2 = mesh.get(mesh.size() - 1);
 
                                     if(instance1.positions().size() != instance2.positions().size()){
-                                        VLDebug.printD();
-                                        VLDebug.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1_Vertex_Size[");
-                                        VLDebug.append(instance1.positions().size());
-                                        VLDebug.append("] Instance2_Vertex_Size[");
-                                        VLDebug.append(instance2.positions().size());
-                                        VLDebug.append("]");
-                                        VLDebug.printE();
+                                        log.printInfo();
+                                        log.append("[WARNING] [Attempting to do instancing on meshes with different vertex characteristics] [Instance1_Vertex_Size[");
+                                        log.append(instance1.positions().size());
+                                        log.append("] Instance2_Vertex_Size[");
+                                        log.append(instance2.positions().size());
+                                        log.append("]");
+                                        log.printError();
                                     }
                                 }
 
                             }catch(Exception ex){
-                                VLDebug.append("Error building \"");
-                                VLDebug.append(entry.name);
-                                VLDebug.append("\"\n[Assembler Configuration]\n");
+                                log.append("Error building \"");
+                                log.append(entry.name);
+                                log.append("\"\n[Assembler Configuration]\n");
 
-                                entry.assembler.stringify(VLDebug.get(), null);
-                                VLDebug.printE();
+                                entry.assembler.stringify(log.get(), null);
+                                log.printError();
 
                                 throw new RuntimeException(ex);
                             }
 
                             if(found){
-                                VLDebug.printD();
+                                log.printInfo();
                             }
                         }
                     }
                 }
 
-                VLDebug.printDirect("[DONE]\n");
-                VLDebug.printD();
-                VLDebug.printDirect("[Checking Scan Results]\n");
+                log.printInfo("[DONE]\n");
+                log.printInfo("[Checking Scan Results]\n");
 
                 for(int i = 0; i < entrysize; i++){
                     entry = entries.get(i);
 
                     if(entry.mesh.size() == 0){
-                        VLDebug.append("Scan incomplete : found no instance for mesh with keyword \"");
-                        VLDebug.append(entry.name);
-                        VLDebug.append("\".\n");
-                        VLDebug.append("[Assembler Configuration]\n");
+                        log.append("Scan incomplete : found no instance for mesh with keyword \"");
+                        log.append(entry.name);
+                        log.append("\".\n");
+                        log.append("[Assembler Configuration]\n");
 
-                        entry.assembler.stringify(VLDebug.get(), null);
+                        entry.assembler.stringify(log.get(), null);
 
-                        VLDebug.printE();
+                        log.printError();
                         throw new RuntimeException("Mesh Scan Error");
                     }
 
                     entry.scanComplete();
                 }
 
-                VLDebug.printDirect("[DONE]\n");
-                VLDebug.printD();
+                log.printInfo("[DONE]\n");
 
             }else{
                 int filesize = files.size();
@@ -239,46 +239,49 @@ public abstract class FSHub{
             int size = entries.size();
 
             if(debug > FSControl.DEBUG_DISABLED){
-                VLDebug.recreate();
+                log = new VLLog(new String[]{
+                        FSControl.LOGTAG, getClass().getSimpleName()
+                });
+
                 FSHScanner entry;
 
                 int buffersize = buffers.size();
 
-                VLDebug.printDirect("[Buffering Stage]\n");
+                log.printInfo("[Buffering Stage]\n");
 
                 for(int i = 0; i < size; i++){
                     entry = entries.get(i);
 
-                    VLDebug.append("accountingForMesh[");
-                    VLDebug.append(i + 1);
-                    VLDebug.append("/");
-                    VLDebug.append(size);
-                    VLDebug.append("]\n");
+                    log.append("accountingForMesh[");
+                    log.append(i + 1);
+                    log.append("/");
+                    log.append(size);
+                    log.append("]\n");
 
                     if(debug >= FSControl.DEBUG_FULL){
-                        entry.debugInfo();
+                        entry.debugInfo(log);
                     }
 
                     try{
                         entry.accountForBufferSize();
 
                     }catch(Exception ex){
-                        VLDebug.append("Error accounting for buffer size \"");
-                        VLDebug.append(entry.name);
-                        VLDebug.append("\"\n");
-                        VLDebug.append("[Assembler Configuration]\n");
+                        log.append("Error accounting for buffer size \"");
+                        log.append(entry.name);
+                        log.append("\"\n");
+                        log.append("[Assembler Configuration]\n");
 
-                        entry.assembler.stringify(VLDebug.get(), null);
-                        VLDebug.printE();
+                        entry.assembler.stringify(log.get(), null);
+                        log.printError();
 
                         throw new RuntimeException(ex);
                     }
 
-                    VLDebug.printD();
+                    log.printInfo();
                 }
 
                 try{
-                    VLDebug.append("Initializing buffers...");
+                    log.append("Initializing buffers...");
                     FSVertexBuffer<?> buffer;
 
                     for(int i = 0; i < buffersize; i++){
@@ -287,57 +290,57 @@ public abstract class FSHub{
                         buffer.initialize();
                     }
 
-                    VLDebug.append("[SUCCESS]\n");
+                    log.append("[SUCCESS]\n");
 
                 }catch(Exception ex){
-                    VLDebug.append("[FAILED]");
-                    VLDebug.printE();
+                    log.append("[FAILED]");
+                    log.printError();
                     throw new RuntimeException("Failed to initialize buffers", ex);
                 }
 
                 for(int i = 0; i < size; i++){
                     entry = entries.get(i);
 
-                    VLDebug.append("Buffering[");
-                    VLDebug.append(i + 1);
-                    VLDebug.append("/");
-                    VLDebug.append(size);
-                    VLDebug.append("]\n");
+                    log.append("Buffering[");
+                    log.append(i + 1);
+                    log.append("/");
+                    log.append(size);
+                    log.append("]\n");
 
                     if(debug >= FSControl.DEBUG_FULL){
-                        entry.debugInfo();
+                        entry.debugInfo(log);
                     }
 
                     try{
-                        entry.bufferDebugAndFinish();
+                        entry.bufferDebugAndFinish(log);
 
                     }catch(Exception ex){
-                        VLDebug.append("Error buffering \"");
-                        VLDebug.append(entry.name);
-                        VLDebug.append("\"\n");
-                        VLDebug.append("[Assembler Configuration]\n");
+                        log.append("Error buffering \"");
+                        log.append(entry.name);
+                        log.append("\"\n");
+                        log.append("[Assembler Configuration]\n");
 
-                        entry.assembler.stringify(VLDebug.get(), null);
-                        VLDebug.printE();
+                        entry.assembler.stringify(log.get(), null);
+                        log.printError();
 
                         throw new RuntimeException(ex);
                     }
 
-                    VLDebug.printD();
+                    log.printInfo();
                 }
 
                 try{
-                    VLDebug.append("Uploading buffers...");
+                    log.append("Uploading buffers...");
 
                     for(int i = 0; i < buffersize; i++){
                         buffers.get(i).upload();
                     }
 
-                    VLDebug.append("[SUCCESS]\n");
+                    log.append("[SUCCESS]\n");
 
                 }catch(Exception ex){
-                    VLDebug.append("[FAILED]");
-                    VLDebug.printE();
+                    log.append("[FAILED]");
+                    log.printError();
                     throw new RuntimeException("Failed to upload buffers", ex);
                 }
 
@@ -345,8 +348,7 @@ public abstract class FSHub{
                     entries.get(i).bufferComplete();
                 }
 
-                VLDebug.printDirect("[DONE]\n");
-                VLDebug.printD();
+                log.printInfo("[DONE]\n");
 
             }else{
                 int buffersize = buffers.size();

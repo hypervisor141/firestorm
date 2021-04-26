@@ -2,14 +2,14 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public class FSRPass{
 
     private VLListType<FSP> entries;
     
-    private final long id;
+    private long id;
     private final int debug;
 
     private float[] clearcolor;
@@ -17,6 +17,7 @@ public class FSRPass{
 
     private FSConfigGroup preconfig;
     private FSConfigGroup postconfig;
+    private VLLog log;
     
     public FSRPass(float[] clearcolor, int clearbits, FSConfigGroup preconfig, FSConfigGroup postconfig, int capacity, int debug){
         this.clearcolor = clearcolor;
@@ -25,8 +26,7 @@ public class FSRPass{
         this.postconfig = postconfig;
         this.debug = debug;
 
-        entries = new VLListType<>(capacity, capacity);
-        id = FSCFrames.getNextID();
+        initialize(capacity);
     }
 
     public FSRPass(float[] clearcolor, int clearbits, int capacity, int debug){
@@ -34,8 +34,18 @@ public class FSRPass{
         this.clearbits = clearbits;
         this.debug = debug;
 
+        initialize(capacity);
+    }
+
+    private void initialize(int capacity){
         entries = new VLListType<>(capacity, capacity);
         id = FSCFrames.getNextID();
+
+        if(debug >= FSControl.DEBUG_NORMAL){
+            log = new VLLog(new String[]{
+                    FSControl.LOGTAG, getClass().getSimpleName() + "-" + id
+            });
+        }
     }
 
     public void clearBit(int bits){
@@ -138,11 +148,9 @@ public class FSRPass{
         GLES32.glClear(clearbits);
         GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
 
-        VLDebug.recreate();
-
         if(preconfig != null){
             if(debug >= FSControl.DEBUG_NORMAL){
-                preconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
+                preconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX, log, debug);
 
             }else{
                 preconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
@@ -170,7 +178,7 @@ public class FSRPass{
 
         if(postconfig != null){
             if(debug >= FSControl.DEBUG_NORMAL){
-                postconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
+                postconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX, log, debug);
 
             }else{
                 postconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);

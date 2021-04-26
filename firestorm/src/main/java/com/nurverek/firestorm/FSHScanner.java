@@ -2,7 +2,7 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
-import vanguard.VLDebug;
+import vanguard.VLLog;
 
 public abstract class FSHScanner{
 
@@ -39,16 +39,16 @@ public abstract class FSHScanner{
         map.accountFor(mesh);
     }
 
-    protected void bufferDebugAndFinish(){
-        map.bufferDebug(mesh);
+    protected void bufferDebugAndFinish(VLLog log){
+        map.bufferDebug(mesh, log);
         program.meshes().add(mesh);
     }
 
-    protected void debugInfo(){
-        VLDebug.append("[");
-        VLDebug.append(getClass().getSimpleName());
-        VLDebug.append("] ");
-        VLDebug.append("mesh[" + mesh.name + "] ");
+    protected void debugInfo(VLLog log){
+        log.append("[");
+        log.append(getClass().getSimpleName());
+        log.append("] ");
+        log.append("mesh[" + mesh.name + "] ");
 
         int size = mesh.size();
         VLArrayFloat[] data;
@@ -71,7 +71,7 @@ public abstract class FSHScanner{
             }
         }
 
-        VLDebug.append("storageRequirements[");
+        log.append("storageRequirements[");
 
         if(assembler.INSTANCE_SHARE_POSITIONS){
             requirements[FSHub.ELEMENT_POSITION] /= size;
@@ -89,16 +89,16 @@ public abstract class FSHScanner{
         size = FSHub.ELEMENT_NAMES.length;
 
         for(int i = 0; i < size; i++){
-            VLDebug.append(FSHub.ELEMENT_NAMES[i]);
-            VLDebug.append("[");
-            VLDebug.append(requirements[i]);
+            log.append(FSHub.ELEMENT_NAMES[i]);
+            log.append("[");
+            log.append(requirements[i]);
 
             if(i < size - 1){
-                VLDebug.append("] ");
+                log.append("] ");
             }
         }
 
-        VLDebug.append("]]\n");
+        log.append("]]\n");
     }
 
     public static class Singular extends FSHScanner{

@@ -10,10 +10,10 @@ import vanguard.VLArrayFloat;
 import vanguard.VLArrayInt;
 import vanguard.VLArrayUtils;
 import vanguard.VLBufferTracker;
-import vanguard.VLDebug;
 import vanguard.VLFloat;
 import vanguard.VLInt;
 import vanguard.VLListType;
+import vanguard.VLLog;
 import vanguard.VLStringify;
 
 public abstract class FSP{
@@ -25,6 +25,7 @@ public abstract class FSP{
 
     protected CoreConfig coreconfigs;
 
+    protected final VLLog log;
     protected int program;
     protected int debug;
     protected int uniformlocation;
@@ -37,6 +38,8 @@ public abstract class FSP{
         meshes = new VLListType<>(meshcapacity, meshcapacity);
 
         uniformlocation = 0;
+
+        log = debugmode >= FSControl.DEBUG_NORMAL ? new VLLog(FSControl.LOGTAG, 2) : null;
     }
 
     protected abstract CoreConfig customize(VLListType<FSMesh> meshes, int debug);
@@ -49,11 +52,18 @@ public abstract class FSP{
         return coreconfigs;
     }
 
+    public VLLog log(){
+        return log;
+    }
+
     public int id(){
         return program;
     }
 
     public FSP build(){
+        log.tag(1,getClass().getSimpleName() + "-" + program);
+        log.reset();
+
         coreconfigs = customize(meshes, debug);
 
         int size = meshes.size();
@@ -62,27 +72,25 @@ public abstract class FSP{
             meshes.get(i).programPreBuild(this, coreconfigs, debug);
         }
 
-        VLDebug.recreate();
-
+        log.reset();
         program = GLES32.glCreateProgram();
 
-        FSShader shader;
         size = shaders.size();
 
         for(int i = 0; i < size; i++){
-            shader = shaders.get(i);
+            FSShader shader = shaders.get(i);
             shader.buildSource();
             shader.compile();
             shader.attach();
 
             if(debug > FSControl.DEBUG_DISABLED){
-                VLDebug.append("Compiling and attaching shader type ");
-                VLDebug.append(shader.type);
-                VLDebug.append(" for program id ");
-                VLDebug.append(program);
-                VLDebug.append(" : \n");
+                log.append("Compiling and attaching shader type ");
+                log.append(shader.type);
+                log.append(" for program id ");
+                log.append(program);
+                log.append(" : \n");
 
-                shader.stringify(VLDebug.get(), null);
+                shader.stringify(log.get(), null);
             }
 
             shader.logDebugInfo(this);
@@ -106,26 +114,26 @@ public abstract class FSP{
             size = shaders.size();
 
             for(int i = 0; i < size; i++){
-                shader = shaders.get(i);
+                FSShader shader = shaders.get(i);
 
-                VLDebug.append("[");
-                VLDebug.append(i + 1);
-                VLDebug.append("/");
-                VLDebug.append(size);
-                VLDebug.append("]");
-                VLDebug.append(" shaderType[");
-                VLDebug.append(shader.type);
-                VLDebug.append("]");
-                VLDebug.printE();
+                log.append("[");
+                log.append(i + 1);
+                log.append("/");
+                log.append(size);
+                log.append("]");
+                log.append(" shaderType[");
+                log.append(shader.type);
+                log.append("]");
+                log.printError();
 
-                shader.stringify(VLDebug.get(), null);
+                shader.stringify(log.get(), null);
             }
 
-            VLDebug.append("Program[");
-            VLDebug.append(program);
-            VLDebug.append("] program build failure : ");
-            VLDebug.append(info);
-            VLDebug.printE();
+            log.append("Program[");
+            log.append(program);
+            log.append("] program build failure : ");
+            log.append(info);
+            log.printError();
 
             throw new RuntimeException();
         }
@@ -133,26 +141,26 @@ public abstract class FSP{
         if(debug > FSControl.DEBUG_DISABLED){
             try{
                 if(coreconfigs.setupconfig != null){
-                    VLDebug.append("[Notifying program built for SetupConfig]\n");
+                    log.append("[Notifying program built for SetupConfig]\n");
                     coreconfigs.setupconfig.notifyProgramBuilt(this);
                 }
                 if(coreconfigs.meshconfig != null){
-                    VLDebug.append("[Notifying program built for MeshConfig]\n");
+                    log.append("[Notifying program built for MeshConfig]\n");
                     coreconfigs.meshconfig.notifyProgramBuilt(this);
                 }
                 if(coreconfigs.postdrawconfig != null){
-                    VLDebug.append("[Notifying program built for PostDrawConfig]\n");
+                    log.append("[Notifying program built for PostDrawConfig]\n");
                     coreconfigs.postdrawconfig.notifyProgramBuilt(this);
                 }
 
             }catch(Exception ex){
-                VLDebug.append("Failed.\n");
-                VLDebug.printE();
+                log.append("Failed.\n");
+                log.printError();
 
                 throw new RuntimeException("Error during program configuration setup", ex);
             }
 
-            VLDebug.printD();
+            log.printInfo();
 
         }else{
             if(coreconfigs.setupconfig != null){
@@ -194,59 +202,58 @@ public abstract class FSP{
         int meshsize = meshes.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
-            VLDebug.recreate();
-
-            VLDebug.append("------- PROGRAM[");
-            VLDebug.append(program);
-            VLDebug.append("] -------");
-            VLDebug.printD();
+            log.reset();
+            log.append("------- PROGRAM[");
+            log.append(program);
+            log.append("] -------");
+            log.printInfo();
 
             if(coreconfigs.setupconfig != null){
-                VLDebug.append("[SetupConfig]");
-                VLDebug.printD();
+                log.append("[SetupConfig]");
+                log.printInfo();
 
-                coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex);
+                coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                VLDebug.printD();
+                log.printInfo();
             }
 
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
                     FSMesh mesh = meshes.get(i);
 
-                    VLDebug.append("[InternalMeshConfig] [");
-                    VLDebug.append(i + 1);
-                    VLDebug.append("/");
-                    VLDebug.append(meshsize);
-                    VLDebug.append("] [");
-                    VLDebug.append(mesh.name());
-                    VLDebug.append("]");
-                    VLDebug.printD();
+                    log.append("[InternalMeshConfig] [");
+                    log.append(i + 1);
+                    log.append("/");
+                    log.append(meshsize);
+                    log.append("] [");
+                    log.append(mesh.name());
+                    log.append("]");
+                    log.printInfo();
 
-                    mesh.configureDebug(pass, this, i, passindex);
+                    mesh.configureDebug(pass, this, i, passindex, log, debug);
 
-                    VLDebug.append("[MeshConfig] [");
-                    VLDebug.append(i + 1);
-                    VLDebug.append("/");
-                    VLDebug.append(meshsize);
-                    VLDebug.append("] [");
-                    VLDebug.append(mesh.name());
-                    VLDebug.append("]");
-                    VLDebug.printD();
+                    log.append("[MeshConfig] [");
+                    log.append(i + 1);
+                    log.append("/");
+                    log.append(meshsize);
+                    log.append("] [");
+                    log.append(mesh.name());
+                    log.append("]");
+                    log.printInfo();
 
-                    coreconfigs.meshconfig.runDebug(pass, this, mesh, i, passindex);
+                    coreconfigs.meshconfig.runDebug(pass, this, mesh, i, passindex, log, debug);
 
-                    VLDebug.printD();
+                    log.printInfo();
                 }
 
-                VLDebug.append("[PostDrawConfig]");
-                VLDebug.printD();
+                log.append("[PostDrawConfig]");
+                log.printInfo();
             }
 
             if(coreconfigs.postdrawconfig != null){
-                coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex);
+                coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                VLDebug.printD();
+                log.printInfo();
             }
 
         }else{
@@ -282,19 +289,18 @@ public abstract class FSP{
             use();
 
             if(debug > FSControl.DEBUG_DISABLED){
-                VLDebug.recreate();
+                log.reset();
+                log.append("------- PROGRAM[");
+                log.append(program);
+                log.append("] -------");
+                log.printInfo();
 
-                VLDebug.append("------- PROGRAM[");
-                VLDebug.append(program);
-                VLDebug.append("] -------");
-                VLDebug.printD();
+                log.append("[PostFrameConfig]");
+                log.printInfo();
 
-                VLDebug.append("[PostFrameConfig]");
-                VLDebug.printD();
+                coreconfigs.postframeconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                coreconfigs.postframeconfig.runDebug(pass, this, null, -1, passindex);
-
-                VLDebug.printD();
+                log.printInfo();
 
             }else{
                 coreconfigs.postframeconfig.run(pass, this, null, -1, passindex);
@@ -310,10 +316,10 @@ public abstract class FSP{
                 FSTools.checkGLError();
 
             }catch(Exception ex){
-                VLDebug.append("Error on program activation program[");
-                VLDebug.append(program);
-                VLDebug.append("]");
-                VLDebug.printE();
+                log.append("Error on program activation program[");
+                log.append(program);
+                log.append("]");
+                log.printError();
 
                 throw new RuntimeException(ex);
             }
@@ -431,12 +437,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append(" flag[");
-            VLDebug.append(flag);
-            VLDebug.append("]");
+            log.append(" flag[");
+            log.append(flag);
+            log.append("]");
         }
     }
 
@@ -460,12 +466,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append(" color[");
-            VLDebug.append(Arrays.toString(color));
-            VLDebug.append("]");
+            log.append(" color[");
+            log.append(Arrays.toString(color));
+            log.append("]");
         }
     }
 
@@ -498,17 +504,17 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x);
-            VLDebug.append("], y[");
-            VLDebug.append(y);
-            VLDebug.append("], width[");
-            VLDebug.append(width);
-            VLDebug.append("], height[");
-            VLDebug.append(height);
+            log.append("x[");
+            log.append(x);
+            log.append("], y[");
+            log.append(y);
+            log.append("], width[");
+            log.append(width);
+            log.append("], height[");
+            log.append(height);
         }
     }
 
@@ -532,12 +538,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("mask[");
-            VLDebug.append(mask);
-            VLDebug.append("] ");
+            log.append("mask[");
+            log.append(mask);
+            log.append("] ");
         }
     }
 
@@ -561,12 +567,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("mode[");
-            VLDebug.append(cullmode);
-            VLDebug.append("] ");
+            log.append("mode[");
+            log.append(cullmode);
+            log.append("] ");
         }
     }
 
@@ -590,12 +596,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("divisor[");
-            VLDebug.append(divisor);
-            VLDebug.append("] ");
+            log.append("divisor[");
+            log.append(divisor);
+            log.append("] ");
         }
     }
 
@@ -619,12 +625,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("mode[");
-            VLDebug.append(readmode);
-            VLDebug.append("] ");
+            log.append("mode[");
+            log.append(readmode);
+            log.append("] ");
         }
     }
 
@@ -710,7 +716,7 @@ public abstract class FSP{
         }
 
         @Override
-        public abstract void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug);
+        public abstract void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug);
 
         @Override
         public int getGLSLSize(){
@@ -725,16 +731,16 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            VLDebug.append("offset[");
-            VLDebug.append(offset);
-            VLDebug.append("] count[");
-            VLDebug.append(count);
-            VLDebug.append("] array[");
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            log.append("offset[");
+            log.append(offset);
+            log.append("] count[");
+            log.append(count);
+            log.append("] array[");
 
-            array.stringify(VLDebug.get(), null);
+            array.stringify(log.get(), null);
 
-            VLDebug.append("]");
+            log.append("]");
         }
     }
 
@@ -769,21 +775,21 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            VLDebug.append("] instance[");
-            VLDebug.append(instance);
-            VLDebug.append("] element[");
-            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
-            VLDebug.append("] array[");
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            log.append("] instance[");
+            log.append(instance);
+            log.append("] element[");
+            log.append(FSHub.ELEMENT_NAMES[element]);
+            log.append("] array[");
 
             if(array == null){
-                mesh.get(instance).element(element).stringify(VLDebug.get(), null);
+                mesh.get(instance).element(element).stringify(log.get(), null);
 
             }else{
-                array.stringify(VLDebug.get(), null);
+                array.stringify(log.get(), null);
             }
 
-            VLDebug.append("]");
+            log.append("]");
         }
     }
 
@@ -821,24 +827,24 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
             FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
 
-            VLDebug.append("element[");
-            VLDebug.append(element);
-            VLDebug.append("bindingIndex[");
-            VLDebug.append(bindingindex);
-            VLDebug.append("] normalized[");
-            VLDebug.append(normalized);
-            VLDebug.append("] tracker[");
+            log.append("element[");
+            log.append(element);
+            log.append("bindingIndex[");
+            log.append(bindingindex);
+            log.append("] normalized[");
+            log.append(normalized);
+            log.append("] tracker[");
 
-            binding.tracker.stringify(VLDebug.get(), null);
-            VLDebug.append("] buffer[");
+            binding.tracker.stringify(log.get(), null);
+            log.append("] buffer[");
 
-            binding.vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
-            VLDebug.append("] ");
+            binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            log.append("] ");
         }
     }
 
@@ -873,22 +879,22 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
             FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
 
-            VLDebug.append("linkIndex[");
-            VLDebug.append(linkindex);
-            VLDebug.append("] normalized[");
-            VLDebug.append(normalized);
-            VLDebug.append("] tracker[");
+            log.append("linkIndex[");
+            log.append(linkindex);
+            log.append("] normalized[");
+            log.append(normalized);
+            log.append("] tracker[");
 
-            link.tracker.stringify(VLDebug.get(), null);
-            VLDebug.append("] buffer[");
+            link.tracker.stringify(log.get(), null);
+            log.append("] buffer[");
 
-            link.vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
-            VLDebug.append("] ");
+            link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            log.append("] ");
         }
     }
 
@@ -924,22 +930,22 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
             FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
 
-            VLDebug.append("element[");
-            VLDebug.append(element);
-            VLDebug.append("bindingIndex[");
-            VLDebug.append(bindingindex);
-            VLDebug.append("] tracker[");
+            log.append("element[");
+            log.append(element);
+            log.append("bindingIndex[");
+            log.append(bindingindex);
+            log.append("] tracker[");
 
-            binding.tracker.stringify(VLDebug.get(), null);
-            VLDebug.append("] buffer[");
+            binding.tracker.stringify(log.get(), null);
+            log.append("] buffer[");
 
-            binding.vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
-            VLDebug.append("] ");
+            binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            log.append("] ");
         }
     }
 
@@ -972,21 +978,21 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
             FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
             VLBufferTracker tracker = link.tracker;
 
-            VLDebug.append("linkIndex[");
-            VLDebug.append(linkindex);
-            VLDebug.append("] tracker[");
+            log.append("linkIndex[");
+            log.append(linkindex);
+            log.append("] tracker[");
 
-            link.tracker.stringify(VLDebug.get(), null);
-            VLDebug.append("] buffer[");
+            link.tracker.stringify(log.get(), null);
+            log.append("] buffer[");
 
-            link.vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
-            VLDebug.append("] ");
+            link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            log.append("] ");
         }
     }
 
@@ -1138,18 +1144,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("], z[");
-            VLDebug.append(z.get());
-            VLDebug.append("], w[");
-            VLDebug.append(w.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("], z[");
+            log.append(z.get());
+            log.append("], w[");
+            log.append(w.get());
+            log.append("] ");
         }
 
         @Override
@@ -1183,16 +1189,16 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("], z[");
-            VLDebug.append(z.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("], z[");
+            log.append(z.get());
+            log.append("] ");
         }
     }
 
@@ -1219,14 +1225,14 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("] ");
         }
     }
 
@@ -1250,12 +1256,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("] ");
         }
     }
 
@@ -1386,18 +1392,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("], z[");
-            VLDebug.append(z.get());
-            VLDebug.append("], w[");
-            VLDebug.append(w.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("], z[");
+            log.append(z.get());
+            log.append("], w[");
+            log.append(w.get());
+            log.append("] ");
         }
     }
 
@@ -1426,16 +1432,16 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("], z[");
-            VLDebug.append(z.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("], z[");
+            log.append(z.get());
+            log.append("] ");
         }
     }
 
@@ -1462,14 +1468,14 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("] ");
         }
     }
 
@@ -1493,12 +1499,12 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("] ");
         }
     }
 
@@ -1629,18 +1635,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("x[");
-            VLDebug.append(x.get());
-            VLDebug.append("], y[");
-            VLDebug.append(y.get());
-            VLDebug.append("], z[");
-            VLDebug.append(z.get());
-            VLDebug.append("], w[");
-            VLDebug.append(w.get());
-            VLDebug.append("] ");
+            log.append("x[");
+            log.append(x.get());
+            log.append("], y[");
+            log.append(y.get());
+            log.append("], z[");
+            log.append(z.get());
+            log.append("], w[");
+            log.append(w.get());
+            log.append("] ");
         }
     }
 
@@ -1729,18 +1735,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("element[");
-            VLDebug.append(FSHub.ELEMENT_NAMES[element]);
-            VLDebug.append("] bindingIndex[");
-            VLDebug.append(bindingindex);
-            VLDebug.append("] buffer[");
+            log.append("element[");
+            log.append(FSHub.ELEMENT_NAMES[element]);
+            log.append("] bindingIndex[");
+            log.append(bindingindex);
+            log.append("] buffer[");
 
-            mesh.first().bufferBindings().get(element, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(element, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("] ");
+            log.append("] ");
         }
     }
 
@@ -1774,14 +1780,14 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("element[NONE] ");
+            log.append("element[NONE] ");
 
-            vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("] ");
+            log.append("] ");
         }
     }
 
@@ -1806,9 +1812,9 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
-            VLDebug.append("[DYNAMIC]");
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
+            log.append("[DYNAMIC]");
         }
     }
 
@@ -1831,9 +1837,9 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
-            VLDebug.append("[DYNAMIC]");
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
+            log.append("[DYNAMIC]");
         }
     }
 
@@ -1854,9 +1860,9 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
-            VLDebug.append("[DYNAMIC]");
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
+            log.append("[DYNAMIC]");
         }
     }
 
@@ -1893,18 +1899,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("linkIndex[");
-            VLDebug.append(linkindex);
-            VLDebug.append("] link[");
-            VLDebug.append(mesh.getLink(linkindex));
-            VLDebug.append("] buffer[");
+            log.append("linkIndex[");
+            log.append(linkindex);
+            log.append("] link[");
+            log.append(mesh.getLink(linkindex));
+            log.append("] buffer[");
 
-            ((FSLinkGLBuffered<?, ?>)mesh.getLink(linkindex)).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            ((FSLinkGLBuffered<?, ?>)mesh.getLink(linkindex)).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("] ");
+            log.append("] ");
         }
     }
 
@@ -1925,14 +1931,14 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("drawMode[");
-            VLDebug.append(mesh.drawmode);
-            VLDebug.append("] indexCount[");
-            VLDebug.append(mesh.first().vertexSize());
-            VLDebug.append("] ");
+            log.append("drawMode[");
+            log.append(mesh.drawmode);
+            log.append("] indexCount[");
+            log.append(mesh.first().vertexSize());
+            log.append("] ");
         }
     }
 
@@ -1953,16 +1959,16 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("drawMode[");
-            VLDebug.append(mesh.drawmode);
-            VLDebug.append("] indexCount[");
-            VLDebug.append(mesh.first().vertexSize());
-            VLDebug.append("] instanceCount[");
-            VLDebug.append(mesh.size());
-            VLDebug.append("] ");
+            log.append("drawMode[");
+            log.append(mesh.drawmode);
+            log.append("] indexCount[");
+            log.append(mesh.first().vertexSize());
+            log.append("] instanceCount[");
+            log.append(mesh.size());
+            log.append("] ");
         }
     }
 
@@ -1990,18 +1996,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("element[");
-            VLDebug.append(FSHub.ELEMENT_NAMES[FSHub.ELEMENT_INDEX]);
-            VLDebug.append("] bindingIndex[");
-            VLDebug.append(bindingindex);
-            VLDebug.append("] buffer[");
+            log.append("element[");
+            log.append(FSHub.ELEMENT_NAMES[FSHub.ELEMENT_INDEX]);
+            log.append("] bindingIndex[");
+            log.append(bindingindex);
+            log.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("] ");
+            log.append("] ");
         }
     }
 
@@ -2029,20 +2035,20 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("drawMode[");
-            VLDebug.append(mesh.drawmode);
-            VLDebug.append("] instanceCount[");
-            VLDebug.append(mesh.size());
-            VLDebug.append("] bindingIndex[");
-            VLDebug.append(bindingindex);
-            VLDebug.append("] buffer[");
+            log.append("drawMode[");
+            log.append(mesh.drawmode);
+            log.append("] instanceCount[");
+            log.append(mesh.size());
+            log.append("] bindingIndex[");
+            log.append(bindingindex);
+            log.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("] ");
+            log.append("] ");
         }
     }
 
@@ -2077,24 +2083,24 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-            super.debugInfo(pass, program, mesh, debug);
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
 
-            VLDebug.append("drawMode[");
-            VLDebug.append(mesh.drawmode);
-            VLDebug.append("] start[");
-            VLDebug.append(start);
-            VLDebug.append("] end[");
-            VLDebug.append(end);
-            VLDebug.append("] count[");
-            VLDebug.append(count);
-            VLDebug.append("] bindingIndex[");
-            VLDebug.append(bindingindex);
-            VLDebug.append("] buffer[");
+            log.append("drawMode[");
+            log.append(mesh.drawmode);
+            log.append("] start[");
+            log.append(start);
+            log.append("] end[");
+            log.append(end);
+            log.append("] count[");
+            log.append(count);
+            log.append("] bindingIndex[");
+            log.append(bindingindex);
+            log.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(VLDebug.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            VLDebug.append("] ");
+            log.append("] ");
         }
     }
 

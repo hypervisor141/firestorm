@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLDebug;
+import vanguard.VLLog;
 
 public abstract class FSConfig{
 
@@ -12,8 +12,8 @@ public abstract class FSConfig{
         }
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
-            self.configureDebug(pass, program, mesh, meshindex, passindex);
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
+            self.configureDebug(pass, program, mesh, meshindex, passindex, log, debug);
         }
     };
     public static final Mode MODE_ONETIME = new Mode(){
@@ -25,8 +25,8 @@ public abstract class FSConfig{
         }
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
-            self.configureDebug(pass, program, mesh, meshindex, passindex);
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
+            self.configureDebug(pass, program, mesh, meshindex, passindex, log, debug);
             self.mode = MODE_DISABLED;
         }
     };
@@ -36,7 +36,7 @@ public abstract class FSConfig{
         public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){}
     };
 
     private Mode mode;
@@ -65,22 +65,22 @@ public abstract class FSConfig{
         mode.configure(pass, this, program, mesh, meshindex, passindex);
     }
 
-    public void runDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-        mode.configureDebug(pass, this, program, mesh, meshindex, passindex);
+    public void runDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
+        mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
     }
 
     protected abstract void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex);
 
-    protected void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    protected void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         try{
-            printDebugHeader(pass, program, mesh);
+            printDebugHeader(pass, program, mesh, log, debug);
 
             configure(pass, program, mesh, meshindex, passindex);
             FSTools.checkGLError();
 
         }catch(Exception ex){
-            VLDebug.append("[FAILED]");
-            VLDebug.printE();
+            program.log.append("[FAILED]");
+            program.log.printError();
 
             throw new RuntimeException(ex);
         }
@@ -88,32 +88,34 @@ public abstract class FSConfig{
 
     protected void notifyProgramBuilt(FSP program){}
 
-    protected void printDebugHeader(FSRPass pass, FSP program, FSMesh mesh){
-        String classname = getClass().getSimpleName();
+    protected void printDebugHeader(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+        if(log != null){
+            String classname = getClass().getSimpleName();
 
-        VLDebug.append("[");
-        VLDebug.append(classname == "" ? "Anonymous" : classname);
-        VLDebug.append("]");
+            log.append("[");
+            log.append(classname == "" ? "Anonymous" : classname);
+            log.append("]");
 
-        if(program != null && program.debug >= FSControl.DEBUG_FULL){
-            VLDebug.append(" [");
-            debugInfo(pass, program, mesh, program.debug);
-            VLDebug.append("]\n");
+            if(program.debug >= FSControl.DEBUG_FULL){
+                log.append(" [");
+                debugInfo(pass, program, mesh, log, debug);
+                log.append("]\n");
 
-        }else{
-            VLDebug.append("\n");
+            }else{
+                log.append("\n");
+            }
         }
     }
 
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-        VLDebug.append("GLSLSize[");
-        VLDebug.append(getGLSLSize());
-        VLDebug.append("] ");
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+        log.append("GLSLSize[");
+        log.append(getGLSLSize());
+        log.append("] ");
     }
 
     public interface Mode{
 
         void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
-        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
+        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug);
     }
 }

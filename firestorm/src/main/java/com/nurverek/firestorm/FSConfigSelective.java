@@ -1,7 +1,7 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLDebug;
 import vanguard.VLListType;
+import vanguard.VLLog;
 
 public class FSConfigSelective extends FSConfigLocated{
 
@@ -30,9 +30,9 @@ public class FSConfigSelective extends FSConfigLocated{
     }
 
     @Override
-    public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
+    public void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         active.location(location());
-        active.runDebug(pass, program, mesh, meshindex, passindex);
+        active.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
     }
 
     @Override
@@ -65,28 +65,28 @@ public class FSConfigSelective extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, int debug){
-        super.debugInfo(pass, program, mesh, debug);
+    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+        super.debugInfo(pass, program, mesh, log, debug);
 
-        VLDebug.append("activeConfig[");
-        VLDebug.append(active == null ? "NULL" : active.getClass().getSimpleName());
-        VLDebug.append("] [");
+        log.append("activeConfig[");
+        log.append(active == null ? "NULL" : active.getClass().getSimpleName());
+        log.append("] [");
 
         if(active == null){
-            VLDebug.append("NULL");
+            log.append("NULL");
 
         }else{
-            active.debugInfo(pass, program, mesh, debug);
+            active.debugInfo(pass, program, mesh, log, debug);
         }
 
-        VLDebug.append("] configs[  ");
+        log.append("] configs[  ");
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            configs.get(i).debugInfo(pass, program, mesh, debug);
-            VLDebug.append("  ");
+            configs.get(i).debugInfo(pass, program, mesh, log, debug);
+            log.append("  ");
         }
 
-        VLDebug.append("] ");
+        log.append("] ");
     }
 }

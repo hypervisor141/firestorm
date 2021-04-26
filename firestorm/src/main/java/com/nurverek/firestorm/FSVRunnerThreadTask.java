@@ -13,11 +13,11 @@ public class FSVRunnerThreadTask extends VLVRunnerThreadTask{
         }
     };
 
-    public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean debug, boolean enablecomensator){
-        super(root, freqmillis, freqextrananos, debug, enablecomensator, REPORTER);
+    public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean enablecomensator, boolean debug){
+        super(root, freqmillis, freqextrananos, enablecomensator, REPORTER, debug ? FSControl.LOGTAG : null);
     }
 
-    public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean debug, boolean enablecomensator, PostReporter reporter){
-        super(root, freqmillis, freqextrananos, debug, enablecomensator, reporter);
+    public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean enablecomensator, PostReporter reporter, boolean debug){
+        super(root, freqmillis, freqextrananos, enablecomensator, reporter, debug ? FSControl.LOGTAG : null);
     }
 }
