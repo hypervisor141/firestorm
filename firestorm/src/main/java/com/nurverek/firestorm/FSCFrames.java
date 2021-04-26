@@ -165,7 +165,7 @@ public class FSCFrames{
             }
         }
 
-        requestFrame();
+        FSR.requestFrame();
     }
 
     protected static void timeFrameStarted(){
