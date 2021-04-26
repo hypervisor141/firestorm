@@ -67,12 +67,12 @@ public class FSR{
             renderthread.setDaemon(true);
             renderthread.setPriority(8);
             renderthread.setName("FSR");
-            renderthread.requestStart(0);
+            renderthread.requestStart();
         }
     }
 
     protected static void requestFrame(){
-        if(renderthread != null && renderthread.enabled()){
+        if(renderthread != null && renderthread.running()){
             choreographer.postFrameCallback(CHOREOGRAPHER_CALLBACK);
         }
     }
@@ -236,7 +236,7 @@ public class FSR{
     }
 
     protected static void destroy(){
-        renderthread.lockdown(0);
+        renderthread.lockdown();
 
         if(FSControl.getDestroyOnPause()){
             FSR.paused();
