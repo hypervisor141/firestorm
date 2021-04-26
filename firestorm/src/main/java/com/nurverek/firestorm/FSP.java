@@ -892,19 +892,26 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-
             log.append("linkIndex[");
             log.append(linkindex);
             log.append("] normalized[");
             log.append(normalized);
             log.append("] tracker[");
 
-            link.tracker.stringify(log.get(), null);
-            log.append("] buffer[");
+            try{
+                FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
 
-            link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-            log.append("] ");
+                link.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
@@ -998,18 +1005,24 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-            VLBufferTracker tracker = link.tracker;
-
             log.append("linkIndex[");
             log.append(linkindex);
             log.append("] tracker[");
 
-            link.tracker.stringify(log.get(), null);
-            log.append("] buffer[");
+            try{
+                FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
 
-            link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-            log.append("] ");
+                link.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
@@ -1936,9 +1949,20 @@ public abstract class FSP{
             log.append(mesh.getLink(linkindex));
             log.append("] buffer[");
 
-            ((FSLinkGLBuffered<?, ?>)mesh.getLink(linkindex)).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            try{
+                FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
 
-            log.append("] ");
+                link.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
