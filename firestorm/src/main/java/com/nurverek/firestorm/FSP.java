@@ -851,9 +851,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -908,9 +907,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -966,9 +964,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -1019,9 +1016,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -1784,9 +1780,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -1959,9 +1954,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -2108,9 +2102,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -2171,9 +2164,8 @@ public abstract class FSP{
                 log.append("] ");
 
             }catch(Exception ex){
-                log.append("PRINT FAILED[");
-                log.append(ex.getMessage());
-                log.append("]");
+                log.append("[PRINT FAILED]");
+                throw new RuntimeException(ex);
             }
         }
     }
