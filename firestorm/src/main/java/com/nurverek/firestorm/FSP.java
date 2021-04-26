@@ -72,7 +72,8 @@ public abstract class FSP{
             meshes.get(i).programPreBuild(this, coreconfigs, debug);
         }
 
-        log.reset();
+        log.printInfo();
+
         program = GLES32.glCreateProgram();
 
         size = shaders.size();
@@ -84,17 +85,17 @@ public abstract class FSP{
             shader.attach();
 
             if(debug > FSControl.DEBUG_DISABLED){
-                log.append("Compiling and attaching shader type ");
+                log.append("[Compiling and attaching shader] type[");
                 log.append(shader.type);
-                log.append(" for program id ");
-                log.append(program);
-                log.append(" : \n");
+                log.append("] ");
 
                 shader.stringify(log.get(), null);
             }
 
             shader.debugInfo(this, log, debug);
         }
+
+        log.printInfo();
 
         GLES32.glLinkProgram(program);
         FSTools.checkGLError();

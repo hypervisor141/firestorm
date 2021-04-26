@@ -113,7 +113,7 @@ public abstract class FSHub{
                 FSHScanner entry;
                 boolean found;
 
-                log.printInfo("[Assembler Check Stage]\n");
+                log.printInfo("[Assembler Check Stage]");
 
                 for(int i = 0; i < entrysize; i++){
                     entry = entries.get(i);
@@ -127,8 +127,9 @@ public abstract class FSHub{
                     entry.assembler.stringify(log.get(), null);
                 }
 
-                log.printInfo("\n[DONE]\n");
-                log.printInfo("[Build Stage]\n");
+                log.printInfo();
+                log.printInfo("[DONE]");
+                log.printInfo("[Build Stage]");
 
                 int filesize = files.size();
 
@@ -190,8 +191,9 @@ public abstract class FSHub{
                     }
                 }
 
-                log.printInfo("[DONE]\n");
-                log.printInfo("[Checking Scan Results]\n");
+                log.printInfo();
+                log.printInfo("[DONE]");
+                log.printInfo("[Checking Scan Results]");
 
                 for(int i = 0; i < entrysize; i++){
                     entry = entries.get(i);
@@ -211,7 +213,8 @@ public abstract class FSHub{
                     entry.scanComplete();
                 }
 
-                log.printInfo("[DONE]\n");
+                log.printInfo();
+                log.printInfo("[DONE]");
 
             }else{
                 int filesize = files.size();
@@ -247,7 +250,7 @@ public abstract class FSHub{
 
                 int buffersize = buffers.size();
 
-                log.printInfo("[Buffering Stage]\n");
+                log.printInfo("[Buffering Stage]");
 
                 for(int i = 0; i < size; i++){
                     entry = entries.get(i);
@@ -295,6 +298,7 @@ public abstract class FSHub{
                 }catch(Exception ex){
                     log.append("[FAILED]");
                     log.printError();
+
                     throw new RuntimeException("Failed to initialize buffers", ex);
                 }
 
@@ -348,7 +352,7 @@ public abstract class FSHub{
                     entries.get(i).bufferComplete();
                 }
 
-                log.printInfo("[DONE]\n");
+                log.printInfo("[DONE]");
 
             }else{
                 int buffersize = buffers.size();
