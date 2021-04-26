@@ -88,6 +88,10 @@ public class FSR{
 
         events.GLPreCreated(continuing);
         events.GLPostCreated(continuing);
+
+        if(continuing){
+            FSR.resumed();
+        }
     }
 
     protected static void surfaceChanged(int format, int width, int height){
