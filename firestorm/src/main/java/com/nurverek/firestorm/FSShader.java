@@ -386,8 +386,8 @@ public final class FSShader implements VLStringify{
         log.append("] type[");
         log.append(type);
         log.append("] [");
-        log.append(info.isEmpty() ? "Success" : info);
-        log.append("]");
+        log.append(info.isEmpty() ? "SUCCESS" : info);
+        log.append("]\n");
     }
 
     private static String resolveShaderName(int gltype){

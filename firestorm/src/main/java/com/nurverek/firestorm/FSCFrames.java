@@ -155,16 +155,11 @@ public class FSCFrames{
         synchronized(CHANGELOCK){
             QUEUED_FRAMES_COUNT--;
 
-            if(EFFICIENT_RENDER){
-                if(EXTERNAL_CHANGES == 0 && UNCHANGED_FRAMES < MAX_UNCHANGED_FRAMES){
-                    UNCHANGED_FRAMES++;
-
-                    FSR.requestFrame();
-                }
+            if(EFFICIENT_RENDER && EXTERNAL_CHANGES == 0 && UNCHANGED_FRAMES < MAX_UNCHANGED_FRAMES){
+                UNCHANGED_FRAMES++;
+                FSR.requestFrame();
             }
         }
-
-        requestFrame();
     }
 
     protected static void timeFrameStarted(){
