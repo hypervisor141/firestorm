@@ -66,8 +66,6 @@ public class FSConfigSequence extends FSConfigLocated{
     public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         String classname = getClass().getSimpleName();
         int size = configs.size();
-        FSConfig c;
-
         int loc = location;
 
         log.append("ENTERING [");
@@ -87,11 +85,11 @@ public class FSConfigSequence extends FSConfigLocated{
             log.append(size);
             log.append("] ");
 
-            c = configs.get(i);
-            c.location(loc);
-            c.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+            FSConfig config = configs.get(i);
+            config.location(loc);
+            config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
 
-            loc += c.getGLSLSize();
+            loc += config.getGLSLSize();
         }
 
         log.append("EXITING [");

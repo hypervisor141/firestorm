@@ -65,6 +65,7 @@ public class FSR{
             renderthread = threadinterface.create();
             renderthread.setDaemon(true);
             renderthread.setPriority(8);
+            renderthread.setName("FSR");
             renderthread.requestStart(0);
         }
     }

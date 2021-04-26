@@ -6,6 +6,8 @@ public abstract class FSConfig{
 
     public static final Mode MODE_ALWAYS = new Mode(){
 
+        private static final String NAME = "ALWAYS";
+
         @Override
         public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
             self.configure(pass, program, mesh, meshindex, passindex);
@@ -14,10 +16,17 @@ public abstract class FSConfig{
         @Override
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
             self.configureDebug(pass, program, mesh, meshindex, passindex, log, debug);
+        }
+
+        @Override
+        public String getModeName(){
+            return NAME;
         }
     };
     public static final Mode MODE_ONETIME = new Mode(){
 
+        private static final String NAME = "ONETIME";
+
         @Override
         public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){
             self.configure(pass, program, mesh, meshindex, passindex);
@@ -29,14 +38,28 @@ public abstract class FSConfig{
             self.configureDebug(pass, program, mesh, meshindex, passindex, log, debug);
             self.mode = MODE_DISABLED;
         }
+
+        @Override
+        public String getModeName(){
+            return NAME;
+        }
     };
     public static final Mode MODE_DISABLED = new Mode(){
+
+        private static final String NAME = "DISABLED";
 
         @Override
         public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){}
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){}
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
+            self.printDebugHeader(pass, program, mesh, log, debug);
+        }
+
+        @Override
+        public String getModeName(){
+            return NAME;
+        }
     };
 
     private Mode mode;
@@ -93,7 +116,9 @@ public abstract class FSConfig{
             String classname = getClass().getSimpleName();
 
             log.append("[");
-            log.append(classname == "" ? "Anonymous" : classname);
+            log.append(mode.getModeName());
+            log.append("] [");
+            log.append(classname.equals("") ? "Anonymous" : classname);
             log.append("]");
 
             if(debug >= FSControl.DEBUG_FULL){
@@ -117,5 +142,6 @@ public abstract class FSConfig{
 
         void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
         void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug);
+        String getModeName();
     }
 }

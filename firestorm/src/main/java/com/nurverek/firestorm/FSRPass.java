@@ -158,10 +158,9 @@ public class FSRPass{
         }
 
         int size = entries.size();
-        FSP entry;
 
         for(int index = 0; index < size; index++){
-            entry = entries.get(index);
+            FSP entry = entries.get(index);
             FSR.CURRENT_PASS_ENTRY_INDEX = index;
 
             entry.draw(this, FSR.CURRENT_PASS_INDEX);
