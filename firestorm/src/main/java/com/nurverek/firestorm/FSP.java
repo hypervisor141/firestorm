@@ -833,8 +833,6 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
-
             log.append("element[");
             log.append(element);
             log.append("bindingIndex[");
@@ -843,11 +841,20 @@ public abstract class FSP{
             log.append(normalized);
             log.append("] tracker[");
 
-            binding.tracker.stringify(log.get(), null);
-            log.append("] buffer[");
+            try{
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
 
-            binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-            log.append("] ");
+                binding.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
@@ -936,19 +943,26 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
-
             log.append("element[");
             log.append(element);
             log.append("bindingIndex[");
             log.append(bindingindex);
             log.append("] tracker[");
 
-            binding.tracker.stringify(log.get(), null);
-            log.append("] buffer[");
+            try{
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
 
-            binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-            log.append("] ");
+                binding.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
@@ -1745,11 +1759,22 @@ public abstract class FSP{
             log.append(FSHub.ELEMENT_NAMES[element]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
-            log.append("] buffer[");
+            log.append("] tracker[");
 
-            mesh.first().bufferBindings().get(element, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            try{
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
 
-            log.append("] ");
+                binding.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
@@ -2047,11 +2072,22 @@ public abstract class FSP{
             log.append(mesh.size());
             log.append("] bindingIndex[");
             log.append(bindingindex);
-            log.append("] buffer[");
+            log.append("] tracker[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            try{
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, this.bindingindex);
 
-            log.append("] ");
+                binding.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
@@ -2099,11 +2135,22 @@ public abstract class FSP{
             log.append(count);
             log.append("] bindingIndex[");
             log.append(bindingindex);
-            log.append("] buffer[");
+            log.append("] tracker[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            try{
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, this.bindingindex);
 
-            log.append("] ");
+                binding.tracker.stringify(log.get(), null);
+                log.append("] buffer[");
+
+                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                log.append("] ");
+
+            }catch(Exception ex){
+                log.append("PRINT FAILED[");
+                log.append(ex.getMessage());
+                log.append("]");
+            }
         }
     }
 
