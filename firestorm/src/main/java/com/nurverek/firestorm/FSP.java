@@ -61,7 +61,7 @@ public abstract class FSP{
     }
 
     public FSP build(){
-        log.tag(1,getClass().getSimpleName() + "-" + program);
+        log.tag(1, getClass().getSimpleName());
         log.reset();
 
         coreconfigs = customize(meshes, debug);
@@ -75,6 +75,8 @@ public abstract class FSP{
         log.printInfo();
 
         program = GLES32.glCreateProgram();
+
+        log.tag(1, getClass().getSimpleName() + "-" + program);
 
         size = shaders.size();
 
