@@ -79,8 +79,8 @@ public abstract class FSConfig{
             FSTools.checkGLError();
 
         }catch(Exception ex){
-            program.log.append("[FAILED]");
-            program.log.printError();
+            log.append("[FAILED]");
+            log.printError();
 
             throw new RuntimeException(ex);
         }
