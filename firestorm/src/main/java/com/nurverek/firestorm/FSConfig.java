@@ -4,9 +4,9 @@ import vanguard.VLLog;
 
 public abstract class FSConfig{
 
-    public static final Mode MODE_ALWAYS = new Mode(){
+    public static final Mode MODE_FULLTIME = new Mode(){
 
-        private static final String NAME = "ALWAYS";
+        private static final String NAME = "FULLTIME";
 
         @Override
         public void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex){

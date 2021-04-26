@@ -12,7 +12,7 @@ public class FSSyncUtils{
 
         @Override
         public void sync(Object source){
-            if(target.mode() != FSConfig.MODE_ALWAYS){
+            if(target.mode() != FSConfig.MODE_FULLTIME){
                 target.mode(FSConfig.MODE_ONETIME);
             }
         }
