@@ -39,7 +39,7 @@ public abstract class FSP{
 
         uniformlocation = 0;
 
-        log = debugmode >= FSControl.DEBUG_NORMAL ? new VLLog(FSControl.LOGTAG, 2) : null;
+        log = new VLLog(FSControl.LOGTAG, 2);
     }
 
     protected abstract CoreConfig customize(VLListType<FSMesh> meshes, int debug);
