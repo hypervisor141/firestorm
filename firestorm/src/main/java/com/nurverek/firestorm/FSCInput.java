@@ -182,14 +182,14 @@ public final class FSCInput{
             FSBounds.Collision results = mesh.get(instanceindex).schematics().checkInputCollision(near, far);
 
             if(results != null){
-                listener.activated(results, this, results.boundsindex, e1, e2, f1, f2, near, far);
+                listener.activated(results, this, e1, e2, f1, f2, near, far);
             }
         }
     }
 
     public interface CollisionListener{
 
-        void activated(FSBounds.Collision results, MeshEntry entry, int boundindex, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
+        void activated(FSBounds.Collision results, MeshEntry entry, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     }
 
     public static abstract class Type{
