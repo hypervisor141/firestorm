@@ -35,10 +35,10 @@ public class FSMesh{
         this.configs = new FSConfigGroup(mode, capacity, resizer);
     }
 
+    public void scanComplete(FSInstance instance){}
     public void scanComplete(){}
-
+    public void bufferComplete(int index, int element, FSInstance instance){}
     public void bufferComplete(){}
-
     public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
 
     public FSInstance generateInstance(String name){

@@ -209,6 +209,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                         }
 
                         instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+
+                        target.bufferComplete(i, element, instance);
                     }
 
                 }else{
@@ -218,6 +220,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                     buffer.put(tracker, array.provider(), 0, array.size(), unitoffset, unitsize, unitsubcount, stride);
                     instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+
+                    target.bufferComplete(0, element, instance);
                 }
 
                 return initialoffset + unitsubcount;
@@ -232,6 +236,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                         buffer.put(tracker, instance.element(element).provider());
                         instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+
+                        target.bufferComplete(i, element, instance);
                     }
 
                 }else{
@@ -240,6 +246,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                     buffer.put(tracker, instance.element(element).provider());
                     instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+
+                    target.bufferComplete(0, element, instance);
                 }
 
                 return buffer.position();
@@ -305,7 +313,10 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             buffer.put(tracker, array.provider(), 0, array.size(), unitoffset, unitsize, unitsubcount, stride);
 
             for(int i = 0; i < size; i++){
-                target.get(i).bufferBindings().add(FSHub.ELEMENT_INDEX, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+                FSInstance instance = target.get(i);
+                instance.bufferBindings().add(FSHub.ELEMENT_INDEX, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+
+                target.bufferComplete(0, FSHub.ELEMENT_INDEX, instance);
             }
 
             return buffer.position();

@@ -120,6 +120,7 @@ public abstract class FSHScanner{
                 }
 
                 assembler.buildFirst(instance, this, data);
+                mesh.scanComplete(instance);
 
                 return true;
             }
@@ -150,6 +151,8 @@ public abstract class FSHScanner{
                     assembler.buildRest(instance, this, data);
                 }
 
+                mesh.scanComplete(instance);
+
                 return true;
             }
 
@@ -178,11 +181,13 @@ public abstract class FSHScanner{
                 if(assembler.LOAD_INDICES && mesh.indices == null){
                     mesh.indices(new VLArrayShort(data.indices.array()));
                     assembler.buildFirst(instance, this, data);
+                    mesh.scanComplete(instance);
 
                     for(int i = 0; i < copycount; i++){
                         instance = mesh.generateInstance(data.name);
 
                         assembler.buildFirst(instance, this, data);
+                        mesh.scanComplete(instance);
                     }
                 }
 
