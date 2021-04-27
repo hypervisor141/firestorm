@@ -97,6 +97,14 @@ public class FSMesh{
         }
     }
 
+    public void updateSchematicBoundaries(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).updateSchematicBoundaries();
+        }
+    }
+
     public void markSchematicsForUpdate(){
         int size = instances.size();
 

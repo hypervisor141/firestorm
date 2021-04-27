@@ -74,6 +74,10 @@ public class FSInstance{
         data = new Data(states.get(index));
     }
 
+    public void updateSchematicBoundaries(){
+        schematics.updateBoundaries();
+    }
+
     public void markSchematicsForUpdate(){
         schematics.markForNewUpdates();
     }
