@@ -97,6 +97,14 @@ public class FSMesh{
         }
     }
 
+    public void markSchematicsForUpdate(){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).markSchematicsForUpdate();
+        }
+    }
+
     public void applyModelMatrices(){
         int size = instances.size();
 
