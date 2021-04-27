@@ -8,15 +8,69 @@ public abstract class FSBounds{
     protected static final float[] CACHE1 = new float[4];
     protected static final float[] CACHE2 = new float[4];
 
-    public static final Mode MODE_X_VOLUMETRIC = new XVolumentricMode();
-    public static final Mode MODE_Y_VOLUMETRIC = new YVolumetricMode();
-    public static final Mode MODE_Z_VOLUMETRIC = new ZVolumetricMode();
-    public static final Mode MODE_X_OFFSET = new XOffsetMode();
-    public static final Mode MODE_Y_OFFSET = new YOffsetMode();
-    public static final Mode MODE_Z_OFFSET = new ZOffsetMode();
-    public static final Mode MODE_X_OFFSET_VOLUMETRIC = new XOffsetVolumeMode();
-    public static final Mode MODE_Y_OFFSET_VOLUMETRIC = new YOffsetVolumeMode();
-    public static final Mode MODE_Z_OFFSET_VOLUMETRIC = new ZOffsetVolumeMode();
+    public static final Mode MODE_X_VOLUMETRIC = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return coefficient * schematics.modelWidth() / 100f;
+        }
+    };
+    public static final Mode MODE_Y_VOLUMETRIC = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return coefficient * schematics.modelHeight() / 100f;
+        }
+    };
+    public static final Mode MODE_Z_VOLUMETRIC = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return coefficient * schematics.modelDepth() / 100f;
+        }
+    };
+    public static final Mode MODE_X_RELATIVE = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return schematics.modelLeft() + coefficient;
+        }
+    };
+    public static final Mode MODE_Y_RELATIVE = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return schematics.modelBottom() + coefficient;
+        }
+    };
+    public static final Mode MODE_Z_RELATIVE = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return schematics.modelFront() + coefficient;
+        }
+    };
+    public static final Mode MODE_X_RELATIVE_VOLUMETRIC = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return schematics.modelLeft() + coefficient * schematics.modelWidth() / 100f;
+        }
+    };
+    public static final Mode MODE_Y_RELATIVE_VOLUMETRIC = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return schematics.modelBottom() + coefficient * schematics.modelHeight() / 100f;
+        }
+    };
+    public static final Mode MODE_Z_RELATIVE_VOLUMETRIC = new Mode(){
+
+        @Override
+        public float calculate(FSSchematics schematics, float coefficient){
+            return schematics.modelFront() + coefficient * schematics.modelDepth() / 100f;
+        }
+    };
     public static final Mode MODE_DIRECT_VALUE = new DirectMode();
 
     private static final VLUpdater<FSBounds> UPDATE = new VLUpdater<FSBounds>(){
@@ -60,7 +114,7 @@ public abstract class FSBounds{
         return points;
     }
 
-    public final void update(){
+    public final void checkForUpdates(){
         updater.update(this);
     }
 
@@ -96,15 +150,21 @@ public abstract class FSBounds{
         }
     }
 
-    protected abstract void check(Collision results, FSBoundsSphere bounds);
+    protected void check(Collision results, FSBoundsSphere bounds){
+        checkForUpdates();
+    }
 
-    protected abstract void check(Collision results, FSBoundsCuboid bounds);
+    protected void check(Collision results, FSBoundsCuboid bounds){
+        checkForUpdates();
+    }
 
-    public abstract void checkPoint(Collision results, float[] point);
+    public void checkPoint(Collision results, float[] point){
+        checkForUpdates();
+    }
 
-    public abstract void checkInput(Collision results, float[] near, float[] far);
-
-
+    public void checkInput(Collision results, float[] near, float[] far){
+        checkForUpdates();
+    }
 
     public static final class Point{
 
@@ -145,78 +205,6 @@ public abstract class FSBounds{
     public static interface Mode{
 
         float calculate(FSSchematics schematics, float coefficient);
-    }
-
-    protected static final class XVolumentricMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return coefficient * schematics.modelWidth() / 100f;
-        }
-    }
-
-    protected static final class YVolumetricMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return coefficient * schematics.modelHeight() / 100f;
-        }
-    }
-
-    protected static final class ZVolumetricMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return coefficient * schematics.modelDepth() / 100f;
-        }
-    }
-
-    protected static final class XOffsetMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelLeft() + coefficient;
-        }
-    }
-
-    protected static final class YOffsetMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelBottom() + coefficient;
-        }
-    }
-
-    protected static final class ZOffsetMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelFront() + coefficient;
-        }
-    }
-
-    protected static final class XOffsetVolumeMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelLeft() + coefficient * schematics.modelWidth() / 100f;
-        }
-    }
-
-    protected static final class YOffsetVolumeMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelBottom() + coefficient * schematics.modelHeight() / 100f;
-        }
-    }
-
-    protected static final class ZOffsetVolumeMode implements Mode{
-
-        @Override
-        public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelFront() + coefficient * schematics.modelDepth() / 100f;
-        }
     }
 
     protected static final class DirectMode implements Mode{

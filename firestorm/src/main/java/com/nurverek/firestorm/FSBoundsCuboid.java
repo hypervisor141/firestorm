@@ -55,7 +55,7 @@ public class FSBoundsCuboid extends FSBounds {
 
     @Override
     public void check(Collision results, FSBoundsSphere bounds){
-        update();
+        super.check(results, bounds);
 
         float[] coords = offset.coordinates;
         float[] targetcoords = bounds.offset.coordinates;
@@ -73,7 +73,7 @@ public class FSBoundsCuboid extends FSBounds {
 
     @Override
     public void check(Collision results, FSBoundsCuboid bounds){
-        update();
+        super.check(results, bounds);
 
         float[] coords = offset.coordinates;
         float[] targetcoords = bounds.offset.coordinates;
@@ -88,7 +88,7 @@ public class FSBoundsCuboid extends FSBounds {
 
     @Override
     public void checkPoint(Collision results, float[] point){
-        update();
+        super.checkPoint(results, point);
 
         VLMath.difference(offset.coordinates, 0, point, 0, CACHE1, 0, 3);
         float origindistance = VLMath.length(CACHE1, 0, 3);
@@ -103,7 +103,7 @@ public class FSBoundsCuboid extends FSBounds {
 
     @Override
     public void checkInput(Collision results, float[] near, float[] far){
-        update();
+        super.checkInput(results, near, far);
 
         VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, CACHE2, 0);
         checkPoint(results, CACHE2);

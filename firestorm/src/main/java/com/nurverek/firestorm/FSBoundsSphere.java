@@ -23,7 +23,7 @@ public class FSBoundsSphere extends FSBounds {
 
     @Override
     public void check(Collision results, FSBoundsSphere bounds){
-        update();
+        super.check(results, bounds);
 
         results.distance = VLMath.euclideanDistance(point(0).coordinates, 0, offset.coordinates, 0, 3) - radius - bounds.radius;
         results.collided = results.distance <= 0;
@@ -31,14 +31,14 @@ public class FSBoundsSphere extends FSBounds {
 
     @Override
     public void check(Collision results, FSBoundsCuboid bounds){
-        update();
+        super.check(results, bounds);
 
         bounds.check(results, this);
     }
 
     @Override
     public void checkPoint(Collision results, float[] point){
-        update();
+        super.checkPoint(results, point);
 
         results.distance = VLMath.euclideanDistance(point, 0, offset.coordinates, 0, 3) - radius;
         results.collided = results.distance <= 0;
@@ -46,7 +46,7 @@ public class FSBoundsSphere extends FSBounds {
 
     @Override
     public void checkInput(Collision results, float[] near, float[] far){
-        update();
+        super.checkInput(results, near, far);
 
         VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, CACHE2, 0);
         checkPoint(results, CACHE2);
