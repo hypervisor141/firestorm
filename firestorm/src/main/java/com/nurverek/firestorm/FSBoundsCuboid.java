@@ -14,10 +14,8 @@ public class FSBoundsCuboid extends FSBounds {
                           float halfwidth, float halfheight, float halfdepth, Mode wmode, Mode hmode, Mode dmode){
         super(schematics);
 
-        VLListType<Point> points = new VLListType<>(1, 1);
-        points.add(new Point(wmode, hmode, dmode, halfwidth, halfheight, halfdepth));
-
-        initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, zoffset), points);
+        initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, zoffset), 1);
+        add(new Point(wmode, hmode, dmode, halfwidth, halfheight, halfdepth));
     }
 
 
@@ -38,7 +36,7 @@ public class FSBoundsCuboid extends FSBounds {
     }
 
     @Override
-    protected void updateData(){
+    protected void notifyBasePointsUpdated(){
         float[] offsetcoords = offset.coordinates;
         float[] point1 = point(0).coordinates;
 

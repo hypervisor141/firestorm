@@ -91,15 +91,19 @@ public abstract class FSBounds{
         this.schematics = schematics;
     }
 
-    protected final void initialize(Point offset, VLListType<Point> points){
+    protected final void initialize(Point offset, int pointscapacity){
         this.offset = offset;
-        this.points = points;
+        this.points = new VLListType<>(pointscapacity, pointscapacity);
 
         markForUpdate();
     }
 
-    protected void markForUpdate(){
+    public void markForUpdate(){
         updater = UPDATE;
+    }
+
+    public void add(Point point){
+        points.add(point);
     }
 
     public Point offset(){
@@ -114,6 +118,10 @@ public abstract class FSBounds{
         return points;
     }
 
+    public int size(){
+        return points.size();
+    }
+
     public final void checkForUpdates(){
         updater.update(this);
     }
@@ -122,21 +130,18 @@ public abstract class FSBounds{
         offset.calculate(schematics);
         float[] offsetcoords = offset.coordinates;
 
-        Point point;
         int size = points.size();
 
         for(int i = 0; i < size; i++){
-            point = points.get(i);
+            Point point = points.get(i);
             point.calculate(schematics);
-            point.coordinates[0] += offsetcoords[0];
-            point.coordinates[1] += offsetcoords[1];
-            point.coordinates[2] += offsetcoords[2];
+            point.offset(offsetcoords);
         }
 
-        updateData();
+        notifyBasePointsUpdated();
     }
 
-    protected abstract void updateData();
+    protected abstract void notifyBasePointsUpdated();
 
     protected void check(Collision results, FSBounds bounds){
         if(bounds instanceof FSBoundsSphere){
@@ -189,6 +194,12 @@ public abstract class FSBounds{
             coordinates[2] = modes[2].calculate(schematics, coefficients[2]);
         }
 
+        public void offset(float[] offset){
+            coordinates[0] += offset[0];
+            coordinates[1] += offset[1];
+            coordinates[2] += offset[2];
+        }
+
         public Mode[] modes(){
             return modes;
         }
@@ -217,9 +228,21 @@ public abstract class FSBounds{
 
     public static final class Collision{
 
-        public float distance;
         public boolean collided;
         public int boundsindex;
+        public float distance;
+
+        public Collision(boolean collided, int boundsindex, float distance){
+            this.collided = collided;
+            this.boundsindex = boundsindex;
+            this.distance = distance;
+        }
+
+        public Collision(Collision src){
+            this.collided = src.collided;
+            this.boundsindex = src.boundsindex;
+            this.distance = src.distance;
+        }
 
         public Collision(){
 

@@ -184,7 +184,7 @@ public final class FSSchematics{
         config.multiplyViewPerspective(boundsmvp, 4, boundsmodel, 4);
     }
 
-    public void checkCollision(FSInstance target, InstanceCollision results){
+    public void checkCollision(InstanceCollision results, FSInstance target){
         int index = -1;
         int size = mainbounds.size();
 
@@ -192,9 +192,11 @@ public final class FSSchematics{
             index = target.schematics.checkCollision(COLLISIONCACHE, mainbounds.get(i));
 
             if(index != -1){
+                results.collision = new FSBounds.Collision(COLLISIONCACHE);
                 results.sourceindex = i;
                 results.targetindex = index;
-                break;
+
+                return;
             }
         }
     }
@@ -235,8 +237,7 @@ public final class FSSchematics{
 
             if(COLLISIONCACHE.collided){
                 COLLISIONCACHE.boundsindex = i;
-
-                return COLLISIONCACHE;
+                return new FSBounds.Collision(COLLISIONCACHE);
             }
         }
 
@@ -251,7 +252,6 @@ public final class FSSchematics{
         for(int i = 0; i < mainbounds.size(); i++){
             mainbounds.get(i).markForUpdate();
         }
-
         for(int i = 0; i < inputbounds.size(); i++){
             inputbounds.get(i).markForUpdate();
         }
@@ -583,8 +583,15 @@ public final class FSSchematics{
 
     public static final class InstanceCollision{
 
+        public FSBounds.Collision collision;
         public int sourceindex;
         public int targetindex;
+
+        public InstanceCollision(FSBounds.Collision collision, int sourceindex, int targetindex){
+            this.collision = collision;
+            this.sourceindex = sourceindex;
+            this.targetindex = targetindex;
+        }
 
         public InstanceCollision(){
 

@@ -10,14 +10,12 @@ public class FSBoundsSphere extends FSBounds {
     public FSBoundsSphere(FSSchematics schematics, float xoffset, float yoffset, float zoffset, Mode xmode, Mode ymode, Mode zmode, float radius, Mode radiusmode){
         super(schematics);
 
-        VLListType<Point> points = new VLListType<>(2, 1);
-        points.add(new Point(radiusmode, MODE_DIRECT_VALUE, MODE_DIRECT_VALUE, radius, 0, 0));
-
-        initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, 0), points);
+        initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, zoffset), 1);
+        add(new Point(radiusmode, MODE_DIRECT_VALUE, MODE_DIRECT_VALUE, radius, 0, 0));
     }
 
     @Override
-    protected void updateData(){
+    protected void notifyBasePointsUpdated(){
         radius = VLMath.euclideanDistance(point(0).coordinates, 0, offset.coordinates, 0, 3);
     }
 
