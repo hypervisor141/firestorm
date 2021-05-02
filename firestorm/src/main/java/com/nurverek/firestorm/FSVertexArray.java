@@ -15,8 +15,8 @@ public final class FSVertexArray{
     }
 
     public void create(){
-        GLES32.glGenVertexArrays(1, FSStatic.CACHE_INT, 0);
-        id = FSStatic.CACHE_INT[0];
+        GLES32.glGenVertexArrays(1, FSCache.CACHE_INT, 0);
+        id = FSCache.CACHE_INT[0];
     }
 
     public void bind(){
@@ -34,7 +34,7 @@ public final class FSVertexArray{
     public void destroy(){
         id = -1;
 
-        FSStatic.CACHE_INT[0] = id;
-        GLES32.glDeleteVertexArrays(1, FSStatic.CACHE_INT, 0);
+        FSCache.CACHE_INT[0] = id;
+        GLES32.glDeleteVertexArrays(1, FSCache.CACHE_INT, 0);
     }
 }

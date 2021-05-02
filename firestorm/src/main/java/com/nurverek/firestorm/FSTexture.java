@@ -10,9 +10,6 @@ import vanguard.VLInt;
 
 public class FSTexture{
 
-    public static int LIB_BIND = 0;
-    public static int LIB_UPLOAD_UNIT = 1;
-
     private VLInt target;
     private VLInt texunit;
 
@@ -24,7 +21,6 @@ public class FSTexture{
 
     public FSTexture(int id, VLInt target, VLInt texunit){
         this.id = id;
-
         initialize(target, texunit);
     }
 
@@ -36,8 +32,8 @@ public class FSTexture{
         this.target = target;
         this.texunit = texunit;
 
-        GLES32.glGenTextures(1, FSStatic.CACHE_INT, 0);
-        id = FSStatic.CACHE_INT[0];
+        GLES32.glGenTextures(1, FSCache.CACHE_INT, 0);
+        id = FSCache.CACHE_INT[0];
     }
 
     public void activateUnit(){
@@ -193,7 +189,7 @@ public class FSTexture{
         target = null;
         texunit = null;
 
-        FSStatic.CACHE_INT[0] = id;
-        GLES32.glDeleteTextures(1, FSStatic.CACHE_INT, 0);
+        FSCache.CACHE_INT[0] = id;
+        GLES32.glDeleteTextures(1, FSCache.CACHE_INT, 0);
     }
 }

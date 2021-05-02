@@ -216,7 +216,7 @@ public class FSHAssembler implements VLStringify{
 
         int size = positions.length;
 
-        for(int i = 0; i < size; i += FSHub.UNIT_SIZE_POSITION){
+        for(int i = 0; i < size; i += FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION]){
             positions[i] = positions[i] - x;
             positions[i + 1] = positions[i + 1] - y;
             positions[i + 2] = positions[i + 2] - z;
@@ -230,7 +230,7 @@ public class FSHAssembler implements VLStringify{
         VLListFloat converted = new VLListFloat(positions.length, positions.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
-            int pindex = indices[i2] * FSHub.UNIT_SIZE_POSITION;
+            int pindex = indices[i2] * FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION];
 
             converted.add(positions[pindex]);
             converted.add(positions[pindex]);
@@ -247,7 +247,7 @@ public class FSHAssembler implements VLStringify{
         VLListFloat converted = new VLListFloat(colors.length, colors.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
-            int cindex = indices[i2] * FSHub.UNIT_SIZE_COLOR;
+            int cindex = indices[i2] * FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_COLOR];
 
             converted.add(colors[cindex]);
             converted.add(colors[cindex + 1]);
@@ -264,7 +264,7 @@ public class FSHAssembler implements VLStringify{
         VLListFloat converted = new VLListFloat(texcoords.length, texcoords.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
-            int tindex = indices[i2] * FSHub.UNIT_SIZE_TEXCOORD;
+            int tindex = indices[i2] * FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_TEXCOORD];
 
             converted.add(texcoords[tindex]);
             converted.add(texcoords[tindex + 1]);
@@ -279,7 +279,7 @@ public class FSHAssembler implements VLStringify{
         VLListFloat converted = new VLListFloat(normals.length, normals.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
-            int nindex = indices[i2] * FSHub.UNIT_SIZE_NORMAL;
+            int nindex = indices[i2] * FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_NORMAL];
 
             converted.add(normals[nindex]);
             converted.add(normals[nindex + 1]);
@@ -291,16 +291,16 @@ public class FSHAssembler implements VLStringify{
     }
 
     protected final void buildFirst(FSInstance instance, FSHScanner scanner, FSM.Data data){
-        operate(firstfuncs, instance, scanner, data);
-        operate(customfunc, instance, scanner, data);
+        buildTarget(firstfuncs, instance, scanner, data);
+        buildTarget(customfunc, instance, scanner, data);
     }
 
     protected final void buildRest(FSInstance instance, FSHScanner scanner, FSM.Data data){
-        operate(restfuncs, instance, scanner, data);
-        operate(customfunc, instance, scanner, data);
+        buildTarget(restfuncs, instance, scanner, data);
+        buildTarget(customfunc, instance, scanner, data);
     }
 
-    private void operate(VLListType<BuildStep> funcs, FSInstance instance, FSHScanner scanner, FSM.Data data){
+    private void buildTarget(VLListType<BuildStep> funcs, FSInstance instance, FSHScanner scanner, FSM.Data data){
         FSMesh mesh = scanner.mesh;
         VLArrayShort indices = mesh.indices;
 

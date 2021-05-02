@@ -15,17 +15,29 @@ public final class FSControl{
     protected static boolean destroyonpause;
     protected static boolean isalive;
 
-    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int maxunchangedframes, int maxqueuedframes){
+    private static long GLOBAL_ID;
+    private static final Object IDLOCK = new Object();
+
+    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
         FSControl.surface = surface;
         FSControl.events = surface.events();
         FSControl.view = view;
         FSControl.destroyonpause = keepalive;
 
         if(!isAlive()){
+            GLOBAL_ID = 1000;
+
+            FSGlobal.initialize(extraelementscount);
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
             FSR.initialize(threadinterface);
             FSCThreads.initialize();
+        }
+    }
+
+    public static long getNextID(){
+        synchronized(IDLOCK){
+            return GLOBAL_ID++;
         }
     }
 
@@ -63,8 +75,10 @@ public final class FSControl{
         FSCEGL.destroy();
         FSCInput.destroy();
         FSCFrames.destroy();
+        FSGlobal.destroy();
 
         if(!destroyonpause){
+            GLOBAL_ID = -1;
             isalive = false;
 
             surface = null;

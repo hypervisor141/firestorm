@@ -159,7 +159,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         public Element(int element, boolean instanced){
-            super(0, FSHub.UNIT_SIZES[element], FSHub.UNIT_SIZES[element], instanced);
+            super(0, FSGlobal.UNIT_SIZES[element], FSGlobal.UNIT_SIZES[element], instanced);
             this.element = element;
         }
 
@@ -171,11 +171,11 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 int size = target.size();
 
                 for(int i = 0; i < size; i++){
-                    total += target.get(i).element(element).size();
+                    total += target.get(i).elementData(element).size();
                 }
 
             }else{
-                total = target.first().element(element).size();
+                total = target.first().elementData(element).size();
             }
 
             return (total / unitsize) * unitsubcount;
@@ -183,7 +183,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
         @Override
         protected int getInterleaveDebugReferenceValue(FSMesh target){
-            return target.first().element(element).size() / unitsize;
+            return target.first().elementData(element).size() / unitsize;
         }
 
         @Override
@@ -197,7 +197,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                     for(int i = 0; i < size; i++){
                         FSInstance instance = target.get(i);
-                        VLArrayFloat array = instance.element(element);
+                        VLArrayFloat array = instance.elementData(element);
                         VLBufferTracker tracker = new VLBufferTracker();
                         int arraysize = array.size();
 
@@ -215,7 +215,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                 }else{
                     FSInstance instance = target.first();
-                    VLArrayFloat array = instance.element(element);
+                    VLArrayFloat array = instance.elementData(element);
                     VLBufferTracker tracker = new VLBufferTracker();
 
                     buffer.put(tracker, array.provider(), 0, array.size(), unitoffset, unitsize, unitsubcount, stride);
@@ -234,7 +234,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                         FSInstance instance = target.get(i);
                         VLBufferTracker tracker = new VLBufferTracker();
 
-                        buffer.put(tracker, instance.element(element).provider());
+                        buffer.put(tracker, instance.elementData(element).provider());
                         instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
 
                         target.bufferComplete(i, element, instance);
@@ -244,7 +244,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                     FSInstance instance = target.first();
                     VLBufferTracker tracker = new VLBufferTracker();
 
-                    buffer.put(tracker, instance.element(element).provider());
+                    buffer.put(tracker, instance.elementData(element).provider());
                     instance.bufferBindings().add(element, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
 
                     target.bufferComplete(0, element, instance);
@@ -269,7 +269,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         private void debugInstance(FSMesh target, FSInstance instance, int referencesize, VLLog log){
-            if((instance.element(element).size() / unitsize) != referencesize){
+            if((instance.elementData(element).size() / unitsize) != referencesize){
                 log.append("[Segment is set to interleaved mode has an instance whose count does not match with other entries] element[");
                 log.append(element);
                 log.append("] instanceVertexSize[");
@@ -290,7 +290,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     public static class Indices<BUFFER extends VLBuffer<?, ?>> extends Entry<BUFFER>{
 
         public Indices(){
-            super(0, FSHub.UNIT_SIZES[FSHub.ELEMENT_INDEX], FSHub.UNIT_SIZES[FSHub.ELEMENT_INDEX], false);
+            super(0, FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_INDEX], FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_INDEX], false);
         }
 
         @Override
@@ -314,9 +314,9 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
             for(int i = 0; i < size; i++){
                 FSInstance instance = target.get(i);
-                instance.bufferBindings().add(FSHub.ELEMENT_INDEX, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
+                instance.bufferBindings().add(FSGlobal.ELEMENT_INDEX, new FSBufferBindings.Binding<BUFFER>(tracker, buffer, vbuffer));
 
-                target.bufferComplete(0, FSHub.ELEMENT_INDEX, instance);
+                target.bufferComplete(0, FSGlobal.ELEMENT_INDEX, instance);
             }
 
             return buffer.position();

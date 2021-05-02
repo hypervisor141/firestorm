@@ -774,7 +774,7 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            array = (TYPE)mesh.get(instance).element(element);
+            array = (TYPE)mesh.get(instance).elementData(element);
         }
 
         @Override
@@ -782,11 +782,11 @@ public abstract class FSP{
             log.append("] instance[");
             log.append(instance);
             log.append("] element[");
-            log.append(FSHub.ELEMENT_NAMES[element]);
+            log.append(FSGlobal.NAMES[element]);
             log.append("] array[");
 
             if(array == null){
-                mesh.get(instance).element(element).stringify(log.get(), null);
+                mesh.get(instance).elementData(element).stringify(log.get(), null);
 
             }else{
                 array.stringify(log.get(), null);
@@ -814,14 +814,13 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
-            VLBufferTracker tracker = binding.tracker;
+            FSElement<?, ?> info = mesh.first().element(element);
+            VLBufferTracker tracker = info.tracker;
 
             int bytesize = tracker.typebytesize;
+            info.vbuffer.bind();
 
-            binding.vbuffer.bind();
-
-            GLES32.glVertexAttribPointer(location, unitsize, FSHub.ELEMENT_GLDATA_TYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
+            GLES32.glVertexAttribPointer(location, unitsize, FSGlobal.GLTYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
         }
 
         @Override
@@ -936,7 +935,7 @@ public abstract class FSP{
 
             binding.vbuffer.bind();
 
-            GLES32.glVertexAttribIPointer(location, unitsize, FSHub.ELEMENT_GLDATA_TYPES[element], tracker.stride * bytesize, tracker.offset * bytesize);
+            GLES32.glVertexAttribIPointer(location, unitsize, FSGlobal.GLTYPES[element], tracker.stride * bytesize, tracker.offset * bytesize);
         }
 
         @Override
@@ -1765,7 +1764,7 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append("element[");
-            log.append(FSHub.ELEMENT_NAMES[element]);
+            log.append(FSGlobal.NAMES[element]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] tracker[");
@@ -2029,11 +2028,11 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
-            GLES32.glDrawElements(mesh.drawmode, tracker.count, FSHub.ELEMENT_GLDATA_TYPES[FSHub.ELEMENT_INDEX], tracker.offset * FSHub.ELEMENT_BYTES[FSHub.ELEMENT_INDEX]);
+            GLES32.glDrawElements(mesh.drawmode, tracker.count, FSGlobal.GLTYPES[FSGlobal.ELEMENT_INDEX], tracker.offset * FSGlobal.BYTES[FSGlobal.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2046,12 +2045,12 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append("element[");
-            log.append(FSHub.ELEMENT_NAMES[FSHub.ELEMENT_INDEX]);
+            log.append(FSGlobal.NAMES[FSGlobal.ELEMENT_INDEX]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
             log.append("] ");
         }
@@ -2068,11 +2067,11 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
-            GLES32.glDrawElementsInstanced(mesh.drawmode, tracker.count, FSHub.ELEMENT_GLDATA_TYPES[FSHub.ELEMENT_INDEX], tracker.offset * FSHub.ELEMENT_BYTES[FSHub.ELEMENT_INDEX], mesh.size());
+            GLES32.glDrawElementsInstanced(mesh.drawmode, tracker.count, FSGlobal.GLTYPES[FSGlobal.ELEMENT_INDEX], tracker.offset * FSGlobal.BYTES[FSGlobal.ELEMENT_INDEX], mesh.size());
         }
 
         @Override
@@ -2093,7 +2092,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, this.bindingindex);
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, this.bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");
@@ -2126,11 +2125,11 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, bindingindex);
+            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
-            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSHub.ELEMENT_GLDATA_TYPES[FSHub.ELEMENT_INDEX], tracker.offset * FSHub.ELEMENT_BYTES[FSHub.ELEMENT_INDEX]);
+            GLES32.glDrawRangeElements(mesh.drawmode, start, end, count, FSGlobal.GLTYPES[FSGlobal.ELEMENT_INDEX], tracker.offset * FSGlobal.BYTES[FSGlobal.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2155,7 +2154,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSHub.ELEMENT_INDEX, this.bindingindex);
+                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, this.bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");

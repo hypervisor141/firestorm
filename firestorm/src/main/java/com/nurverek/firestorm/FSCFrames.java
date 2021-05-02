@@ -4,7 +4,6 @@ import vanguard.VLLog;
 
 public class FSCFrames{
 
-    private static long GLOBAL_ID;
     private static long TOTAL_FRAMES;
     private static long FRAME_TIME;
     private static long AVERAGE_FRAMESWAP_TIME;
@@ -26,8 +25,6 @@ public class FSCFrames{
         LOG = new VLLog(FSControl.LOGTAG, 1);
 
         synchronized(LOCK){
-            GLOBAL_ID = 1000;
-
             TOTAL_FRAMES = 0;
             FRAME_TIME = 0;
             AVERAGE_FRAMESWAP_TIME = 0;
@@ -69,12 +66,6 @@ public class FSCFrames{
     public static void resetUnchangedFrames(){
         synchronized(LOCK){
             UNCHANGED_FRAMES = 0;
-        }
-    }
-
-    public static long getNextID(){
-        synchronized(LOCK){
-            return GLOBAL_ID++;
         }
     }
 
@@ -228,8 +219,6 @@ public class FSCFrames{
     protected static void destroy(){
         if(!FSControl.getDestroyOnPause()){
             synchronized(LOCK){
-                GLOBAL_ID = -1;
-
                 TOTAL_FRAMES = 0;
                 AVERAGE_FRAMESWAP_TIME = 0;
                 AVERAGE_PROCESS_TIME = 0;

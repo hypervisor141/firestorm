@@ -9,7 +9,7 @@ public final class FSBufferMap{
     protected VLListType<FSBufferSegment<?>> segments;
 
     public FSBufferMap(){
-        segments = new VLListType<>(FSHub.ELEMENT_TOTAL_COUNT, FSHub.ELEMENT_TOTAL_COUNT);
+        segments = new VLListType<>(FSGlobal.COUNT, FSGlobal.COUNT);
     }
 
     public <BUFFER extends VLBuffer<?, ?>> FSBufferSegment<BUFFER> add(FSBufferSegment<BUFFER> segment){

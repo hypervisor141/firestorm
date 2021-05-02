@@ -53,14 +53,14 @@ public abstract class FSHScanner{
         int size = mesh.size();
         VLArrayFloat[] data;
         VLArrayFloat array;
-        int[] requirements = new int[FSHub.ELEMENT_TOTAL_COUNT];
+        int[] requirements = new int[FSGlobal.COUNT];
 
         if(mesh.indices != null){
-            requirements[FSHub.ELEMENT_INDEX] = mesh.indices.size();
+            requirements[FSGlobal.ELEMENT_INDEX] = mesh.indices.size();
         }
 
         for(int i = 0; i < size; i++){
-            data = mesh.get(i).data.elements;
+            data = mesh.get(i).data.locations;
 
             for(int i2 = 0; i2 < data.length; i2++){
                 array = data[i2];
@@ -74,22 +74,22 @@ public abstract class FSHScanner{
         log.append("storageRequirements[");
 
         if(assembler.INSTANCE_SHARE_POSITIONS){
-            requirements[FSHub.ELEMENT_POSITION] /= size;
+            requirements[FSGlobal.ELEMENT_POSITION] /= size;
         }
         if(assembler.INSTANCE_SHARE_COLORS){
-            requirements[FSHub.ELEMENT_COLOR] /= size;
+            requirements[FSGlobal.ELEMENT_COLOR] /= size;
         }
         if(assembler.INSTANCE_SHARE_TEXCOORDS){
-            requirements[FSHub.ELEMENT_TEXCOORD] /= size;
+            requirements[FSGlobal.ELEMENT_TEXCOORD] /= size;
         }
         if(assembler.INSTANCE_SHARE_NORMALS){
-            requirements[FSHub.ELEMENT_NORMAL] /= size;
+            requirements[FSGlobal.ELEMENT_NORMAL] /= size;
         }
 
-        size = FSHub.ELEMENT_NAMES.length;
+        size = FSGlobal.NAMES.length;
 
         for(int i = 0; i < size; i++){
-            log.append(FSHub.ELEMENT_NAMES[i]);
+            log.append(FSGlobal.NAMES[i]);
             log.append("[");
             log.append(requirements[i]);
 

@@ -7,7 +7,7 @@ public abstract class FSLight{
     protected long id;
 
     public FSLight(){
-        id = FSCFrames.getNextID();
+        id = FSControl.getNextID();
     }
 
     public VLArrayFloat position(){

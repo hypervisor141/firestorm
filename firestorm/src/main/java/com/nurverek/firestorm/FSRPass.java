@@ -39,7 +39,7 @@ public class FSRPass{
 
     private void initialize(int capacity){
         entries = new VLListType<>(capacity, capacity);
-        id = FSCFrames.getNextID();
+        id = FSControl.getNextID();
 
         if(debug >= FSControl.DEBUG_NORMAL){
             log = new VLLog(new String[]{

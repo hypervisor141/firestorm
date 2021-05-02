@@ -1,9 +1,10 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLUpdater;
 
-public final class FSSchematics{
+public final class FSSchematics implements VLCopyable<FSSchematics>{
 
     private static final VLUpdater<FSSchematics> UPDATE_CENTROID = new VLUpdater<FSSchematics>(){
 
@@ -56,26 +57,56 @@ public final class FSSchematics{
         inputbounds = new VLListType<>(0, 1);
     }
 
-    public FSSchematics(FSInstance instance, FSSchematics src){
+    public FSSchematics(FSSchematics src, int depth){
+        copy(src, depth);
+    }
+
+    @Override
+    public void copy(FSSchematics src, int depth){
         this.instance = instance;
 
-        mainbounds = new VLListType<>(0, 1);
-        inputbounds = new VLListType<>(0, 1);
+        if(depth == DEPTH_MIN){
+            mainbounds = new VLListType<>(0, 1);
+            inputbounds = new VLListType<>(0, 1);
 
-        centroid = src.centroid.clone();
-        centroidmodel = src.centroidmodel.clone();
-        centroidmvp = src.centroidmvp.clone();
-        bounds = src.bounds.clone();
-        boundsmodel = src.boundsmodel.clone();
-        boundsmvp = src.boundsmvp.clone();
+            centroid = src.centroid.clone();
+            centroidmodel = src.centroidmodel.clone();
+            centroidmvp = src.centroidmvp.clone();
+            bounds = src.bounds.clone();
+            boundsmodel = src.boundsmodel.clone();
+            boundsmvp = src.boundsmvp.clone();
 
-        centroidupdater = src.centroidupdater;
-        modelupdater = src.modelupdater;
-        mvpupdater = src.mvpupdater;
+            centroidupdater = src.centroidupdater;
+            modelupdater = src.modelupdater;
+            mvpupdater = src.mvpupdater;
+
+        }else if(depth == DEPTH_MAX){
+            mainbounds = new VLListType<>(0, 1);
+            inputbounds = new VLListType<>(0, 1);
+
+            centroid = src.centroid.clone();
+            centroidmodel = src.centroidmodel.clone();
+            centroidmvp = src.centroidmvp.clone();
+            bounds = src.bounds.clone();
+            boundsmodel = src.boundsmodel.clone();
+            boundsmvp = src.boundsmvp.clone();
+
+            centroidupdater = src.centroidupdater;
+            modelupdater = src.modelupdater;
+            mvpupdater = src.mvpupdater;
+
+        }else{
+            throw new RuntimeException("Invalid depth : " + depth);
+        }
+    }
+
+    @Override
+    public FSSchematics duplicate(int depth){
+        return new FSSchematics(this, depth);
     }
 
     public void initialize(){
-        bounds = new float[FSHub.UNIT_SIZE_POSITION * 2];
+        bounds = new float[FSGlobal.UNIT_SIZE_POSITION * 2];
         centroid = new float[4];
         centroidmodel = new float[4];
         centroidmvp = new float[4];
@@ -111,7 +142,7 @@ public final class FSSchematics{
         centroid[1] = 0;
         centroid[2] = 0;
 
-        for(int index = 0; index < size; index += FSHub.UNIT_SIZE_POSITION){
+        for(int index = 0; index < size; index += FSGlobal.UNIT_SIZE_POSITION){
             x = vertices[index];
             y = vertices[index + 1];
             z = vertices[index + 2];
@@ -147,7 +178,7 @@ public final class FSSchematics{
             }
         }
 
-        int pointcount = size / FSHub.UNIT_SIZE_POSITION;
+        int pointcount = size / FSGlobal.UNIT_SIZE_POSITION;
 
         centroid[0] /= pointcount;
         centroid[1] /= pointcount;
