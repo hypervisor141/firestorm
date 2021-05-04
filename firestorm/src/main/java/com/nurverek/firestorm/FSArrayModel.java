@@ -22,11 +22,15 @@ public class FSArrayModel extends VLArrayFloat{
         super(s);
     }
 
+    public FSArrayModel(FSArrayModel src, long flags){
+        super(null);
+        copy(src, flags);
+    }
+
     public FSArrayModel(){
         super(new float[FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_MODEL]]);
         identity();
     }
-
 
     @Override
     public void transform(int index, VLVMatrix matrix, boolean replace){
@@ -90,5 +94,10 @@ public class FSArrayModel extends VLArrayFloat{
         results[offset] /= w;
         results[offset + 1] /= w;
         results[offset + 2] /= w;
+    }
+
+    @Override
+    public FSArrayModel duplicate(long flags){
+        return new FSArrayModel(this, flags);
     }
 }

@@ -39,8 +39,8 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
     private VLUpdater<FSSchematics> modelupdater;
     private VLUpdater<FSSchematics> mvpupdater;
 
-    private final VLListType<FSBounds> mainbounds;
-    private final VLListType<FSBounds> inputbounds;
+    private VLListType<FSBounds> mainbounds;
+    private VLListType<FSBounds> inputbounds;
 
     private float[] centroid;
     private float[] centroidmodel;
@@ -53,36 +53,31 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
     public FSSchematics(FSInstance instance){
         this.instance = instance;
 
-        mainbounds = new VLListType<>(0, 1);
-        inputbounds = new VLListType<>(0, 1);
+        mainbounds = new VLListType<>(0, 10);
+        inputbounds = new VLListType<>(0, 10);
     }
 
-    public FSSchematics(FSSchematics src, int depth){
-        copy(src, depth);
+    public FSSchematics(FSSchematics src, long flags){
+        copy(src, flags);
     }
 
     @Override
-    public void copy(FSSchematics src, int depth){
-        this.instance = instance;
+    public void copy(FSSchematics src, long flags){
+        this.instance = src.instance;
 
-        if(depth == DEPTH_MIN){
-            mainbounds = new VLListType<>(0, 1);
-            inputbounds = new VLListType<>(0, 1);
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            mainbounds = src.mainbounds;
+            inputbounds = src.inputbounds;
+            centroid = src.centroid;
+            centroidmodel = src.centroidmodel;
+            centroidmvp = src.centroidmvp;
+            bounds = src.bounds;
+            boundsmodel = src.boundsmodel;
+            boundsmvp = src.boundsmvp;
 
-            centroid = src.centroid.clone();
-            centroidmodel = src.centroidmodel.clone();
-            centroidmvp = src.centroidmvp.clone();
-            bounds = src.bounds.clone();
-            boundsmodel = src.boundsmodel.clone();
-            boundsmvp = src.boundsmvp.clone();
-
-            centroidupdater = src.centroidupdater;
-            modelupdater = src.modelupdater;
-            mvpupdater = src.mvpupdater;
-
-        }else if(depth == DEPTH_MAX){
-            mainbounds = new VLListType<>(0, 1);
-            inputbounds = new VLListType<>(0, 1);
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            mainbounds = src.mainbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            inputbounds = src.inputbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             centroid = src.centroid.clone();
             centroidmodel = src.centroidmodel.clone();
@@ -90,23 +85,23 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             bounds = src.bounds.clone();
             boundsmodel = src.boundsmodel.clone();
             boundsmvp = src.boundsmvp.clone();
-
-            centroidupdater = src.centroidupdater;
-            modelupdater = src.modelupdater;
-            mvpupdater = src.mvpupdater;
 
         }else{
-            throw new RuntimeException("Invalid depth : " + depth);
+            Helper.throwMissingBaseFlags();
         }
+
+        centroidupdater = src.centroidupdater;
+        modelupdater = src.modelupdater;
+        mvpupdater = src.mvpupdater;
     }
 
     @Override
-    public FSSchematics duplicate(int depth){
-        return new FSSchematics(this, depth);
+    public FSSchematics duplicate(long flags){
+        return new FSSchematics(this, flags);
     }
 
     public void initialize(){
-        bounds = new float[FSGlobal.UNIT_SIZE_POSITION * 2];
+        bounds = new float[FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION] * 2];
         centroid = new float[4];
         centroidmodel = new float[4];
         centroidmvp = new float[4];
@@ -118,13 +113,6 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
         mvpupdater = UPDATE_MVP;
     }
 
-    public void updateBoundaries(FSSchematics src){
-        bounds = src.bounds;
-        centroid = src.centroid;
-
-        markForNewUpdates();
-    }
-
     public void updateBoundaries(){
         float maxx = -Float.MAX_VALUE;
         float minx = Float.MAX_VALUE;
@@ -133,7 +121,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
         float maxz = -Float.MAX_VALUE;
         float minz = Float.MAX_VALUE;
 
-        float[] vertices = instance.data.positions().provider();
+        float[] vertices = instance.positions().provider();
         int size = vertices.length;
 
         float x, y, z;
@@ -142,7 +130,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
         centroid[1] = 0;
         centroid[2] = 0;
 
-        for(int index = 0; index < size; index += FSGlobal.UNIT_SIZE_POSITION){
+        for(int index = 0; index < size; index += FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION]){
             x = vertices[index];
             y = vertices[index + 1];
             z = vertices[index + 2];
@@ -178,7 +166,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             }
         }
 
-        int pointcount = size / FSGlobal.UNIT_SIZE_POSITION;
+        int pointcount = size / FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION];
 
         centroid[0] /= pointcount;
         centroid[1] /= pointcount;
@@ -197,12 +185,12 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     private void updateCentroid(){
-        instance.data.model().transformPoint(centroidmodel, 0, centroid, 0);
+        instance.model().transformPoint(centroidmodel, 0, centroid, 0);
         FSControl.getView().multiplyViewPerspective(centroidmvp, 0, centroidmodel, 0);
     }
 
     private void updateModels(){
-        FSArrayModel model = instance.data.model();
+        FSArrayModel model = instance.model();
 
         model.transformPoint(boundsmodel, 0, bounds, 0);
         model.transformPoint(boundsmodel, 4, bounds, 4);

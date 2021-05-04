@@ -49,8 +49,8 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     public void initialize(){
         destroy();
 
-        GLES32.glGenBuffers(1, FSCache.CACHE_INT, 0);
-        id = FSCache.CACHE_INT[0];
+        GLES32.glGenBuffers(1, FSCache.INT1, 0);
+        id = FSCache.INT1[0];
     }
 
     public void bind(){
@@ -220,8 +220,8 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     }
 
     public void destroy(){
-        FSCache.CACHE_INT[0] = id;
-        GLES32.glDeleteBuffers(1, FSCache.CACHE_INT, 0);
+        FSCache.INT1[0] = id;
+        GLES32.glDeleteBuffers(1, FSCache.INT1, 0);
 
         id = -1;
     }

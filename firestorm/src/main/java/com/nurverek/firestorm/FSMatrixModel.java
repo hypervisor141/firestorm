@@ -11,6 +11,10 @@ public class FSMatrixModel extends VLVMatrix{
         super(initialcapacity, resizercount);
     }
 
+    public FSMatrixModel(FSMatrixModel src, long flags){
+        super(src, flags);
+    }
+
     public void addRowTranslation(VLV x, VLV y, VLV z){
         VLListType<VLVTypeVariable> row = new VLListType<>(4, 0);
 
@@ -125,5 +129,10 @@ public class FSMatrixModel extends VLVMatrix{
 
     public int getTransformType(int rowindex){
         return (int) matrix.get(rowindex).get(0).get();
+    }
+
+    @Override
+    public FSMatrixModel duplicate(long flags){
+        return new FSMatrixModel(this, flags);
     }
 }

@@ -15,8 +15,8 @@ public class FSFrameBuffer{
     }
 
     public void initialize(){
-        GLES32.glGenFramebuffers(1, FSCache.CACHE_INT,0);
-        id = FSCache.CACHE_INT[0];
+        GLES32.glGenFramebuffers(1, FSCache.INT1,0);
+        id = FSCache.INT1[0];
     }
 
     public void bind(){
@@ -60,7 +60,7 @@ public class FSFrameBuffer{
     }
 
     public void destroy(){
-        FSCache.CACHE_INT[0] = id;
-        GLES32.glDeleteFramebuffers(1, FSCache.CACHE_INT, 0);
+        FSCache.INT1[0] = id;
+        GLES32.glDeleteFramebuffers(1, FSCache.INT1, 0);
     }
 }

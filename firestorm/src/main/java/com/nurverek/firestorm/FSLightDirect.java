@@ -17,6 +17,10 @@ public class FSLightDirect extends FSLight{
         updateDirection();
     }
 
+    public FSLightDirect(FSLightDirect src, long flags){
+        copy(src, flags);
+    }
+
     public void updateDirection(){
         float[] dir = direction().provider();
         float[] pos = position().provider();
@@ -25,6 +29,32 @@ public class FSLightDirect extends FSLight{
         dir[0] = cent[0] - pos[0];
         dir[1] = cent[1] - pos[1];
         dir[2] = cent[2] - pos[2];
+    }
+
+    @Override
+    public void copy(FSLight src, long flags){
+        super.copy(src, flags);
+
+        FSLightDirect target = (FSLightDirect)src;
+
+        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+            position = target.position;
+            center = target.center;
+            direction = target.direction;
+
+        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
+            position = target.position.duplicate(FLAG_MAX_DEPTH);
+            center = target.center.duplicate(FLAG_MAX_DEPTH);
+            direction = target.direction.duplicate(FLAG_MAX_DEPTH);
+
+        }else{
+            throw new RuntimeException("Invalid flags : " + flags);
+        }
+    }
+
+    @Override
+    public FSLightDirect duplicate(long flags){
+        return new FSLightDirect(this, flags);
     }
 
     @Override

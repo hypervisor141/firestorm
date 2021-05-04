@@ -32,8 +32,8 @@ public class FSTexture{
         this.target = target;
         this.texunit = texunit;
 
-        GLES32.glGenTextures(1, FSCache.CACHE_INT, 0);
-        id = FSCache.CACHE_INT[0];
+        GLES32.glGenTextures(1, FSCache.INT1, 0);
+        id = FSCache.INT1[0];
     }
 
     public void activateUnit(){
@@ -189,7 +189,7 @@ public class FSTexture{
         target = null;
         texunit = null;
 
-        FSCache.CACHE_INT[0] = id;
-        GLES32.glDeleteTextures(1, FSCache.CACHE_INT, 0);
+        FSCache.INT1[0] = id;
+        GLES32.glDeleteTextures(1, FSCache.INT1, 0);
     }
 }

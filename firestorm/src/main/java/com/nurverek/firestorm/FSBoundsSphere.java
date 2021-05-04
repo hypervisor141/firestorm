@@ -1,9 +1,8 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLListType;
 import vanguard.VLMath;
 
-public class FSBoundsSphere extends FSBounds {
+public class FSBoundsSphere extends FSBounds{
 
     protected float radius;
 
@@ -12,6 +11,22 @@ public class FSBoundsSphere extends FSBounds {
 
         initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, zoffset), 1);
         add(new Point(radiusmode, MODE_DIRECT_VALUE, MODE_DIRECT_VALUE, radius, 0, 0));
+    }
+
+    public FSBoundsSphere(FSBoundsSphere src, long flags){
+        super(null);
+        copy(src, flags);
+    }
+
+    @Override
+    public void copy(FSBounds src, long flags){
+        super.copy(src, flags);
+        radius = ((FSBoundsSphere)src).radius;
+    }
+
+    @Override
+    public FSBoundsSphere duplicate(long flags){
+        return new FSBoundsSphere(this, flags);
     }
 
     @Override
@@ -46,7 +61,7 @@ public class FSBoundsSphere extends FSBounds {
     public void checkInput(Collision results, float[] near, float[] far){
         super.checkInput(results, near, far);
 
-        VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, CACHE2, 0);
-        checkPoint(results, CACHE2);
+        VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, FSCache.FLOAT4_2, 0);
+        checkPoint(results, FSCache.FLOAT4_2);
     }
 }

@@ -1,12 +1,13 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLUpdater;
 
-public abstract class FSBounds{
+public abstract class FSBounds implements VLCopyable<FSBounds>{
 
-    protected static final float[] CACHE1 = new float[4];
-    protected static final float[] CACHE2 = new float[4];
+    public static final long FLAG_FORCE_DUPLICATE_POINTS = 0x1F;
+    public static final long FLAG_FORCE_REFERENCE_POINTS = 0x2F;
 
     public static final Mode MODE_X_VOLUMETRIC = new Mode(){
 
@@ -81,6 +82,8 @@ public abstract class FSBounds{
         }
     };
 
+    public static final int DEPTH_SHALLOW_POINTS = 1;
+
     protected FSSchematics schematics;
     private VLUpdater<FSBounds> updater;
 
@@ -97,6 +100,37 @@ public abstract class FSBounds{
 
         markForUpdate();
     }
+
+    @Override
+    public void copy(FSBounds src, long flags){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            points = src.points;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            points = src.points.duplicate(VLCopyable.FLAG_DUPLICATE);
+
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            if((flags & FLAG_FORCE_REFERENCE_POINTS) == FLAG_FORCE_REFERENCE_POINTS){
+                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_REFERENCE_ARRAY);
+
+            }else if((flags & FLAG_FORCE_DUPLICATE_POINTS) == FLAG_FORCE_DUPLICATE_POINTS){
+                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+
+            }else{
+                Helper.throwMissingFlag("FLAG_CUSTOM", "FLAG_FORCE_REFERENCE_POINTS", "FLAG_FORCE_DUPLICATE_POINTS");
+            }
+
+        }else{
+            Helper.throwMissingBaseFlags();
+        }
+
+        schematics = src.schematics;
+        updater = src.updater;
+        offset = src.offset;
+    }
+
+    @Override
+    public abstract FSBounds duplicate(long flags);
 
     public void markForUpdate(){
         updater = UPDATE;
@@ -171,7 +205,7 @@ public abstract class FSBounds{
         checkForUpdates();
     }
 
-    public static final class Point{
+    public static final class Point implements VLCopyable<Point>{
 
         protected Mode[] modes;
         protected float[] coefficients;
@@ -186,6 +220,35 @@ public abstract class FSBounds{
             };
 
             coordinates = new float[3];
+        }
+
+        public Point(Point src, long flags){
+            copy(src, flags);
+        }
+
+        @Override
+        public void copy(Point src, long flags){
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                modes = src.modes;
+                coefficients = src.coefficients;
+                coordinates = src.coordinates;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                modes = src.modes.clone();
+                coefficients = src.coefficients.clone();
+                coordinates = src.coordinates.clone();
+
+            }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+                Helper.throwCustomCopyNotSupported(flags);
+
+            }else{
+                Helper.throwMissingBaseFlags();
+            }
+        }
+
+        @Override
+        public Point duplicate(long flags){
+            return new Point(this, flags);
         }
 
         public void calculate(FSSchematics schematics){

@@ -6,9 +6,12 @@ import vanguard.VLBuffer;
 import vanguard.VLBufferFloat;
 import vanguard.VLBufferShort;
 import vanguard.VLBufferTracker;
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 
-public abstract class FSElement<DATA, BUFFER extends VLBuffer<?, ?>>{
+public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSElement<DATA, BUFFER>>{
+
+    public static final long FLAG_SHALLOW_BINDINGS = 0x10L;
 
     public DATA data;
     public VLListType<FSBufferBinding<BUFFER>> bindings;
@@ -17,6 +20,42 @@ public abstract class FSElement<DATA, BUFFER extends VLBuffer<?, ?>>{
         this.data = data;
         bindings = new VLListType<>(1, 5);
     }
+
+    public FSElement(FSElement<DATA, BUFFER> src, long flags){
+        copy(src, flags);
+    }
+
+    @Override
+    public void copy(FSElement<DATA, BUFFER> src, long flags){
+        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+            data = src.data;
+            bindings = src.bindings;
+
+        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
+            data = (DATA)src.data.duplicate(FLAG_MAX_DEPTH);
+
+            if((flags & FLAG_SHALLOW_BINDINGS) == FLAG_SHALLOW_BINDINGS){
+                bindings = src.bindings.duplicate(FLAG_MAX_DEPTH);
+
+            }else{
+                VLListType<FSBufferBinding<BUFFER>> srcbindings = src.bindings;
+                bindings = new VLListType<>(srcbindings.size(), srcbindings.resizerCount());
+                bindings.maximizeVirtualSize();
+
+                int size = bindings.size();
+
+                for(int i = 0; i < size; i++){
+                    bindings.set(i, srcbindings.get(i).duplicate(FLAG_MAX_DEPTH));
+                }
+            }
+
+        }else{
+            throw new RuntimeException("Invalid flags : " + flags);
+        }
+    }
+
+    @Override
+    public abstract FSElement<DATA, BUFFER> duplicate(long flags);
 
     public abstract int size();
     public abstract void buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer);
@@ -89,6 +128,11 @@ public abstract class FSElement<DATA, BUFFER extends VLBuffer<?, ?>>{
             super(data);
         }
 
+        public Short(Short src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public int size(){
             return data.size();
@@ -115,12 +159,22 @@ public abstract class FSElement<DATA, BUFFER extends VLBuffer<?, ?>>{
             FSBufferBinding<VLBufferShort> binding = bindings.get(index);
             binding.buffer.update(binding.tracker, (short[])data.provider());
         }
+
+        @Override
+        public Short duplicate(long flags){
+            return new Short(this, flags);
+        }
     }
 
     public static class Float extends FSElement<VLArrayFloat, VLBufferFloat>{
 
         public Float(VLArrayFloat data){
             super(data);
+        }
+
+        public Float(Float src, long flags){
+            super(null);
+            copy(src, flags);
         }
 
         @Override
@@ -148,6 +202,11 @@ public abstract class FSElement<DATA, BUFFER extends VLBuffer<?, ?>>{
         public void updateBuffer(int index){
             FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
             binding.buffer.update(binding.tracker, (float[])data.provider());
+        }
+
+        @Override
+        public Float duplicate(long flags){
+            return new Float(this, flags);
         }
     }
 }

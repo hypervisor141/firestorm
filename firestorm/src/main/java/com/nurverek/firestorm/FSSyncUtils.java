@@ -11,7 +11,7 @@ public class FSSyncUtils{
             super(target);
         }
 
-        public Config(Config src, int depth){
+        public Config(Config src, long flags){
             super(null);
             copy(src, depth);
         }
@@ -24,10 +24,10 @@ public class FSSyncUtils{
         }
 
         @Override
-        public void copy(VLSyncType<Object> src, int depth){}
+        public void copy(VLSyncType<Object> src, long flags){}
 
         @Override
-        public Config duplicate(int depth){
+        public Config duplicate(long flags){
             return new Config(this, depth);
         }
     }
@@ -38,7 +38,7 @@ public class FSSyncUtils{
             super(schematics);
         }
 
-        public SchematicsUpdateBounds(SchematicsUpdateBounds src, int depth){
+        public SchematicsUpdateBounds(SchematicsUpdateBounds src, long flags){
             super(null);
             copy(src, depth);
         }
@@ -49,10 +49,10 @@ public class FSSyncUtils{
         }
 
         @Override
-        public void copy(VLSyncType<Object> src, int depth){}
+        public void copy(VLSyncType<Object> src, long flags){}
 
         @Override
-        public SchematicsUpdateBounds duplicate(int depth){
+        public SchematicsUpdateBounds duplicate(long flags){
             return new SchematicsUpdateBounds(this, depth);
         }
     }
@@ -63,7 +63,7 @@ public class FSSyncUtils{
             super(schematics);
         }
 
-        public SchematicsMarkUpdate(SchematicsMarkUpdate src, int depth){
+        public SchematicsMarkUpdate(SchematicsMarkUpdate src, long flags){
             super(null);
             copy(src, depth);
         }
@@ -74,10 +74,10 @@ public class FSSyncUtils{
         }
 
         @Override
-        public void copy(VLSyncType<Object> src, int depth){}
+        public void copy(VLSyncType<Object> src, long flags){}
 
         @Override
-        public SchematicsMarkUpdate duplicate(int depth){
+        public SchematicsMarkUpdate duplicate(long flags){
             return new SchematicsMarkUpdate(this, depth);
         }
     }
@@ -91,7 +91,7 @@ public class FSSyncUtils{
             this.replace = replace;
         }
 
-        public MatrixModel_ArrayModel(MatrixModel_ArrayModel src, int depth){
+        public MatrixModel_ArrayModel(MatrixModel_ArrayModel src, long flags){
             super(null);
             copy(src, depth);
         }
@@ -102,12 +102,12 @@ public class FSSyncUtils{
         }
 
         @Override
-        public void copy(VLSyncType<FSMatrixModel> src, int depth){
+        public void copy(VLSyncType<FSMatrixModel> src, long flags){
             replace = ((MatrixModel_ArrayModel)src).replace;
         }
 
         @Override
-        public MatrixModel_ArrayModel duplicate(int depth){
+        public MatrixModel_ArrayModel duplicate(long flags){
             return new MatrixModel_ArrayModel(this, depth);
         }
     }
@@ -118,7 +118,7 @@ public class FSSyncUtils{
             super(target);
         }
 
-        public Bounds(Bounds src, int depth){
+        public Bounds(Bounds src, long flags){
             super(null);
             copy(src, depth);
         }
@@ -129,10 +129,10 @@ public class FSSyncUtils{
         }
 
         @Override
-        public void copy(VLSyncType<Object> src, int depth){}
+        public void copy(VLSyncType<Object> src, long flags){}
 
         @Override
-        public Bounds duplicate(int depth){
+        public Bounds duplicate(long flags){
             return new Bounds(this, depth);
         }
     }
@@ -143,7 +143,7 @@ public class FSSyncUtils{
             super(target);
         }
 
-        public VertexBuffer(VertexBuffer src, int depth){
+        public VertexBuffer(VertexBuffer src, long flags){
             super(null);
             copy(src, depth);
         }
@@ -154,10 +154,10 @@ public class FSSyncUtils{
         }
 
         @Override
-        public void copy(VLSyncType<Object> src, int depth){}
+        public void copy(VLSyncType<Object> src, long flags){}
 
         @Override
-        public VertexBuffer duplicate(int depth){
+        public VertexBuffer duplicate(long flags){
             return new VertexBuffer(this, depth);
         }
     }

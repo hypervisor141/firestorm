@@ -4,9 +4,10 @@ import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLBufferFloat;
 import vanguard.VLBufferShort;
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 
-public final class FSElementStore{
+public final class FSElementStore implements VLCopyable<FSElementStore>{
 
     protected VLListType<FSElement<?, ?>>[] vault;
     protected FSElement<?, ?>[] active;
@@ -14,6 +15,10 @@ public final class FSElementStore{
     protected FSElementStore(){
         vault = new VLListType[FSGlobal.COUNT];
         active = new FSElement<?, ?>[FSGlobal.COUNT];
+    }
+
+    public FSElementStore(FSElementStore src, long flags){
+        copy(src, flags);
     }
 
     public void allocateElement(int element, int capacity, int resizer){
@@ -50,5 +55,47 @@ public final class FSElementStore{
 
     public FSElement<?, ?> first(int element){
         return vault[element].get(0);
+    }
+
+    @Override
+    public void copy(FSElementStore src, long flags){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            vault = src.vault;
+            active = src.active;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            VLListType<FSElement<?, ?>>[] srcvault = src.vault;
+            int size = srcvault.length;
+
+            vault = new VLListType[size];
+
+            for(int i = 0; i < size; i++){
+                if(srcvault[i] != null){
+                    vault[i] = srcvault[i].duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+                }
+            }
+
+            FSElement<?, ?>[] srcactive = src.active;
+            size = srcactive.length;
+
+            active = new FSElement<?, ?>[size];
+
+            for(int i = 0; i < size; i++){
+                if(active[i] != null){
+                    active[i] = active[i].duplicate(FLAG_DUPLICATE);
+                }
+            }
+
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            Helper.throwCustomCopyNotSupported(flags);
+
+        }else{
+            Helper.throwMissingBaseFlags();
+        }
+    }
+
+    @Override
+    public FSElementStore duplicate(long flags){
+        return new FSElementStore(this, flags);
     }
 }

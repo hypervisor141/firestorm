@@ -1,9 +1,10 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
+import vanguard.VLCopyable;
 import vanguard.VLFloat;
 
-public final class FSLightMaterial{
+public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
 
     protected VLArrayFloat ambient;
     protected VLArrayFloat specular;
@@ -22,6 +23,10 @@ public final class FSLightMaterial{
         this.diffuse = sharedcolor;
         this.specular = sharedcolor;
         this.shininess = shininess;
+    }
+
+    public FSLightMaterial(FSLightMaterial src, long flags){
+        copy(src, flags);
     }
 
     public FSLightMaterial(){
@@ -45,5 +50,32 @@ public final class FSLightMaterial{
 
     public VLFloat shininess(){
         return shininess;
+    }
+
+    @Override
+    public void copy(FSLightMaterial src, long flags){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            ambient = src.ambient;
+            diffuse = src.diffuse;
+            specular = src.specular;
+            shininess = src.shininess;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            ambient = src.ambient.duplicate(FLAG_DUPLICATE);;
+            diffuse = src.diffuse.duplicate(FLAG_DUPLICATE);;
+            specular = src.specular.duplicate(FLAG_DUPLICATE);;
+            shininess = src.shininess.duplicate(FLAG_DUPLICATE);;
+
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            Helper.throwCustomCopyNotSupported(flags);
+
+        }else{
+            Helper.throwMissingBaseFlags();
+        }
+    }
+
+    @Override
+    public FSLightMaterial duplicate(long flags){
+        return new FSLightMaterial(this, flags);
     }
 }

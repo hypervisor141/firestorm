@@ -2,8 +2,19 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
+import vanguard.VLCopyable;
 
-public class FSInstance{
+public class FSInstance implements VLCopyable<FSInstance>{
+
+    public static final long FLAG_UNIQUE_ID = 0x10L;
+    public static final long FLAG_UNIQUE_NAME = 0x100L;
+    public static final long FLAG_SHALLOW_STORAGE = 0x1000L;
+    public static final long FLAG_SHALLOW_STORAGE_ELEMENTS = 0x2000L;
+    public static final long FLAG_SHALLOW_SCHEMATIC_BOUNDS = 0x10000L;
+    public static final long FLAG_REFERENCE_MATERIAL = 0x100000L;
+    public static final long FLAG_REFERENCE_LIGHTMAP = 0x1000000L;
+    public static final long FLAG_REFERENCE_MODEL_MATRIX = 0x10000000L;
+    public static final long FLAG_SHALLOW_MODEL_MATRIX = 0x20000000L;
 
     protected FSMesh mesh;
     protected FSElementStore store;
@@ -14,7 +25,6 @@ public class FSInstance{
     protected FSLightMap lightmap;
 
     protected String name;
-
     protected long id;
 
     protected FSInstance(FSMesh mesh, String name){
@@ -24,6 +34,10 @@ public class FSInstance{
         store = new FSElementStore();
         id = FSControl.getNextID();
         schematics = new FSSchematics(this);
+    }
+
+    protected FSInstance(FSInstance src, long flags){
+        copy(src, flags);
     }
 
     public void name(String name){
@@ -204,6 +218,59 @@ public class FSInstance{
 
     public void updateBufferPipelineStrict(int element, int bindingindex){
         element(element).updateBufferPipelineStrict(bindingindex);
+    }
+
+    @Override
+    public void copy(FSInstance src, long flags){
+        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+            store = src.store;
+            schematics = src.schematics;
+            modelmatrix = src.modelmatrix;
+            colortexture = src.colortexture;
+            lightmaterial = src.lightmaterial;
+            lightmap = src.lightmap;
+            name = src.name;
+            id = src.id;
+
+        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
+            if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
+                id = FSControl.getNextID();
+
+            }else{
+                id = src.id;
+            }
+            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
+                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+
+            }else{
+                name = src.name;
+            }
+            if((flags & FLAG_SHALLOW_STORAGE) == FLAG_SHALLOW_STORAGE){
+                store = store.duplicate(FSElementStore.FLAG_SHALLOW_VAULT);
+
+            }else if((flags & FLAG_SHALLOW_STORAGE_ELEMENTS) == FLAG_SHALLOW_STORAGE_ELEMENTS){
+                store = store.duplicate(FSElementStore.FLAG_SHALLOW_VAULT);
+            }
+
+            public static final long FLAG_UNIQUE_NAME = 0x100L;
+            public static final long FLAG_SHALLOW_STORAGE = 0x1000L;
+            public static final long FLAG_SHALLOW_STORAGE_ELEMENTS = 0x2000L;
+            public static final long FLAG_SHALLOW_SCHEMATIC_BOUNDS = 0x10000L;
+            public static final long FLAG_REFERENCE_MATERIAL = 0x100000L;
+            public static final long FLAG_REFERENCE_LIGHTMAP = 0x1000000L;
+            public static final long FLAG_REFERENCE_MODEL_MATRIX = 0x10000000L;
+            public static final long FLAG_SHALLOW_MODEL_MATRIX = 0x20000000L;
+
+        }else{
+            throw new RuntimeException("Invalid flags : " + flags);
+        }
+
+        mesh = src.mesh;
+    }
+
+    @Override
+    public FSInstance duplicate(long flags){
+        return new FSInstance(this, flags);
     }
 
     public void destroy(){

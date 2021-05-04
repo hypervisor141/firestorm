@@ -25,6 +25,8 @@ public abstract class FSHScanner{
     protected void bufferAndFinish(){
         map.buffer(mesh);
         program.meshes().add(mesh);
+
+        set active bindings;
     }
 
     protected void scanComplete(){

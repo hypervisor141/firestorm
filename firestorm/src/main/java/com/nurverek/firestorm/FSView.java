@@ -6,8 +6,9 @@ import android.opengl.Matrix;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayInt;
+import vanguard.VLCopyable;
 
-public class FSView{
+public class FSView implements VLCopyable<FSView>{
 
     protected VLArrayFloat matview;
     protected VLArrayFloat matperspective;
@@ -34,6 +35,50 @@ public class FSView{
         settingsorthographic = new VLArrayFloat(new float[6]);
 
         setPerspectiveMode();
+    }
+
+    public FSView(FSView src, long flags){
+        copy(src, flags);
+    }
+
+    public void setPerspectiveMode(){
+        matprojection = matperspective;
+    }
+
+    public void setOrthographicMode(){
+        matprojection = matorthographic;
+    }
+
+    public VLArrayFloat matrixPerspective(){
+        return matperspective;
+    }
+
+    public VLArrayFloat matrixOrthographic(){
+        return matorthographic;
+    }
+
+    public VLArrayFloat matrixView(){
+        return matview;
+    }
+
+    public VLArrayFloat matrixViewProjection(){
+        return matviewprojection;
+    }
+
+    public VLArrayInt settingsViewport(){
+        return settingsviewport;
+    }
+
+    public VLArrayFloat settingsView(){
+        return settingsview;
+    }
+
+    public VLArrayFloat settingsPerspective(){
+        return settingsperspective;
+    }
+
+    public VLArrayFloat settingsOrthographic(){
+        return settingsorthographic;
     }
 
     public void viewPort(int x, int y, int width, int height){
@@ -155,43 +200,37 @@ public class FSView{
         resultsfar[offset2 + 2] /= y;
     }
 
-    public void setPerspectiveMode(){
-        matprojection = matperspective;
+    @Override
+    public void copy(FSView src, long flags){
+        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+            matview = src.matview;
+            matperspective = src.matperspective;
+            matorthographic = src.matorthographic;
+            matviewprojection = src.matviewprojection;
+            settingsviewport = src.settingsviewport;
+            settingsview = src.settingsview;
+            settingsperspective = src.settingsperspective;
+            settingsorthographic = src.settingsorthographic;
+
+        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
+            matview = src.matview.duplicate(FLAG_MAX_DEPTH);
+            matperspective = src.matperspective.duplicate(FLAG_MAX_DEPTH);
+            matorthographic = src.matorthographic.duplicate(FLAG_MAX_DEPTH);
+            matviewprojection = src.matviewprojection.duplicate(FLAG_MAX_DEPTH);
+            settingsviewport = src.settingsviewport.duplicate(FLAG_MAX_DEPTH);
+            settingsview = src.settingsview.duplicate(FLAG_MAX_DEPTH);
+            settingsperspective = src.settingsperspective.duplicate(FLAG_MAX_DEPTH);
+            settingsorthographic = src.settingsorthographic.duplicate(FLAG_MAX_DEPTH);
+
+        }else{
+            throw new RuntimeException("Invalid flags : " + flags);
+        }
+
+        matprojection = src.matprojection;
     }
 
-    public void setOrthographicMode(){
-        matprojection = matorthographic;
-    }
-
-    public VLArrayFloat matrixPerspective(){
-        return matperspective;
-    }
-
-    public VLArrayFloat matrixOrthographic(){
-        return matorthographic;
-    }
-
-    public VLArrayFloat matrixView(){
-        return matview;
-    }
-
-    public VLArrayFloat matrixViewProjection(){
-        return matviewprojection;
-    }
-
-    public VLArrayInt settingsViewport(){
-        return settingsviewport;
-    }
-
-    public VLArrayFloat settingsView(){
-        return settingsview;
-    }
-
-    public VLArrayFloat settingsPerspective(){
-        return settingsperspective;
-    }
-
-    public VLArrayFloat settingsOrthographic(){
-        return settingsorthographic;
+    @Override
+    public FSView duplicate(long flags){
+        return new FSView(this, flags);
     }
 }

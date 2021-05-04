@@ -41,10 +41,10 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         buffer.attachTexture2D(GLES32.GL_DEPTH_ATTACHMENT, texture.target().get(), texture.id(), 0);
         buffer.checkStatus();
 
-        FSCache.CACHE_INT[0] = GLES32.GL_NONE;
+        FSCache.INT1[0] = GLES32.GL_NONE;
 
         GLES32.glReadBuffer(GLES32.GL_NONE);
-        GLES32.glDrawBuffers(0, FSCache.CACHE_INT, 0);
+        GLES32.glDrawBuffers(0, FSCache.INT1, 0);
 
         buffer.unbind();
 

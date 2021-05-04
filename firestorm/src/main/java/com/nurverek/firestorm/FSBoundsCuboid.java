@@ -18,6 +18,10 @@ public class FSBoundsCuboid extends FSBounds {
         add(new Point(wmode, hmode, dmode, halfwidth, halfheight, halfdepth));
     }
 
+    public FSBoundsCuboid(FSBoundsCuboid src, long flags){
+        super(null);
+        copy(src, flags);
+    }
 
     public float getHalfWidth(){
         return halfwidth;
@@ -36,6 +40,22 @@ public class FSBoundsCuboid extends FSBounds {
     }
 
     @Override
+    public void copy(FSBounds src, long flags){
+        super.copy(src, flags);
+
+        FSBoundsCuboid target = (FSBoundsCuboid)src;
+        halfwidth = target.halfwidth;
+        halfheight = target.halfheight;
+        halfdepth = target.halfdepth;
+        halfdiameter = target.halfdiameter;
+    }
+
+    @Override
+    public FSBoundsCuboid duplicate(long flags){
+        return new FSBoundsCuboid(this, flags);
+    }
+
+    @Override
     protected void notifyBasePointsUpdated(){
         float[] offsetcoords = offset.coordinates;
         float[] point1 = point(0).coordinates;
@@ -44,11 +64,11 @@ public class FSBoundsCuboid extends FSBounds {
         halfheight = (point1[1] - offsetcoords[1]);
         halfdepth = (point1[2] - offsetcoords[2]);
 
-        CACHE1[0] = halfwidth;
-        CACHE1[1] = halfheight;
-        CACHE1[2] = halfheight;
+        FSCache.FLOAT4[0] = halfwidth;
+        FSCache.FLOAT4[1] = halfheight;
+        FSCache.FLOAT4[2] = halfheight;
 
-        halfdiameter = VLMath.euclideanDistance(CACHE1, 0, offsetcoords, 0, 3);
+        halfdiameter = VLMath.euclideanDistance(FSCache.FLOAT4, 0, offsetcoords, 0, 3);
     }
 
     @Override
@@ -58,14 +78,14 @@ public class FSBoundsCuboid extends FSBounds {
         float[] coords = offset.coordinates;
         float[] targetcoords = bounds.offset.coordinates;
 
-        VLMath.difference(coords, 0, targetcoords, 0, CACHE1, 0, 3);
-        float origindistance = VLMath.length(CACHE1, 0, 3);
+        VLMath.difference(coords, 0, targetcoords, 0, FSCache.FLOAT4, 0, 3);
+        float origindistance = VLMath.length(FSCache.FLOAT4, 0, 3);
 
-        CACHE1[0] = VLMath.clamp(CACHE1[0], -halfwidth, halfwidth);
-        CACHE1[1] = VLMath.clamp(CACHE1[1], -halfheight, halfheight);
-        CACHE1[2] = VLMath.clamp(CACHE1[2], -halfdepth, halfdepth);
+        FSCache.FLOAT4[0] = VLMath.clamp(FSCache.FLOAT4[0], -halfwidth, halfwidth);
+        FSCache.FLOAT4[1] = VLMath.clamp(FSCache.FLOAT4[1], -halfheight, halfheight);
+        FSCache.FLOAT4[2] = VLMath.clamp(FSCache.FLOAT4[2], -halfdepth, halfdepth);
 
-        results.distance = origindistance - VLMath.length(CACHE1, 0, 3) - bounds.radius;
+        results.distance = origindistance - VLMath.length(FSCache.FLOAT4, 0, 3) - bounds.radius;
         results.collided = results.distance <= 0;
     }
 
@@ -76,26 +96,26 @@ public class FSBoundsCuboid extends FSBounds {
         float[] coords = offset.coordinates;
         float[] targetcoords = bounds.offset.coordinates;
 
-        CACHE1[0] = Math.abs(coords[0] - targetcoords[0]) - halfwidth - bounds.halfwidth;
-        CACHE1[1] = Math.abs(coords[1] - targetcoords[1]) - halfheight - bounds.halfheight;
-        CACHE1[2] = Math.abs(coords[2] - targetcoords[2]) - halfdepth - bounds.halfdepth;
+        FSCache.FLOAT4[0] = Math.abs(coords[0] - targetcoords[0]) - halfwidth - bounds.halfwidth;
+        FSCache.FLOAT4[1] = Math.abs(coords[1] - targetcoords[1]) - halfheight - bounds.halfheight;
+        FSCache.FLOAT4[2] = Math.abs(coords[2] - targetcoords[2]) - halfdepth - bounds.halfdepth;
 
-        results.distance = VLMath.length(CACHE1, 0, 3);
-        results.collided = CACHE1[0] <= 0 && CACHE2[1] <= 0 && CACHE2[2] <= 0;
+        results.distance = VLMath.length(FSCache.FLOAT4, 0, 3);
+        results.collided = FSCache.FLOAT4[0] <= 0 && FSCache.FLOAT4_2[1] <= 0 && FSCache.FLOAT4_2[2] <= 0;
     }
 
     @Override
     public void checkPoint(Collision results, float[] point){
         super.checkPoint(results, point);
 
-        VLMath.difference(offset.coordinates, 0, point, 0, CACHE1, 0, 3);
-        float origindistance = VLMath.length(CACHE1, 0, 3);
+        VLMath.difference(offset.coordinates, 0, point, 0, FSCache.FLOAT4, 0, 3);
+        float origindistance = VLMath.length(FSCache.FLOAT4, 0, 3);
 
-        CACHE1[0] = VLMath.clamp(CACHE1[0], -halfwidth, halfwidth);
-        CACHE1[1] = VLMath.clamp(CACHE1[1], -halfheight, halfheight);
-        CACHE1[2] = VLMath.clamp(CACHE1[2], -halfdepth, halfdepth);
+        FSCache.FLOAT4[0] = VLMath.clamp(FSCache.FLOAT4[0], -halfwidth, halfwidth);
+        FSCache.FLOAT4[1] = VLMath.clamp(FSCache.FLOAT4[1], -halfheight, halfheight);
+        FSCache.FLOAT4[2] = VLMath.clamp(FSCache.FLOAT4[2], -halfdepth, halfdepth);
 
-        results.distance = origindistance - VLMath.length(CACHE1, 0, 3);
+        results.distance = origindistance - VLMath.length(FSCache.FLOAT4, 0, 3);
         results.collided = results.distance <= 0;
     }
 
@@ -103,7 +123,7 @@ public class FSBoundsCuboid extends FSBounds {
     public void checkInput(Collision results, float[] near, float[] far){
         super.checkInput(results, near, far);
 
-        VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, CACHE2, 0);
-        checkPoint(results, CACHE2);
+        VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, FSCache.FLOAT4_2, 0);
+        checkPoint(results, FSCache.FLOAT4_2);
     }
 }
