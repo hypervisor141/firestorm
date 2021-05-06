@@ -1,8 +1,10 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
+import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSConfig{
+public abstract class FSConfig implements VLCopyable<FSConfig>{
 
     public static final Mode MODE_FULLTIME = new Mode(){
 
@@ -21,6 +23,14 @@ public abstract class FSConfig{
         @Override
         public String getModeName(){
             return NAME;
+        }
+
+        @Override
+        public void copy(Mode src, long flags){}
+
+        @Override
+        public Mode duplicate(long flags){
+            return this;
         }
     };
     public static final Mode MODE_ONETIME = new Mode(){
@@ -43,6 +53,14 @@ public abstract class FSConfig{
         public String getModeName(){
             return NAME;
         }
+
+        @Override
+        public void copy(Mode src, long flags){}
+
+        @Override
+        public Mode duplicate(long flags){
+            return this;
+        }
     };
     public static final Mode MODE_DISABLED = new Mode(){
 
@@ -59,6 +77,14 @@ public abstract class FSConfig{
         @Override
         public String getModeName(){
             return NAME;
+        }
+
+        @Override
+        public void copy(Mode src, long flags){}
+
+        @Override
+        public Mode duplicate(long flags){
+            return this;
         }
     };
 
@@ -140,13 +166,29 @@ public abstract class FSConfig{
         }
     }
 
+    @Override
+    public void copy(FSConfig src, long flags){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            mode = src.mode;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            mode = src.mode.duplicate(FLAG_DUPLICATE);
+
+        }else{
+            Helper.throwMissingDefaultFlags();
+        }
+    }
+
+    @Override
+    public abstract FSConfig duplicate(long flags);
+
     public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
         log.append("GLSLSize[");
         log.append(getGLSLSize());
         log.append("] ");
     }
 
-    public interface Mode{
+    public interface Mode extends VLCopyable<Mode>{
 
         void configure(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex);
         void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug);

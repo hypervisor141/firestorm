@@ -202,7 +202,7 @@ public class FSView implements VLCopyable<FSView>{
 
     @Override
     public void copy(FSView src, long flags){
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             matview = src.matview;
             matperspective = src.matperspective;
             matorthographic = src.matorthographic;
@@ -212,15 +212,15 @@ public class FSView implements VLCopyable<FSView>{
             settingsperspective = src.settingsperspective;
             settingsorthographic = src.settingsorthographic;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            matview = src.matview.duplicate(FLAG_MAX_DEPTH);
-            matperspective = src.matperspective.duplicate(FLAG_MAX_DEPTH);
-            matorthographic = src.matorthographic.duplicate(FLAG_MAX_DEPTH);
-            matviewprojection = src.matviewprojection.duplicate(FLAG_MAX_DEPTH);
-            settingsviewport = src.settingsviewport.duplicate(FLAG_MAX_DEPTH);
-            settingsview = src.settingsview.duplicate(FLAG_MAX_DEPTH);
-            settingsperspective = src.settingsperspective.duplicate(FLAG_MAX_DEPTH);
-            settingsorthographic = src.settingsorthographic.duplicate(FLAG_MAX_DEPTH);
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            matview = src.matview.duplicate(FLAG_DUPLICATE);
+            matperspective = src.matperspective.duplicate(FLAG_DUPLICATE);
+            matorthographic = src.matorthographic.duplicate(FLAG_DUPLICATE);
+            matviewprojection = src.matviewprojection.duplicate(FLAG_DUPLICATE);
+            settingsviewport = src.settingsviewport.duplicate(FLAG_DUPLICATE);
+            settingsview = src.settingsview.duplicate(FLAG_DUPLICATE);
+            settingsperspective = src.settingsperspective.duplicate(FLAG_DUPLICATE);
+            settingsorthographic = src.settingsorthographic.duplicate(FLAG_DUPLICATE);
 
         }else{
             throw new RuntimeException("Invalid flags : " + flags);

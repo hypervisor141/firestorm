@@ -5,7 +5,7 @@ import vanguard.VLLog;
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
     private TYPE config;
-    private final int glslsize;
+    private int glslsize;
 
     public FSConfigDynamic(Mode mode, TYPE config){
         super(mode);
@@ -17,6 +17,11 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     public FSConfigDynamic(Mode mode, int glslsize){
         super(mode);
         this.glslsize = glslsize;
+    }
+
+    public FSConfigDynamic(FSConfigDynamic<TYPE> src, long flags){
+        super(null);
+        copy(src, flags);
     }
 
     @Override
@@ -49,6 +54,30 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     @Override
     public int getGLSLSize(){
         return glslsize;
+    }
+
+    @Override
+    public void copy(FSConfig src, long flags){
+        super.copy(src, flags);
+
+        FSConfigDynamic<TYPE> target = (FSConfigDynamic<TYPE>)src;
+
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            config = target.config;
+            glslsize = target.glslsize;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            config = (TYPE)target.config.duplicate(FLAG_DUPLICATE);
+            glslsize = target.glslsize;
+
+        }else{
+            Helper.throwMissingDefaultFlags();
+        }
+    }
+
+    @Override
+    public FSConfigDynamic<TYPE> duplicate(long flags){
+        return new FSConfigDynamic<>(this, flags);
     }
 
     @Override

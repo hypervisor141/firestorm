@@ -27,6 +27,15 @@ public abstract class FSConfigLocated extends FSConfig{
     }
 
     @Override
+    public void copy(FSConfig src, long flags){
+        super.copy(src, flags);
+        location = ((FSConfigLocated)src).location;
+    }
+
+    @Override
+    public abstract FSConfigLocated duplicate(long flags);
+
+    @Override
     public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
         super.debugInfo(pass, program, mesh, log, debug);
 

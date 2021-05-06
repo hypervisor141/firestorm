@@ -3,25 +3,23 @@ package com.nurverek.firestorm;
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLCopyable;
+import vanguard.VLVMatrix;
 
 public class FSInstance implements VLCopyable<FSInstance>{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
-    public static final long FLAG_SHALLOW_STORAGE = 0x1000L;
-    public static final long FLAG_SHALLOW_STORAGE_ELEMENTS = 0x2000L;
-    public static final long FLAG_SHALLOW_SCHEMATIC_BOUNDS = 0x10000L;
-    public static final long FLAG_REFERENCE_MATERIAL = 0x100000L;
-    public static final long FLAG_REFERENCE_LIGHTMAP = 0x1000000L;
-    public static final long FLAG_REFERENCE_MODEL_MATRIX = 0x10000000L;
-    public static final long FLAG_SHALLOW_MODEL_MATRIX = 0x20000000L;
+    public static final long FLAG_FORCE_DUPLICATE_STORAGE = 0x1000L;
+    public static final long FLAG_DUPLICATE_SCHEMATICS = 0x10000L;
+    public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
+    public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
 
     protected FSMesh mesh;
     protected FSElementStore store;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
     protected FSTexture colortexture;
-    protected FSLightMaterial lightmaterial;
+    protected FSLightMaterial material;
     protected FSLightMap lightmap;
 
     protected String name;
@@ -32,8 +30,8 @@ public class FSInstance implements VLCopyable<FSInstance>{
         this.mesh = mesh;
 
         store = new FSElementStore();
-        id = FSControl.getNextID();
         schematics = new FSSchematics(this);
+        id = FSControl.getNextID();
     }
 
     protected FSInstance(FSInstance src, long flags){
@@ -56,8 +54,8 @@ public class FSInstance implements VLCopyable<FSInstance>{
         this.colortexture = texture;
     }
 
-    public void lightMaterial(FSLightMaterial material){
-        this.lightmaterial = material;
+    public void material(FSLightMaterial material){
+        this.material = material;
     }
 
     public void lightMap(FSLightMap map){
@@ -88,8 +86,8 @@ public class FSInstance implements VLCopyable<FSInstance>{
         return colortexture;
     }
 
-    public FSLightMaterial lightMaterial(){
-        return lightmaterial;
+    public FSLightMaterial material(){
+        return material;
     }
 
     public FSLightMap lightMap(){
@@ -222,22 +220,59 @@ public class FSInstance implements VLCopyable<FSInstance>{
 
     @Override
     public void copy(FSInstance src, long flags){
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             store = src.store;
             schematics = src.schematics;
             modelmatrix = src.modelmatrix;
             colortexture = src.colortexture;
-            lightmaterial = src.lightmaterial;
+            material = src.material;
             lightmap = src.lightmap;
             name = src.name;
             id = src.id;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
-                id = FSControl.getNextID();
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            store = src.store.duplicate(FLAG_DUPLICATE);
+            schematics = src.schematics.duplicate(FLAG_DUPLICATE);
+
+            if(modelmatrix != null){
+                modelmatrix = src.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+            }
+            if(material != null){
+                material = src.material.duplicate(FLAG_DUPLICATE);
+            }
+
+            colortexture = src.colortexture;
+            lightmap = src.lightmap;
+            name = src.name.concat("_duplicate").concat(String.valueOf(id));
+            id = FSControl.getNextID();
+
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            colortexture = src.colortexture;
+            lightmap = src.lightmap;
+
+            if((flags & FLAG_FORCE_DUPLICATE_STORAGE) == FLAG_FORCE_DUPLICATE_STORAGE){
+                store = src.store.duplicate(FLAG_DUPLICATE);
 
             }else{
-                id = src.id;
+                store = src.store.duplicate(FLAG_REFERENCE);
+            }
+            if((flags & FLAG_DUPLICATE_SCHEMATICS) == FLAG_DUPLICATE_SCHEMATICS){
+                schematics = src.schematics.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                schematics = src.schematics.duplicate(FLAG_REFERENCE);
+            }
+            if(material != null && (flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
+                material = src.material.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+
+            }else{
+                material = src.material.duplicate(FLAG_REFERENCE);
+            }
+            if(modelmatrix != null && (flags & FLAG_DUPLICATE_MODEL_MATRIX) == FLAG_DUPLICATE_MODEL_MATRIX){
+                modelmatrix = src.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+
+            }else{
+                modelmatrix = src.modelmatrix.duplicate(FLAG_REFERENCE);
             }
             if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
                 name = src.name.concat("_duplicate").concat(String.valueOf(id));
@@ -245,24 +280,15 @@ public class FSInstance implements VLCopyable<FSInstance>{
             }else{
                 name = src.name;
             }
-            if((flags & FLAG_SHALLOW_STORAGE) == FLAG_SHALLOW_STORAGE){
-                store = store.duplicate(FSElementStore.FLAG_SHALLOW_VAULT);
+            if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
+                id = FSControl.getNextID();
 
-            }else if((flags & FLAG_SHALLOW_STORAGE_ELEMENTS) == FLAG_SHALLOW_STORAGE_ELEMENTS){
-                store = store.duplicate(FSElementStore.FLAG_SHALLOW_VAULT);
+            }else{
+                id = src.id;
             }
 
-            public static final long FLAG_UNIQUE_NAME = 0x100L;
-            public static final long FLAG_SHALLOW_STORAGE = 0x1000L;
-            public static final long FLAG_SHALLOW_STORAGE_ELEMENTS = 0x2000L;
-            public static final long FLAG_SHALLOW_SCHEMATIC_BOUNDS = 0x10000L;
-            public static final long FLAG_REFERENCE_MATERIAL = 0x100000L;
-            public static final long FLAG_REFERENCE_LIGHTMAP = 0x1000000L;
-            public static final long FLAG_REFERENCE_MODEL_MATRIX = 0x10000000L;
-            public static final long FLAG_SHALLOW_MODEL_MATRIX = 0x20000000L;
-
         }else{
-            throw new RuntimeException("Invalid flags : " + flags);
+            Helper.throwMissingAllFlags();
         }
 
         mesh = src.mesh;
@@ -278,7 +304,7 @@ public class FSInstance implements VLCopyable<FSInstance>{
         schematics = null;
         modelmatrix = null;
         colortexture = null;
-        lightmaterial = null;
+        material = null;
         lightmap = null;
         store = null;
         name = null;

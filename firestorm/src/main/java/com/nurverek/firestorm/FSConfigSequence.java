@@ -1,31 +1,37 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
 public class FSConfigSequence extends FSConfigLocated{
 
-    public VLListType<FSConfig> configs;
-    private int glslsize;
+    public static final long FLAG_FORCE_DUPLICATE_CONFIGS = 0x1L;
 
-    public FSConfigSequence(Mode mode, VLListType<FSConfig> configs){
-        super(mode);
-        update(configs);
-    }
+    protected VLListType<FSConfig> configs;
+    protected int glslsize;
 
-    public FSConfigSequence(Mode mode, int glslsize){
+    public FSConfigSequence(Mode mode, int capacity, int resizer){
         super(mode);
-        this.glslsize = glslsize;
+        configs = new VLListType<>(capacity, resizer);
     }
 
     public FSConfigSequence(Mode mode){
         super(mode);
     }
 
-    public void update(VLListType<FSConfig> stages){
-        this.configs = stages;
+    public FSConfigSequence(FSConfigSequence src, long flags){
+        super(null);
+        copy(src, flags);
+    }
 
-        updateGLSLSize();
+    public void add(FSConfig config){
+        configs.add(config);
+        glslsize += config.getGLSLSize();
+    }
+
+    public VLListType<FSConfig> configs(){
+        return configs;
     }
 
     public void updateGLSLSize(){
@@ -100,6 +106,38 @@ public class FSConfigSequence extends FSConfigLocated{
     @Override
     public int getGLSLSize(){
         return glslsize;
+    }
+
+    @Override
+    public void copy(FSConfig src, long flags){
+        super.copy(src, flags);
+
+        FSConfigSequence target = (FSConfigSequence)src;
+
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            configs = target.configs;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            configs = target.configs.duplicate(FLAG_DUPLICATE);
+
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            if((flags & FLAG_FORCE_DUPLICATE_CONFIGS) == FLAG_FORCE_DUPLICATE_CONFIGS){
+                configs = target.configs.duplicate(FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+
+            }else{
+                Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_DUPLICATE_CONFIGS");
+            }
+
+        }else{
+            Helper.throwMissingAllFlags();
+        }
+
+        glslsize = target.glslsize;
+    }
+
+    @Override
+    public FSConfigSequence duplicate(long flags){
+        return new FSConfigSequence(this, flags);
     }
 
     @Override

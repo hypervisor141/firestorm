@@ -1,20 +1,17 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLArrayFloat;
-import vanguard.VLArrayShort;
-import vanguard.VLBufferFloat;
-import vanguard.VLBufferShort;
 import vanguard.VLCopyable;
+import vanguard.VLListInt;
 import vanguard.VLListType;
 
 public final class FSElementStore implements VLCopyable<FSElementStore>{
 
     protected VLListType<FSElement<?, ?>>[] vault;
-    protected FSElement<?, ?>[] active;
+    protected int[] active;
 
     protected FSElementStore(){
         vault = new VLListType[FSGlobal.COUNT];
-        active = new FSElement<?, ?>[FSGlobal.COUNT];
+        active = new int[FSGlobal.COUNT];
     }
 
     public FSElementStore(FSElementStore src, long flags){
@@ -26,7 +23,7 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
     }
 
     public void activate(int element, int index){
-        active[element] = vault[element].get(index);
+        active[element] = index;
     }
 
     public void add(int element, FSElement<?, ?> entry){
@@ -34,7 +31,7 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
     }
 
     public FSElement<?, ?> active(int element){
-        return active[element];
+        return vault[element].get(active[element]);
     }
 
     public FSElement<?, ?> get(int element, int index){
@@ -57,6 +54,10 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
         return vault[element].get(0);
     }
 
+    public int size(int element){
+        return vault[element].size();
+    }
+
     @Override
     public void copy(FSElementStore src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
@@ -70,27 +71,17 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
             vault = new VLListType[size];
 
             for(int i = 0; i < size; i++){
-                if(srcvault[i] != null){
-                    vault[i] = srcvault[i].duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+                VLListType<FSElement<?, ?>> list = srcvault[i];
+
+                if(list != null){
+                    vault[i] = list.duplicate(FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
                 }
             }
 
-            FSElement<?, ?>[] srcactive = src.active;
-            size = srcactive.length;
-
-            active = new FSElement<?, ?>[size];
-
-            for(int i = 0; i < size; i++){
-                if(active[i] != null){
-                    active[i] = active[i].duplicate(FLAG_DUPLICATE);
-                }
-            }
-
-        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            Helper.throwCustomCopyNotSupported(flags);
+            active = src.active.clone();
 
         }else{
-            Helper.throwMissingBaseFlags();
+            Helper.throwMissingDefaultFlags();
         }
     }
 

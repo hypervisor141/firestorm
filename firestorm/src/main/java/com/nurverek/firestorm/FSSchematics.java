@@ -87,7 +87,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             boundsmvp = src.boundsmvp.clone();
 
         }else{
-            Helper.throwMissingBaseFlags();
+            Helper.throwMissingDefaultFlags();
         }
 
         centroidupdater = src.centroidupdater;

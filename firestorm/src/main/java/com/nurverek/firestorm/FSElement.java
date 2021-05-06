@@ -11,8 +11,6 @@ import vanguard.VLListType;
 
 public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSElement<DATA, BUFFER>>{
 
-    public static final long FLAG_SHALLOW_BINDINGS = 0x10L;
-
     public DATA data;
     public VLListType<FSBufferBinding<BUFFER>> bindings;
 
@@ -27,27 +25,13 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
     @Override
     public void copy(FSElement<DATA, BUFFER> src, long flags){
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             data = src.data;
             bindings = src.bindings;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            data = (DATA)src.data.duplicate(FLAG_MAX_DEPTH);
-
-            if((flags & FLAG_SHALLOW_BINDINGS) == FLAG_SHALLOW_BINDINGS){
-                bindings = src.bindings.duplicate(FLAG_MAX_DEPTH);
-
-            }else{
-                VLListType<FSBufferBinding<BUFFER>> srcbindings = src.bindings;
-                bindings = new VLListType<>(srcbindings.size(), srcbindings.resizerCount());
-                bindings.maximizeVirtualSize();
-
-                int size = bindings.size();
-
-                for(int i = 0; i < size; i++){
-                    bindings.set(i, srcbindings.get(i).duplicate(FLAG_MAX_DEPTH));
-                }
-            }
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            data = (DATA)src.data.duplicate(FLAG_DUPLICATE);
+            bindings = src.bindings.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
         }else{
             throw new RuntimeException("Invalid flags : " + flags);
@@ -56,11 +40,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
     @Override
     public abstract FSElement<DATA, BUFFER> duplicate(long flags);
-
     public abstract int size();
-    public abstract void buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer);
-    public abstract void buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int arrayoffset, int arraysize, int unitoffset, int unitsize, int unitsubcount, int stride);
     public abstract void updateBuffer(int index);
+
+    public VLBufferTracker buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer){
+        VLBufferTracker tracker = new VLBufferTracker();
+        bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+
+        return tracker;
+    }
+
+    public VLBufferTracker buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int arrayoffset, int arraysize, int unitoffset, int unitsize, int unitsubcount, int stride){
+        VLBufferTracker tracker = new VLBufferTracker();
+        bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+
+        return tracker;
+    }
+
+    public VLBufferTracker buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, int unitoffset, int unitsize, int unitsubcount, int stride){
+        return buffer(vbuffer, buffer, 0, size(), unitoffset, unitsize, unitsubcount, stride);
+    }
 
     public void updateBuffer(){
         int size = bindings.size();
@@ -139,25 +138,25 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void buffer(FSVertexBuffer<VLBufferShort> vbuffer, VLBufferShort buffer){
-            VLBufferTracker tracker = new VLBufferTracker();
+        public VLBufferTracker buffer(FSVertexBuffer<VLBufferShort> vbuffer, VLBufferShort buffer){
+            VLBufferTracker tracker = super.buffer(vbuffer, buffer);
             buffer.put(tracker, data.provider());
 
-            bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+            return tracker;
         }
 
         @Override
-        public void buffer(FSVertexBuffer<VLBufferShort> vbuffer, VLBufferShort buffer, int arrayoffset, int arraysize, int unitoffset, int unitsize, int unitsubcount, int stride){
-            VLBufferTracker tracker = new VLBufferTracker();
+        public VLBufferTracker buffer(FSVertexBuffer<VLBufferShort> vbuffer, VLBufferShort buffer, int arrayoffset, int arraysize, int unitoffset, int unitsize, int unitsubcount, int stride){
+            VLBufferTracker tracker = super.buffer(vbuffer, buffer, arrayoffset, arraysize, unitoffset, unitsize, unitsubcount, stride);
             buffer.put(tracker, data.provider(), arrayoffset, arraysize, unitoffset, unitsize, unitsubcount, stride);
 
-            bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+            return tracker;
         }
 
         @Override
         public void updateBuffer(int index){
             FSBufferBinding<VLBufferShort> binding = bindings.get(index);
-            binding.buffer.update(binding.tracker, (short[])data.provider());
+            binding.buffer.update(binding.tracker, data.provider());
         }
 
         @Override
@@ -183,25 +182,25 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void buffer(FSVertexBuffer<VLBufferFloat> vbuffer, VLBufferFloat buffer){
-            VLBufferTracker tracker = new VLBufferTracker();
-            buffer.put(tracker, data.provider());
+        public VLBufferTracker buffer(FSVertexBuffer<VLBufferFloat> vbuffer, VLBufferFloat buffer, int arrayoffset, int arraysize, int unitoffset, int unitsize, int unitsubcount, int stride){
+            VLBufferTracker tracker = super.buffer(vbuffer, buffer, arrayoffset, arraysize, unitoffset, unitsize, unitsubcount, stride);
+            buffer.put(tracker, data.provider(), arrayoffset, arraysize, unitoffset, unitsize, unitsubcount, stride);
 
-            bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+            return tracker;
         }
 
         @Override
-        public void buffer(FSVertexBuffer<VLBufferFloat> vbuffer, VLBufferFloat buffer, int arrayoffset, int arraysize, int unitoffset, int unitsize, int unitsubcount, int stride){
-            VLBufferTracker tracker = new VLBufferTracker();
-            buffer.put(tracker, data.provider(), arrayoffset, arraysize, unitoffset, unitsize, unitsubcount, stride);
+        public VLBufferTracker buffer(FSVertexBuffer<VLBufferFloat> vbuffer, VLBufferFloat buffer){
+            VLBufferTracker tracker = super.buffer(vbuffer, buffer);
+            buffer.put(tracker, data.provider());
 
-            bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+            return tracker;
         }
 
         @Override
         public void updateBuffer(int index){
             FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
-            binding.buffer.update(binding.tracker, (float[])data.provider());
+            binding.buffer.update(binding.tracker, data.provider());
         }
 
         @Override

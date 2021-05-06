@@ -217,10 +217,6 @@ public abstract class FSHub{
                     log.append(size);
                     log.append("]\n");
 
-                    if(debug >= FSControl.DEBUG_FULL){
-                        entry.debugInfo(log);
-                    }
-
                     try{
                         entry.accountForBufferSize();
 
@@ -266,10 +262,6 @@ public abstract class FSHub{
                     log.append("/");
                     log.append(size);
                     log.append("]\n");
-
-                    if(debug >= FSControl.DEBUG_FULL){
-                        entry.debugInfo(log);
-                    }
 
                     try{
                         entry.bufferDebugAndFinish(log);

@@ -66,11 +66,8 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
             specular = src.specular.duplicate(FLAG_DUPLICATE);;
             shininess = src.shininess.duplicate(FLAG_DUPLICATE);;
 
-        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            Helper.throwCustomCopyNotSupported(flags);
-
         }else{
-            Helper.throwMissingBaseFlags();
+            Helper.throwMissingDefaultFlags();
         }
     }
 

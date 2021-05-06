@@ -29,18 +29,18 @@ public abstract class FSAttenuation implements VLCopyable<FSAttenuation>{
         public void copy(FSAttenuation src, long flags){
             Distance target = (Distance)src;
 
-            if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
                 constant = target.constant;
                 linear = target.linear;
                 quadratic = target.quadratic;
 
-            }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-                constant = target.constant.duplicate(FLAG_MAX_DEPTH);
-                linear = target.linear.duplicate(FLAG_MAX_DEPTH);
-                quadratic = target.quadratic.duplicate(FLAG_MAX_DEPTH);
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                constant = target.constant.duplicate(FLAG_DUPLICATE);
+                linear = target.linear.duplicate(FLAG_DUPLICATE);
+                quadratic = target.quadratic.duplicate(FLAG_DUPLICATE);
 
             }else{
-                throw new RuntimeException("Invalid flags : " + flags);
+                Helper.throwMissingDefaultFlags();
             }
         }
 
@@ -78,14 +78,14 @@ public abstract class FSAttenuation implements VLCopyable<FSAttenuation>{
         public void copy(FSAttenuation src, long flags){
             Radius target = (Radius)src;
 
-            if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
                 radius = target.radius;
 
-            }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-                radius = target.radius.duplicate(FLAG_MAX_DEPTH);
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                radius = target.radius.duplicate(FLAG_DUPLICATE);
 
             }else{
-                throw new RuntimeException("Invalid flags : " + flags);
+                Helper.throwMissingDefaultFlags();
             }
         }
 

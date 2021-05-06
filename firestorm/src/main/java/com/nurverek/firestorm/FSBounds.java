@@ -117,11 +117,11 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
                 points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             }else{
-                Helper.throwMissingFlag("FLAG_CUSTOM", "FLAG_FORCE_REFERENCE_POINTS", "FLAG_FORCE_DUPLICATE_POINTS");
+                Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_REFERENCE_POINTS", "FLAG_FORCE_DUPLICATE_POINTS");
             }
 
         }else{
-            Helper.throwMissingBaseFlags();
+            Helper.throwMissingDefaultFlags();
         }
 
         schematics = src.schematics;
@@ -238,11 +238,8 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
                 coefficients = src.coefficients.clone();
                 coordinates = src.coordinates.clone();
 
-            }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-                Helper.throwCustomCopyNotSupported(flags);
-
             }else{
-                Helper.throwMissingBaseFlags();
+                Helper.throwMissingDefaultFlags();
             }
         }
 

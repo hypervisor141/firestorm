@@ -25,14 +25,14 @@ public class FSBrightness implements VLCopyable<FSBrightness>{
 
     @Override
     public void copy(FSBrightness src, long flags){
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             level = src.level;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            level = src.level.duplicate(FLAG_MAX_DEPTH);
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            level = src.level.duplicate(FLAG_DUPLICATE);
 
         }else{
-            throw new RuntimeException("Invalid flags : " + flags);
+            Helper.throwMissingDefaultFlags();
         }
     }
 

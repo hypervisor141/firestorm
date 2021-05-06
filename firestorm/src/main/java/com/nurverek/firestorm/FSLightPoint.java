@@ -32,16 +32,16 @@ public class FSLightPoint extends FSLight{
 
         FSLightPoint target = (FSLightPoint)src;
 
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             attenuation = target.attenuation;
             position = target.position;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            attenuation = target.attenuation.duplicate(FLAG_MAX_DEPTH);
-            position = target.position.duplicate(FLAG_MAX_DEPTH);
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            attenuation = target.attenuation.duplicate(FLAG_DUPLICATE);
+            position = target.position.duplicate(FLAG_DUPLICATE);
 
         }else{
-            throw new RuntimeException("Invalid flags : " + flags);
+            Helper.throwMissingDefaultFlags();
         }
     }
 

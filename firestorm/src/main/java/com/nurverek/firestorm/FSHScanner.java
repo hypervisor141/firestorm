@@ -25,8 +25,6 @@ public abstract class FSHScanner{
     protected void bufferAndFinish(){
         map.buffer(mesh);
         program.meshes().add(mesh);
-
-        set active bindings;
     }
 
     protected void scanComplete(){
@@ -46,63 +44,6 @@ public abstract class FSHScanner{
         program.meshes().add(mesh);
     }
 
-    protected void debugInfo(VLLog log){
-        log.append("[");
-        log.append(getClass().getSimpleName());
-        log.append("] ");
-        log.append("mesh[" + mesh.name + "] ");
-
-        int size = mesh.size();
-        VLArrayFloat[] data;
-        VLArrayFloat array;
-        int[] requirements = new int[FSGlobal.COUNT];
-
-        if(mesh.indices != null){
-            requirements[FSGlobal.ELEMENT_INDEX] = mesh.indices.size();
-        }
-
-        for(int i = 0; i < size; i++){
-            data = mesh.get(i).data.locations;
-
-            for(int i2 = 0; i2 < data.length; i2++){
-                array = data[i2];
-
-                if(array != null){
-                    requirements[i2] += array.size();
-                }
-            }
-        }
-
-        log.append("storageRequirements[");
-
-        if(assembler.INSTANCE_SHARE_POSITIONS){
-            requirements[FSGlobal.ELEMENT_POSITION] /= size;
-        }
-        if(assembler.INSTANCE_SHARE_COLORS){
-            requirements[FSGlobal.ELEMENT_COLOR] /= size;
-        }
-        if(assembler.INSTANCE_SHARE_TEXCOORDS){
-            requirements[FSGlobal.ELEMENT_TEXCOORD] /= size;
-        }
-        if(assembler.INSTANCE_SHARE_NORMALS){
-            requirements[FSGlobal.ELEMENT_NORMAL] /= size;
-        }
-
-        size = FSGlobal.NAMES.length;
-
-        for(int i = 0; i < size; i++){
-            log.append(FSGlobal.NAMES[i]);
-            log.append("[");
-            log.append(requirements[i]);
-
-            if(i < size - 1){
-                log.append("] ");
-            }
-        }
-
-        log.append("]]\n");
-    }
-
     public static class Singular extends FSHScanner{
 
         public Singular(FSMesh mesh, FSP program, FSBufferMap map, FSHAssembler assembler, String name, int drawmode){
@@ -116,10 +57,6 @@ public abstract class FSHScanner{
                 mesh.name(name);
 
                 FSInstance instance = mesh.generateInstance(data.name);
-
-                if(assembler.LOAD_INDICES){
-                    mesh.indices(new VLArrayShort(data.indices.array()));
-                }
 
                 assembler.buildFirst(instance, this, data);
                 mesh.scanComplete(instance);
@@ -145,8 +82,7 @@ public abstract class FSHScanner{
 
                 FSInstance instance = mesh.generateInstance(data.name);
 
-                if(assembler.LOAD_INDICES && mesh.indices == null){
-                    mesh.indices(new VLArrayShort(data.indices.array()));
+                if(mesh.size() == 1){
                     assembler.buildFirst(instance, this, data);
 
                 }else{
@@ -180,17 +116,14 @@ public abstract class FSHScanner{
 
                 FSInstance instance = mesh.generateInstance(data.name);
 
-                if(assembler.LOAD_INDICES && mesh.indices == null){
-                    mesh.indices(new VLArrayShort(data.indices.array()));
+                assembler.buildFirst(instance, this, data);
+                mesh.scanComplete(instance);
+
+                for(int i = 0; i < copycount; i++){
+                    instance = mesh.generateInstance(data.name);
+
                     assembler.buildFirst(instance, this, data);
                     mesh.scanComplete(instance);
-
-                    for(int i = 0; i < copycount; i++){
-                        instance = mesh.generateInstance(data.name);
-
-                        assembler.buildFirst(instance, this, data);
-                        mesh.scanComplete(instance);
-                    }
                 }
 
                 return true;

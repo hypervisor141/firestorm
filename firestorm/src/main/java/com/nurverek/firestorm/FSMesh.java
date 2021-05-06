@@ -1,18 +1,27 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public class FSMesh{
+public class FSMesh implements VLCopyable<FSMesh>{
 
-    protected String name;
+    public static final long FLAG_UNIQUE_ID = 0x10L;
+    public static final long FLAG_UNIQUE_NAME = 0x100L;
+    public static final long FLAG_FORCE_DUPLICATE_INSTANCES = 0x1000L;
+    public static final long FLAG_DUPLICATE_CONFIGS = 0x100000L;
 
     protected VLListType<FSInstance> instances;
-    protected VLListType<FSBufferBinding<?>>[] activebindings;
-    protected FSConfigGroup configs;
+    protected VLListType<FSBufferBinding<?>>[] bindings;
+    protected FSConfigSequence configs;
+    protected String name;
 
-    protected long id;
     protected int drawmode;
+    protected long id;
+
+    public FSMesh(FSMesh src, long flags){
+        copy(src, flags);
+    }
 
     public FSMesh(){
 
@@ -21,19 +30,18 @@ public class FSMesh{
     public void initialize(int drawmode, int capacity, int resizer){
         this.drawmode = drawmode;
 
-        activebindings = new VLListType[FSGlobal.COUNT];
-
-        id = FSControl.getNextID();
         instances = new VLListType<>(capacity, resizer);
+        bindings = new VLListType[FSGlobal.COUNT];
+        id = FSControl.getNextID();
     }
 
     public void initConfigs(FSConfig.Mode mode, int capacity, int resizer){
-        this.configs = new FSConfigGroup(mode, capacity, resizer);
+        this.configs = new FSConfigSequence(mode, capacity, resizer);
     }
 
     public void scanComplete(FSInstance instance){}
     public void scanComplete(){}
-    public void bufferComplete(int index, int element, FSInstance instance){}
+    public void bufferComplete(FSInstance instance, int index, int element, int storageindex){}
     public void bufferComplete(){}
     public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
 
@@ -48,20 +56,24 @@ public class FSMesh{
         configs.add(config);
     }
 
-    public void activateBinding(int element, FSBufferBinding<?> binding){
-        activebindings[element].add(binding);
-    }
-
-    public void deactivateBinding(int element, int index){
-        activebindings[element].remove(index);
-    }
-
     public void drawMode(int mode){
         drawmode = mode;
     }
 
     public void name(String name){
         this.name = name;
+    }
+
+    public void bindFromStorage(int instanceindex, int element, int storageindex, int bindingindex){
+        bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
+    }
+
+    public void bindFromActive(int instanceindex, int element, int bindingindex){
+        bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
+    }
+
+    public void unbind(int element, int index){
+        bindings[element].remove(index);
     }
 
     public FSInstance first(){
@@ -72,12 +84,24 @@ public class FSMesh{
         return instances.get(index);
     }
 
-    public FSConfig getConfig(int index){
-        return configs.configs.get(index);
+    public FSConfig config(int index){
+        return configs.configs().get(index);
     }
 
-    public FSConfigGroup configGroup(int index){
+    public FSConfigSequence configs(){
         return configs;
+    }
+
+    public FSBufferBinding<?> binding(int element, int index){
+        return bindings[element].get(index);
+    }
+
+    public VLListType<FSBufferBinding<?>> bindings(int element){
+        return bindings[element];
+    }
+
+    public VLListType<FSBufferBinding<?>>[] bindings(){
+        return bindings;
     }
 
     public FSInstance remove(int index){
@@ -100,10 +124,6 @@ public class FSMesh{
         return instances;
     }
 
-    public VLListType<FSBufferBinding<?>> bindings(int element){
-        return activebindings[element];
-    }
-
     public long id(){
         return id;
     }
@@ -124,11 +144,11 @@ public class FSMesh{
         }
     }
 
-    public void lightMaterial(FSLightMaterial material){
+    public void material(FSLightMaterial material){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).lightMaterial(material);
+            instances.get(i).material(material);
         }
     }
 
@@ -210,6 +230,60 @@ public class FSMesh{
         for(int i = 0; i < size; i++){
             instances.get(i).updateBufferPipelineStrict(element);
         }
+    }
+
+    @Override
+    public void copy(FSMesh src, long flags){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            instances = src.instances;
+            configs = src.configs;
+            name = src.name;
+            drawmode = src.drawmode;
+            id = src.id;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            instances = src.instances.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            configs = src.configs.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            name = src.name.concat("_duplicate").concat(String.valueOf(id));
+            drawmode = src.drawmode;
+            id = FSControl.getNextID();
+
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            if((flags & FLAG_FORCE_DUPLICATE_INSTANCES) == FLAG_FORCE_DUPLICATE_INSTANCES){
+                instances = src.instances.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+
+            }else{
+                instances = src.instances.duplicate(VLListType.FLAG_REFERENCE);
+            }
+            if((flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
+                configs = src.configs.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                configs = src.configs.duplicate(FLAG_REFERENCE);
+            }
+            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
+                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+
+            }else{
+                name = src.name;
+            }
+            if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
+                id = FSControl.getNextID();
+
+            }else{
+                id = src.id;
+            }
+
+            drawmode = src.drawmode;
+
+        }else{
+            Helper.throwMissingAllFlags();
+        }
+    }
+
+    @Override
+    public FSMesh duplicate(long flags){
+        return new FSMesh(this, flags);
     }
 
     public void destroy(){

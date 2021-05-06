@@ -37,15 +37,15 @@ public class FSLightDirect extends FSLight{
 
         FSLightDirect target = (FSLightDirect)src;
 
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             position = target.position;
             center = target.center;
             direction = target.direction;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            position = target.position.duplicate(FLAG_MAX_DEPTH);
-            center = target.center.duplicate(FLAG_MAX_DEPTH);
-            direction = target.direction.duplicate(FLAG_MAX_DEPTH);
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            position = target.position.duplicate(FLAG_DUPLICATE);
+            center = target.center.duplicate(FLAG_DUPLICATE);
+            direction = target.direction.duplicate(FLAG_DUPLICATE);
 
         }else{
             throw new RuntimeException("Invalid flags : " + flags);

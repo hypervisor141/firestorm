@@ -10,6 +10,7 @@ import vanguard.VLArrayFloat;
 import vanguard.VLArrayInt;
 import vanguard.VLArrayUtils;
 import vanguard.VLBufferTracker;
+import vanguard.VLCopyable;
 import vanguard.VLFloat;
 import vanguard.VLInt;
 import vanguard.VLListType;
@@ -407,12 +408,12 @@ public abstract class FSP{
 
     public static class CoreConfig{
         
-        public FSConfigGroup setupconfig;
-        public FSConfigGroup meshconfig;
-        public FSConfigGroup postdrawconfig;
-        public FSConfigGroup postframeconfig;
+        public FSConfigSequence setupconfig;
+        public FSConfigSequence meshconfig;
+        public FSConfigSequence postdrawconfig;
+        public FSConfigSequence postframeconfig;
 
-        public CoreConfig(FSConfigGroup setupconfig, FSConfigGroup meshconfig, FSConfigGroup postdrawconfig, FSConfigGroup postframeconfig){
+        public CoreConfig(FSConfigSequence setupconfig, FSConfigSequence meshconfig, FSConfigSequence postdrawconfig, FSConfigSequence postframeconfig){
             this.setupconfig = setupconfig;
             this.meshconfig = meshconfig;
             this.postdrawconfig = postdrawconfig;
@@ -429,6 +430,11 @@ public abstract class FSP{
             this.flag = flag;
         }
 
+        public Clear(Clear src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glClear(flag);
@@ -437,6 +443,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            flag = ((Clear)src).flag;
+        }
+
+        @Override
+        public Clear duplicate(long flags){
+            return new Clear(this, flags);
         }
 
         @Override
@@ -458,6 +475,11 @@ public abstract class FSP{
             this.color = color;
         }
 
+        public ClearColor(ClearColor src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glClearColor(color[0], color[1], color[2], color[3]);
@@ -466,6 +488,26 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                color = ((ClearColor)src).color;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                color = ((ClearColor)src).color.clone();
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+        }
+
+        @Override
+        public ClearColor duplicate(long flags){
+            return new ClearColor(this, flags);
         }
 
         @Override
@@ -480,30 +522,62 @@ public abstract class FSP{
 
     public static class ViewPort extends FSConfig{
 
-        public FSView config;
+        public FSView view;
         public int x;
         public int y;
         public int width;
         public int height;
 
-        public ViewPort(Mode mode, FSView config, int x, int y, int width, int height){
+        public ViewPort(Mode mode, FSView view, int x, int y, int width, int height){
             super(mode);
 
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
-            this.config = config;
+            this.view = view;
+        }
+
+        public ViewPort(ViewPort src, long flags){
+            super(null);
+            copy(src, flags);
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            config.viewPort(x, y, width, height);
+            view.viewPort(x, y, width, height);
         }
 
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            ViewPort target = (ViewPort)src;
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                view = target.view;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                view = target.view.duplicate(VLCopyable.FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+
+            x = target.x;
+            y = target.y;
+            width = target.width;
+            height = target.height;
+        }
+
+        @Override
+        public ViewPort duplicate(long flags){
+            return new ViewPort(this, flags);
         }
 
         @Override
@@ -530,6 +604,11 @@ public abstract class FSP{
             this.mask = mask;
         }
 
+        public DepthMask(DepthMask src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glDepthMask(mask);
@@ -538,6 +617,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            mask = ((DepthMask)src).mask;
+        }
+
+        @Override
+        public DepthMask duplicate(long flags){
+            return new DepthMask(this, flags);
         }
 
         @Override
@@ -559,6 +649,11 @@ public abstract class FSP{
             this.cullmode = cullmode;
         }
 
+        public CullFace(CullFace src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glCullFace(cullmode);
@@ -567,6 +662,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            cullmode = ((CullFace)src).cullmode;
+        }
+
+        @Override
+        public CullFace duplicate(long flags){
+            return new CullFace(this, flags);
         }
 
         @Override
@@ -588,6 +694,11 @@ public abstract class FSP{
             this.divisor = divisor;
         }
 
+        public AttribDivisor(AttribDivisor src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttribDivisor(location, divisor);
@@ -596,6 +707,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            divisor = ((AttribDivisor)src).divisor;
+        }
+
+        @Override
+        public AttribDivisor duplicate(long flags){
+            return new AttribDivisor(this, flags);
         }
 
         @Override
@@ -617,6 +739,11 @@ public abstract class FSP{
             this.readmode = readmode;
         }
 
+        public ReadBuffer(ReadBuffer src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glReadBuffer(readmode);
@@ -625,6 +752,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            readmode = ((ReadBuffer)src).readmode;
+        }
+
+        @Override
+        public ReadBuffer duplicate(long flags){
+            return new ReadBuffer(this, flags);
         }
 
         @Override
@@ -643,6 +781,11 @@ public abstract class FSP{
             super(mode, location);
         }
 
+        public AttribEnable(AttribEnable src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glEnableVertexAttribArray(location);
@@ -652,12 +795,22 @@ public abstract class FSP{
         public int getGLSLSize(){
             return 0;
         }
+
+        @Override
+        public AttribEnable duplicate(long flags){
+            return new AttribEnable(this, flags);
+        }
     }
 
     public static class AttribDisable extends FSConfigLocated{
 
         public AttribDisable(Mode mode, int location){
             super(mode, location);
+        }
+
+        public AttribDisable(AttribDisable src, long flags){
+            super(null);
+            copy(src, flags);
         }
 
         @Override
@@ -668,6 +821,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public AttribDisable duplicate(long flags){
+            return new AttribDisable(this, flags);
         }
     }
 
@@ -683,6 +841,10 @@ public abstract class FSP{
             this.array = array;
             this.offset = offset;
             this.count = count;
+        }
+
+        public Array(Mode mode){
+            super(mode);
         }
 
         public final void offset(int s){
@@ -719,18 +881,45 @@ public abstract class FSP{
         }
 
         @Override
-        public abstract void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug);
-
-        @Override
         public int getGLSLSize(){
             return count;
         }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            Array<TYPE> target = (Array<TYPE>)src;
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                array = target.array;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                array = (TYPE)target.array.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+
+            offset = target.offset;
+            count = target.count;
+        }
+
+        @Override
+        public abstract Array<TYPE> duplicate(long flags);
+
+        @Override
+        public abstract void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug);
     }
 
     public abstract static class ArrayDirect<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
 
         public ArrayDirect(Mode mode, TYPE array, int offset, int count){
             super(mode, array, offset, count);
+        }
+
+        public ArrayDirect(Mode mode){
+            super(mode);
         }
 
         @Override
@@ -745,6 +934,9 @@ public abstract class FSP{
 
             log.append("]");
         }
+
+        @Override
+        public abstract ArrayDirect<TYPE> duplicate(long flags);
     }
 
     public abstract static class ArrayElement<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
@@ -757,6 +949,10 @@ public abstract class FSP{
 
             this.element = element;
             this.instance = instance;
+        }
+
+        public ArrayElement(Mode mode){
+            super(mode);
         }
 
         public final void set(int instance, int element){
@@ -778,6 +974,19 @@ public abstract class FSP{
         }
 
         @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            ArrayElement<TYPE> target = (ArrayElement<TYPE>)src;
+
+            target.instance = instance;
+            target.element = element;
+        }
+
+        @Override
+        public abstract ArrayElement<TYPE> duplicate(long flags);
+
+        @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             log.append("] instance[");
             log.append(instance);
@@ -786,7 +995,11 @@ public abstract class FSP{
             log.append("] array[");
 
             if(array == null){
-                mesh.get(instance).elementData(element).stringify(log.get(), null);
+                log.append("element[");
+                log.append(mesh.get(instance).elementData(element).getClass().getSimpleName());
+                log.append(", ");
+                log.append(element);
+                log.append("]");
 
             }else{
                 array.stringify(log.get(), null);
@@ -812,13 +1025,18 @@ public abstract class FSP{
             this.normalized = normalized;
         }
 
+        public AttribPointer(AttribPointer src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSElement<?, ?> info = mesh.first().element(element);
-            VLBufferTracker tracker = info.tracker;
+            FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
+            VLBufferTracker tracker = binding.tracker;
 
             int bytesize = tracker.typebytesize;
-            info.vbuffer.bind();
+            binding.vbuffer.bind();
 
             GLES32.glVertexAttribPointer(location, unitsize, FSGlobal.GLTYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
         }
@@ -826,6 +1044,23 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            AttribPointer target = (AttribPointer)src;
+
+            element = target.element;
+            unitsize = target.unitsize;
+            bindingindex = target.bindingindex;
+            normalized = target.normalized;
+        }
+
+        @Override
+        public AttribPointer duplicate(long flags){
+            return new AttribPointer(this, flags);
         }
 
         @Override
@@ -841,68 +1076,12 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
-
-            }catch(Exception ex){
-                log.append("[PRINT FAILED]");
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    public static class AttribPointerLink extends FSConfigLocated{
-
-        public int linkindex;
-        public int unitsize;
-        public boolean normalized;
-
-        public AttribPointerLink(Mode mode, int linkindex, int unitsize, boolean normalized){
-            super(mode);
-
-            this.linkindex = linkindex;
-            this.unitsize = unitsize;
-            this.normalized = normalized;
-        }
-
-        @Override
-        public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-            VLBufferTracker tracker = link.tracker;
-            int bytesize = tracker.typebytesize;
-
-            link.vbuffer.bind();
-
-            GLES32.glVertexAttribPointer(location, unitsize, link.gldatatype, normalized, tracker.stride * bytesize, tracker.offset * bytesize);
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
-
-        @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
-            super.debugInfo(pass, program, mesh, log, debug);
-
-            log.append("linkIndex[");
-            log.append(linkindex);
-            log.append("] normalized[");
-            log.append(normalized);
-            log.append("] tracker[");
-
-            try{
-                FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-
-                link.tracker.stringify(log.get(), null);
-                log.append("] buffer[");
-
-                link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
                 log.append("] ");
 
             }catch(Exception ex){
@@ -926,10 +1105,15 @@ public abstract class FSP{
             this.unitsize = unitsize;
         }
 
+        public AttribIPointer(AttribIPointer src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
-            VLBufferTracker tracker = (VLBufferTracker)binding.tracker;
+            FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
+            VLBufferTracker tracker = binding.tracker;
 
             int bytesize = tracker.typebytesize;
 
@@ -944,6 +1128,22 @@ public abstract class FSP{
         }
 
         @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            AttribPointer target = (AttribPointer)src;
+
+            element = target.element;
+            unitsize = target.unitsize;
+            bindingindex = target.bindingindex;
+        }
+
+        @Override
+        public AttribIPointer duplicate(long flags){
+            return new AttribIPointer(this, flags);
+        }
+
+        @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
@@ -954,64 +1154,12 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
-
-            }catch(Exception ex){
-                log.append("[PRINT FAILED]");
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    public static class AttribIPointerLink extends FSConfigLocated{
-
-        public int linkindex;
-        public int unitsize;
-
-        public AttribIPointerLink(Mode mode, int linkindex, int unitsize){
-            super(mode);
-
-            this.linkindex = linkindex;
-            this.unitsize = unitsize;
-        }
-
-        @Override
-        public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-            VLBufferTracker tracker = link.tracker;
-            int bytesize = tracker.typebytesize;
-
-            link.vbuffer.bind();
-
-            GLES32.glVertexAttribIPointer(location, unitsize, link.gldatatype, tracker.stride * bytesize, tracker.offset * bytesize);
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
-        }
-
-        @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
-            super.debugInfo(pass, program, mesh, log, debug);
-
-            log.append("linkIndex[");
-            log.append(linkindex);
-            log.append("] tracker[");
-
-            try{
-                FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-
-                link.tracker.stringify(log.get(), null);
-                log.append("] buffer[");
-
-                link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
                 log.append("] ");
 
             }catch(Exception ex){
@@ -1027,9 +1175,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public UniformMatrix4fvd(UniformMatrix4fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniformMatrix4fv(location, count(), false, array().provider(), offset());
+        }
+
+        @Override
+        public UniformMatrix4fvd duplicate(long flags){
+            return new UniformMatrix4fvd(this, flags);
         }
     }
 
@@ -1039,10 +1197,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public UniformMatrix4fve(UniformMatrix4fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniformMatrix4fv(location, count(), false, array().provider(), offset());
+        }
+
+        @Override
+        public UniformMatrix4fve duplicate(long flags){
+            return new UniformMatrix4fve(this, flags);
         }
     }
 
@@ -1052,9 +1220,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform4fvd(Uniform4fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform4fvd duplicate(long flags){
+            return new Uniform4fvd(this, flags);
         }
     }
 
@@ -1064,11 +1242,21 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform4fve(Uniform4fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
 
             GLES32.glUniform4fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform4fve duplicate(long flags){
+            return new Uniform4fve(this, flags);
         }
     }
 
@@ -1078,9 +1266,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform3fvd(Uniform3fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform3fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform3fvd duplicate(long flags){
+            return new Uniform3fvd(this, flags);
         }
     }
 
@@ -1090,10 +1288,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform3fve(Uniform3fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform3fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform3fve duplicate(long flags){
+            return new Uniform3fve(this, flags);
         }
     }
 
@@ -1103,9 +1311,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform2fvd(Uniform2fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform2fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform2fvd duplicate(long flags){
+            return new Uniform2fvd(this, flags);
         }
     }
 
@@ -1115,10 +1333,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform2fve(Uniform2fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform2fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform2fve duplicate(long flags){
+            return new Uniform2fve(this, flags);
         }
     }
 
@@ -1128,9 +1356,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform1fvd(Uniform1fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform1fvd duplicate(long flags){
+            return new Uniform1fvd(this, flags);
         }
     }
 
@@ -1140,10 +1378,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform1fve(Uniform1fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform1fv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform1fve duplicate(long flags){
+            return new Uniform1fve(this, flags);
         }
     }
 
@@ -1163,9 +1411,24 @@ public abstract class FSP{
             this.w = w;
         }
 
+        public Uniform4f(Uniform4f src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4f(location, x.get(), y.get(), z.get(), w.get());
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 1;
+        }
+
+        @Override
+        public Uniform4f duplicate(long flags){
+            return new Uniform4f(this, flags);
         }
 
         @Override
@@ -1181,11 +1444,6 @@ public abstract class FSP{
             log.append("], w[");
             log.append(w.get());
             log.append("] ");
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 1;
         }
     }
 
@@ -1203,6 +1461,11 @@ public abstract class FSP{
             this.z = z;
         }
 
+        public Uniform3f(Uniform3f src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform3f(location, x.get(), y.get(), z.get());
@@ -1211,6 +1474,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public Uniform3f duplicate(long flags){
+            return new Uniform3f(this, flags);
         }
 
         @Override
@@ -1239,6 +1507,11 @@ public abstract class FSP{
             this.y = y;
         }
 
+        public Uniform2f(Uniform2f src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform2f(location, x.get(), y.get());
@@ -1247,6 +1520,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public Uniform2f duplicate(long flags){
+            return new Uniform2f(this, flags);
         }
 
         @Override
@@ -1270,6 +1548,11 @@ public abstract class FSP{
             this.x = x;
         }
 
+        public Uniform1f(Uniform1f src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1f(location, x.get());
@@ -1278,6 +1561,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public Uniform1f duplicate(long flags){
+            return new Uniform1f(this, flags);
         }
 
         @Override
@@ -1296,9 +1584,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform4ivd(Uniform4ivd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform4ivd duplicate(long flags){
+            return new Uniform4ivd(this, flags);
         }
     }
 
@@ -1308,10 +1606,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform4ive(Uniform4ive src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform4ive duplicate(long flags){
+            return new Uniform4ive(this, flags);
         }
     }
 
@@ -1321,9 +1629,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform3ivd(Uniform3ivd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform3ivd duplicate(long flags){
+            return new Uniform3ivd(this, flags);
         }
     }
 
@@ -1333,10 +1651,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform3ive(Uniform3ive src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform3ive duplicate(long flags){
+            return new Uniform3ive(this, flags);
         }
     }
 
@@ -1346,9 +1674,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform2ivd(Uniform2ivd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform2ivd duplicate(long flags){
+            return new Uniform2ivd(this, flags);
         }
     }
 
@@ -1358,10 +1696,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform2ive(Uniform2ive src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform2ive duplicate(long flags){
+            return new Uniform2ive(this, flags);
         }
     }
 
@@ -1371,9 +1719,19 @@ public abstract class FSP{
             super(mode, array, offset, count);
         }
 
+        public Uniform1ivd(Uniform1ivd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform1ivd duplicate(long flags){
+            return new Uniform1ivd(this, flags);
         }
     }
 
@@ -1383,10 +1741,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, count);
         }
 
+        public Uniform1ive(Uniform1ive src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glUniform1iv(location, count(), array().provider(), offset());
+        }
+
+        @Override
+        public Uniform1ive duplicate(long flags){
+            return new Uniform1ive(this, flags);
         }
     }
 
@@ -1406,6 +1774,11 @@ public abstract class FSP{
             this.w = w;
         }
 
+        public Uniform4i(Uniform4i src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform4i(location, x.get(), y.get(), z.get(), w.get());
@@ -1414,6 +1787,34 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            Uniform4i target = (Uniform4i)src;
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                x = target.x;
+                y = target.y;
+                z = target.z;
+                w = target.w;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                x = target.x.duplicate(FLAG_DUPLICATE);
+                y = target.y.duplicate(FLAG_DUPLICATE);
+                z = target.z.duplicate(FLAG_DUPLICATE);
+                w = target.w.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+        }
+
+        @Override
+        public Uniform4i duplicate(long flags){
+            return new Uniform4i(this, flags);
         }
 
         @Override
@@ -1446,6 +1847,11 @@ public abstract class FSP{
             this.z = z;
         }
 
+        public Uniform3i(Uniform3i src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform3i(location, x.get(), y.get(), z.get());
@@ -1454,6 +1860,32 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            Uniform3i target = (Uniform3i)src;
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                x = target.x;
+                y = target.y;
+                z = target.z;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                x = target.x.duplicate(FLAG_DUPLICATE);
+                y = target.y.duplicate(FLAG_DUPLICATE);
+                z = target.z.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+        }
+
+        @Override
+        public Uniform3i duplicate(long flags){
+            return new Uniform3i(this, flags);
         }
 
         @Override
@@ -1482,6 +1914,11 @@ public abstract class FSP{
             this.y = y;
         }
 
+        public Uniform2i(Uniform2i src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform2i(location, x.get(), y.get());
@@ -1490,6 +1927,30 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            Uniform2i target = (Uniform2i)src;
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                x = target.x;
+                y = target.y;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                x = target.x.duplicate(FLAG_DUPLICATE);
+                y = target.y.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+        }
+
+        @Override
+        public Uniform2i duplicate(long flags){
+            return new Uniform2i(this, flags);
         }
 
         @Override
@@ -1513,6 +1974,11 @@ public abstract class FSP{
             this.x = x;
         }
 
+        public Uniform1i(Uniform1i src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1i(location, x.get());
@@ -1521,6 +1987,26 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                x = ((Uniform1i)src).x;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                x = ((Uniform1i)src).x.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+        }
+
+        @Override
+        public Uniform1i duplicate(long flags){
+            return new Uniform1i(this, flags);
         }
 
         @Override
@@ -1539,9 +2025,19 @@ public abstract class FSP{
             super(mode, array, offset, 4);
         }
 
+        public Attrib4fvd(Attrib4fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib4fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib4fvd duplicate(long flags){
+            return new Attrib4fvd(this, flags);
         }
     }
 
@@ -1551,10 +2047,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, 4);
         }
 
+        public Attrib4fve(Attrib4fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib4fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib4fve duplicate(long flags){
+            return new Attrib4fve(this, flags);
         }
     }
 
@@ -1564,9 +2070,19 @@ public abstract class FSP{
             super(mode, array, offset, 3);
         }
 
+        public Attrib3fvd(Attrib3fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib3fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib3fvd duplicate(long flags){
+            return new Attrib3fvd(this, flags);
         }
     }
 
@@ -1576,10 +2092,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, 3);
         }
 
+        public Attrib3fve(Attrib3fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib3fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib3fve duplicate(long flags){
+            return new Attrib3fve(this, flags);
         }
     }
 
@@ -1589,9 +2115,19 @@ public abstract class FSP{
             super(mode, array, offset, 2);
         }
 
+        public Attrib2fvd(Attrib2fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib2fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib2fvd duplicate(long flags){
+            return new Attrib2fvd(this, flags);
         }
     }
 
@@ -1601,10 +2137,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, 2);
         }
 
+        public Attrib2fve(Attrib2fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib2fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib2fve duplicate(long flags){
+            return new Attrib2fve(this, flags);
         }
     }
 
@@ -1614,9 +2160,19 @@ public abstract class FSP{
             super(mode, array, offset, 1);
         }
 
+        public Attrib1fvd(Attrib1fvd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib1fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib1fvd duplicate(long flags){
+            return new Attrib1fvd(this, flags);
         }
     }
 
@@ -1626,10 +2182,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, 1);
         }
 
+        public Attrib1fve(Attrib1fve src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glVertexAttrib1fv(location, array().provider(), offset());
+        }
+
+        @Override
+        public Attrib1fve duplicate(long flags){
+            return new Attrib1fve(this, flags);
         }
     }
 
@@ -1649,6 +2215,11 @@ public abstract class FSP{
             this.w = w;
         }
 
+        public AttribI4i(AttribI4i src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4i(location, x.get(), y.get(), z.get(), w.get());
@@ -1657,6 +2228,34 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            AttribI4i target = (AttribI4i)src;
+
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                x = target.x;
+                y = target.y;
+                z = target.z;
+                w = target.w;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                x = target.x.duplicate(FLAG_DUPLICATE);
+                y = target.y.duplicate(FLAG_DUPLICATE);
+                z = target.z.duplicate(FLAG_DUPLICATE);
+                w = target.w.duplicate(FLAG_DUPLICATE);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+        }
+
+        @Override
+        public AttribI4i duplicate(long flags){
+            return new AttribI4i(this, flags);
         }
 
         @Override
@@ -1681,9 +2280,19 @@ public abstract class FSP{
             super(mode, array, offset, 4);
         }
 
+        public AttribI4ivd(AttribI4ivd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4iv(location, array().provider(), offset());
+        }
+
+        @Override
+        public AttribI4ivd duplicate(long flags){
+            return new AttribI4ivd(this, flags);
         }
     }
 
@@ -1693,10 +2302,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, 4);
         }
 
+        public AttribI4ive(AttribI4ive src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glVertexAttribI4iv(location, array().provider(), offset());
+        }
+
+        @Override
+        public AttribI4ive duplicate(long flags){
+            return new AttribI4ive(this, flags);
         }
     }
 
@@ -1706,9 +2325,19 @@ public abstract class FSP{
             super(mode, array, offset, 4);
         }
 
+        public AttribI4uivd(AttribI4uivd src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4uiv(location, array().provider(), offset());
+        }
+
+        @Override
+        public AttribI4uivd duplicate(long flags){
+            return new AttribI4uivd(this, flags);
         }
     }
 
@@ -1718,10 +2347,20 @@ public abstract class FSP{
             super(mode, element, instance, offset, 4);
         }
 
+        public AttribI4uive(AttribI4uive src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             super.configure(pass, program, mesh, meshindex, passindex);
             GLES32.glVertexAttribI4uiv(location, array().provider(), offset());
+        }
+
+        @Override
+        public AttribI4uive duplicate(long flags){
+            return new AttribI4uive(this, flags);
         }
     }
 
@@ -1740,6 +2379,11 @@ public abstract class FSP{
             this.name = name;
         }
 
+        public UniformBlockElement(UniformBlockElement src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         protected void notifyProgramBuilt(FSP program){
             location = program.getUniformBlockIndex(name);
@@ -1748,7 +2392,7 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer<?> buffer = mesh.first().bufferBindings().get(element, bindingindex).vbuffer;
+            FSVertexBuffer<?> buffer = mesh.binding(element, bindingindex).vbuffer;
 
             program.uniformBlockBinding(location, buffer.bindPoint());
             buffer.bindBufferBase();
@@ -1757,6 +2401,21 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            UniformBlockElement target = (UniformBlockElement)src;
+            element = target.element;
+            bindingindex = target.bindingindex;
+            name = target.name;
+        }
+
+        @Override
+        public UniformBlockElement duplicate(long flags){
+            return new UniformBlockElement(this, flags);
         }
 
         @Override
@@ -1770,7 +2429,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(this.element, this.bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");
@@ -1797,6 +2456,11 @@ public abstract class FSP{
             this.name = name;
         }
 
+        public UniformBlockData(UniformBlockData src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         protected void notifyProgramBuilt(FSP program){
             location = program.getUniformBlockIndex(name);
@@ -1812,6 +2476,20 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            UniformBlockData target = (UniformBlockData)src;
+            vbuffer = target.vbuffer;
+            name = target.name;
+        }
+
+        @Override
+        public UniformBlockData duplicate(long flags){
+            return new UniformBlockData(this, flags);
         }
 
         @Override
@@ -1835,6 +2513,11 @@ public abstract class FSP{
             this.texture = texture;
         }
 
+        public TextureBind(TextureBind src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             texture.activateUnit();
@@ -1844,6 +2527,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            texture = ((TextureBind)src).texture;
+        }
+
+        @Override
+        public TextureBind duplicate(long flags){
+            return new TextureBind(this, flags);
         }
 
         @Override
@@ -1859,6 +2553,11 @@ public abstract class FSP{
             super(mode);
         }
 
+        public TextureColorBind(TextureColorBind src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             FSTexture t = mesh.first().colortexture;
@@ -1869,6 +2568,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public TextureColorBind duplicate(long flags){
+            return new TextureColorBind(this, flags);
         }
 
         @Override
@@ -1884,6 +2588,11 @@ public abstract class FSP{
             super(mode);
         }
 
+        public TextureColorUnit(TextureColorUnit src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glUniform1i(location, mesh.first().colortexture.unit().get());
@@ -1895,67 +2604,14 @@ public abstract class FSP{
         }
 
         @Override
+        public TextureColorUnit duplicate(long flags){
+            return new TextureColorUnit(this, flags);
+        }
+
+        @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
             log.append("[DYNAMIC]");
-        }
-    }
-
-    public static class UniformBlockLink extends FSConfigLocated{
-
-        public int linkindex;
-        protected String name;
-
-        public UniformBlockLink(Mode mode, String name, int linkindex){
-            super(mode);
-
-            this.name = name;
-            this.linkindex = linkindex;
-            this.name = name;
-        }
-
-        @Override
-        protected void notifyProgramBuilt(FSP program){
-            location = program.getUniformBlockIndex(name);
-            name = null;
-        }
-
-        @Override
-        public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSVertexBuffer<?> buffer = ((FSLinkGLBuffered<?, ?>)mesh.getLink(linkindex)).vbuffer;
-
-            program.uniformBlockBinding(location, buffer.bindPoint());
-            buffer.bindBufferBase();
-        }
-
-        @Override
-        public int getGLSLSize(){
-            return 0;
-        }
-
-        @Override
-        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
-            super.debugInfo(pass, program, mesh, log, debug);
-
-            log.append("linkIndex[");
-            log.append(linkindex);
-            log.append("] link[");
-            log.append(mesh.getLink(linkindex));
-            log.append("] buffer[");
-
-            try{
-                FSLinkGLBuffered<?, ?> link = (FSLinkGLBuffered<?, ?>)mesh.links.get(linkindex);
-
-                link.tracker.stringify(log.get(), null);
-                log.append("] buffer[");
-
-                link.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
-
-            }catch(Exception ex){
-                log.append("[PRINT FAILED]");
-                throw new RuntimeException(ex);
-            }
         }
     }
 
@@ -1963,6 +2619,11 @@ public abstract class FSP{
 
         public DrawArrays(Mode mode){
             super(mode);
+        }
+
+        public DrawArrays(DrawArrays src, long flags){
+            super(null);
+            copy(src, flags);
         }
 
         @Override
@@ -1973,6 +2634,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public DrawArrays duplicate(long flags){
+            return new DrawArrays(this, flags);
         }
 
         @Override
@@ -1993,6 +2659,11 @@ public abstract class FSP{
             super(mode);
         }
 
+        public DrawArraysInstanced(DrawArraysInstanced src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
             GLES32.glDrawArraysInstanced(mesh.drawmode, 0, mesh.first().vertexSize(), mesh.size());
@@ -2001,6 +2672,11 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public DrawArraysInstanced duplicate(long flags){
+            return new DrawArraysInstanced(this, flags);
         }
 
         @Override
@@ -2026,9 +2702,14 @@ public abstract class FSP{
             this.bindingindex = bindingindex;
         }
 
+        public DrawElements(DrawElements src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex);
+            FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
@@ -2041,6 +2722,17 @@ public abstract class FSP{
         }
 
         @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            bindingindex = ((DrawElements)src).bindingindex;
+        }
+
+        @Override
+        public DrawElements duplicate(long flags){
+            return new DrawElements(this, flags);
+        }
+
+        @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
@@ -2050,7 +2742,7 @@ public abstract class FSP{
             log.append(bindingindex);
             log.append("] buffer[");
 
-            mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
             log.append("] ");
         }
@@ -2065,9 +2757,14 @@ public abstract class FSP{
             this.bindingindex = bindingindex;
         }
 
+        public DrawElementsInstanced(DrawElementsInstanced src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex);
+            FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
@@ -2077,6 +2774,17 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            bindingindex = ((DrawElementsInstanced)src).bindingindex;
+        }
+
+        @Override
+        public DrawElementsInstanced duplicate(long flags){
+            return new DrawElementsInstanced(this, flags);
         }
 
         @Override
@@ -2092,7 +2800,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, this.bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");
@@ -2123,9 +2831,14 @@ public abstract class FSP{
             this.bindingindex = bindingindex;
         }
 
+        public DrawRangeElements(DrawRangeElements src, long flags){
+            super(null);
+            copy(src, flags);
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, bindingindex);
+            FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
@@ -2135,6 +2848,22 @@ public abstract class FSP{
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+
+            DrawRangeElements target = (DrawRangeElements)src;
+            start = target.start;
+            end = target.end;
+            count = target.count;
+            bindingindex = target.bindingindex;
+        }
+
+        @Override
+        public DrawRangeElements duplicate(long flags){
+            return new DrawRangeElements(this, flags);
         }
 
         @Override
@@ -2154,7 +2883,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBindings.Binding<?> binding = mesh.first().bufferBindings().get(FSGlobal.ELEMENT_INDEX, this.bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
 
                 binding.tracker.stringify(log.get(), null);
                 log.append("] buffer[");
@@ -2184,15 +2913,15 @@ public abstract class FSP{
 
         @Override
         public void stringify(StringBuilder src, Object hint){
-            src.append("[countRow : ");
+            src.append("[sizeRow]");
             src.append(length[0]);
-            src.append(" size : ");
+            src.append("] size[");
             src.append(size[0]);
-            src.append(" type : ");
+            src.append("] type[");
             src.append(type[0]);
-            src.append(" name : ");
+            src.append("] name[");
             src.append(new String(VLArrayUtils.slice(name, 0, length[0]), StandardCharsets.UTF_8));
-            src.append(" ]");
+            src.append("]");
 
         }
     }

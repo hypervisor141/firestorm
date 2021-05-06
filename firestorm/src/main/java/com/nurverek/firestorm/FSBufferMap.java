@@ -4,15 +4,25 @@ import vanguard.VLBuffer;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public final class FSBufferMap{
+public final class FSBufferMap<BUFFER extends VLBuffer<?, ?>>{
 
-    protected VLListType<FSBufferSegment<?>> segments;
+    protected VLListType<FSBufferSegment<BUFFER>> segments;
+    protected FSVertexBuffer<BUFFER> vbuffer;
+    protected BUFFER buffer;
 
-    public FSBufferMap(){
-        segments = new VLListType<>(FSGlobal.COUNT, FSGlobal.COUNT);
+    public FSBufferMap(FSVertexBuffer<BUFFER> vbuffer, int capacity){
+        this.vbuffer = vbuffer;
+        this.buffer = vbuffer.provider();
+
+        segments = new VLListType<>(capacity, capacity);
     }
 
-    public <BUFFER extends VLBuffer<?, ?>> FSBufferSegment<BUFFER> add(FSBufferSegment<BUFFER> segment){
+    public FSBufferMap(BUFFER buffer, int capacity){
+        this.buffer = vbuffer.provider();
+        segments = new VLListType<>(capacity, capacity);
+    }
+
+    public FSBufferSegment<BUFFER> add(FSBufferSegment<BUFFER> segment){
         segments.add(segment);
         return segment;
     }
@@ -21,7 +31,7 @@ public final class FSBufferMap{
         int size = segments.size();
 
         for(int i = 0; i < size; i++){
-            segments.get(i).accountFor(target);
+            segments.get(i).accountFor(target, buffer);
         }
     }
 
@@ -29,7 +39,7 @@ public final class FSBufferMap{
         int size = segments.size();
 
         for(int i = 0; i < size; i++){
-            segments.get(i).buffer(target);
+            segments.get(i).buffer(target, buffer, vbuffer);
         }
     }
 
@@ -45,7 +55,7 @@ public final class FSBufferMap{
             log.printInfo();
 
             try{
-                segments.get(i).bufferDebug(target, log);
+                segments.get(i).bufferDebug(target, buffer, vbuffer, log);
 
             }catch(Exception ex){
                 log.append(" [FAILED]\n");

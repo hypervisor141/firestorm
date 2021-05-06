@@ -36,16 +36,15 @@ public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyabl
 
     @Override
     public void copy(FSBufferBinding<BUFFER> src, long flags){
-        if((flags & FLAG_MINIMAL) == FLAG_MINIMAL){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             buffer = src.buffer;
             tracker = src.tracker;
 
-        }else if((flags & FLAG_MAX_DEPTH) == FLAG_MAX_DEPTH){
-            buffer = (BUFFER)src.buffer.duplicate(FLAG_MAX_DEPTH);
-            tracker = src.tracker.duplicate(FLAG_MAX_DEPTH);
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            Helper.throwUnsupportedFlag("FLAG_DUPLICATE");
 
         }else{
-            throw new RuntimeException("Invalid flags : " + flags);
+            Helper.throwMissingDefaultFlags();
         }
 
         vbuffer = src.vbuffer;
