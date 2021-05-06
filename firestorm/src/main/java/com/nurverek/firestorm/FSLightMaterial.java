@@ -29,11 +29,8 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         copy(src, flags);
     }
 
-    public FSLightMaterial(){
-        ambient = new VLArrayFloat(3);
-        specular = new VLArrayFloat(3);
-        diffuse = new VLArrayFloat(3);
-        shininess = new VLFloat(1);
+    protected FSLightMaterial(){
+
     }
 
     public VLArrayFloat ambient(){

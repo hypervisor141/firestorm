@@ -94,6 +94,10 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         this.schematics = schematics;
     }
 
+    protected FSBounds(){
+
+    }
+
     protected final void initialize(Point offset, int pointscapacity){
         this.offset = offset;
         this.points = new VLListType<>(pointscapacity, pointscapacity);

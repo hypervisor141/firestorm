@@ -24,6 +24,10 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
         copy(src, flags);
     }
 
+    protected FSConfigDynamic(){
+
+    }
+
     @Override
     protected void notifyProgramBuilt(FSP program){
         config.notifyProgramBuilt(program);

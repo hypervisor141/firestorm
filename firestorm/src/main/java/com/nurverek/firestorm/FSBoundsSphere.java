@@ -18,6 +18,10 @@ public class FSBoundsSphere extends FSBounds{
         copy(src, flags);
     }
 
+    protected FSBoundsSphere(){
+
+    }
+
     @Override
     public void copy(FSBounds src, long flags){
         super.copy(src, flags);

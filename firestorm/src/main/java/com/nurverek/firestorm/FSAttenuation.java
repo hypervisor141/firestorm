@@ -5,7 +5,7 @@ import vanguard.VLFloat;
 
 public abstract class FSAttenuation implements VLCopyable<FSAttenuation>{
 
-    public FSAttenuation(){
+    protected FSAttenuation(){
 
     }
 
@@ -23,6 +23,10 @@ public abstract class FSAttenuation implements VLCopyable<FSAttenuation>{
 
         public Distance(Distance src, long flags){
             copy(src, flags);
+        }
+
+        protected Distance(){
+
         }
 
         @Override
@@ -72,6 +76,10 @@ public abstract class FSAttenuation implements VLCopyable<FSAttenuation>{
 
         public Radius(Radius src, long flags){
             copy(src, flags);
+        }
+
+        protected Radius(){
+
         }
 
         @Override

@@ -15,6 +15,10 @@ public class FSMatrixModel extends VLVMatrix{
         super(src, flags);
     }
 
+    protected FSMatrixModel(){
+
+    }
+
     public void addRowTranslation(VLV x, VLV y, VLV z){
         VLListType<VLVTypeVariable> row = new VLListType<>(4, 0);
 

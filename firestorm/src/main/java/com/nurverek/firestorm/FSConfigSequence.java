@@ -20,6 +20,10 @@ public class FSConfigSequence extends FSConfigLocated{
         super(mode);
     }
 
+    protected FSConfigSequence(){
+
+    }
+
     public FSConfigSequence(FSConfigSequence src, long flags){
         super(null);
         copy(src, flags);

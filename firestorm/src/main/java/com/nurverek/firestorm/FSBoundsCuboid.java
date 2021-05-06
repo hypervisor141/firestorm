@@ -23,6 +23,10 @@ public class FSBoundsCuboid extends FSBounds {
         copy(src, flags);
     }
 
+    protected FSBoundsCuboid(){
+
+    }
+
     public float getHalfWidth(){
         return halfwidth;
     }

@@ -28,6 +28,10 @@ public class FSLightSpot extends FSLight{
         copy(src, flags);
     }
 
+    protected FSLightSpot(){
+
+    }
+
     public void updateDirection(){
         float[] dir = direction().provider();
         float[] pos = position().provider();

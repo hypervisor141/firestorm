@@ -19,12 +19,12 @@ public class FSMesh implements VLCopyable<FSMesh>{
     protected int drawmode;
     protected long id;
 
-    public FSMesh(FSMesh src, long flags){
-        copy(src, flags);
-    }
-
     public FSMesh(){
 
+    }
+
+    public FSMesh(FSMesh src, long flags){
+        copy(src, flags);
     }
 
     public void initialize(int drawmode, int capacity, int resizer){

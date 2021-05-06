@@ -5,7 +5,7 @@ import vanguard.VLFloat;
 
 public class FSGamma implements VLCopyable<FSGamma>{
 
-    private VLFloat level;
+    protected VLFloat level;
 
     public FSGamma(VLFloat level){
         this.level = level;
@@ -13,6 +13,10 @@ public class FSGamma implements VLCopyable<FSGamma>{
 
     public FSGamma(FSGamma src, long flags){
         copy(src, flags);
+    }
+
+    protected FSGamma(){
+
     }
 
     public void level(VLFloat level){

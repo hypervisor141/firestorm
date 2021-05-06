@@ -21,6 +21,10 @@ public class FSLightDirect extends FSLight{
         copy(src, flags);
     }
 
+    protected FSLightDirect(){
+
+    }
+
     public void updateDirection(){
         float[] dir = direction().provider();
         float[] pos = position().provider();

@@ -5,7 +5,7 @@ import vanguard.VLFloat;
 
 public class FSBrightness implements VLCopyable<FSBrightness>{
 
-    private VLFloat level;
+    protected VLFloat level;
 
     public FSBrightness(VLFloat level){
         this.level = level;
@@ -13,6 +13,10 @@ public class FSBrightness implements VLCopyable<FSBrightness>{
 
     public FSBrightness(FSBrightness src, long flags){
         copy(src, flags);
+    }
+
+    protected FSBrightness(){
+
     }
 
     public void level(VLFloat level){

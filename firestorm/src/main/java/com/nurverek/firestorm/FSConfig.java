@@ -94,6 +94,10 @@ public abstract class FSConfig implements VLCopyable<FSConfig>{
         this.mode = mode;
     }
 
+    protected FSConfig(){
+
+    }
+
     public void location(int location){ }
 
     public int location(){

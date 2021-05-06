@@ -17,6 +17,10 @@ public class FSLightPoint extends FSLight{
         copy(src, flags);
     }
 
+    protected FSLightPoint(){
+
+    }
+
     public FSAttenuation attenuation(){
         return attenuation;
     }

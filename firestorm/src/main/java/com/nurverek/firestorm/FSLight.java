@@ -5,8 +5,6 @@ import vanguard.VLCopyable;
 
 public abstract class FSLight implements VLCopyable<FSLight>{
 
-    public static final long FLAG_UNIQUE_ID = 0x10L;
-
     protected long id;
 
     public FSLight(){
@@ -23,11 +21,14 @@ public abstract class FSLight implements VLCopyable<FSLight>{
 
     @Override
     public void copy(FSLight src, long flags){
-        if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            id = src.id;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             id = FSControl.getNextID();
 
         }else{
-            id = src.id;
+            Helper.throwMissingDefaultFlags();
         }
     }
 

@@ -16,6 +16,10 @@ public abstract class FSConfigLocated extends FSConfig{
         location = -Integer.MAX_VALUE;
     }
 
+    protected FSConfigLocated(){
+
+    }
+
     @Override
     public void location(int location){
         this.location = location;

@@ -19,6 +19,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         bindings = new VLListType<>(1, 5);
     }
 
+    protected FSElement(){
+
+    }
+
     public FSElement(FSElement<DATA, BUFFER> src, long flags){
         copy(src, flags);
     }

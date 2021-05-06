@@ -21,7 +21,7 @@ public class FSView implements VLCopyable<FSView>{
     protected VLArrayFloat settingsperspective;
     protected VLArrayFloat settingsorthographic;
 
-    public FSView(){
+    public FSView(boolean perspectivemode){
         matprojection = null;
 
         matview = new VLArrayFloat(new float[16]);
@@ -34,11 +34,20 @@ public class FSView implements VLCopyable<FSView>{
         settingsperspective = new VLArrayFloat(new float[4]);
         settingsorthographic = new VLArrayFloat(new float[6]);
 
-        setPerspectiveMode();
+        if(perspectivemode){
+            setPerspectiveMode();
+
+        }else{
+            setOrthographicMode();
+        }
     }
 
     public FSView(FSView src, long flags){
         copy(src, flags);
+    }
+
+    protected FSView(){
+
     }
 
     public void setPerspectiveMode(){

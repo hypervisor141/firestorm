@@ -38,6 +38,10 @@ public class FSInstance implements VLCopyable<FSInstance>{
         copy(src, flags);
     }
 
+    protected FSInstance(){
+
+    }
+
     public void name(String name){
         this.name = name;
     }
