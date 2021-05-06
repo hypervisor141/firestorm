@@ -232,7 +232,7 @@ public class FSView implements VLCopyable<FSView>{
             settingsorthographic = src.settingsorthographic.duplicate(FLAG_DUPLICATE);
 
         }else{
-            throw new RuntimeException("Invalid flags : " + flags);
+            Helper.throwMissingDefaultFlags();
         }
 
         matprojection = src.matprojection;
