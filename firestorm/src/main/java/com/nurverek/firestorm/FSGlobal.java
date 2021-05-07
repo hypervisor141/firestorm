@@ -20,10 +20,12 @@ public class FSGlobal{
     public static int[] UNIT_SIZES;
     public static int[] UNIT_BYTES;
 
+    public static int DEFAULT_ELEMENT_COUNT = 6;
+    public static int CUSTOM_ELEMENT_OFFSET = DEFAULT_ELEMENT_COUNT;
     public static int COUNT;
 
     protected static void initialize(int extraelementscount){
-        COUNT = 6 + extraelementscount;
+        COUNT = DEFAULT_ELEMENT_COUNT + extraelementscount;
 
         NAMES = new String[COUNT];
         ELEMENTS = new int[COUNT];
