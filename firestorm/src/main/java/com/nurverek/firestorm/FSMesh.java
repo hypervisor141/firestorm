@@ -152,7 +152,15 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
-    public void activateLatestElement(int element){
+    public void activateFirstElements(int element){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).storage().activate(element, 0);
+        }
+    }
+
+    public void activateLatestElements(int element){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
