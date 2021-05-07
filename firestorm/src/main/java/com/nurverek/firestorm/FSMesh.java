@@ -64,18 +64,6 @@ public class FSMesh implements VLCopyable<FSMesh>{
         this.name = name;
     }
 
-    public void bindFromStorage(int instanceindex, int element, int storageindex, int bindingindex){
-        bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
-    }
-
-    public void bindFromActive(int instanceindex, int element, int bindingindex){
-        bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
-    }
-
-    public void unbind(int element, int index){
-        bindings[element].remove(index);
-    }
-
     public FSInstance first(){
         return instances.get(0);
     }
@@ -141,6 +129,35 @@ public class FSMesh implements VLCopyable<FSMesh>{
     public void configureDebug(FSRPass pass, FSP program, int meshindex, int passindex, VLLog log, int debug){
         if(configs != null){
             configs.configureDebug(pass, program, this, meshindex, passindex, log, debug);
+        }
+    }
+
+    public void bindFromStorage(int instanceindex, int element, int storageindex, int bindingindex){
+        bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
+    }
+
+    public void bindFromActive(int instanceindex, int element, int bindingindex){
+        bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
+    }
+
+    public void unbind(int element, int index){
+        bindings[element].remove(index);
+    }
+
+    public void storeElement(int element, FSElement<?, ?> data){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).storage().add(element, data);
+        }
+    }
+
+    public void activateLatestElement(int element){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            FSElementStore store = instances.get(i).storage();
+            store.activate(element, store.size(element) - 1);
         }
     }
 
