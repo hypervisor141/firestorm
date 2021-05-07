@@ -4,7 +4,7 @@ import android.opengl.GLES32;
 
 public class FSGlobal{
 
-    private FSGlobal(){}
+    protected FSGlobal(){}
 
     public static final int ELEMENT_MODEL = 0;
     public static final int ELEMENT_POSITION = 1;
