@@ -5,47 +5,61 @@ import vanguard.VLLog;
 public abstract class FSHScanner{
 
     protected FSHAssembler assembler;
-    protected FSBufferMap map;
+    protected FSBufferMap<?>[] maps;
     protected FSP program;
     protected FSMesh mesh;
     protected String name;
 
-    protected FSHScanner(FSMesh mesh, FSP program, FSBufferMap map, FSHAssembler assembler, String name){
+    protected FSHScanner(FSMesh mesh, FSP program, FSBufferMap<?>[] maps, FSHAssembler assembler, String name){
         this.mesh = mesh;
         this.program = program;
-        this.map = map;
+        this.maps = maps;
         this.assembler = assembler;
         this.name = name.toLowerCase();
     }
 
     protected abstract boolean scan(FSAutomator automator, FSM.Data data);
 
-    protected void bufferAndFinish(){
-        map.buffer(mesh);
-        program.meshes().add(mesh);
-    }
-
-    protected void scanComplete(){
+    protected void signalScanComplete(){
         mesh.scanComplete();
     }
 
-    protected void bufferComplete(){
+    protected void signalBufferComplete(){
         mesh.bufferComplete();
     }
 
-    protected void accountForBufferSize(){
-        map.accountFor(mesh);
+    protected void accountForMeshSizeOnBuffer(){
+        int size = maps.length;
+
+        for(int i = 0; i < size; i++){
+            maps[i].accountFor(mesh);
+        }
+    }
+
+    protected void bufferAndFinish(){
+        int size = maps.length;
+
+        for(int i = 0; i < size; i++){
+            maps[i].buffer(mesh);
+        }
+
+        program.meshes().add(mesh);
     }
 
     protected void bufferDebugAndFinish(VLLog log){
-        map.bufferDebug(mesh, log);
+        int size = maps.length;
+
+        for(int i = 0; i < size; i++){
+            maps[i].bufferDebug(mesh, log);
+        }
+
         program.meshes().add(mesh);
     }
 
     public static class Singular extends FSHScanner{
 
-        public Singular(FSMesh mesh, FSP program, FSBufferMap map, FSHAssembler assembler, String name, int drawmode){
-            super(mesh, program, map, assembler, name);
+        public Singular(FSMesh mesh, FSP program, FSBufferMap<?>[] maps, FSHAssembler assembler, String name, int drawmode){
+            super(mesh, program, maps, assembler, name);
             mesh.initialize(drawmode, 1, 0);
         }
 
@@ -68,8 +82,8 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh mesh, FSP program, FSBufferMap map, FSHAssembler assembler, String prefixname, int drawmode, int estimatedsize){
-            super(mesh, program, map, assembler, prefixname);
+        public Instanced(FSMesh mesh, FSP program, FSBufferMap<?>[] maps, FSHAssembler assembler, String prefixname, int drawmode, int estimatedsize){
+            super(mesh, program, maps, assembler, prefixname);
             mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
         }
 
@@ -100,8 +114,8 @@ public abstract class FSHScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSMesh mesh, FSP program, FSBufferMap map, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
-            super(mesh, program, map, assembler, prefixname);
+        public InstancedCopy(FSMesh mesh, FSP program, FSBufferMap<?>[] maps, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
+            super(mesh, program, maps, assembler, prefixname);
 
             this.copycount = copycount;
             mesh.initialize(drawmode, copycount, 0);

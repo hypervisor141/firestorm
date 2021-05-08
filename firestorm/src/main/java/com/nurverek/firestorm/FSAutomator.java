@@ -20,19 +20,19 @@ public class FSAutomator{
         buffers = new VLListType<>(buffercapacity, buffercapacity);
     }
 
-    public void addFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
+    public void registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
         FSM data = new FSM();
         data.loadFromFile(src, order, fullsizedposition, estimatedsize);
 
         files.add(data);
     }
 
-    public void addScanner(FSHScanner entry){
-        entries.add(entry);
+    public void registerBuffer(FSVertexBuffer<?> buffer){
+        buffers.add(buffer);
     }
 
-    public void addBuffer(FSVertexBuffer<?> buffer){
-        buffers.add(buffer);
+    public void registerScanner(FSHScanner entry){
+        entries.add(entry);
     }
 
     public void scan(int debug){
@@ -143,7 +143,7 @@ public class FSAutomator{
                     throw new RuntimeException("Mesh Scan Error");
                 }
 
-                entry.scanComplete();
+                entry.signalScanComplete();
             }
 
             log.printInfo();
@@ -166,7 +166,7 @@ public class FSAutomator{
             }
 
             for(int i = 0; i < entrysize; i++){
-                entries.get(i).scanComplete();
+                entries.get(i).signalScanComplete();
             }
         }
     }
@@ -195,7 +195,7 @@ public class FSAutomator{
                 log.append("]\n");
 
                 try{
-                    entry.accountForBufferSize();
+                    entry.accountForMeshSizeOnBuffer();
 
                 }catch(Exception ex){
                     log.append("Error accounting for buffer size \"");
@@ -274,7 +274,7 @@ public class FSAutomator{
             }
 
             for(int i = 0; i < size; i++){
-                entries.get(i).bufferComplete();
+                entries.get(i).signalBufferComplete();
             }
 
             log.printInfo("[DONE]");
@@ -283,7 +283,7 @@ public class FSAutomator{
             int buffersize = buffers.size();
 
             for(int i = 0; i < size; i++){
-                entries.get(i).accountForBufferSize();
+                entries.get(i).accountForMeshSizeOnBuffer();
             }
             for(int i = 0; i < buffersize; i++){
                 FSVertexBuffer<?>  buffer = buffers.get(i);
@@ -297,7 +297,7 @@ public class FSAutomator{
                 buffers.get(i).upload();
             }
             for(int i = 0; i < size; i++){
-                entries.get(i).bufferComplete();
+                entries.get(i).signalBufferComplete();
             }
         }
     }
