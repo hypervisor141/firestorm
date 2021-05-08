@@ -305,7 +305,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
             for(int i = storeoffset; i < size; i++){
                 if(list.get(i).size() != unitsizetomatch){
-                    log.append("[ERROR] [Segment is on interleaving mode but there is a mismatch between target unit sizes]");
+                    log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes]");
                     log.append("target[");
                     log.append(unitsizetomatch);
                     log.append("] instance[");
@@ -367,7 +367,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
         public void checkForInterleavingErrors(FSInstance instance, int unitsizetomatch, VLLog log){
             if(instance.store.get(element).size() != unitsizetomatch){
-                log.append("[ERROR] [Segment is on interleaving mode but there is a mismatch between target unit sizes]");
+                log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes]");
                 log.append("target[");
                 log.append(unitsizetomatch);
                 log.append("] instance[");

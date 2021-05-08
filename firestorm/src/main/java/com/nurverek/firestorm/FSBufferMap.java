@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import java.nio.ByteOrder;
+
 import vanguard.VLBuffer;
 import vanguard.VLListType;
 import vanguard.VLLog;
@@ -32,6 +34,20 @@ public final class FSBufferMap<BUFFER extends VLBuffer<?, ?>>{
 
         for(int i = 0; i < size; i++){
             segments.get(i).accountFor(target, buffer);
+        }
+    }
+
+    public void initialize(){
+        buffer.initialize(ByteOrder.nativeOrder());
+
+        if(vbuffer != null){
+            vbuffer.initialize();
+        }
+    }
+
+    public void upload(){
+        if(vbuffer != null){
+            vbuffer.upload();
         }
     }
 

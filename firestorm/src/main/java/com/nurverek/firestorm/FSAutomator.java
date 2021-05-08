@@ -11,13 +11,13 @@ public class FSAutomator{
 
     protected VLListType<FSM> files;
     protected VLListType<FSHScanner> entries;
-    protected VLListType<FSVertexBuffer<?>> buffers;
+    protected VLListType<FSBufferMap<?>> maps;
     protected VLLog log;
 
-    protected FSAutomator(int filecapacity, int scancapacity, int buffercapacity){
+    protected FSAutomator(int filecapacity, int scancapacity, int mapcapacity){
         files = new VLListType<>(filecapacity, filecapacity);
         entries = new VLListType<>(scancapacity, scancapacity);
-        buffers = new VLListType<>(buffercapacity, buffercapacity);
+        maps = new VLListType<>(mapcapacity, mapcapacity);
     }
 
     public void registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
@@ -27,12 +27,14 @@ public class FSAutomator{
         files.add(data);
     }
 
-    public void registerBuffer(FSVertexBuffer<?> buffer){
-        buffers.add(buffer);
+    public int registerBufferMap(FSBufferMap<?> map){
+        maps.add(map);
+        return maps.size() - 1;
     }
 
-    public void registerScanner(FSHScanner entry){
-        entries.add(entry);
+    public void registerScanner(FSHScanner scanner){
+        scanner.automator = this;
+        entries.add(scanner);
     }
 
     public void scan(int debug){
@@ -179,14 +181,19 @@ public class FSAutomator{
                     FSControl.LOGTAG, getClass().getSimpleName()
             });
 
-            FSHScanner entry;
+            int mapsize = maps.size();
 
-            int buffersize = buffers.size();
+            if(mapsize == 0){
+                log.append("[FAILED] [No buffers have been registered for this automator, register some buffers first]\n");
+                log.printError();
+
+                throw new RuntimeException("[No buffers registered]");
+            }
 
             log.printInfo("[Buffering Stage]");
 
             for(int i = 0; i < size; i++){
-                entry = entries.get(i);
+                FSHScanner entry = entries.get(i);
 
                 log.append("accountingForMesh[");
                 log.append(i + 1);
@@ -198,10 +205,9 @@ public class FSAutomator{
                     entry.accountForMeshSizeOnBuffer();
 
                 }catch(Exception ex){
-                    log.append("Error accounting for buffer size \"");
+                    log.append("[Error accounting for buffer size] [");
                     log.append(entry.name);
-                    log.append("\"\n");
-                    log.append("[Assembler Configuration]\n");
+                    log.append("]\n [Assembler Configuration]\n");
 
                     entry.assembler.stringify(log.get(), null);
                     log.printError();
@@ -213,13 +219,10 @@ public class FSAutomator{
             }
 
             try{
-                log.append("Initializing buffers...");
-                FSVertexBuffer<?> buffer;
+                log.append("[Initializing buffers...]");
 
-                for(int i = 0; i < buffersize; i++){
-                    buffer = buffers.get(i);
-                    buffer.provider().initialize(ByteOrder.nativeOrder());
-                    buffer.initialize();
+                for(int i = 0; i < mapsize; i++){
+                    maps.get(i).initialize();
                 }
 
                 log.append("[SUCCESS]\n");
@@ -228,11 +231,11 @@ public class FSAutomator{
                 log.append("[FAILED]");
                 log.printError();
 
-                throw new RuntimeException("Failed to initialize buffers", ex);
+                throw new RuntimeException("[Failed to initialize buffers]", ex);
             }
 
             for(int i = 0; i < size; i++){
-                entry = entries.get(i);
+                FSHScanner entry = entries.get(i);
 
                 log.append("Buffering[");
                 log.append(i + 1);
@@ -261,8 +264,8 @@ public class FSAutomator{
             try{
                 log.append("Uploading buffers...");
 
-                for(int i = 0; i < buffersize; i++){
-                    buffers.get(i).upload();
+                for(int i = 0; i < mapsize; i++){
+                    maps.get(i).upload();
                 }
 
                 log.append("[SUCCESS]\n");
@@ -280,21 +283,19 @@ public class FSAutomator{
             log.printInfo("[DONE]");
 
         }else{
-            int buffersize = buffers.size();
+            int mapsize = maps.size();
 
             for(int i = 0; i < size; i++){
                 entries.get(i).accountForMeshSizeOnBuffer();
             }
-            for(int i = 0; i < buffersize; i++){
-                FSVertexBuffer<?>  buffer = buffers.get(i);
-                buffer.provider().initialize(ByteOrder.nativeOrder());
-                buffer.initialize();
+            for(int i = 0; i < mapsize; i++){
+                maps.get(i).initialize();
             }
             for(int i = 0; i < size; i++){
                 entries.get(i).bufferAndFinish();
             }
-            for(int i = 0; i < buffersize; i++){
-                buffers.get(i).upload();
+            for(int i = 0; i < mapsize; i++){
+                maps.get(i).upload();
             }
             for(int i = 0; i < size; i++){
                 entries.get(i).signalBufferComplete();
