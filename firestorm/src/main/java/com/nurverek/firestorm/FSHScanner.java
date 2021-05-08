@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLArrayFloat;
-import vanguard.VLArrayShort;
 import vanguard.VLLog;
 
 public abstract class FSHScanner{
@@ -20,7 +18,7 @@ public abstract class FSHScanner{
         this.name = name.toLowerCase();
     }
 
-    protected abstract boolean scan(FSHub.Automator automator, FSM.Data data);
+    protected abstract boolean scan(FSAutomator automator, FSM.Data data);
 
     protected void bufferAndFinish(){
         map.buffer(mesh);
@@ -52,7 +50,7 @@ public abstract class FSHScanner{
         }
 
         @Override
-        protected boolean scan(FSHub.Automator automator, FSM.Data data){
+        protected boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.equalsIgnoreCase(name)){
                 mesh.name(name);
 
@@ -76,7 +74,7 @@ public abstract class FSHScanner{
         }
 
         @Override
-        protected boolean scan(FSHub.Automator automator, FSM.Data data){
+        protected boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
                 mesh.name(name);
 
@@ -110,7 +108,7 @@ public abstract class FSHScanner{
         }
 
         @Override
-        protected boolean scan(FSHub.Automator automator, FSM.Data data){
+        protected boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
                 mesh.name(name);
 
