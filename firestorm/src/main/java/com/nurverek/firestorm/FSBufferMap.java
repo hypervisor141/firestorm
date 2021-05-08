@@ -12,16 +12,25 @@ public final class FSBufferMap<BUFFER extends VLBuffer<?, ?>>{
     protected FSVertexBuffer<BUFFER> vbuffer;
     protected BUFFER buffer;
 
+    private boolean initialized;
+    private boolean uploaded;
+
     public FSBufferMap(FSVertexBuffer<BUFFER> vbuffer, int capacity){
         this.vbuffer = vbuffer;
         this.buffer = vbuffer.provider();
 
         segments = new VLListType<>(capacity, capacity);
+
+        initialized = false;
+        uploaded = false;
     }
 
     public FSBufferMap(BUFFER buffer, int capacity){
         this.buffer = vbuffer.provider();
         segments = new VLListType<>(capacity, capacity);
+
+        initialized = false;
+        uploaded = false;
     }
 
     public FSBufferSegment<BUFFER> add(FSBufferSegment<BUFFER> segment){
@@ -38,16 +47,21 @@ public final class FSBufferMap<BUFFER extends VLBuffer<?, ?>>{
     }
 
     public void initialize(){
-        buffer.initialize(ByteOrder.nativeOrder());
+        if(!initialized){
+            buffer.initialize(ByteOrder.nativeOrder());
 
-        if(vbuffer != null){
-            vbuffer.initialize();
+            if(vbuffer != null){
+                vbuffer.initialize();
+            }
+
+            initialized = true;
         }
     }
 
     public void upload(){
-        if(vbuffer != null){
+        if(!uploaded && vbuffer != null){
             vbuffer.upload();
+            uploaded = true;
         }
     }
 
