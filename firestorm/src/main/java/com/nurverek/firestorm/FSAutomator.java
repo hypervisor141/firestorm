@@ -201,36 +201,6 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Initializing buffers...]");
-
-            for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
-
-                log.append("initializing[");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("]\n");
-
-                try{
-                    entry.initializeBuffer();
-
-                }catch(Exception ex){
-                    log.append("[Error initializing buffer for target] [");
-                    log.append(entry.name);
-                    log.append("]\n [Assembler Configuration]\n");
-
-                    entry.assembler.stringify(log.get(), null);
-                    log.printError();
-
-                    throw new RuntimeException(ex);
-                }
-
-                log.printInfo();
-            }
-
-            log.append("[SUCCESS]\n");
-
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
@@ -258,24 +228,23 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Uploading buffers...]");
-
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
-                log.append("uploading[");
+                log.append("Uploading[");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
                 log.append("]\n");
 
                 try{
-                    entry.initializeBuffer();
+                    entry.uploadBuffer();
 
                 }catch(Exception ex){
-                    log.append("[Error uploading buffer for target] [");
+                    log.append("Error uploading[");
                     log.append(entry.name);
-                    log.append("]\n [Assembler Configuration]\n");
+                    log.append("]\n");
+                    log.append("[Assembler Configuration]\n");
 
                     entry.assembler.stringify(log.get(), null);
                     log.printError();
@@ -286,12 +255,33 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[SUCCESS]\n");
-
             log.append("[Signaling buffer complete] ");
 
             for(int i = 0; i < size; i++){
-                scanners.get(i).signalBufferComplete();
+                FSHScanner entry = scanners.get(i);
+
+                log.append("Signalling[");
+                log.append(i + 1);
+                log.append("/");
+                log.append(size);
+                log.append("]\n");
+
+                try{
+                    entry.signalBufferComplete();
+
+                }catch(Exception ex){
+                    log.append("Error signalling completion[");
+                    log.append(entry.name);
+                    log.append("]\n");
+                    log.append("[Assembler Configuration]\n");
+
+                    entry.assembler.stringify(log.get(), null);
+                    log.printError();
+
+                    throw new RuntimeException(ex);
+                }
+
+                log.printInfo();
             }
 
             log.append("[DONE]\n");
@@ -300,9 +290,6 @@ public class FSAutomator{
         }else{
             for(int i = 0; i < size; i++){
                 scanners.get(i).adjustBufferCapacity();
-            }
-            for(int i = 0; i < size; i++){
-                scanners.get(i).initializeBuffer();
             }
             for(int i = 0; i < size; i++){
                 scanners.get(i).bufferAndFinish();

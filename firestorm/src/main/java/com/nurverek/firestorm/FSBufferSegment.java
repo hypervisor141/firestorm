@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import java.nio.ByteOrder;
+
 import vanguard.VLBuffer;
 import vanguard.VLListType;
 import vanguard.VLLog;
@@ -8,21 +10,39 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
     private static final int BUFFER_PRINT_LIMIT = 100;
 
+    protected FSVertexBuffer<BUFFER> vbuffer;
+    protected BUFFER buffer;
+
     protected VLListType<EntryType<BUFFER>> entries;
 
     protected int totalstride;
     protected boolean interleaved;
+    protected boolean uploaded;
 
     private boolean debuggedsegmentstructure;
 
-    public FSBufferSegment(boolean interleaved, int capacity){
+    public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int capacity){
         this.interleaved = interleaved;
+        this.vbuffer = vbuffer;
+        this.buffer = vbuffer.provider();
+
+        entries = new VLListType<>(capacity, capacity / 2);
 
         debuggedsegmentstructure = false;
-        entries = new VLListType<>(capacity, capacity / 2);
+        uploaded = false;
     }
 
-    public void accountFor(FSMesh target, BUFFER buffer){
+    public FSBufferSegment(BUFFER buffer, boolean interleaved, int capacity){
+        this.interleaved = interleaved;
+        this.buffer = buffer;
+
+        entries = new VLListType<>(capacity, capacity / 2);
+
+        debuggedsegmentstructure = false;
+        uploaded = false;
+    }
+
+    public void accountFor(FSMesh target){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
@@ -37,7 +57,15 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         return this;
     }
 
-    protected void buffer(FSMesh target, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer){
+    protected void buffer(FSMesh target){
+        if(buffer.provider() == null){
+            buffer.initialize(ByteOrder.nativeOrder());
+
+            if(vbuffer != null){
+                vbuffer.initialize();
+            }
+        }
+
         int size = entries.size();
 
         if(interleaved){
@@ -61,7 +89,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    protected void bufferDebug(FSMesh target, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, VLLog log){
+    protected void bufferDebug(FSMesh target, VLLog log){
         int size = entries.size();
         EntryType<BUFFER> entry;
 
@@ -112,7 +140,14 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         log.append("] ");
 
         buffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-        buffer(target, buffer, vbuffer);
+        buffer(target);
+    }
+
+    public void upload(){
+        if(!uploaded && vbuffer != null){
+            vbuffer.upload();
+            uploaded = true;
+        }
     }
 
     public interface EntryType<BUFFER extends VLBuffer<?, ?>>{
