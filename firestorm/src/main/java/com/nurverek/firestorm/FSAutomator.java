@@ -10,14 +10,12 @@ import vanguard.VLLog;
 public class FSAutomator{
 
     protected VLListType<FSM> files;
-    protected VLListType<FSHScanner> entries;
-    protected VLListType<FSBufferMap<?>> maps;
+    protected VLListType<FSHScanner> scanners;
     protected VLLog log;
 
-    protected FSAutomator(int filecapacity, int scancapacity, int mapcapacity){
+    protected FSAutomator(int filecapacity, int scancapacity){
         files = new VLListType<>(filecapacity, filecapacity);
-        entries = new VLListType<>(scancapacity, scancapacity);
-        maps = new VLListType<>(mapcapacity, mapcapacity);
+        scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
     public void registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
@@ -27,18 +25,12 @@ public class FSAutomator{
         files.add(data);
     }
 
-    public int registerBufferMap(FSBufferMap<?> map){
-        maps.add(map);
-        return maps.size() - 1;
-    }
-
     public void registerScanner(FSHScanner scanner){
-        scanner.automator = this;
-        entries.add(scanner);
+        scanners.add(scanner);
     }
 
     public void scan(int debug){
-        int entrysize = entries.size();
+        int entrysize = scanners.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             log = new VLLog(new String[]{
@@ -51,7 +43,7 @@ public class FSAutomator{
             log.printInfo("[Assembler Check Stage]");
 
             for(int i = 0; i < entrysize; i++){
-                entry = entries.get(i);
+                entry = scanners.get(i);
                 entry.assembler.checkDebug();
 
                 log.append("Scanner[");
@@ -76,7 +68,7 @@ public class FSAutomator{
                     FSM.Data d = data.get(i2);
 
                     for(int i3 = 0; i3 < entrysize; i3++){
-                        entry = entries.get(i3);
+                        entry = scanners.get(i3);
                         FSMesh mesh = entry.mesh;
                         found = false;
 
@@ -131,7 +123,7 @@ public class FSAutomator{
             log.printInfo("[Checking Scan Results]");
 
             for(int i = 0; i < entrysize; i++){
-                entry = entries.get(i);
+                entry = scanners.get(i);
 
                 if(entry.mesh.size() == 0){
                     log.append("Scan incomplete : found no instance for mesh with keyword \"");
@@ -162,38 +154,29 @@ public class FSAutomator{
                     FSM.Data data = datalist.get(i2);
 
                     for(int i3 = 0; i3 < entrysize; i3++){
-                        entries.get(i3).scan(this, data);
+                        scanners.get(i3).scan(this, data);
                     }
                 }
             }
 
             for(int i = 0; i < entrysize; i++){
-                entries.get(i).signalScanComplete();
+                scanners.get(i).signalScanComplete();
             }
         }
     }
 
     public void buffer(int debug){
-        int size = entries.size();
+        int size = scanners.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             log = new VLLog(new String[]{
                     FSControl.LOGTAG, getClass().getSimpleName()
             });
 
-            int mapsize = maps.size();
-
-            if(mapsize == 0){
-                log.append("[FAILED] [No buffers have been registered for this automator, register some buffers first]\n");
-                log.printError();
-
-                throw new RuntimeException("[No buffers registered]");
-            }
-
             log.printInfo("[Buffering Stage]");
 
             for(int i = 0; i < size; i++){
-                FSHScanner entry = entries.get(i);
+                FSHScanner entry = scanners.get(i);
 
                 log.append("accountingForMesh[");
                 log.append(i + 1);
@@ -202,7 +185,7 @@ public class FSAutomator{
                 log.append("]\n");
 
                 try{
-                    entry.accountForMeshSizeOnBuffer();
+                    entry.adjustBufferCapacity();
 
                 }catch(Exception ex){
                     log.append("[Error accounting for buffer size] [");
@@ -218,24 +201,38 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            try{
-                log.append("[Initializing buffers...]");
-
-                for(int i = 0; i < mapsize; i++){
-                    maps.get(i).initialize();
-                }
-
-                log.append("[SUCCESS]\n");
-
-            }catch(Exception ex){
-                log.append("[FAILED]");
-                log.printError();
-
-                throw new RuntimeException("[Failed to initialize buffers]", ex);
-            }
+            log.append("[Initializing buffers...]");
 
             for(int i = 0; i < size; i++){
-                FSHScanner entry = entries.get(i);
+                FSHScanner entry = scanners.get(i);
+
+                log.append("initializing[");
+                log.append(i + 1);
+                log.append("/");
+                log.append(size);
+                log.append("]\n");
+
+                try{
+                    entry.initializeBuffer();
+
+                }catch(Exception ex){
+                    log.append("[Error initializing buffer for target] [");
+                    log.append(entry.name);
+                    log.append("]\n [Assembler Configuration]\n");
+
+                    entry.assembler.stringify(log.get(), null);
+                    log.printError();
+
+                    throw new RuntimeException(ex);
+                }
+
+                log.printInfo();
+            }
+
+            log.append("[SUCCESS]\n");
+
+            for(int i = 0; i < size; i++){
+                FSHScanner entry = scanners.get(i);
 
                 log.append("Buffering[");
                 log.append(i + 1);
@@ -261,44 +258,60 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            try{
-                log.append("Uploading buffers...");
+            log.append("[Uploading buffers...]");
 
-                for(int i = 0; i < mapsize; i++){
-                    maps.get(i).upload();
+            for(int i = 0; i < size; i++){
+                FSHScanner entry = scanners.get(i);
+
+                log.append("uploading[");
+                log.append(i + 1);
+                log.append("/");
+                log.append(size);
+                log.append("]\n");
+
+                try{
+                    entry.initializeBuffer();
+
+                }catch(Exception ex){
+                    log.append("[Error uploading buffer for target] [");
+                    log.append(entry.name);
+                    log.append("]\n [Assembler Configuration]\n");
+
+                    entry.assembler.stringify(log.get(), null);
+                    log.printError();
+
+                    throw new RuntimeException(ex);
                 }
 
-                log.append("[SUCCESS]\n");
-
-            }catch(Exception ex){
-                log.append("[FAILED]");
-                log.printError();
-                throw new RuntimeException("Failed to upload buffers", ex);
+                log.printInfo();
             }
+
+            log.append("[SUCCESS]\n");
+
+            log.append("[Signaling buffer complete] ");
 
             for(int i = 0; i < size; i++){
-                entries.get(i).signalBufferComplete();
+                scanners.get(i).signalBufferComplete();
             }
 
-            log.printInfo("[DONE]");
+            log.append("[DONE]\n");
+            log.printInfo();
 
         }else{
-            int mapsize = maps.size();
-
             for(int i = 0; i < size; i++){
-                entries.get(i).accountForMeshSizeOnBuffer();
-            }
-            for(int i = 0; i < mapsize; i++){
-                maps.get(i).initialize();
+                scanners.get(i).adjustBufferCapacity();
             }
             for(int i = 0; i < size; i++){
-                entries.get(i).bufferAndFinish();
-            }
-            for(int i = 0; i < mapsize; i++){
-                maps.get(i).upload();
+                scanners.get(i).initializeBuffer();
             }
             for(int i = 0; i < size; i++){
-                entries.get(i).signalBufferComplete();
+                scanners.get(i).bufferAndFinish();
+            }
+            for(int i = 0; i < size; i++){
+                scanners.get(i).uploadBuffer();
+            }
+            for(int i = 0; i < size; i++){
+                scanners.get(i).signalBufferComplete();
             }
         }
     }
