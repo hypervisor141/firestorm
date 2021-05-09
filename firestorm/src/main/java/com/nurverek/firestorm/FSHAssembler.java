@@ -322,7 +322,6 @@ public class FSHAssembler implements VLStringify{
 
     private void buildTarget(VLListType<BuildStep> funcs, FSInstance instance, FSHScanner scanner, FSM.Data data){
         FSMesh mesh = scanner.mesh;
-        VLArrayShort indices = instance.indices();
         int funcsize = funcs.size();
 
         FSElementStore store = instance.storage();
@@ -371,6 +370,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_INDEX, 1, 0);
             store.add(FSGlobal.ELEMENT_INDEX, new FSElement.Short(new VLArrayShort(data.indices.array())));
             store.activate(FSGlobal.ELEMENT_INDEX, 0);
         }
@@ -380,6 +380,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_INDEX, 1, 0);
             store.add(FSGlobal.ELEMENT_INDEX, new FSElement.Short(new VLArrayShort(mesh.first().indices().provider())));
             store.activate(FSGlobal.ELEMENT_INDEX, 0);
         }
@@ -389,6 +390,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_MODEL, 1, 0);
             store.add(FSGlobal.ELEMENT_MODEL, new FSElement.Float(new FSArrayModel()));
             store.activate(FSGlobal.ELEMENT_MODEL, 0);
 
@@ -400,6 +402,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_POSITION, 1, 0);
             store.add(FSGlobal.ELEMENT_POSITION, new FSElement.Float(new VLArrayFloat(data.positions.array())));
             store.activate(FSGlobal.ELEMENT_POSITION, 0);
         }
@@ -408,6 +411,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_POSITION, 1, 0);
             store.add(FSGlobal.ELEMENT_POSITION, new FSElement.Float(new VLArrayFloat(mesh.first().positions().provider())));
             store.activate(FSGlobal.ELEMENT_POSITION, 0);
         }
@@ -455,6 +459,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_COLOR, 1, 0);
             store.add(FSGlobal.ELEMENT_COLOR, new FSElement.Float(new VLArrayFloat(data.colors.array())));
             store.activate(FSGlobal.ELEMENT_COLOR, 0);
         }
@@ -470,6 +475,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_COLOR, 1, 0);
             store.add(FSGlobal.ELEMENT_COLOR, new FSElement.Float(new VLArrayFloat(mesh.first().colors().provider())));
             store.activate(FSGlobal.ELEMENT_COLOR, 0);
         }
@@ -480,6 +486,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_TEXCOORD, 1, 0);
             store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(new VLArrayFloat(data.texcoords.array())));
             store.activate(FSGlobal.ELEMENT_TEXCOORD, 0);
         }
@@ -488,9 +495,6 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
-            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(new VLArrayFloat(data.texcoords.array())));
-            store.activate(FSGlobal.ELEMENT_TEXCOORD, 0);
-
             assembler.unIndexTexCoords(instance);
         }
     };
@@ -498,8 +502,10 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
-            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(new VLArrayFloat(mesh.first().texCoords().provider())));
+            store.allocateElement(FSGlobal.ELEMENT_TEXCOORD, 1, 0);
+            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(new VLArrayFloat(data.texcoords.array())));
             store.activate(FSGlobal.ELEMENT_TEXCOORD, 0);
+
         }
     };
     private static final BuildStep TEXTURE_FLIP_U = new BuildStep(){
@@ -532,6 +538,7 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_NORMAL, 1, 0);
             store.add(FSGlobal.ELEMENT_NORMAL, new FSElement.Float(new VLArrayFloat(data.normals.array())));
             store.activate(FSGlobal.ELEMENT_NORMAL, 0);
         }
@@ -547,7 +554,9 @@ public class FSHAssembler implements VLStringify{
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
+            store.allocateElement(FSGlobal.ELEMENT_NORMAL, 1, 0);
             store.add(FSGlobal.ELEMENT_NORMAL, new FSElement.Float(new VLArrayFloat(mesh.first().normals().provider())));
+            store.activate(FSGlobal.ELEMENT_NORMAL, 0);
         }
     };
 
