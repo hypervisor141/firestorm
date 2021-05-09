@@ -370,7 +370,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_INDEX, 1, 0);
-            store.add(FSGlobal.ELEMENT_INDEX, new FSElement.Short(new VLArrayShort(data.indices.array())));
+            store.add(FSGlobal.ELEMENT_INDEX, new FSElement.Short(FSGlobal.ELEMENT_INDEX, new VLArrayShort(data.indices.array())));
             store.activate(FSGlobal.ELEMENT_INDEX, 0);
         }
     };
@@ -380,7 +380,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_INDEX, 1, 0);
-            store.add(FSGlobal.ELEMENT_INDEX, new FSElement.Short(new VLArrayShort(mesh.first().indices().provider())));
+            store.add(FSGlobal.ELEMENT_INDEX, new FSElement.Short(FSGlobal.ELEMENT_INDEX, new VLArrayShort(mesh.first().indices().provider())));
             store.activate(FSGlobal.ELEMENT_INDEX, 0);
         }
     };
@@ -390,7 +390,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_MODEL, 1, 0);
-            store.add(FSGlobal.ELEMENT_MODEL, new FSElement.Float(new FSArrayModel()));
+            store.add(FSGlobal.ELEMENT_MODEL, new FSElement.Float(FSGlobal.ELEMENT_MODEL, new FSArrayModel()));
             store.activate(FSGlobal.ELEMENT_MODEL, 0);
 
             instance.modelMatrix(new FSMatrixModel(2, 10));
@@ -402,7 +402,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_POSITION, 1, 0);
-            store.add(FSGlobal.ELEMENT_POSITION, new FSElement.Float(new VLArrayFloat(data.positions.array())));
+            store.add(FSGlobal.ELEMENT_POSITION, new FSElement.Float(FSGlobal.ELEMENT_POSITION, new VLArrayFloat(data.positions.array())));
             store.activate(FSGlobal.ELEMENT_POSITION, 0);
         }
     };
@@ -411,7 +411,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_POSITION, 1, 0);
-            store.add(FSGlobal.ELEMENT_POSITION, new FSElement.Float(new VLArrayFloat(mesh.first().positions().provider())));
+            store.add(FSGlobal.ELEMENT_POSITION, new FSElement.Float(FSGlobal.ELEMENT_POSITION, new VLArrayFloat(mesh.first().positions().provider())));
             store.activate(FSGlobal.ELEMENT_POSITION, 0);
         }
     };
@@ -459,7 +459,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_COLOR, 1, 0);
-            store.add(FSGlobal.ELEMENT_COLOR, new FSElement.Float(new VLArrayFloat(data.colors.array())));
+            store.add(FSGlobal.ELEMENT_COLOR, new FSElement.Float(FSGlobal.ELEMENT_COLOR, new VLArrayFloat(data.colors.array())));
             store.activate(FSGlobal.ELEMENT_COLOR, 0);
         }
     };
@@ -475,7 +475,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_COLOR, 1, 0);
-            store.add(FSGlobal.ELEMENT_COLOR, new FSElement.Float(new VLArrayFloat(mesh.first().colors().provider())));
+            store.add(FSGlobal.ELEMENT_COLOR, new FSElement.Float(FSGlobal.ELEMENT_COLOR, new VLArrayFloat(mesh.first().colors().provider())));
             store.activate(FSGlobal.ELEMENT_COLOR, 0);
         }
     };
@@ -486,7 +486,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(new VLArrayFloat(data.texcoords.array())));
+            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(FSGlobal.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.array())));
             store.activate(FSGlobal.ELEMENT_TEXCOORD, 0);
         }
     };
@@ -502,7 +502,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(new VLArrayFloat(data.texcoords.array())));
+            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.Float(FSGlobal.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.array())));
             store.activate(FSGlobal.ELEMENT_TEXCOORD, 0);
 
         }
@@ -538,7 +538,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_NORMAL, 1, 0);
-            store.add(FSGlobal.ELEMENT_NORMAL, new FSElement.Float(new VLArrayFloat(data.normals.array())));
+            store.add(FSGlobal.ELEMENT_NORMAL, new FSElement.Float(FSGlobal.ELEMENT_NORMAL, new VLArrayFloat(data.normals.array())));
             store.activate(FSGlobal.ELEMENT_NORMAL, 0);
         }
     };
@@ -554,7 +554,7 @@ public class FSHAssembler implements VLStringify{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_NORMAL, 1, 0);
-            store.add(FSGlobal.ELEMENT_NORMAL, new FSElement.Float(new VLArrayFloat(mesh.first().normals().provider())));
+            store.add(FSGlobal.ELEMENT_NORMAL, new FSElement.Float(FSGlobal.ELEMENT_NORMAL, new VLArrayFloat(mesh.first().normals().provider())));
             store.activate(FSGlobal.ELEMENT_NORMAL, 0);
         }
     };

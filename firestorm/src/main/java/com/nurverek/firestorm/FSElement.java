@@ -11,12 +11,19 @@ import vanguard.VLListType;
 
 public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSElement<DATA, BUFFER>>{
 
+    public int element;
     public DATA data;
     public VLListType<FSBufferBinding<BUFFER>> bindings;
 
-    public FSElement(DATA data){
+    public FSElement(int element, DATA data){
+        this.element = element;
         this.data = data;
+
         bindings = new VLListType<>(1, 5);
+    }
+
+    protected FSElement(int element){
+        this.element = element;
     }
 
     protected FSElement(){
@@ -40,6 +47,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }else{
             throw new RuntimeException("Invalid flags : " + flags);
         }
+
+        element = src.element;
     }
 
     @Override
@@ -50,6 +59,11 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
     public VLBufferTracker buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer){
         VLBufferTracker tracker = new VLBufferTracker();
         bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
+
+        tracker.unitoffset = 0;
+        tracker.unitsize = FSGlobal.UNIT_SIZES[element];
+        tracker.unitsubcount = tracker.unitsize;
+        tracker.stride = tracker.unitsize;
 
         return tracker;
     }
@@ -127,13 +141,20 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
     public static class Short extends FSElement<VLArrayShort, VLBufferShort>{
 
-        public Short(VLArrayShort data){
-            super(data);
+        public Short(int element, VLArrayShort data){
+            super(element, data);
+        }
+
+        public Short(int element){
+            super(element);
         }
 
         public Short(Short src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Short(){
+
         }
 
         @Override
@@ -171,13 +192,21 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
     public static class Float extends FSElement<VLArrayFloat, VLBufferFloat>{
 
-        public Float(VLArrayFloat data){
-            super(data);
+        public Float(int element, VLArrayFloat data){
+            super(element, data);
+        }
+
+        public Float(int element){
+            super(element);
         }
 
         public Float(Float src, long flags){
-            super(null);
+            super();
             copy(src, flags);
+        }
+
+        protected Float(){
+
         }
 
         @Override
