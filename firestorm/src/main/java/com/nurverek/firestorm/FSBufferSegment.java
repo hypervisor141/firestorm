@@ -57,14 +57,18 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         return this;
     }
 
-    protected void buffer(FSMesh target){
+    private void checkInitialize(){
         if(buffer.provider() == null){
             buffer.initialize(ByteOrder.nativeOrder());
 
-            if(vbuffer != null){
+            if(vbuffer != null && vbuffer.getBufferID() >= 0){
                 vbuffer.initialize();
             }
         }
+    }
+
+    protected void buffer(FSMesh target){
+        checkInitialize();
 
         int size = entries.size();
 
@@ -139,7 +143,6 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
         log.append("] ");
 
-        buffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
         buffer(target);
     }
 
