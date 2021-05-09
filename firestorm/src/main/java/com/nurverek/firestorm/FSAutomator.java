@@ -214,9 +214,9 @@ public class FSAutomator{
                     entry.bufferDebugAndFinish(log);
 
                 }catch(Exception ex){
-                    log.append("Error buffering \"");
+                    log.append("[Failed to buffer] [");
                     log.append(entry.name);
-                    log.append("\"\n");
+                    log.append("]\n");
                     log.append("[Assembler Configuration]\n");
 
                     entry.assembler.stringify(log.get(), null);
@@ -241,7 +241,7 @@ public class FSAutomator{
                     entry.uploadBuffer();
 
                 }catch(Exception ex){
-                    log.append("Error uploading[");
+                    log.append("[Failed to upload] [");
                     log.append(entry.name);
                     log.append("]\n");
                     log.append("[Assembler Configuration]\n");
@@ -270,7 +270,7 @@ public class FSAutomator{
                     entry.signalBufferComplete();
 
                 }catch(Exception ex){
-                    log.append("Error signalling completion[");
+                    log.append("[Failed to signal buffer completion] [");
                     log.append(entry.name);
                     log.append("]\n");
                     log.append("[Assembler Configuration]\n");

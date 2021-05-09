@@ -29,7 +29,7 @@ public abstract class FSHScanner{
     }
 
     void adjustBufferCapacity(){
-        buffertarget.accountFor(mesh);
+        buffertarget.prepare(mesh);
     }
 
     void bufferAndFinish(){
@@ -38,8 +38,16 @@ public abstract class FSHScanner{
     }
 
     void bufferDebugAndFinish(VLLog log){
+        log.append("[Attempting to buffer for target mesh] [");
+        log.append(mesh.name);
+        log.append("]\n");
+        log.printInfo();
+
         buffertarget.bufferDebug(mesh, log);
         program.meshes().add(mesh);
+
+        log.append("[DONE]");
+        log.printInfo();
     }
 
     void uploadBuffer(){

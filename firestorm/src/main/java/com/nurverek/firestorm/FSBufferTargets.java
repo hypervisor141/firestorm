@@ -16,11 +16,11 @@ public class FSBufferTargets{
         return this;
     }
 
-    public void accountFor(FSMesh target){
+    public void prepare(FSMesh target){
         int size = segments.size();
 
         for(int i = 0; i < size; i++){
-            segments.get(i).accountFor(target);
+            segments.get(i).prepare(target);
         }
     }
 
@@ -35,7 +35,19 @@ public class FSBufferTargets{
     public void bufferDebug(FSMesh target, VLLog log){
         int size = segments.size();
 
+        log.append("[");
+        log.append(getClass().getSimpleName());
+        log.append("]\n");
+        log.printInfo();
+
         for(int i = 0; i < size; i++){
+            log.append("[Segment] [");
+            log.append(i + 1);
+            log.append("/");
+            log.append(size);
+            log.append("]");
+            log.printInfo();
+
             segments.get(i).bufferDebug(target, log);
         }
     }

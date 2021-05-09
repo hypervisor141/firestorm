@@ -167,7 +167,6 @@ public class FSHAssembler implements VLStringify{
             if(!DRAW_MODE_INDEXED){
                 firstfuncs.add(TEXTURE_UNINDEX);
             }
-
             if(FLIP_TEXTURE_U){
                 firstfuncs.add(TEXTURE_FLIP_U);
             }
@@ -198,7 +197,7 @@ public class FSHAssembler implements VLStringify{
         if(LOAD_NORMALS){
             firstfuncs.add(NORMAL_SET);
 
-            if(DRAW_MODE_INDEXED){
+            if(!DRAW_MODE_INDEXED){
                 firstfuncs.add(NORMAL_UNINDEX);
             }
 
@@ -208,7 +207,7 @@ public class FSHAssembler implements VLStringify{
             }else{
                 restfuncs.add(NORMAL_SET);
 
-                if(DRAW_MODE_INDEXED){
+                if(!DRAW_MODE_INDEXED){
                     restfuncs.add(NORMAL_UNINDEX);
                 }
             }

@@ -1,6 +1,7 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLCopyable;
+import vanguard.VLList;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
@@ -80,6 +81,12 @@ public class FSMesh implements VLCopyable<FSMesh>{
         return configs;
     }
 
+    public void allocateBinding(int element, int capacity, int resizer){
+        if(bindings[element] == null){
+            bindings[element] = new VLListType<>(capacity, resizer);
+        }
+    }
+
     public FSBufferBinding<?> binding(int element, int index){
         return bindings[element].get(index);
     }
@@ -136,8 +143,17 @@ public class FSMesh implements VLCopyable<FSMesh>{
         bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
     }
 
+    public void bindFromStorageLatest(int instanceindex, int element, int storageindex){
+        VLListType<?> list = instances.get(instanceindex).storage().get(element).get(storageindex).bindings;
+        bindings[element].add((FSBufferBinding<?>)list.get(list.size() - 1));
+    }
+
     public void bindFromActive(int instanceindex, int element, int bindingindex){
         bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
+    }
+
+    public void bindManual(int element, FSBufferBinding<?> binding){
+        bindings[element].add(binding);
     }
 
     public void unbind(int element, int index){
