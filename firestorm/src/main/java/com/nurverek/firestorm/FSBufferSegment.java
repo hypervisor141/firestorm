@@ -364,8 +364,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 int size2 = list.get(i).size() / unitsize;
 
                 if(size2 != unitcountrequired){
-                    log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] ");
-                    log.append("element[");
+                    log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes]    element[");
                     log.append(FSGlobal.NAMES[element]);
                     log.append("] referenceSize[");
                     log.append(unitcountrequired);
@@ -444,8 +443,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             int size = instance.element(element).size() / unitsize;
 
             if(size != unitcountrequired){
-                log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] ");
-                log.append("element[");
+                log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] element[");
                 log.append(FSGlobal.NAMES[element]);
                 log.append("] referenceSize[");
                 log.append(unitcountrequired);

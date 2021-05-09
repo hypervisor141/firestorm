@@ -14,7 +14,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
 
     protected VLListType<FSInstance> instances;
     protected VLListType<FSBufferBinding<?>>[] bindings;
-    protected FSConfigSequence configs;
+    protected FSConfigGroup configs;
     protected String name;
 
     protected int drawmode;
@@ -37,7 +37,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
     }
 
     public void initConfigs(FSConfig.Mode mode, int capacity, int resizer){
-        this.configs = new FSConfigSequence(mode, capacity, resizer);
+        this.configs = new FSConfigGroup(mode, capacity, resizer);
     }
 
     public void scanComplete(FSInstance instance){}
@@ -77,7 +77,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         return configs.configs().get(index);
     }
 
-    public FSConfigSequence configs(){
+    public FSConfigGroup configs(){
         return configs;
     }
 

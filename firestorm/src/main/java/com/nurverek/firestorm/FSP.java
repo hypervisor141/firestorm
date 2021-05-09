@@ -408,12 +408,12 @@ public abstract class FSP{
 
     public static class CoreConfig{
         
-        public FSConfigSequence setupconfig;
-        public FSConfigSequence meshconfig;
-        public FSConfigSequence postdrawconfig;
-        public FSConfigSequence postframeconfig;
+        public FSConfigGroup setupconfig;
+        public FSConfigGroup meshconfig;
+        public FSConfigGroup postdrawconfig;
+        public FSConfigGroup postframeconfig;
 
-        public CoreConfig(FSConfigSequence setupconfig, FSConfigSequence meshconfig, FSConfigSequence postdrawconfig, FSConfigSequence postframeconfig){
+        public CoreConfig(FSConfigGroup setupconfig, FSConfigGroup meshconfig, FSConfigGroup postdrawconfig, FSConfigGroup postframeconfig){
             this.setupconfig = setupconfig;
             this.meshconfig = meshconfig;
             this.postdrawconfig = postdrawconfig;

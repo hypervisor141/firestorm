@@ -1,50 +1,34 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public class FSConfigSequence extends FSConfigLocated{
+public class FSConfigGroup extends FSConfig{
 
     public static final long FLAG_FORCE_DUPLICATE_CONFIGS = 0x1L;
 
     protected VLListType<FSConfig> configs;
-    protected int glslsize;
 
-    public FSConfigSequence(Mode mode, int capacity, int resizer){
+    public FSConfigGroup(Mode mode, int capacity, int resizer){
         super(mode);
         configs = new VLListType<>(capacity, resizer);
     }
 
-    public FSConfigSequence(Mode mode){
-        super(mode);
-    }
-
-    protected FSConfigSequence(){
-
-    }
-
-    public FSConfigSequence(FSConfigSequence src, long flags){
+    public FSConfigGroup(FSConfigGroup src, long flags){
         super(null);
         copy(src, flags);
     }
 
+    protected FSConfigGroup(){
+
+    }
+
     public void add(FSConfig config){
         configs.add(config);
-        glslsize += config.getGLSLSize();
     }
 
     public VLListType<FSConfig> configs(){
         return configs;
-    }
-
-    public void updateGLSLSize(){
-        int size = configs.size();
-        glslsize = 0;
-
-        for(int i = 0; i < size; i++){
-            glslsize += configs.get(i).getGLSLSize();
-        }
     }
 
     @Override
@@ -60,14 +44,9 @@ public class FSConfigSequence extends FSConfigLocated{
     public final void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
         int size = configs.size();
 
-        int loc = location;
-
         for(int i = 0; i < size; i++){
             FSConfig config = configs.get(i);
-            config.location(loc);
             config.run(pass, program, mesh, meshindex, passindex);
-
-            loc += config.getGLSLSize();
         }
     }
 
@@ -75,16 +54,11 @@ public class FSConfigSequence extends FSConfigLocated{
     public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
         String classname = getClass().getSimpleName();
         int size = configs.size();
-        int loc = location;
 
         log.append("ENTERING [");
         log.append(classname);
         log.append("] configs[");
         log.append(size);
-        log.append("] location[");
-        log.append(loc);
-        log.append("] GLSLSize[");
-        log.append(glslsize);
         log.append("]\n");
 
         for(int i = 0; i < size; i++){
@@ -94,11 +68,7 @@ public class FSConfigSequence extends FSConfigLocated{
             log.append(size);
             log.append("] ");
 
-            FSConfig config = configs.get(i);
-            config.location(loc);
-            config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
-
-            loc += config.getGLSLSize();
+            configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
         }
 
         log.append("EXITING [");
@@ -108,7 +78,7 @@ public class FSConfigSequence extends FSConfigLocated{
 
     @Override
     public int getGLSLSize(){
-        return glslsize;
+        return 0;
     }
 
     @Override
@@ -134,13 +104,11 @@ public class FSConfigSequence extends FSConfigLocated{
         }else{
             Helper.throwMissingAllFlags();
         }
-
-        glslsize = target.glslsize;
     }
 
     @Override
-    public FSConfigSequence duplicate(long flags){
-        return new FSConfigSequence(this, flags);
+    public FSConfigGroup duplicate(long flags){
+        return new FSConfigGroup(this, flags);
     }
 
     @Override
