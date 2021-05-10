@@ -174,7 +174,7 @@ public class FSAutomator{
                     FSControl.LOGTAG, getClass().getSimpleName()
             });
 
-            log.printInfo("[Buffering Stage]");
+            log.printInfo("[Measuring Buffer Size]");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
@@ -201,6 +201,8 @@ public class FSAutomator{
 
                 log.printInfo();
             }
+
+            log.append("[Buffer Size Measurement Complete]\n[Buffering Data]\n");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
@@ -229,6 +231,8 @@ public class FSAutomator{
                 log.printInfo();
             }
 
+            log.append("[Buffer Complete]\n[Uploading buffers]\n");
+
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
@@ -256,7 +260,7 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Signaling buffer complete]\n");
+            log.append("[Upload Complete]\n[Signaling buffer complete]\n");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
