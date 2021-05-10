@@ -636,7 +636,7 @@ public abstract class FSP{
 
             log.append(" mask[");
             log.append(mask);
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -681,7 +681,7 @@ public abstract class FSP{
 
             log.append(" mode[");
             log.append(cullmode);
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -726,7 +726,7 @@ public abstract class FSP{
 
             log.append(" divisor[");
             log.append(divisor);
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -771,7 +771,7 @@ public abstract class FSP{
 
             log.append(" mode[");
             log.append(readmode);
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1079,10 +1079,10 @@ public abstract class FSP{
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
+                log.append("]");
 
             }catch(Exception ex){
-                log.append("[PRINT FAILED]");
+                log.append(" [FAILED]");
                 throw new RuntimeException(ex);
             }
         }
@@ -1154,10 +1154,10 @@ public abstract class FSP{
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
+                log.append("]");
 
             }catch(Exception ex){
-                log.append("[PRINT FAILED]");
+                log.append(" [FAILED]");
                 throw new RuntimeException(ex);
             }
         }
@@ -1437,7 +1437,7 @@ public abstract class FSP{
             log.append(z.get());
             log.append("], w[");
             log.append(w.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1485,7 +1485,7 @@ public abstract class FSP{
             log.append(y.get());
             log.append("], z[");
             log.append(z.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1529,7 +1529,7 @@ public abstract class FSP{
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1568,7 +1568,7 @@ public abstract class FSP{
 
             log.append(" x[");
             log.append(x.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1823,7 +1823,7 @@ public abstract class FSP{
             log.append(z.get());
             log.append("], w[");
             log.append(w.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1892,7 +1892,7 @@ public abstract class FSP{
             log.append(y.get());
             log.append("], z[");
             log.append(z.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -1955,7 +1955,7 @@ public abstract class FSP{
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2009,7 +2009,7 @@ public abstract class FSP{
 
             log.append(" x[");
             log.append(x.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2264,7 +2264,7 @@ public abstract class FSP{
             log.append(z.get());
             log.append("], w[");
             log.append(w.get());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2429,10 +2429,10 @@ public abstract class FSP{
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
+                log.append("]");
 
             }catch(Exception ex){
-                log.append("[PRINT FAILED]");
+                log.append(" [FAILED]");
                 throw new RuntimeException(ex);
             }
         }
@@ -2494,7 +2494,7 @@ public abstract class FSP{
 
             vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2643,7 +2643,7 @@ public abstract class FSP{
             log.append(mesh.drawmode);
             log.append("] indexCount[");
             log.append(mesh.first().vertexSize());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2683,7 +2683,7 @@ public abstract class FSP{
             log.append(mesh.first().vertexSize());
             log.append("] instanceCount[");
             log.append(mesh.size());
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2738,7 +2738,7 @@ public abstract class FSP{
 
             mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
-            log.append("] ");
+            log.append("]");
         }
     }
 
@@ -2800,10 +2800,10 @@ public abstract class FSP{
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
+                log.append("]");
 
             }catch(Exception ex){
-                log.append("[PRINT FAILED]");
+                log.append(" [FAILED]");
                 throw new RuntimeException(ex);
             }
         }
@@ -2883,10 +2883,10 @@ public abstract class FSP{
                 log.append("] buffer[");
 
                 binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
-                log.append("] ");
+                log.append("]");
 
             }catch(Exception ex){
-                log.append("[PRINT FAILED]");
+                log.append(" [FAILED]");
                 throw new RuntimeException(ex);
             }
         }
