@@ -1068,7 +1068,7 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append("element[");
-            log.append(element);
+            log.append(FSGlobal.NAMES[element]);
             log.append("bindingIndex[");
             log.append(bindingindex);
             log.append("] normalized[");
@@ -1148,7 +1148,7 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append("element[");
-            log.append(element);
+            log.append(FSGlobal.NAMES[element]);
             log.append("bindingIndex[");
             log.append(bindingindex);
             log.append("] tracker[");
