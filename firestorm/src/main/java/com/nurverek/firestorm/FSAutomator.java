@@ -45,14 +45,25 @@ public class FSAutomator{
 
             for(int i = 0; i < entrysize; i++){
                 entry = scanners.get(i);
-                entry.assembler.checkDebug();
 
-                log.append("Scanner[");
-                log.append(entry.name);
-                log.append("] [Invalid Assembler Configuration]\n");
-                log.append("[Assembler Configuration]\n");
+                try{
+                    log.append("Scanner[");
+                    log.append(entry.name);
+                    log.append("]\n");
 
-                entry.assembler.stringify(log.get(), null);
+                    entry.assembler.checkDebug();
+
+                    log.append("[SUCCESS]");
+
+                }catch(Exception ex){
+                    log.append("[FAILED] [Invalid assembler configuration detected]\n");
+                    log.append("[Assembler Configuration]\n");
+
+                    entry.assembler.stringify(log.get(), null);
+                    log.printError();
+
+                    throw new RuntimeException("Invalid assembler configuration", ex);
+                }
             }
 
             log.printInfo();
