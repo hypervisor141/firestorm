@@ -775,20 +775,22 @@ public abstract class FSP{
         }
     }
 
-    public static class AttribEnable extends FSConfigLocated{
+    public static class AttribEnable extends FSConfig{
 
-        public AttribEnable(Mode mode, int location){
-            super(mode, location);
+        public FSConfigLocated config;
+
+        public AttribEnable(Mode mode, FSConfigLocated config){
+            super(mode);
+            this.config = config;
         }
 
         public AttribEnable(AttribEnable src, long flags){
-            super(null);
             copy(src, flags);
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            GLES32.glEnableVertexAttribArray(location);
+            GLES32.glEnableVertexAttribArray(config.location());
         }
 
         @Override
@@ -797,15 +799,24 @@ public abstract class FSP{
         }
 
         @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            this.config = ((AttribEnable)src).config;
+        }
+
+        @Override
         public AttribEnable duplicate(long flags){
             return new AttribEnable(this, flags);
         }
     }
 
-    public static class AttribDisable extends FSConfigLocated{
+    public static class AttribDisable extends FSConfig{
 
-        public AttribDisable(Mode mode, int location){
-            super(mode, location);
+        public FSConfigLocated config;
+
+        public AttribDisable(Mode mode, FSConfigLocated config){
+            super(mode);
+            this.config = config;
         }
 
         public AttribDisable(AttribDisable src, long flags){
@@ -815,12 +826,18 @@ public abstract class FSP{
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex){
-            GLES32.glDisableVertexAttribArray(location);
+            GLES32.glDisableVertexAttribArray(config.location());
         }
 
         @Override
         public int getGLSLSize(){
             return 0;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            this.config = ((AttribDisable)src).config;
         }
 
         @Override
@@ -845,6 +862,10 @@ public abstract class FSP{
 
         public Array(Mode mode){
             super(mode);
+        }
+
+        protected Array(){
+
         }
 
         public final void offset(int s){
@@ -920,6 +941,10 @@ public abstract class FSP{
 
         public ArrayDirect(Mode mode){
             super(mode);
+        }
+
+        protected ArrayDirect(){
+
         }
 
         @Override
@@ -1624,7 +1649,6 @@ public abstract class FSP{
         }
 
         public Uniform3ivd(Uniform3ivd src, long flags){
-            super(null);
             copy(src, flags);
         }
 
