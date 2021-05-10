@@ -45,8 +45,7 @@ public class FSConfigGroup extends FSConfig{
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            FSConfig config = configs.get(i);
-            config.run(pass, program, mesh, meshindex, passindex);
+            configs.get(i).run(pass, program, mesh, meshindex, passindex);
         }
     }
 
