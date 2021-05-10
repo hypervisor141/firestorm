@@ -41,7 +41,8 @@ public class FSAutomator{
             FSHScanner entry;
             boolean found;
 
-            log.printInfo("[Automated Scan Initiated]\n[Assembler Check Stage]");
+            log.printInfo("[Automated Scan Initiated]");
+            log.printInfo("[Assembler Check Stage]");
 
             for(int i = 0; i < entrysize; i++){
                 entry = scanners.get(i);
@@ -153,7 +154,7 @@ public class FSAutomator{
             }
 
             log.printInfo();
-            log.printInfo("[Automated Scan And Build Complete]\n");
+            log.printInfo("[Automated Scan And Build Complete]");
 
         }else{
             int filesize = files.size();
@@ -185,7 +186,8 @@ public class FSAutomator{
                     FSControl.LOGTAG, getClass().getSimpleName()
             });
 
-            log.printInfo("[Automated Buffering Initiated]\n[Measuring Buffer Size]\n");
+            log.printInfo("[Automated Buffering Initiated]");
+            log.printInfo("[Measuring Buffer Size]");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
@@ -213,7 +215,8 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Buffer Size Measurement Complete]\n[Buffering Data]\n");
+            log.printInfo("[Buffer Size Measurement Complete]");
+            log.printInfo("[Buffering Data]");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
@@ -242,7 +245,8 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Buffer Complete]\n[Uploading buffers]\n");
+            log.printInfo("[Buffer Complete]");
+            log.printInfo("[Uploading Buffers]");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
@@ -271,7 +275,8 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Upload Complete]\n[Signaling buffer complete]\n");
+            log.printInfo("[Upload Complete]");
+            log.printInfo("[Signaling Buffer Complete]");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
@@ -301,7 +306,7 @@ public class FSAutomator{
             }
 
             log.printInfo();
-            log.printInfo("[Automated Buffer Procedure Complete]\n");
+            log.printInfo("[Automated Buffer Procedure Complete]");
 
         }else{
             for(int i = 0; i < size; i++){
