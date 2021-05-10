@@ -101,13 +101,15 @@ public class FSHAssembler implements VLStringify{
     private void configurePositions(){
         if(LOAD_POSITIONS){
             firstfuncs.add(POSITION_SET);
+
+            if(!DRAW_MODE_INDEXED){
+                firstfuncs.add(POSITION_UNINDEX);
+            }
+
             firstfuncs.add(POSITION_INIT_SCHEMATICS);
 
             if(CONVERT_POSITIONS_TO_MODELARRAYS){
                 firstfuncs.add(POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE);
-            }
-            if(!DRAW_MODE_INDEXED){
-                firstfuncs.add(POSITION_UNINDEX);
             }
 
             if(INSTANCE_SHARE_POSITIONS){
@@ -127,11 +129,13 @@ public class FSHAssembler implements VLStringify{
 
             }else{
                 restfuncs.add(POSITION_SET);
-                restfuncs.add(POSITION_INIT_SCHEMATICS);
 
                 if(!DRAW_MODE_INDEXED){
                     restfuncs.add(POSITION_UNINDEX);
                 }
+
+                restfuncs.add(POSITION_INIT_SCHEMATICS);
+
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
                     restfuncs.add(POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE);
                 }
@@ -164,14 +168,14 @@ public class FSHAssembler implements VLStringify{
         if(LOAD_TEXCOORDS){
             firstfuncs.add(TEXTURE_SET);
 
-            if(!DRAW_MODE_INDEXED){
-                firstfuncs.add(TEXTURE_UNINDEX);
-            }
             if(FLIP_TEXTURE_U){
                 firstfuncs.add(TEXTURE_FLIP_U);
             }
             if(FLIP_TEXTURE_V){
                 firstfuncs.add(TEXTURE_FLIP_V);
+            }
+            if(!DRAW_MODE_INDEXED){
+                firstfuncs.add(TEXTURE_UNINDEX);
             }
 
             if(INSTANCE_SHARE_TEXCOORDS){
@@ -180,14 +184,14 @@ public class FSHAssembler implements VLStringify{
             }else{
                 restfuncs.add(TEXTURE_SET);
 
-                if(!DRAW_MODE_INDEXED){
-                    restfuncs.add(TEXTURE_UNINDEX);
-                }
                 if(FLIP_TEXTURE_U){
                     restfuncs.add(TEXTURE_FLIP_U);
                 }
                 if(FLIP_TEXTURE_V){
                     restfuncs.add(TEXTURE_FLIP_V);
+                }
+                if(!DRAW_MODE_INDEXED){
+                    restfuncs.add(TEXTURE_UNINDEX);
                 }
             }
         }
@@ -513,8 +517,9 @@ public class FSHAssembler implements VLStringify{
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             float[] array = instance.texCoords().provider();
             int size = array.length;
+            int jumps = FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_TEXCOORD];
 
-            for(int i = 0; i < size; i += 2){
+            for(int i = 0; i < size; i += jumps){
                 array[i] = 1F - array[i];
             }
         }
@@ -525,8 +530,9 @@ public class FSHAssembler implements VLStringify{
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             float[] array = instance.texCoords().provider();
             int size = array.length;
+            int jumps = FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_TEXCOORD];
 
-            for(int i = 1; i < size; i += 2){
+            for(int i = 0; i < size; i += jumps){
                 array[i] = 1F - array[i];
             }
         }

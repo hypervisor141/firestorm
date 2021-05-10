@@ -18,11 +18,12 @@ public class FSAutomator{
         scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
-    public void registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
+    public FSM registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
         FSM data = new FSM();
         data.loadFromFile(src, order, fullsizedposition, estimatedsize);
-
         files.add(data);
+
+        return data;
     }
 
     public void registerScanner(FSHScanner scanner){
