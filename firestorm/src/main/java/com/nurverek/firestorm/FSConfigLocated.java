@@ -45,6 +45,6 @@ public abstract class FSConfigLocated extends FSConfig{
 
         log.append("location[");
         log.append(location);
-        log.append("] ");
+        log.append("]");
     }
 }
