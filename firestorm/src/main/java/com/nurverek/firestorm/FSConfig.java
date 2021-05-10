@@ -72,6 +72,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>{
         @Override
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
             self.printHeader(log);
+            log.append("\n");
         }
 
         @Override
@@ -159,9 +160,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>{
 
             if(debug >= FSControl.DEBUG_FULL){
                 log.append(" [");
-
                 debugInfo(pass, program, mesh, log, debug);
-
                 log.append("]\n");
 
             }else{
