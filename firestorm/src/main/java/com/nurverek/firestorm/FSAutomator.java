@@ -256,7 +256,7 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[Signaling buffer complete] ");
+            log.append("[Signaling buffer complete]\n");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
