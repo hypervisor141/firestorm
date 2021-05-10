@@ -142,7 +142,7 @@ public class FSAutomator{
             }
 
             log.printInfo();
-            log.printInfo("[DONE]");
+            log.printInfo("[Automated Mesh Scan And Build Complete]\n");
 
         }else{
             int filesize = files.size();
@@ -285,8 +285,8 @@ public class FSAutomator{
                 log.printInfo();
             }
 
-            log.append("[DONE]\n");
             log.printInfo();
+            log.printInfo("[Automated Buffer Procedure Complete]\n");
 
         }else{
             for(int i = 0; i < size; i++){
