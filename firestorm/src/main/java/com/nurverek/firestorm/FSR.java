@@ -23,8 +23,6 @@ public class FSR{
         }
     };
 
-    public static final Object RENDERLOCK = new Object();
-
     private static VLListType<FSRPass> passes;
     private static VLListType<FSHub> hubs;
     private static VLListType<FSRTask> tasks;
@@ -108,34 +106,32 @@ public class FSR{
     protected static void drawFrame(){
         FSCFrames.timeFrameStarted();
 
-        synchronized(RENDERLOCK){
-            FSEvents events = FSControl.events();
-            events.GLPreDraw();
+        FSEvents events = FSControl.events();
+        events.GLPreDraw();
 
-            int size = passes.size();
+        int size = passes.size();
 
-            for(int i = 0; i < size; i++){
-                CURRENT_PASS_INDEX = i;
-                CURRENT_PASS_ENTRY_INDEX = -1;
+        for(int i = 0; i < size; i++){
+            CURRENT_PASS_INDEX = i;
+            CURRENT_PASS_ENTRY_INDEX = -1;
 
-                passes.get(i).draw();
-            }
-
-            synchronized(tasks){
-                taskcache.add(tasks);
-                tasks.clear();
-            }
-
-            size = taskcache.size();
-
-            for(int i = 0; i < size; i++){
-                taskcache.get(i).run();
-            }
-
-            taskcache.clear();
-
-            events.GLPostDraw();
+            passes.get(i).draw();
         }
+
+        synchronized(tasks){
+            taskcache.add(tasks);
+            tasks.clear();
+        }
+
+        size = taskcache.size();
+
+        for(int i = 0; i < size; i++){
+            taskcache.get(i).run();
+        }
+
+        taskcache.clear();
+
+        events.GLPostDraw();
 
         finishFrame();
     }
@@ -242,29 +238,27 @@ public class FSR{
             FSR.paused();
 
         }else{
-            synchronized(RENDERLOCK){
-                renderthread.requestDestruction();
-                renderthread = null;
+            renderthread.requestDestruction();
+            renderthread = null;
 
-                FSCThreads.destroy();
+            FSCThreads.destroy();
 
-                int size = hubs.size();
+            int size = hubs.size();
 
-                for(int i = 0; i < size; i++){
-                    hubs.get(i).destroy();
-                }
-
-                CURRENT_PASS_INDEX = -1;
-                CURRENT_PASS_ENTRY_INDEX = -1;
-
-                isInitialized = false;
-
-                threadinterface = null;
-                choreographer = null;
-                passes = null;
-                tasks = null;
-                taskcache = null;
+            for(int i = 0; i < size; i++){
+                hubs.get(i).destroy();
             }
+
+            CURRENT_PASS_INDEX = -1;
+            CURRENT_PASS_ENTRY_INDEX = -1;
+
+            isInitialized = false;
+
+            threadinterface = null;
+            choreographer = null;
+            passes = null;
+            tasks = null;
+            taskcache = null;
         }
     }
 }

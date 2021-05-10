@@ -104,15 +104,7 @@ public final class FSCInput{
     }
 
     public static void triggerInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        float[] near = new float[4];
-        float[] far = new float[4];
-
-        synchronized(FSR.RENDERLOCK){
-            FSView config = FSControl.getView();
-            config.unProject2DPoint(e1.getX(), e1.getY(), near, 0, far, 0);
-        }
-
-        FSR.post(new TaskProcessInput(type, e1, e2, f1, f2, near, far));
+        FSR.post(new TaskProcessInput(type, e1, e2, f1, f2));
     }
 
     protected static void destroy(){
@@ -134,28 +126,34 @@ public final class FSCInput{
         protected final MotionEvent e2;
         protected final float f1;
         protected final float f2;
-        protected final float[] near;
-        protected final float[] far;
 
-        protected TaskProcessInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+        protected TaskProcessInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
             this.type = type;
             this.e1 = e1;
             this.e2 = e2;
             this.f1 = f1;
             this.f2 = f2;
-            this.near = near;
-            this.far = far;
         }
 
         @Override
         public void run(){
+            float[] near = new float[4];
+            float[] far = new float[4];
+
+            FSView config = FSControl.getView();
+            config.unProject2DPoint(e1.getX(), e1.getY(), near, 0, far, 0);
+
+            ArrayList<Entry> cache;
+
             synchronized(type){
                 ArrayList<Entry> entries = type.get();
-                int size = entries.size();
+                cache = new ArrayList<>(entries);
+            }
 
-                for(int i = 0; i < size; i++){
-                    entries.get(i).processInput(e1, e2, f1, f2, near, far);
-                }
+            int size = cache.size();
+
+            for(int i = 0; i < size; i++){
+                cache.get(i).processInput(e1, e2, f1, f2, near, far);
             }
         }
     }
