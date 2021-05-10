@@ -1066,7 +1066,7 @@ public abstract class FSP{
 
             log.append(" element[");
             log.append(FSGlobal.NAMES[element]);
-            log.append("bindingIndex[");
+            log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] normalized[");
             log.append(normalized);
@@ -1143,7 +1143,7 @@ public abstract class FSP{
 
             log.append(" element[");
             log.append(FSGlobal.NAMES[element]);
-            log.append("bindingIndex[");
+            log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] tracker[");
 
