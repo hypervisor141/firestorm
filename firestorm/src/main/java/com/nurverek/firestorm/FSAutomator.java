@@ -41,7 +41,7 @@ public class FSAutomator{
             FSHScanner entry;
             boolean found;
 
-            log.printInfo("[Assembler Check Stage]");
+            log.printInfo("[Automated Scan Initiated]\n[Assembler Check Stage]");
 
             for(int i = 0; i < entrysize; i++){
                 entry = scanners.get(i);
@@ -153,7 +153,7 @@ public class FSAutomator{
             }
 
             log.printInfo();
-            log.printInfo("[Automated Mesh Scan And Build Complete]\n");
+            log.printInfo("[Automated Scan And Build Complete]\n");
 
         }else{
             int filesize = files.size();
@@ -185,7 +185,7 @@ public class FSAutomator{
                     FSControl.LOGTAG, getClass().getSimpleName()
             });
 
-            log.printInfo("[Measuring Buffer Size]");
+            log.printInfo("[Automated Buffering Initiated]\n[Measuring Buffer Size]\n");
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
