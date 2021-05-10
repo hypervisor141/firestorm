@@ -179,7 +179,7 @@ public class FSAutomator{
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
-                log.append("accountingForMesh[");
+                log.append("[measuringBufferSize] [");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
@@ -205,7 +205,7 @@ public class FSAutomator{
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
-                log.append("Buffering[");
+                log.append("[Buffering] [");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
@@ -232,7 +232,7 @@ public class FSAutomator{
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
-                log.append("Uploading[");
+                log.append("[Uploading] [");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
@@ -261,7 +261,7 @@ public class FSAutomator{
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
-                log.append("Signalling[");
+                log.append("[Signalling] [");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
