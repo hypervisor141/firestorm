@@ -141,7 +141,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             log.printInfo();
         }
 
-        log.append("[Entries]");
+        log.append("[Entries]\n");
 
         for(int i = 0; i < size; i++){
             entries.get(i).debugInfo(log);
