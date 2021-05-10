@@ -584,7 +584,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x);
             log.append("], y[");
             log.append(y);
@@ -634,7 +634,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("mask[");
+            log.append(" mask[");
             log.append(mask);
             log.append("] ");
         }
@@ -679,7 +679,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("mode[");
+            log.append(" mode[");
             log.append(cullmode);
             log.append("] ");
         }
@@ -724,7 +724,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("divisor[");
+            log.append(" divisor[");
             log.append(divisor);
             log.append("] ");
         }
@@ -769,7 +769,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("mode[");
+            log.append(" mode[");
             log.append(readmode);
             log.append("] ");
         }
@@ -924,7 +924,7 @@ public abstract class FSP{
 
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
-            log.append("offset[");
+            log.append(" offset[");
             log.append(offset);
             log.append("] count[");
             log.append(count);
@@ -988,7 +988,7 @@ public abstract class FSP{
 
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
-            log.append("] instance[");
+            log.append(" instance[");
             log.append(instance);
             log.append("] element[");
             log.append(FSGlobal.NAMES[element]);
@@ -1064,7 +1064,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("element[");
+            log.append(" element[");
             log.append(FSGlobal.NAMES[element]);
             log.append("bindingIndex[");
             log.append(bindingindex);
@@ -1141,7 +1141,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("element[");
+            log.append(" element[");
             log.append(FSGlobal.NAMES[element]);
             log.append("bindingIndex[");
             log.append(bindingindex);
@@ -1429,7 +1429,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -1479,7 +1479,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -1525,7 +1525,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -1566,7 +1566,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("] ");
         }
@@ -1815,7 +1815,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -1886,7 +1886,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -1951,7 +1951,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -2007,7 +2007,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("] ");
         }
@@ -2256,7 +2256,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("x[");
+            log.append(" x[");
             log.append(x.get());
             log.append("], y[");
             log.append(y.get());
@@ -2416,7 +2416,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("element[");
+            log.append(" element[");
             log.append(FSGlobal.NAMES[element]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
@@ -2490,7 +2490,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("element[NONE] ");
+            log.append(" element[NONE] ");
 
             vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
 
@@ -2537,7 +2537,7 @@ public abstract class FSP{
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
-            log.append("[DYNAMIC]");
+            log.append(" [DYNAMIC]");
         }
     }
 
@@ -2572,7 +2572,7 @@ public abstract class FSP{
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
-            log.append("[DYNAMIC]");
+            log.append(" [DYNAMIC]");
         }
     }
 
@@ -2605,7 +2605,7 @@ public abstract class FSP{
         @Override
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
-            log.append("[DYNAMIC]");
+            log.append(" [DYNAMIC]");
         }
     }
 
@@ -2639,7 +2639,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("drawMode[");
+            log.append(" drawMode[");
             log.append(mesh.drawmode);
             log.append("] indexCount[");
             log.append(mesh.first().vertexSize());
@@ -2677,7 +2677,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("drawMode[");
+            log.append(" drawMode[");
             log.append(mesh.drawmode);
             log.append("] indexCount[");
             log.append(mesh.first().vertexSize());
@@ -2730,7 +2730,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("element[");
+            log.append(" element[");
             log.append(FSGlobal.NAMES[FSGlobal.ELEMENT_INDEX]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
@@ -2785,7 +2785,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("drawMode[");
+            log.append(" drawMode[");
             log.append(mesh.drawmode);
             log.append("] instanceCount[");
             log.append(mesh.size());
@@ -2864,7 +2864,7 @@ public abstract class FSP{
         public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
-            log.append("drawMode[");
+            log.append(" drawMode[");
             log.append(mesh.drawmode);
             log.append("] start[");
             log.append(start);

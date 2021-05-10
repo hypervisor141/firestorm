@@ -189,7 +189,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>{
     public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
         log.append("GLSLSize[");
         log.append(getGLSLSize());
-        log.append("] ");
+        log.append("]");
     }
 
     public interface Mode extends VLCopyable<Mode>{
