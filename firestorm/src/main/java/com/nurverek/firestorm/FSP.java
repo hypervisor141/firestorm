@@ -1012,15 +1012,13 @@ public abstract class FSP{
     public static class AttribPointer extends FSConfigLocated{
 
         public int element;
-        public int unitsize;
         public int bindingindex;
         public boolean normalized;
 
-        public AttribPointer(Mode mode, int element, int unitsize, int bindingindex, boolean normalized){
+        public AttribPointer(Mode mode, int element, int bindingindex, boolean normalized){
             super(mode);
 
             this.element = element;
-            this.unitsize = unitsize;
             this.bindingindex = bindingindex;
             this.normalized = normalized;
         }
@@ -1038,7 +1036,7 @@ public abstract class FSP{
             int bytesize = tracker.typebytesize;
             binding.vbuffer.bind();
 
-            GLES32.glVertexAttribPointer(location, unitsize, FSGlobal.GLTYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
+            GLES32.glVertexAttribPointer(location, tracker.unitsubcount, FSGlobal.GLTYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
         }
 
         @Override
@@ -1053,7 +1051,6 @@ public abstract class FSP{
             AttribPointer target = (AttribPointer)src;
 
             element = target.element;
-            unitsize = target.unitsize;
             bindingindex = target.bindingindex;
             normalized = target.normalized;
         }
@@ -1094,15 +1091,13 @@ public abstract class FSP{
     public static class AttribIPointer extends FSConfigLocated{
 
         public int element;
-        public int unitsize;
         public int bindingindex;
 
-        public AttribIPointer(Mode mode, int element, int unitsize, int bindingindex){
+        public AttribIPointer(Mode mode, int element, int bindingindex){
             super(mode);
 
             this.element = element;
             this.bindingindex = bindingindex;
-            this.unitsize = unitsize;
         }
 
         public AttribIPointer(AttribIPointer src, long flags){
@@ -1119,7 +1114,7 @@ public abstract class FSP{
 
             binding.vbuffer.bind();
 
-            GLES32.glVertexAttribIPointer(location, unitsize, FSGlobal.GLTYPES[element], tracker.stride * bytesize, tracker.offset * bytesize);
+            GLES32.glVertexAttribIPointer(location, tracker.unitsubcount, FSGlobal.GLTYPES[element], tracker.stride * bytesize, tracker.offset * bytesize);
         }
 
         @Override
@@ -1134,7 +1129,6 @@ public abstract class FSP{
             AttribPointer target = (AttribPointer)src;
 
             element = target.element;
-            unitsize = target.unitsize;
             bindingindex = target.bindingindex;
         }
 
