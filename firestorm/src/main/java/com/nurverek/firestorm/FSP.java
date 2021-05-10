@@ -808,6 +808,17 @@ public abstract class FSP{
         public AttribEnable duplicate(long flags){
             return new AttribEnable(this, flags);
         }
+
+        @Override
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
+
+            log.append(" config[");
+            log.append(config.getClass().getSimpleName());
+            log.append("] location[");
+            log.append(config.location());
+            log.append("]");
+        }
     }
 
     public static class AttribDisable extends FSConfig{
@@ -843,6 +854,17 @@ public abstract class FSP{
         @Override
         public AttribDisable duplicate(long flags){
             return new AttribDisable(this, flags);
+        }
+
+        @Override
+        public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+            super.debugInfo(pass, program, mesh, log, debug);
+
+            log.append(" config[");
+            log.append(config.getClass().getSimpleName());
+            log.append("] location[");
+            log.append(config.location());
+            log.append("]");
         }
     }
 
