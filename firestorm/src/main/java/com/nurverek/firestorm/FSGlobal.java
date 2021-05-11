@@ -34,16 +34,17 @@ public class FSGlobal{
         UNIT_SIZES = new int[COUNT];
         UNIT_BYTES = new int[COUNT];
 
-        register(ELEMENT_MODEL, 16, Float.SIZE / 8, GLES32.GL_FLOAT, "model");
-        register(ELEMENT_POSITION, 4, Float.SIZE / 8, GLES32.GL_FLOAT, "position");
-        register(ELEMENT_COLOR, 4, Float.SIZE / 8, GLES32.GL_FLOAT, "color");
-        register(ELEMENT_TEXCOORD, 2, Float.SIZE / 8, GLES32.GL_FLOAT, "texturecoordinates");
-        register(ELEMENT_NORMAL, 3, Float.SIZE / 8, GLES32.GL_FLOAT, "normal");
-        register(ELEMENT_INDEX, 1, Short.SIZE / 8, GLES32.GL_UNSIGNED_SHORT, "index");
+        register("model", ELEMENT_MODEL, GLES32.GL_FLOAT, Float.SIZE / 8, 16);
+        register("position", ELEMENT_POSITION, GLES32.GL_FLOAT, Float.SIZE / 8, 4);
+        register("color", ELEMENT_COLOR, GLES32.GL_FLOAT, Float.SIZE / 8, 4);
+        register("texturecoordinates", ELEMENT_TEXCOORD, GLES32.GL_FLOAT, Float.SIZE / 8, 2);
+        register("normal", ELEMENT_NORMAL, GLES32.GL_FLOAT, Float.SIZE / 8, 3);
+        register("index", ELEMENT_INDEX, GLES32.GL_UNSIGNED_SHORT, Short.SIZE / 8, 1);
     }
 
-    public static void register(int element, int unitsize, int bytes, int gltype, String name){
+    public static void register(String name, int element, int gltype, int bytes, int unitsize){
         NAMES[element] = name;
+        ELEMENTS[element] = element;
         GLTYPES[element] = gltype;
         BYTES[element] = bytes;
         UNIT_SIZES[element] = unitsize;
@@ -53,6 +54,7 @@ public class FSGlobal{
     protected static void destroy(){
         if(FSControl.getDestroyOnPause()){
             NAMES = null;
+            ELEMENTS = null;
             GLTYPES = null;
             BYTES = null;
             UNIT_SIZES = null;
