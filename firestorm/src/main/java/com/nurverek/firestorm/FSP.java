@@ -207,10 +207,6 @@ public abstract class FSP{
 
         if(debug > FSControl.DEBUG_DISABLED){
             log.reset();
-            log.append("------- PROGRAM[");
-            log.append(program);
-            log.append("] -------");
-            log.printInfo();
 
             if(coreconfigs.setupconfig != null){
                 log.append("[SetupConfig]");
@@ -294,10 +290,6 @@ public abstract class FSP{
 
             if(debug > FSControl.DEBUG_DISABLED){
                 log.reset();
-                log.append("------- PROGRAM[");
-                log.append(program);
-                log.append("] -------");
-                log.printInfo();
 
                 log.append("[PostFrameConfig]");
                 log.printInfo();
