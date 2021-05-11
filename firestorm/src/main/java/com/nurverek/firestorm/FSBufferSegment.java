@@ -63,7 +63,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         if(buffer.provider() == null){
             buffer.initialize(ByteOrder.nativeOrder());
 
-            if(vbuffer != null && vbuffer.getBufferID() >= 0){
+            if(vbuffer != null && vbuffer.getBufferID() < 0){
                 vbuffer.initialize();
             }
         }
