@@ -163,6 +163,8 @@ public class FSCFrames{
             }else{
                 request = true;
             }
+
+            EXTERNAL_CHANGES = 0;
         }
 
         if(request){
