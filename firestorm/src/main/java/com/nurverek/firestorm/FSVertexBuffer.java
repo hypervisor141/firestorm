@@ -10,6 +10,8 @@ import vanguard.VLStringify;
 
 public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringify{
 
+    public static int CURRENT_ACTIVE_BUFFER = 0;
+
     private BUFFER buffer;
 
     private int target;
@@ -54,11 +56,15 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     }
 
     public void bind(){
-        GLES32.glBindBuffer(target, id);
+        if(CURRENT_ACTIVE_BUFFER != id){
+            GLES32.glBindBuffer(target, id);
+            CURRENT_ACTIVE_BUFFER = id;
+        }
     }
 
     public void unbind(){
         GLES32.glBindBuffer(target, 0);
+        CURRENT_ACTIVE_BUFFER = 0;
     }
 
     public void upload(){

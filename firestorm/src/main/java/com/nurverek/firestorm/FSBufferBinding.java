@@ -31,7 +31,11 @@ public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyabl
 
     public void updateVertexBufferStrict(){
         int offset = tracker.offset;
-        vbuffer.update(offset,  tracker.endposition - offset);
+        int count = tracker.endposition - offset;
+
+        if(count != 0){
+            vbuffer.update(offset,  count);
+        }
     }
 
     @Override
