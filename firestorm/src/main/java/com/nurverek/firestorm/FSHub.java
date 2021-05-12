@@ -14,12 +14,7 @@ public abstract class FSHub{
         assemble(context, FSR.getRenderPasses());
     }
 
-    public FSAutomator createAutomator(int filecapacity, int scancapacity){
-        return new FSAutomator(filecapacity, scancapacity);
-    }
-
     protected abstract void assemble(Context context, VLListType<FSRPass> targets);
-
     public abstract void paused();
     public abstract void resumed();
     public abstract void destroy();

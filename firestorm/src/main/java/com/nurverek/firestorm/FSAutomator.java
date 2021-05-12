@@ -9,21 +9,17 @@ import vanguard.VLLog;
 
 public class FSAutomator{
 
-    protected VLListType<FSM> files;
+    protected VLListType<FileEntry> files;
     protected VLListType<FSHScanner> scanners;
     protected VLLog log;
 
-    protected FSAutomator(int filecapacity, int scancapacity){
+    public FSAutomator(int filecapacity, int scancapacity){
         files = new VLListType<>(filecapacity, filecapacity);
         scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
-    public FSM registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize) throws IOException{
-        FSM data = new FSM();
-        data.loadFromFile(src, order, fullsizedposition, estimatedsize);
-        files.add(data);
-
-        return data;
+    public void registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize){
+        files.add(new FileEntry(src, order, fullsizedposition, estimatedsize));
     }
 
     public void registerScanner(FSHScanner scanner){
@@ -38,14 +34,13 @@ public class FSAutomator{
                     FSControl.LOGTAG, getClass().getSimpleName()
             });
 
-            FSHScanner entry;
             boolean found;
 
             log.printInfo("[Automated Scan Initiated]");
             log.printInfo("[Assembler Check Stage]");
 
             for(int i = 0; i < entrysize; i++){
-                entry = scanners.get(i);
+                FSHScanner entry = scanners.get(i);
 
                 try{
                     log.append("Scanner[");
@@ -74,25 +69,42 @@ public class FSAutomator{
             int filesize = files.size();
 
             for(int i = 0; i < filesize; i++){
-                VLListType<FSM.Data> data = files.get(i).data;
+                FileEntry file = files.get(i);
+                VLListType<FSM.Data> data = null;
+
+                log.append("LoadingFile[");
+                log.append(i + 1);
+                log.append("/");
+                log.append(filesize);
+                log.append("]");
+
+                try{
+                    data = file.load();
+                    log.append(" [SUCCESS]");
+
+                }catch(IOException ex){
+                    log.append(" [FAILED]");
+                    throw new RuntimeException("Error loading from file", ex);
+                }
+
                 int datasize = data.size();
 
                 for(int i2 = 0; i2 < datasize; i2++){
-                    FSM.Data d = data.get(i2);
+                    FSM.Data fsmdata = data.get(i2);
 
                     for(int i3 = 0; i3 < entrysize; i3++){
-                        entry = scanners.get(i3);
+                        FSHScanner entry = scanners.get(i3);
                         FSMesh mesh = entry.mesh;
                         found = false;
 
                         try{
-                            if(entry.scan(this, d) && debug >= FSControl.DEBUG_FULL){
+                            if(entry.scan(this, fsmdata) && debug >= FSControl.DEBUG_FULL){
                                 log.append("Built[");
                                 log.append(i2);
                                 log.append("] keyword[");
                                 log.append(entry.name);
                                 log.append("] name[");
-                                log.append(d.name);
+                                log.append(fsmdata.name);
                                 log.append("] ");
 
                                 found = true;
@@ -136,7 +148,7 @@ public class FSAutomator{
             log.printInfo("[Checking Scan Results]");
 
             for(int i = 0; i < entrysize; i++){
-                entry = scanners.get(i);
+                FSHScanner entry = scanners.get(i);
 
                 if(entry.mesh.size() == 0){
                     log.append("Scan incomplete : found no instance for mesh with keyword \"");
@@ -160,7 +172,15 @@ public class FSAutomator{
             int filesize = files.size();
 
             for(int i = 0; i < filesize; i++){
-                VLListType<FSM.Data> datalist = files.get(i).data;
+                VLListType<FSM.Data> datalist = null;
+
+                try{
+                    files.get(i).load();
+
+                }catch(IOException ex){
+                    throw new RuntimeException("Failed to load file", ex);
+                }
+
                 int datasize = datalist.size();
 
                 for(int i2 = 0; i2 < datasize; i2++){
@@ -321,6 +341,28 @@ public class FSAutomator{
             for(int i = 0; i < size; i++){
                 scanners.get(i).signalBufferComplete();
             }
+        }
+    }
+
+    private static final class FileEntry{
+
+        public InputStream src;
+        public ByteOrder order;
+        public boolean fullsizedposition;
+        public int estimatedsize;
+
+        private FileEntry(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize){
+            this.src = src;
+            this.order = order;
+            this.fullsizedposition = fullsizedposition;
+            this.estimatedsize = estimatedsize;
+        }
+
+        private VLListType<FSM.Data> load() throws IOException{
+            FSM fsm = new FSM();
+            fsm.loadFromFile(src, order, fullsizedposition, estimatedsize);
+
+            return fsm.data;
         }
     }
 }

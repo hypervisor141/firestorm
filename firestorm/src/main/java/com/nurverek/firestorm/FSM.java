@@ -105,10 +105,6 @@ public class FSM{
         return buffer.getShort();
     }
 
-    public void release(){
-        data = null;
-    }
-
     public static final class Data{
 
         public String name;
