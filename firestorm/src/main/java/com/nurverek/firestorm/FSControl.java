@@ -18,11 +18,11 @@ public final class FSControl{
     private static long GLOBAL_ID;
     private static final Object IDLOCK = new Object();
 
-    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean keepalive, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
+    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
         FSControl.surface = surface;
         FSControl.events = surface.events();
         FSControl.view = view;
-        FSControl.destroyonpause = keepalive;
+        FSControl.destroyonpause = destroyonpause;
 
         if(!isAlive()){
             GLOBAL_ID = 1000;

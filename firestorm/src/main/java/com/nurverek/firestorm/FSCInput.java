@@ -108,7 +108,7 @@ public final class FSCInput{
     }
 
     protected static void destroy(){
-        if(!FSControl.getDestroyOnPause()){
+        if(FSControl.getDestroyOnPause()){
             LIST_TOUCH = null;
             LIST_DOWN = null;
             LIST_SINGLETAP = null;

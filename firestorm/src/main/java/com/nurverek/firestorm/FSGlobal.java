@@ -52,7 +52,7 @@ public class FSGlobal{
     }
 
     protected static void destroy(){
-        if(!FSControl.getDestroyOnPause()){
+        if(FSControl.getDestroyOnPause()){
             NAMES = null;
             ELEMENTS = null;
             GLTYPES = null;

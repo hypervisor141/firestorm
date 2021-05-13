@@ -66,7 +66,7 @@ public class FSCEGL{
         EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
         FSTools.checkEGLError();
 
-        if(!FSControl.getDestroyOnPause()){
+        if(FSControl.getDestroyOnPause()){
             EGL14.eglDestroySurface(display, surface);
             FSTools.checkEGLError();
 

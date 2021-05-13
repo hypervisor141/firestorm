@@ -171,7 +171,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     private void destroy(){
         FSControl.destroy();
 
-        if(!FSControl.getDestroyOnPause()){
+        if(FSControl.getDestroyOnPause()){
             getHolder().removeCallback(this);
 
             gesture = null;

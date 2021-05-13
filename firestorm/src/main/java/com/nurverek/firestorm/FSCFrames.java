@@ -219,7 +219,7 @@ public class FSCFrames{
     }
 
     protected static void destroy(){
-        if(!FSControl.getDestroyOnPause()){
+        if(FSControl.getDestroyOnPause()){
             synchronized(LOCK){
                 TOTAL_FRAMES = 0;
                 AVERAGE_FRAMESWAP_TIME = 0;
