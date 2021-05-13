@@ -39,7 +39,6 @@ public abstract class FSP{
         meshes = new VLListType<>(meshcapacity, meshcapacity);
 
         uniformlocation = 0;
-
         log = new VLLog(FSControl.LOGTAG, 2);
     }
 
@@ -65,6 +64,7 @@ public abstract class FSP{
         log.tag(1, getClass().getSimpleName());
         log.reset();
 
+        program = GLES32.glCreateProgram();
         coreconfigs = customize(meshes, debug);
 
         int size = meshes.size();
@@ -73,12 +73,7 @@ public abstract class FSP{
             meshes.get(i).programPreBuild(this, coreconfigs, debug);
         }
 
-        log.printInfo();
-
-        program = GLES32.glCreateProgram();
-
         log.tag(1, getClass().getSimpleName() + "-" + program);
-
         size = shaders.size();
 
         for(int i = 0; i < size; i++){
