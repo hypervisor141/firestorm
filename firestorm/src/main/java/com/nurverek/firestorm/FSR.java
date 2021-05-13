@@ -234,7 +234,7 @@ public class FSR{
     protected static void destroy(){
         renderthread.lockdown();
 
-        if(FSControl.getDestroyOnPause()){
+        if(!FSControl.getDestroyOnPause()){
             FSR.paused();
 
         }else{
