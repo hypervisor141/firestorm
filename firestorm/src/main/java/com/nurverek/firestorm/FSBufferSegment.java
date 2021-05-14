@@ -46,9 +46,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            EntryType<BUFFER> entry = entries.get(i);
-
-            buffer.adjustPreInitCapacity(entry.calculateNeededSize(target));
+            buffer.adjustPreInitCapacity(entries.get(i).calculateNeededSize(target));
         }
     }
 
@@ -370,7 +368,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 int size2 = list.get(i).size() / unitsize;
 
                 if(size2 != unitcountrequired){
-                    log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes]    element[");
+                    log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] element[");
                     log.append(FSGlobal.NAMES[element]);
                     log.append("] referenceSize[");
                     log.append(unitcountrequired);
@@ -440,6 +438,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         @SuppressWarnings("unchecked")
         public void bufferInterleaved(FSMesh target, int instanceindex, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride){
             FSInstance instance = target.get(instanceindex);
+
             target.allocateBinding(element, 1, 5);
 
             FSElement<?, BUFFER> item = (FSElement<?, BUFFER>)instance.element(element);

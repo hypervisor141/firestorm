@@ -66,29 +66,16 @@ public class FSHAssembler implements VLStringify{
         restfuncs.clear();
         firstfuncs.clear();
 
-        configureIndices();
         configureModels();
         configurePositions();
         configureColors();
         configureTexCoords();
         configureNormals();
+        configureIndices();
     }
 
     public VLListType<BuildStep> customSteps(){
         return customfunc;
-    }
-
-    private void configureIndices(){
-        if(LOAD_INDICES){
-            firstfuncs.add(INDICES_SET);
-
-            if(INSTANCE_SHARE_INDICES){
-                restfuncs.add(INDICES_SHARE);
-
-            }else{
-                restfuncs.add(INDICES_SET);
-            }
-        }
     }
 
     private void configureModels(){
@@ -218,7 +205,20 @@ public class FSHAssembler implements VLStringify{
         }
     }
 
-    private void buildModelClusterFromSchematics(FSInstance instance){  
+    private void configureIndices(){
+        if(LOAD_INDICES){
+            firstfuncs.add(INDICES_SET);
+
+            if(INSTANCE_SHARE_INDICES){
+                restfuncs.add(INDICES_SHARE);
+
+            }else{
+                restfuncs.add(INDICES_SET);
+            }
+        }
+    }
+
+    private void buildModelClusterFromSchematics(FSInstance instance){
         FSSchematics schematics = instance.schematics;
 
         instance.modelMatrix().addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
@@ -537,7 +537,6 @@ public class FSHAssembler implements VLStringify{
             }
         }
     };
-
 
     private static final BuildStep NORMAL_SET = new BuildStep(){
 
