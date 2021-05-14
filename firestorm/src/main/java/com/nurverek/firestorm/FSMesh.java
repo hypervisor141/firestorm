@@ -4,7 +4,7 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public class FSMesh implements VLCopyable<FSMesh>, FSInstanceOperator{
+public class FSMesh implements VLCopyable<FSMesh>, FSMeshType{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -353,6 +353,7 @@ public class FSMesh implements VLCopyable<FSMesh>, FSInstanceOperator{
         return new FSMesh(this, flags);
     }
 
+    @Override
     public void destroy(){
         int size = instances.size();
 

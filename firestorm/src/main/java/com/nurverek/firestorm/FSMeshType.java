@@ -1,6 +1,6 @@
 package com.nurverek.firestorm;
 
-public interface FSInstanceOperator{
+public interface FSMeshType{
 
     void storeElement(int element, FSElement<?, ?> data);
     void activateFirstElement(int element);
@@ -16,4 +16,5 @@ public interface FSInstanceOperator{
     void updateVertexBufferStrict(int element);
     void updateBufferPipeline(int element);
     void updateBufferPipelineStrict(int element);
+    void destroy();
 }

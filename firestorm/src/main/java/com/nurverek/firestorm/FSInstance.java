@@ -5,7 +5,7 @@ import vanguard.VLArrayShort;
 import vanguard.VLCopyable;
 import vanguard.VLVMatrix;
 
-public class FSInstance implements VLCopyable<FSInstance>, FSInstanceOperator{
+public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -335,6 +335,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSInstanceOperator{
         return new FSInstance(this, flags);
     }
 
+    @Override
     public void destroy(){
         mesh = null;
         schematics = null;

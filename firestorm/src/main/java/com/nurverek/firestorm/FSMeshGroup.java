@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import vanguard.VLCopyable;
 import vanguard.VLListType;
 
-public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSInstanceOperator{
+public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
 
     private VLListType<FSMesh> group;
 
@@ -165,5 +165,14 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSInstanceOperator{
     @Override
     public FSMeshGroup duplicate(long flags){
         return new FSMeshGroup(this, flags);
+    }
+
+    @Override
+    public void destroy(){
+        int size = group.size();
+
+        for(int i = 0; i < size; i++){
+            group.get(i).destroy();
+        }
     }
 }
