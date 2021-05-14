@@ -67,7 +67,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    protected void buffer(FSMesh target){
+    public void buffer(FSMesh target){
         checkInitialize();
 
         int size = entries.size();
@@ -93,7 +93,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    protected void bufferDebug(FSMesh target, VLLog log){
+    public void bufferDebug(FSMesh target, VLLog log){
         int size = entries.size();
 
         log.append("[");
