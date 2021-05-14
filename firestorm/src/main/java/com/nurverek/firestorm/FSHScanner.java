@@ -65,7 +65,6 @@ public abstract class FSHScanner{
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.equalsIgnoreCase(name)){
                 mesh.name(name);
-
                 FSInstance instance = mesh.generateInstance(data.name);
 
                 assembler.buildFirst(instance, this, data);
@@ -88,11 +87,10 @@ public abstract class FSHScanner{
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
-                mesh.name(name);
-
                 FSInstance instance = mesh.generateInstance(data.name);
 
                 if(mesh.size() == 1){
+                    mesh.name(name);
                     assembler.buildFirst(instance, this, data);
 
                 }else{
@@ -123,7 +121,6 @@ public abstract class FSHScanner{
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
                 mesh.name(name);
-
                 FSInstance instance = mesh.generateInstance(data.name);
 
                 assembler.buildFirst(instance, this, data);
