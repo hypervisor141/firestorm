@@ -80,8 +80,8 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int drawmode, int estimatedsize){
-            super(mesh, program, buffertarget, assembler, prefixname);
+        public Instanced(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname, int drawmode, int estimatedsize){
+            super(mesh, program, buffertarget, assembler, substringname);
             mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
         }
 
