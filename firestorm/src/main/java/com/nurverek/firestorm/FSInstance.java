@@ -5,7 +5,7 @@ import vanguard.VLArrayShort;
 import vanguard.VLCopyable;
 import vanguard.VLVMatrix;
 
-public class FSInstance implements VLCopyable<FSInstance>{
+public class FSInstance implements VLCopyable<FSInstance>, FSInstanceOperator{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -54,20 +54,38 @@ public class FSInstance implements VLCopyable<FSInstance>{
         modelmatrix = set;
     }
 
+    @Override
     public void colorTexture(FSTexture texture){
         this.colortexture = texture;
     }
 
+    @Override
     public void material(FSLightMaterial material){
         this.material = material;
     }
 
+    @Override
     public void lightMap(FSLightMap map){
         this.lightmap = map;
     }
 
+    @Override
+    public void storeElement(int element, FSElement<?, ?> data){
+        store.add(element, data);
+    }
+
     public void activateElement(int element, int index){
         store.activate(element, index);
+    }
+
+    @Override
+    public void activateFirstElement(int element){
+        store.activate(element, 0);
+    }
+
+    @Override
+    public void activateLastElement(int element){
+        store.activate(element, store.size(element) - 1);
     }
 
     public String name(){
@@ -170,42 +188,43 @@ public class FSInstance implements VLCopyable<FSInstance>{
         return (FSElement.Short)element(FSGlobal.ELEMENT_INDEX);
     }
 
+    public void scanComplete(){}
+
+    public void bufferComplete(int instanceindex, int element, int storeindex){}
+
+    public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
+
+    @Override
     public void updateSchematicBoundaries(){
         schematics.updateBoundaries();
     }
 
+    @Override
     public void markSchematicsForUpdate(){
         schematics.markForNewUpdates();
     }
 
+    @Override
     public void applyModelMatrix(){
         model().transform(0, modelmatrix, true);
     }
 
+    @Override
     public void updateBuffer(int element){
         element(element).updateBuffer();
     }
 
-    public void updateBuffer(int element, int bindingindex){
-        element(element).updateBuffer(bindingindex);
-    }
-
+    @Override
     public void updateVertexBuffer(int element){
         element(element).updateVertexBuffer();
     }
 
-    public void updateVertexBuffer(int element, int bindingindex){
-        element(element).updateVertexBuffer(bindingindex);
-    }
-
+    @Override
     public void updateVertexBufferStrict(int element){
         element(element).updateVertexBufferStrict();
     }
 
-    public void updateVertexBufferStrict(int element, int bindingindex){
-        element(element).updateVertexBufferStrict(bindingindex);
-    }
-
+    @Override
     public void updateBufferPipeline(int element){
         element(element).updateBufferPipeline();
     }
@@ -214,8 +233,21 @@ public class FSInstance implements VLCopyable<FSInstance>{
         element(element).updateBufferPipeline(bindingindex);
     }
 
+    @Override
     public void updateBufferPipelineStrict(int element){
         element(element).updateBufferPipelineStrict();
+    }
+
+    public void updateBuffer(int element, int bindingindex){
+        element(element).updateBuffer(bindingindex);
+    }
+
+    public void updateVertexBuffer(int element, int bindingindex){
+        element(element).updateVertexBuffer(bindingindex);
+    }
+
+    public void updateVertexBufferStrict(int element, int bindingindex){
+        element(element).updateVertexBufferStrict(bindingindex);
     }
 
     public void updateBufferPipelineStrict(int element, int bindingindex){

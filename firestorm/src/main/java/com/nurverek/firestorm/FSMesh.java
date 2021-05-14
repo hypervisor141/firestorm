@@ -1,11 +1,10 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLCopyable;
-import vanguard.VLList;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public class FSMesh implements VLCopyable<FSMesh>{
+public class FSMesh implements VLCopyable<FSMesh>, FSInstanceOperator{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -39,12 +38,6 @@ public class FSMesh implements VLCopyable<FSMesh>{
     public void initConfigs(FSConfig.Mode mode, int capacity, int resizer){
         this.configs = new FSConfigGroup(mode, capacity, resizer);
     }
-
-    public void scanComplete(FSInstance instance){}
-    public void scanComplete(){}
-    public void bufferComplete(FSInstance instance, int index, int element, int storageindex){}
-    public void bufferComplete(){}
-    public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
 
     public FSInstance generateInstance(String name){
         FSInstance instance = new FSInstance(this, name);
@@ -85,6 +78,27 @@ public class FSMesh implements VLCopyable<FSMesh>{
         if(bindings[element] == null){
             bindings[element] = new VLListType<>(capacity, resizer);
         }
+    }
+
+    public void bindFromStorage(int instanceindex, int element, int storageindex, int bindingindex){
+        bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
+    }
+
+    public void bindFromStorageLatest(int instanceindex, int element, int storageindex){
+        VLListType<?> list = instances.get(instanceindex).storage().get(element).get(storageindex).bindings;
+        bindings[element].add((FSBufferBinding<?>)list.get(list.size() - 1));
+    }
+
+    public void bindFromActive(int instanceindex, int element, int bindingindex){
+        bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
+    }
+
+    public void bindManual(int element, FSBufferBinding<?> binding){
+        bindings[element].add(binding);
+    }
+
+    public void unbind(int element, int index){
+        bindings[element].remove(index);
     }
 
     public FSBufferBinding<?> binding(int element, int index){
@@ -139,52 +153,54 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
-    public void bindFromStorage(int instanceindex, int element, int storageindex, int bindingindex){
-        bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
+    protected void scanComplete(FSInstance instance){
+        instance.scanComplete();
     }
 
-    public void bindFromStorageLatest(int instanceindex, int element, int storageindex){
-        VLListType<?> list = instances.get(instanceindex).storage().get(element).get(storageindex).bindings;
-        bindings[element].add((FSBufferBinding<?>)list.get(list.size() - 1));
+    public void bufferComplete(FSInstance instance, int index, int element, int storeindex){
+        instance.bufferComplete(index, element, storeindex);
     }
 
-    public void bindFromActive(int instanceindex, int element, int bindingindex){
-        bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
+    public void scanComplete(){}
+
+    public void bufferComplete(){}
+
+    public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).programPreBuild(program, core, debug);
+        }
     }
 
-    public void bindManual(int element, FSBufferBinding<?> binding){
-        bindings[element].add(binding);
-    }
-
-    public void unbind(int element, int index){
-        bindings[element].remove(index);
-    }
-
+    @Override
     public void storeElement(int element, FSElement<?, ?> data){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).storage().add(element, data);
+            instances.get(i).storeElement(element, data);
         }
     }
 
-    public void activateFirstElements(int element){
+    @Override
+    public void activateFirstElement(int element){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).storage().activate(element, 0);
+            instances.get(i).activateFirstElement(element);
         }
     }
 
-    public void activateLatestElements(int element){
+    @Override
+    public void activateLastElement(int element){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
-            FSElementStore store = instances.get(i).storage();
-            store.activate(element, store.size(element) - 1);
+            instances.get(i).activateLastElement(element);
         }
     }
 
+    @Override
     public void material(FSLightMaterial material){
         int size = instances.size();
 
@@ -193,6 +209,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void lightMap(FSLightMap map){
         int size = instances.size();
 
@@ -201,6 +218,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void colorTexture(FSTexture tex){
         int size = instances.size();
 
@@ -209,6 +227,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void updateSchematicBoundaries(){
         int size = instances.size();
 
@@ -217,6 +236,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void markSchematicsForUpdate(){
         int size = instances.size();
 
@@ -225,7 +245,8 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
-    public void applyModelMatrices(){
+    @Override
+    public void applyModelMatrix(){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
@@ -233,6 +254,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void updateBuffer(int element){
         int size = instances.size();
 
@@ -241,6 +263,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void updateVertexBuffer(int element){
         int size = instances.size();
 
@@ -249,6 +272,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void updateVertexBufferStrict(int element){
         int size = instances.size();
 
@@ -257,6 +281,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void updateBufferPipeline(int element){
         int size = instances.size();
 
@@ -265,6 +290,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
         }
     }
 
+    @Override
     public void updateBufferPipelineStrict(int element){
         int size = instances.size();
 
@@ -336,6 +362,7 @@ public class FSMesh implements VLCopyable<FSMesh>{
 
         name = null;
         instances = null;
+        bindings = null;
         configs = null;
 
         id = -1;
