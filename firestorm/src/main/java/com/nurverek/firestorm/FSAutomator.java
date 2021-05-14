@@ -151,9 +151,9 @@ public class FSAutomator{
                 FSHScanner entry = scanners.get(i);
 
                 if(entry.mesh.size() == 0){
-                    log.append("Scan incomplete : found no instance for mesh with keyword \"");
+                    log.append("Scan incomplete : found no instance for mesh with keyword[");
                     log.append(entry.name);
-                    log.append("\".\n");
+                    log.append("]\n");
                     log.append("[Assembler Configuration]\n");
 
                     entry.assembler.stringify(log.get(), null);
