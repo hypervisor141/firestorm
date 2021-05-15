@@ -3,8 +3,9 @@ package com.nurverek.firestorm;
 import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
+import vanguard.VLLoggableType;
 
-public abstract class FSConfig implements VLCopyable<FSConfig>{
+public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggableType{
 
     public static final Mode MODE_FULLTIME = new Mode(){
 
@@ -189,6 +190,11 @@ public abstract class FSConfig implements VLCopyable<FSConfig>{
         log.append("GLSLSize[");
         log.append(getGLSLSize());
         log.append("]");
+    }
+
+    @Override
+    public void log(VLLog log, Object data){
+        printDebugInfo(null, null, null, log, (int)data);
     }
 
     public interface Mode extends VLCopyable<Mode>{

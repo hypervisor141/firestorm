@@ -15,7 +15,7 @@ import vanguard.VLFloat;
 import vanguard.VLInt;
 import vanguard.VLListType;
 import vanguard.VLLog;
-import vanguard.VLStringify;
+import vanguard.VLLoggableType;
 
 public abstract class FSP{
 
@@ -87,7 +87,7 @@ public abstract class FSP{
                 log.append(shader.type);
                 log.append("] ");
 
-                shader.stringify(log.get(), null);
+                shader.log(log, null);
             }
 
             shader.debugInfo(this, log, debug);
@@ -125,7 +125,7 @@ public abstract class FSP{
                 log.append("]");
                 log.printError();
 
-                shader.stringify(log.get(), null);
+                shader.log(log, null);
             }
 
             log.append("Program[");
@@ -964,7 +964,7 @@ public abstract class FSP{
             log.append(count);
             log.append("] array[");
 
-            array.stringify(log.get(), null);
+            array.log(log, null);
 
             log.append("]");
         }
@@ -1036,7 +1036,7 @@ public abstract class FSP{
                 log.append("]");
 
             }else{
-                array.stringify(log.get(), null);
+                array.log(log, null);
             }
 
             log.append("]");
@@ -1109,10 +1109,10 @@ public abstract class FSP{
             try{
                 FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
 
-                binding.tracker.stringify(log.get(), null);
+                binding.tracker.log(log, null);
                 log.append("] buffer[");
 
-                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                binding.vbuffer.log(log, BUFFER_PRINT_LIMIT);
                 log.append("]");
 
             }catch(Exception ex){
@@ -1184,10 +1184,10 @@ public abstract class FSP{
             try{
                 FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
 
-                binding.tracker.stringify(log.get(), null);
+                binding.tracker.log(log, null);
                 log.append("] buffer[");
 
-                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                binding.vbuffer.log(log, BUFFER_PRINT_LIMIT);
                 log.append("]");
 
             }catch(Exception ex){
@@ -2458,10 +2458,10 @@ public abstract class FSP{
             try{
                 FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
 
-                binding.tracker.stringify(log.get(), null);
+                binding.tracker.log(log, null);
                 log.append("] buffer[");
 
-                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                binding.vbuffer.log(log, BUFFER_PRINT_LIMIT);
                 log.append("]");
 
             }catch(Exception ex){
@@ -2525,7 +2525,7 @@ public abstract class FSP{
 
             log.append(" element[NONE] ");
 
-            vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            vbuffer.log(log, BUFFER_PRINT_LIMIT);
 
             log.append("]");
         }
@@ -2769,7 +2769,7 @@ public abstract class FSP{
             log.append(bindingindex);
             log.append("] buffer[");
 
-            mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex).vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+            mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex).vbuffer.log(log, BUFFER_PRINT_LIMIT);
 
             log.append("]");
         }
@@ -2829,10 +2829,10 @@ public abstract class FSP{
             try{
                 FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
 
-                binding.tracker.stringify(log.get(), null);
+                binding.tracker.log(log, null);
                 log.append("] buffer[");
 
-                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                binding.vbuffer.log(log, BUFFER_PRINT_LIMIT);
                 log.append("]");
 
             }catch(Exception ex){
@@ -2912,10 +2912,10 @@ public abstract class FSP{
             try{
                 FSBufferBinding<?> binding = mesh.binding(FSGlobal.ELEMENT_INDEX, bindingindex);
 
-                binding.tracker.stringify(log.get(), null);
+                binding.tracker.log(log, null);
                 log.append("] buffer[");
 
-                binding.vbuffer.stringify(log.get(), BUFFER_PRINT_LIMIT);
+                binding.vbuffer.log(log, BUFFER_PRINT_LIMIT);
                 log.append("]");
 
             }catch(Exception ex){
@@ -2925,7 +2925,7 @@ public abstract class FSP{
         }
     }
 
-    public static class QueryResults implements VLStringify{
+    public static class QueryResults implements VLLoggableType{
 
         public static int BUFFER_SIZE = 30;
 
@@ -2939,17 +2939,18 @@ public abstract class FSP{
         }
 
         @Override
-        public void stringify(StringBuilder src, Object hint){
-            src.append("[sizeRow]");
-            src.append(length[0]);
-            src.append("] size[");
-            src.append(size[0]);
-            src.append("] type[");
-            src.append(type[0]);
-            src.append("] name[");
-            src.append(new String(VLArrayUtils.slice(name, 0, length[0]), StandardCharsets.UTF_8));
-            src.append("]");
-
+        public void log(VLLog log, Object data){
+            log.append("[");
+            log.append(getClass().getSimpleName());
+            log.append("] sizeRow[");
+            log.append(length[0]);
+            log.append("] size[");
+            log.append(size[0]);
+            log.append("] type[");
+            log.append(type[0]);
+            log.append("] name[");
+            log.append(new String(VLArrayUtils.slice(name, 0, length[0]), StandardCharsets.UTF_8));
+            log.append("]");
         }
     }
 }

@@ -55,7 +55,7 @@ public class FSAutomator{
                     log.append("[FAILED] [Invalid assembler configuration detected]\n");
                     log.append("[Assembler Configuration]\n");
 
-                    entry.assembler.stringify(log.get(), null);
+                    entry.assembler.log(log, null);
                     log.printError();
 
                     throw new RuntimeException("Invalid assembler configuration", ex);
@@ -130,7 +130,7 @@ public class FSAutomator{
                             log.append(entry.name);
                             log.append("\"\n[Assembler Configuration]\n");
 
-                            entry.assembler.stringify(log.get(), null);
+                            entry.assembler.log(log, null);
                             log.printError();
 
                             throw new RuntimeException(ex);
@@ -156,7 +156,7 @@ public class FSAutomator{
                     log.append("]\n");
                     log.append("[Assembler Configuration]\n");
 
-                    entry.assembler.stringify(log.get(), null);
+                    entry.assembler.log(log, null);
 
                     log.printError();
                     throw new RuntimeException("Mesh Scan Error");
@@ -226,7 +226,7 @@ public class FSAutomator{
                     log.append(entry.name);
                     log.append("]\n [Assembler Configuration]\n");
 
-                    entry.assembler.stringify(log.get(), null);
+                    entry.assembler.log(log, null);
                     log.printError();
 
                     throw new RuntimeException(ex);
@@ -256,7 +256,7 @@ public class FSAutomator{
                     log.append("]\n");
                     log.append("[Assembler Configuration]\n");
 
-                    entry.assembler.stringify(log.get(), null);
+                    entry.assembler.log(log, null);
                     log.printError();
 
                     throw new RuntimeException(ex);
@@ -286,7 +286,7 @@ public class FSAutomator{
                     log.append("]\n");
                     log.append("[Assembler Configuration]\n");
 
-                    entry.assembler.stringify(log.get(), null);
+                    entry.assembler.log(log, null);
                     log.printError();
 
                     throw new RuntimeException(ex);
@@ -316,7 +316,7 @@ public class FSAutomator{
                     log.append("]\n");
                     log.append("[Assembler Configuration]\n");
 
-                    entry.assembler.stringify(log.get(), null);
+                    entry.assembler.log(log, null);
                     log.printError();
 
                     throw new RuntimeException(ex);

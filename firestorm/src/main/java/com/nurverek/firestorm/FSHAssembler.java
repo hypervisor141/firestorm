@@ -5,10 +5,11 @@ import vanguard.VLArrayShort;
 import vanguard.VLCopyable;
 import vanguard.VLListFloat;
 import vanguard.VLListType;
-import vanguard.VLStringify;
+import vanguard.VLLog;
+import vanguard.VLLoggableType;
 import vanguard.VLV;
 
-public class FSHAssembler implements VLStringify{
+public class FSHAssembler implements VLLoggableType{
 
     public boolean LOAD_MODELS = false;
     public boolean LOAD_POSITIONS = false;
@@ -340,34 +341,34 @@ public class FSHAssembler implements VLStringify{
         }
     }
 
-    public final void stringify(StringBuilder info, Object hint){
-        info.append("LOAD_MODELS[");
-        info.append(LOAD_MODELS);
-        info.append("]\nLOAD_POSITIONS[");
-        info.append(LOAD_POSITIONS);
-        info.append("]\nLOAD_TEXCOORDS[");
-        info.append(LOAD_TEXCOORDS);
-        info.append("]\nLOAD_COLORS[");
-        info.append(LOAD_COLORS);
-        info.append("]\nLOAD_NORMALS[");
-        info.append(LOAD_NORMALS);
-        info.append("]\nLOAD_INDICES[");
-        info.append(LOAD_INDICES);
-        info.append("]\nINSTANCE_SHARE_POSITIONS[");
-        info.append(INSTANCE_SHARE_POSITIONS);
-        info.append("]\nINSTANCE_SHARE_TEXCOORDS[");
-        info.append(INSTANCE_SHARE_TEXCOORDS);
-        info.append("]\nINSTANCE_SHARE_COLORS[");
-        info.append(INSTANCE_SHARE_COLORS);
-        info.append("]\nINSTANCE_SHARE_NORMALS[");
-        info.append(INSTANCE_SHARE_NORMALS);
-        info.append("]\nCONVERT_POSITIONS_TO_MODELARRAYS[");
-        info.append(CONVERT_POSITIONS_TO_MODELARRAYS);
-        info.append("]\nDRAW_MODE_INDEXED[");
-        info.append(DRAW_MODE_INDEXED);
-        info.append("]");
+    @Override
+    public void log(VLLog log, Object data){
+        log.append("LOAD_MODELS[");
+        log.append(LOAD_MODELS);
+        log.append("]\nLOAD_POSITIONS[");
+        log.append(LOAD_POSITIONS);
+        log.append("]\nLOAD_TEXCOORDS[");
+        log.append(LOAD_TEXCOORDS);
+        log.append("]\nLOAD_COLORS[");
+        log.append(LOAD_COLORS);
+        log.append("]\nLOAD_NORMALS[");
+        log.append(LOAD_NORMALS);
+        log.append("]\nLOAD_INDICES[");
+        log.append(LOAD_INDICES);
+        log.append("]\nINSTANCE_SHARE_POSITIONS[");
+        log.append(INSTANCE_SHARE_POSITIONS);
+        log.append("]\nINSTANCE_SHARE_TEXCOORDS[");
+        log.append(INSTANCE_SHARE_TEXCOORDS);
+        log.append("]\nINSTANCE_SHARE_COLORS[");
+        log.append(INSTANCE_SHARE_COLORS);
+        log.append("]\nINSTANCE_SHARE_NORMALS[");
+        log.append(INSTANCE_SHARE_NORMALS);
+        log.append("]\nCONVERT_POSITIONS_TO_MODELARRAYS[");
+        log.append(CONVERT_POSITIONS_TO_MODELARRAYS);
+        log.append("]\nDRAW_MODE_INDEXED[");
+        log.append(DRAW_MODE_INDEXED);
+        log.append("]");
     }
-
 
     private static final BuildStep INDICES_SET = new BuildStep(){
 

@@ -6,9 +6,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import vanguard.VLBuffer;
-import vanguard.VLStringify;
+import vanguard.VLLog;
+import vanguard.VLLoggableType;
 
-public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringify{
+public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggableType{
 
     public static int CURRENT_ACTIVE_BUFFER = 0;
 
@@ -219,10 +220,10 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLStringif
     }
 
     @Override
-    public void stringify(StringBuilder src, Object hint){
-        src.append("[VertexBuffer] backBuffer[ ");
-        buffer.stringify(src, hint);
-        src.append(" ]");
+    public void log(VLLog log, Object data){
+        log.append("[VertexBuffer] backBuffer[ ");
+        buffer.log(log, data);
+        log.append(" ]");
     }
 
     public void destroy(){

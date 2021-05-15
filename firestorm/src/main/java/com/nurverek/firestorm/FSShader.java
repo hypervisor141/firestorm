@@ -5,9 +5,9 @@ import android.opengl.GLES32;
 import androidx.annotation.NonNull;
 
 import vanguard.VLLog;
-import vanguard.VLStringify;
+import vanguard.VLLoggableType;
 
-public final class FSShader implements VLStringify{
+public final class FSShader implements VLLoggableType{
 
     private static final String HEADER = "#version 320 es\n";
     private static final String MAINHEADER = "void main(){\n";
@@ -49,29 +49,6 @@ public final class FSShader implements VLStringify{
         shadername = resolveShaderName(type);
 
         program.shaders.add(this);
-    }
-
-    public void stringify(StringBuilder src, Object hint){
-        buildSource();
-
-        int line = 1;
-        int currentindex = 0;
-        int newlineindex = 0;
-
-        while(true){
-            newlineindex = finalsrc.indexOf("\n", currentindex);
-
-            if(newlineindex < 0){
-                break;
-            }
-
-            src.append(line);
-            src.append("\t\t");
-            src.append(finalsrc.substring(currentindex, newlineindex + 1));
-
-            currentindex = newlineindex + 1;
-            line++;
-        }
     }
 
     public FSP program(){
@@ -412,6 +389,30 @@ public final class FSShader implements VLStringify{
 
             default:
                 throw new RuntimeException("No such shader : " + gltype);
+        }
+    }
+
+    @Override
+    public void log(VLLog log, Object data){
+        buildSource();
+
+        int line = 1;
+        int currentindex = 0;
+        int newlineindex = 0;
+
+        while(true){
+            newlineindex = finalsrc.indexOf("\n", currentindex);
+
+            if(newlineindex < 0){
+                break;
+            }
+
+            log.append(line);
+            log.append("\t\t");
+            log.append(finalsrc.substring(currentindex, newlineindex + 1));
+
+            currentindex = newlineindex + 1;
+            line++;
         }
     }
 }
