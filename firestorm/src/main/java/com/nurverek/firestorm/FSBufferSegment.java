@@ -5,6 +5,7 @@ import java.nio.ByteOrder;
 import vanguard.VLBuffer;
 import vanguard.VLListType;
 import vanguard.VLLog;
+import vanguard.VLLoggable;
 
 public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
@@ -51,7 +52,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     }
 
     public FSBufferSegment<BUFFER> add(EntryType<BUFFER> entry){
-        totalstride += entry.practicalUnitSize();
+        totalstride += entry.unitSizeOnBuffer();
         entries.add(entry);
 
         return this;
@@ -70,26 +71,26 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     public void buffer(FSMesh target){
         checkInitialize();
 
-        int size = entries.size();
+        int size = entries.size() - 1;
 
         if(interleaved){
-            for(int i = 0; i < size - 1; i++){
+            for(int i = 0; i < size; i++){
                 int initialoffset = buffer.position();
 
                 EntryType<BUFFER> entry = entries.get(i);
                 entry.bufferInterleaved(target, buffer, vbuffer, totalstride);
 
-                buffer.position(initialoffset + entry.practicalUnitSize());
+                buffer.position(initialoffset + entry.unitSizeOnBuffer());
             }
 
             entries.get(size - 1).bufferInterleaved(target, buffer, vbuffer, totalstride);
 
         }else{
-            for(int i = 0; i < size - 1; i++){
+            for(int i = 0; i < size; i++){
                 entries.get(i).bufferSequential(target, buffer, vbuffer, totalstride);
             }
 
-            entries.get(size - 1).bufferSequential(target, buffer, vbuffer, totalstride);
+            entries.get(size).bufferSequential(target, buffer, vbuffer, totalstride);
         }
     }
 
@@ -142,7 +143,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         log.append("[Entries]\n");
 
         for(int i = 0; i < size; i++){
-            entries.get(i).debugInfo(log);
+            entries.get(i).log(log, null);
             log.append("\n");
         }
 
@@ -158,15 +159,14 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    public interface EntryType<BUFFER extends VLBuffer<?, ?>>{
+    public interface EntryType<BUFFER extends VLBuffer<?, ?>> extends VLLoggable{
 
+        int unitSizeOnBuffer();
         int calculateNeededSize(FSMesh target);
         int calculateInterleaveDebugUnitCount(FSMesh target);
         void bufferSequential(FSMesh target, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride);
         void bufferInterleaved(FSMesh target, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride);
-        int practicalUnitSize();
         void checkForInterleavingErrors(FSMesh target, int unitcountrequired, VLLog log);
-        void debugInfo(VLLog log);
     }
 
     public static abstract class ElementType<BUFFER extends VLBuffer<?, ?>> implements EntryType<BUFFER>{
@@ -204,7 +204,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public int practicalUnitSize(){
+        public int unitSizeOnBuffer(){
             return unitsubcount;
         }
 
@@ -260,7 +260,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         public abstract void checkForInterleavingErrors(FSInstance instance, int unitcountrequired, VLLog log);
 
         @Override
-        public void debugInfo(VLLog log){
+        public void log(VLLog log, Object data){
             log.append("[");
             log.append(getClass().getSimpleName());
             log.append("] element[");
@@ -388,8 +388,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public void debugInfo(VLLog log){
-            super.debugInfo(log);
+        public void log(VLLog log, Object data){
+            super.log(log, data);
 
             log.append(" storeOffset[");
             log.append(storeoffset);

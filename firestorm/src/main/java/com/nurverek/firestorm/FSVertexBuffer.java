@@ -7,9 +7,9 @@ import java.nio.ByteOrder;
 
 import vanguard.VLBuffer;
 import vanguard.VLLog;
-import vanguard.VLLoggableType;
+import vanguard.VLLoggable;
 
-public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggableType{
+public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable{
 
     public static int CURRENT_ACTIVE_BUFFER = 0;
 

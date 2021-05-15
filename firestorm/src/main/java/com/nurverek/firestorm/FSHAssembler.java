@@ -6,10 +6,10 @@ import vanguard.VLCopyable;
 import vanguard.VLListFloat;
 import vanguard.VLListType;
 import vanguard.VLLog;
-import vanguard.VLLoggableType;
+import vanguard.VLLoggable;
 import vanguard.VLV;
 
-public class FSHAssembler implements VLLoggableType{
+public class FSHAssembler implements VLLoggable{
 
     public boolean LOAD_MODELS = false;
     public boolean LOAD_POSITIONS = false;

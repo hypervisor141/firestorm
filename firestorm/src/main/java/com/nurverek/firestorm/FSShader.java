@@ -5,9 +5,9 @@ import android.opengl.GLES32;
 import androidx.annotation.NonNull;
 
 import vanguard.VLLog;
-import vanguard.VLLoggableType;
+import vanguard.VLLoggable;
 
-public final class FSShader implements VLLoggableType{
+public final class FSShader implements VLLoggable{
 
     private static final String HEADER = "#version 320 es\n";
     private static final String MAINHEADER = "void main(){\n";

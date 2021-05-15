@@ -15,7 +15,7 @@ import vanguard.VLFloat;
 import vanguard.VLInt;
 import vanguard.VLListType;
 import vanguard.VLLog;
-import vanguard.VLLoggableType;
+import vanguard.VLLoggable;
 
 public abstract class FSP{
 
@@ -2925,7 +2925,7 @@ public abstract class FSP{
         }
     }
 
-    public static class QueryResults implements VLLoggableType{
+    public static class QueryResults implements VLLoggable{
 
         public static int BUFFER_SIZE = 30;
 

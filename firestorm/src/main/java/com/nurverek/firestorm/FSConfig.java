@@ -3,9 +3,9 @@ package com.nurverek.firestorm;
 import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
-import vanguard.VLLoggableType;
+import vanguard.VLLoggable;
 
-public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggableType{
+public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable{
 
     public static final Mode MODE_FULLTIME = new Mode(){
 
