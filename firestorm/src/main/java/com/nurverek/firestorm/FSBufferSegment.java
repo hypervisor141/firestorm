@@ -98,13 +98,13 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 for(int i2 = 0; i2 < size2; i2++){
                     int initialoffset = buffer.position();
 
-                    EntryType<BUFFER> entry = entries.get(i);
+                    EntryType<BUFFER> entry = entries.get(i2);
                     entry.bufferInterleaved(target, instance, buffer, vbuffer, totalstride);
 
                     buffer.position(initialoffset + entry.unitSizeOnBuffer());
                 }
 
-                entries.get(size).bufferInterleaved(target, instance, buffer, vbuffer, totalstride);
+                entries.get(size2).bufferInterleaved(target, instance, buffer, vbuffer, totalstride);
             }
 
         }else{
@@ -114,7 +114,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 FSInstance instance = target.get(i);
 
                 for(int i2 = 0; i2 < size2; i2++){
-                    entries.get(i).bufferSequential(target, instance, buffer, vbuffer, totalstride);
+                    entries.get(i2).bufferSequential(target, instance, buffer, vbuffer, totalstride);
                 }
             }
         }
@@ -151,18 +151,15 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         if(interleaved){
-            EntryType<BUFFER> entry = entries.get(0);
-            int unitcountrequired = entry.calculateInterleaveDebugUnitCount(target, target.first());
-
             log.append("[Checking for mismatch between buffer target unit counts for interleaving]\n");
-
             int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
 
-            for(int i = 0; i < size; i++){
-                FSInstance instance = target.get(i);
+            for(int i = 0; i < entrysize; i++){
+                EntryType<BUFFER> entry = entries.get(i);
+                int unitcountrequired = entry.calculateInterleaveDebugUnitCount(target, target.first());
 
-                for(int i2 = 0; i2 < entrysize; i2++){
-                    entries.get(i).checkForInterleavingErrors(target, instance, unitcountrequired, log);
+                for(int i2 = 0; i2 < size; i2++){
+                    entry.checkForInterleavingErrors(target, target.get(i2), unitcountrequired, log);
                     log.append("\n");
                 }
             }
@@ -224,7 +221,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
         @Override
         public int calculateInterleaveDebugUnitCount(FSMesh target, FSInstance instance){
-            return calculateNeededSize(instance) / unitsize;
+            return calculateNeededSize(instance) / unitsubcount;
         }
 
         @Override
@@ -243,102 +240,70 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    public static class ElementStoreSubset<BUFFER extends VLBuffer<?, ?>> extends ElementType<BUFFER>{
+    public static class ElementStore<BUFFER extends VLBuffer<?, ?>> extends ElementType<BUFFER>{
 
-        public int storeoffset;
-        public int storecount;
+        public int storeindex;
 
-        public ElementStoreSubset(int element, int unitoffset, int unitsize, int unitsubcount, int storeoffset, int storecount){
+        public ElementStore(int element, int unitoffset, int unitsize, int unitsubcount, int storeindex){
             super(element, unitoffset, unitsize, unitsubcount);
-
-            this.storeoffset = storeoffset;
-            this.storecount = storecount;
+            this.storeindex = storeindex;
         }
 
-        public ElementStoreSubset(int element, int storeoffset, int storecount){
+        public ElementStore(int element, int storeindex, int storecount){
             super(element, 0, FSGlobal.UNIT_SIZES[element], FSGlobal.UNIT_SIZES[element]);
-
-            this.storeoffset = storeoffset;
-            this.storecount = storecount;
+            this.storeindex = storeindex;
         }
 
-        public ElementStoreSubset(int element){
+        public ElementStore(int element){
             super(element, 0, FSGlobal.UNIT_SIZES[element], FSGlobal.UNIT_SIZES[element]);
-
-            this.storeoffset = 0;
-            this.storecount = -1;
+            this.storeindex = 0;
         }
 
         @Override
         public int calculateNeededSize(FSInstance instance){
-            VLListType<FSElement<?, ?>> store = instance.store.get(element);
-            int total = 0;
-            int size = storeoffset + (storecount < 0 ? store.size() - storeoffset : storecount);
-
-            for(int i = storeoffset; i < size; i++){
-                total += store.get(i).size();
-            }
-
-            return (total / unitsize) * unitsubcount;
+            return (instance.store.get(element).get(storeindex).size() / unitsize) * unitsubcount;
         }
 
         @Override
         public void bufferSequential(FSMesh target, FSInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride){
-            VLListType<FSElement<?, ?>> list = instance.store.get(element);
-            int size = storeoffset + (storecount < 0 ? list.size() - storeoffset : storecount);
+            target.allocateBinding(element, 1, 5);
 
-            target.allocateBinding(element, storecount, storecount);
+            FSElement<?, BUFFER> item = (FSElement<?, BUFFER>)instance.store.get(element).get(storeindex);
+            item.buffer(vbuffer, buffer);
 
-            for(int i = storeoffset; i < size; i++){
-                FSElement<?, BUFFER> item = (FSElement<?, BUFFER>)list.get(i);
-                item.buffer(vbuffer, buffer);
-
-                target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
-                target.bufferComplete(instance, element, i);
-            }
+            target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
+            target.bufferComplete(instance, element, storeindex);
         }
 
         @Override
         public void bufferInterleaved(FSMesh target, FSInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride){
-            VLListType<FSElement<?, ?>> list = instance.store.get(element);
-            int size = storeoffset + (storecount < 0 ? list.size() - storeoffset : storecount);
+            FSElement<?, BUFFER> item = (FSElement<?, BUFFER>)instance.store.get(element).get(storeindex);
+            item.buffer(vbuffer, buffer, unitoffset, unitsize, unitsubcount, stride);
 
-            target.allocateBinding(element, storecount, storecount);
-
-            for(int i = storeoffset; i < size; i++){
-                FSElement<?, BUFFER> item = (FSElement<?, BUFFER>)list.get(i);
-                item.buffer(vbuffer, buffer, unitoffset, unitsize, unitsubcount, stride);
-
-                target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
-                target.bufferComplete(instance, element, i);
-            }
+            target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
+            target.bufferComplete(instance, element, storeindex);
         }
 
         @Override
         public void checkForInterleavingErrors(FSMesh target, FSInstance instance, int unitcountrequired, VLLog log){
-            VLListType<FSElement<?, ?>> list = instance.store.get(element);
-            int size = storeoffset + (storecount < 0 ? list.size() - storeoffset : storecount);
+            int size2 = instance.store.get(element).get(storeindex).size() / unitsize;
 
-            for(int i = storeoffset; i < size; i++){
-                int size2 = list.get(i).size() / unitsize;
+            if(size2 != unitcountrequired){
+                log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] element[");
+                log.append(FSGlobal.NAMES[element]);
+                log.append("] referenceSize[");
+                log.append(unitcountrequired);
+                log.append("] actualSize[");
+                log.append(size2);
+                log.append("] instance[");
+                log.append(instance.name());
+                log.append("] storeIndex[");
+                log.append(storeindex);
+                log.append("]");
 
-                if(size2 != unitcountrequired){
-                    log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] element[");
-                    log.append(FSGlobal.NAMES[element]);
-                    log.append("] referenceSize[");
-                    log.append(unitcountrequired);
-                    log.append("] actualSize[");
-                    log.append(size2);
-                    log.append("] instance[");
-                    log.append(instance.name());
-                    log.append("] storeIndex[");
-                    log.append(i);
-                    log.append("]");
+                log.printError();
 
-                    log.printError();
-
-                    throw new RuntimeException("[Target unit count mismatch]");
-                }
+                throw new RuntimeException("[Target unit count mismatch]");
             }
         }
 
@@ -346,10 +311,8 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         public void log(VLLog log, Object data){
             super.log(log, data);
 
-            log.append(" storeOffset[");
-            log.append(storeoffset);
-            log.append("] storeCount[");
-            log.append(storecount < 0 ? "MAX" : storecount);
+            log.append(" storeIndex[");
+            log.append(storeindex);
             log.append("]");
         }
     }
