@@ -157,8 +157,8 @@ public class FSMesh implements VLCopyable<FSMesh>, FSMeshType{
         instance.scanComplete();
     }
 
-    public void bufferComplete(FSInstance instance, int index, int element, int storeindex){
-        instance.bufferComplete(index, element, storeindex);
+    public void bufferComplete(FSInstance instance, int element, int storeindex){
+        instance.bufferComplete(element, storeindex);
     }
 
     public void scanComplete(){}

@@ -190,7 +190,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
 
     public void scanComplete(){}
 
-    public void bufferComplete(int instanceindex, int element, int storeindex){}
+    public void bufferComplete(int element, int storeindex){}
 
     public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
 
