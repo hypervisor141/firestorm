@@ -1,5 +1,6 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
@@ -97,11 +98,11 @@ public class FSConfigGroup extends FSConfig{
                 configs = target.configs.duplicate(FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             }else{
-                Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_DUPLICATE_CONFIGS");
+                VLCopyable.Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_DUPLICATE_CONFIGS");
             }
 
         }else{
-            Helper.throwMissingAllFlags();
+            VLCopyable.Helper.throwMissingAllFlags();
         }
     }
 

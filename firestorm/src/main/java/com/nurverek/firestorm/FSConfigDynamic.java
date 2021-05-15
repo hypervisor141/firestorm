@@ -1,5 +1,6 @@
 package com.nurverek.firestorm;
 
+import vanguard.VLCopyable;
 import vanguard.VLLog;
 
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
@@ -75,7 +76,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
             glslsize = target.glslsize;
 
         }else{
-            Helper.throwMissingDefaultFlags();
+            VLCopyable.Helper.throwMissingDefaultFlags();
         }
     }
 

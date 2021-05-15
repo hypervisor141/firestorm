@@ -128,11 +128,11 @@ public class FSConfigSequence extends FSConfigLocated{
                 configs = target.configs.duplicate(FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             }else{
-                Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_DUPLICATE_CONFIGS");
+                VLCopyable.Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_DUPLICATE_CONFIGS");
             }
 
         }else{
-            Helper.throwMissingAllFlags();
+            VLCopyable.Helper.throwMissingAllFlags();
         }
 
         glslsize = target.glslsize;

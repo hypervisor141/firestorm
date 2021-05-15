@@ -179,7 +179,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggableType{
             mode = src.mode.duplicate(FLAG_DUPLICATE);
 
         }else{
-            Helper.throwMissingDefaultFlags();
+            VLCopyable.Helper.throwMissingDefaultFlags();
         }
     }
 

@@ -488,7 +488,7 @@ public abstract class FSP{
                 color = ((ClearColor)src).color.clone();
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
         }
 
@@ -553,7 +553,7 @@ public abstract class FSP{
                 view = target.view.duplicate(VLCopyable.FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
 
             x = target.x;
@@ -928,7 +928,7 @@ public abstract class FSP{
                 array = (TYPE)target.array.duplicate(FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
 
             offset = target.offset;
@@ -1835,7 +1835,7 @@ public abstract class FSP{
                 w = target.w.duplicate(FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
         }
 
@@ -1906,7 +1906,7 @@ public abstract class FSP{
                 z = target.z.duplicate(FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
         }
 
@@ -1971,7 +1971,7 @@ public abstract class FSP{
                 y = target.y.duplicate(FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
         }
 
@@ -2027,7 +2027,7 @@ public abstract class FSP{
                 x = ((Uniform1i)src).x.duplicate(FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
         }
 
@@ -2276,7 +2276,7 @@ public abstract class FSP{
                 w = target.w.duplicate(FLAG_DUPLICATE);
 
             }else{
-                Helper.throwMissingDefaultFlags();
+                VLCopyable.Helper.throwMissingDefaultFlags();
             }
         }
 
