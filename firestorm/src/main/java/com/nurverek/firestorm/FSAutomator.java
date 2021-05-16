@@ -15,7 +15,6 @@ public class FSAutomator{
 
     public FSAutomator(int filecapacity){
         files = new VLListType<>(filecapacity, filecapacity);
-        scanners = new VLListType<>(100, 100);
     }
 
     public FileTarget registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize){
@@ -26,6 +25,7 @@ public class FSAutomator{
     }
 
     public void scan(int debug){
+        scanners = new VLListType<>(100, 100);
         int filesize = files.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
@@ -39,18 +39,16 @@ public class FSAutomator{
             for(int i = 0; i < filesize; i++){
                 FileTarget file = files.get(i);
 
-                log.append("File[");
+                log.append("[");
                 log.append(i + 1);
                 log.append("/");
                 log.append(filesize);
-                log.append("]");
+                log.append("]\n");
 
                 try{
                     file.checkAssembler(log);
-                    log.append(" [SUCCESS]");
 
                 }catch(Exception ex){
-                    log.append(" [FAILED]");
                     throw new RuntimeException(ex);
                 }
             }
@@ -64,14 +62,14 @@ public class FSAutomator{
                 log.append(i + 1);
                 log.append("/");
                 log.append(filesize);
-                log.append("]");
+                log.append("]\n");
 
                 try{
                     file.scan(this);
-                    log.append(" [SUCCESS]");
+                    log.append(" [SUCCESS]\n");
 
                 }catch(IOException ex){
-                    log.append(" [FAILED]");
+                    log.append(" [FAILED]\n");
                     throw new RuntimeException("Error loading from file", ex);
                 }
             }
@@ -87,7 +85,7 @@ public class FSAutomator{
                 log.append(i + 1);
                 log.append("/");
                 log.append(filesize);
-                log.append("]");
+                log.append("]\n");
 
                 try{
                     file.checkAndOffloadResults(this, log);
@@ -277,6 +275,8 @@ public class FSAutomator{
             this.order = order;
             this.fullsizedposition = fullsizedposition;
             this.scancapacity = scancapacity;
+
+            scanners = new VLListType<>(scancapacity, scancapacity);
         }
 
         public void register(FSHScanner scanner){
@@ -284,7 +284,6 @@ public class FSAutomator{
         }
 
         void checkAssembler(VLLog log){
-            log.printInfo("[Assembler Check Stage]");
             int size = scanners.size();
 
             for(int i = 0; i < size; i++){
@@ -293,7 +292,7 @@ public class FSAutomator{
                 try{
                     log.append("Scanner[");
                     log.append(entry.name);
-                    log.append("] ");
+                    log.append("]");
 
                     entry.assembler.checkDebug();
 

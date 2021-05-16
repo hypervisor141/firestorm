@@ -59,6 +59,10 @@ public abstract class FSHScanner{
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.equalsIgnoreCase(name)){
+                if(mesh.size() > 0){
+                    throw new RuntimeException("Found more than one instance for a singular scanner [" + mesh.name() + "]");
+                }
+
                 mesh.name(name);
                 FSInstance instance = mesh.generateInstance(data.name);
 
