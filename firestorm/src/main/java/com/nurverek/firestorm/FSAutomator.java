@@ -325,7 +325,7 @@ public class FSAutomator{
                 FSM.Data data = content.get(i);
 
                 for(int i2 = 0; i2 < size2; i2++){
-                    scanners.get(i).scan(automator, data);
+                    scanners.get(i2).scan(automator, data);
                 }
             }
         }
