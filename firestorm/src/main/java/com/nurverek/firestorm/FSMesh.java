@@ -174,6 +174,15 @@ public class FSMesh implements VLCopyable<FSMesh>, FSMeshType{
     }
 
     @Override
+    public void allocateElement(int element, int capacity, int resizer){
+        int size = instances.size();
+
+        for(int i = 0; i < size; i++){
+            instances.get(i).allocateElement(element, capacity, resizer);
+        }
+    }
+
+    @Override
     public void storeElement(int element, FSElement<?, ?> data){
         int size = instances.size();
 

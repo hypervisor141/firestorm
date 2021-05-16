@@ -32,6 +32,15 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     }
 
     @Override
+    public void allocateElement(int element, int capacity, int resizer){
+        int size = group.size();
+
+        for(int i = 0; i < size; i++){
+            group.get(i).allocateElement(element, capacity, resizer);
+        }
+    }
+
+    @Override
     public void storeElement(int element, FSElement<?, ?> data){
         int size = group.size();
 

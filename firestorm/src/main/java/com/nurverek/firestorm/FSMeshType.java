@@ -2,6 +2,7 @@ package com.nurverek.firestorm;
 
 public interface FSMeshType{
 
+    void allocateElement(int element, int capacity, int resizer);
     void storeElement(int element, FSElement<?, ?> data);
     void activateFirstElement(int element);
     void activateLastElement(int element);

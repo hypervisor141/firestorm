@@ -70,6 +70,11 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
     }
 
     @Override
+    public void allocateElement(int element, int capacity, int resizer){
+        store.allocateElement(element, capacity, resizer);
+    }
+
+    @Override
     public void storeElement(int element, FSElement<?, ?> data){
         store.add(element, data);
     }
