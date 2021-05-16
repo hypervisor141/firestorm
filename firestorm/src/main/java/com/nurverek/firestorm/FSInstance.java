@@ -169,24 +169,24 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
         return (VLArrayShort)elementData(FSGlobal.ELEMENT_INDEX);
     }
 
-    public FSElement.Float modelEntry(){
-        return (FSElement.Float)element(FSGlobal.ELEMENT_MODEL);
+    public FSElement.FloatArray modelEntry(){
+        return (FSElement.FloatArray)element(FSGlobal.ELEMENT_MODEL);
     }
 
-    public FSElement.Float positionsEntry(){
-        return (FSElement.Float)element(FSGlobal.ELEMENT_POSITION);
+    public FSElement.FloatArray positionsEntry(){
+        return (FSElement.FloatArray)element(FSGlobal.ELEMENT_POSITION);
     }
 
-    public FSElement.Float colorsEntry(){
-        return (FSElement.Float)element(FSGlobal.ELEMENT_COLOR);
+    public FSElement.FloatArray colorsEntry(){
+        return (FSElement.FloatArray)element(FSGlobal.ELEMENT_COLOR);
     }
 
-    public FSElement.Float texCoordsEntry(){
-        return (FSElement.Float)element(FSGlobal.ELEMENT_TEXCOORD);
+    public FSElement.FloatArray texCoordsEntry(){
+        return (FSElement.FloatArray)element(FSGlobal.ELEMENT_TEXCOORD);
     }
 
-    public FSElement.Float normalsEntry(){
-        return (FSElement.Float)element(FSGlobal.ELEMENT_NORMAL);
+    public FSElement.FloatArray normalsEntry(){
+        return (FSElement.FloatArray)element(FSGlobal.ELEMENT_NORMAL);
     }
 
     public FSElement.Short indicesEntry(){
