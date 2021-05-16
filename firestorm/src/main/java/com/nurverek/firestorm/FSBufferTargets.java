@@ -40,11 +40,15 @@ public class FSBufferTargets{
         log.append("]\n");
         log.printInfo();
 
+        String name = target.name();
+
         for(int i = 0; i < size; i++){
             log.append("[Segment] [");
             log.append(i + 1);
             log.append("/");
             log.append(size);
+            log.append("] target[");
+            log.append(name);
             log.append("]");
             log.printInfo();
 

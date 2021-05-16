@@ -127,12 +127,34 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         log.append(getClass().getSimpleName());
         log.append("] stride[");
         log.append(totalstride);
+        log.append("] instanceOffset[");
+        log.append(instanceoffset);
+        log.append("] instanceCount[");
+        log.append(instancecount < 0 ? "MAX" : instancecount);
         log.append("]\n");
 
         if(!debuggedsegmentstructure){
             if(totalstride <= 0){
                 log.append("[Invalid stride value] stride[");
                 log.append(totalstride);
+                log.append("]");
+                log.printError();
+
+                throw new RuntimeException();
+            }
+            if(instanceoffset < 0){
+                log.append("[Invalid instance offset] offset[");
+                log.append(instanceoffset);
+                log.append("]");
+                log.printError();
+
+                throw new RuntimeException();
+            }
+            if(instancecount == 0 || instancecount > target.size()){
+                log.append("[Invalid Instance Count] count[");
+                log.append(instancecount);
+                log.append("] meshInstanceCount[");
+                log.append(target.size());
                 log.append("]");
                 log.printError();
 
@@ -149,7 +171,6 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
             debuggedsegmentstructure = true;
         }
-
         if(interleaved){
             log.append("[Checking for mismatch between buffer target unit counts for interleaving]\n");
             int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
@@ -167,16 +188,133 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             log.printInfo();
         }
 
-        log.append("[Entries]\n");
+        int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
 
-        for(int i = 0; i < entrysize; i++){
-            entries.get(i).log(log, null);
-            log.append("\n");
+        checkInitialize();
+
+        if(interleaved){
+            int size2 = entries.size() - 1;
+            EntryType<BUFFER> entry;
+
+            for(int i = 0; i < size; i++){
+                FSInstance instance = target.get(i);
+
+                for(int i2 = 0; i2 < size2; i2++){
+                    entry = entries.get(i2);
+                    int initialoffset = buffer.position();
+
+                    log.append("[");
+                    log.append(instance.name());
+                    log.append("] [");
+                    log.append(i + 1);
+                    log.append("/");
+                    log.append(size);
+                    log.append("] [Entry] [");
+                    log.append(i2 + 1);
+                    log.append("/");
+                    log.append(size2 + 1);
+                    log.append("] bufferOffset[");
+                    log.append(initialoffset);
+                    log.append("] bufferCapacity[");
+                    log.append(buffer.size());
+                    log.append("]");
+
+                    try{
+                        entry.bufferInterleaved(target, instance, buffer, vbuffer, totalstride);
+                        buffer.position(initialoffset + entry.unitSizeOnBuffer());
+
+                        log.append(" bufferPosition[");
+                        log.append(buffer.position());
+                        log.append("] [SUCCESS]\n");
+
+                    }catch(Exception ex){
+                        log.append(" [FAILED]\n");
+
+                        entry.log(log, null);
+                        log.printError();
+
+                        throw new RuntimeException("Buffering failed.", ex);
+                    }
+                }
+
+                int initialoffset = buffer.position();
+                entry = entries.get(size2);
+
+                log.append("[");
+                log.append(instance.name());
+                log.append("] [");
+                log.append(i + 1);
+                log.append("/");
+                log.append(size);
+                log.append("] [Entry] [");
+                log.append(size2 + 1);
+                log.append("/");
+                log.append(size2 + 1);
+                log.append("] bufferOffset[");
+                log.append(initialoffset);
+                log.append("] bufferCapacity[");
+                log.append(buffer.size());
+                log.append("]");
+
+                try{
+                    entry.bufferInterleaved(target, instance, buffer, vbuffer, totalstride);
+
+                    log.append(" bufferPosition[");
+                    log.append(buffer.position());
+                    log.append("] [SUCCESS]\n");
+
+                }catch(Exception ex){
+                    log.append(" [FAILED]\n");
+
+                    entry.log(log, null);
+                    log.printError();
+
+                    throw new RuntimeException(ex);
+                }
+            }
+
+        }else{
+            int size2 = entries.size();
+
+            for(int i = 0; i < size; i++){
+                FSInstance instance = target.get(i);
+
+                for(int i2 = 0; i2 < size2; i2++){
+                    EntryType<BUFFER> entry = entries.get(i2);
+
+                    log.append("[");
+                    log.append(instance.name());
+                    log.append("] [");
+                    log.append(i + 1);
+                    log.append("/");
+                    log.append(size);
+                    log.append("] [Entry] [");
+                    log.append(i2 + 1);
+                    log.append("/");
+                    log.append(size2 + 1);
+                    log.append("] bufferOffset[");
+                    log.append(buffer.position());
+                    log.append("] bufferCapacity[");
+                    log.append(buffer.size());
+                    log.append("]");
+
+                    try{
+                        entry.bufferSequential(target, instance, buffer, vbuffer, totalstride);
+
+                        log.append(" bufferPosition[");
+                        log.append(buffer.position());
+                        log.append("] [SUCCESS]\n");
+
+                    }catch(Exception ex){
+                        log.append(" [FAILED]\n");
+                        entry.log(log, null);
+                        log.printError();
+
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
         }
-
-        log.printInfo();
-
-        buffer(target);
     }
 
     public void upload(){

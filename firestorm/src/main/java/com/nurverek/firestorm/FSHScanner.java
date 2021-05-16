@@ -38,11 +38,6 @@ public abstract class FSHScanner{
     }
 
     void bufferDebugAndFinish(VLLog log){
-        log.append("[Attempting to buffer for target mesh] [");
-        log.append(mesh.name);
-        log.append("]\n");
-        log.printInfo();
-
         buffertarget.bufferDebug(mesh, log);
         program.meshes().add(mesh);
 
