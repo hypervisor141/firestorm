@@ -533,7 +533,7 @@ public class FSHAssembler implements VLLoggable{
             int size = array.length;
             int jumps = FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_TEXCOORD];
 
-            for(int i = 0; i < size; i += jumps){
+            for(int i = 1; i < size; i += jumps){
                 array[i] = 1F - array[i];
             }
         }
