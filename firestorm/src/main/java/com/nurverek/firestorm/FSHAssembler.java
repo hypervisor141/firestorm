@@ -278,7 +278,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.restrictSize();
-       instance.colors().provider(converted.array());
+        instance.colors().provider(converted.array());
     }
 
     protected void unIndexTexCoords(FSInstance instance){
@@ -294,7 +294,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.restrictSize();
-       instance.texCoords().provider(converted.array());
+        instance.texCoords().provider(converted.array());
     }
 
     protected void unIndexNormals(FSInstance instance){
@@ -507,7 +507,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSGlobal.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSGlobal.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.array())));
+            store.add(FSGlobal.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSGlobal.ELEMENT_TEXCOORD, new VLArrayFloat(mesh.first().texCoords().provider())));
             store.activate(FSGlobal.ELEMENT_TEXCOORD, 0);
 
         }
