@@ -77,11 +77,11 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             for(int i2 = 0; i2 < size2; i2++){
                 log.append("[");
                 log.append(instance.name());
-                log.append("] [");
+                log.append("] instance[");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
-                log.append("] [Entry] [");
+                log.append("] entry[");
                 log.append(i2 + 1);
                 log.append("/");
                 log.append(size2 + 1);
@@ -237,11 +237,11 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                     log.append("[");
                     log.append(instance.name());
-                    log.append("] [");
+                    log.append("] instance[");
                     log.append(i + 1);
                     log.append("/");
                     log.append(size);
-                    log.append("] [Entry] [");
+                    log.append("] entry[");
                     log.append(i2 + 1);
                     log.append("/");
                     log.append(size2 + 1);
@@ -274,11 +274,11 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                 log.append("[");
                 log.append(instance.name());
-                log.append("] [");
+                log.append("] instance[");
                 log.append(i + 1);
                 log.append("/");
                 log.append(size);
-                log.append("] [Entry] [");
+                log.append("] entry[");
                 log.append(size2 + 1);
                 log.append("/");
                 log.append(size2 + 1);
