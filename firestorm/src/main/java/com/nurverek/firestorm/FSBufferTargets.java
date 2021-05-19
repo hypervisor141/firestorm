@@ -26,26 +26,17 @@ public class FSBufferTargets{
 
     public void prepareDebug(FSMesh target, VLLog log){
         int size = segments.size();
-
-        log.append("[");
-        log.append(getClass().getSimpleName());
-        log.append("]\n");
-        log.printInfo();
-
-        String name = target.name();
+        log.addTag(getClass().getSimpleName());
 
         for(int i = 0; i < size; i++){
-            log.append("[Segment] [");
-            log.append(i + 1);
-            log.append("/");
-            log.append(size);
-            log.append("] target[");
-            log.append(name);
-            log.append("]");
-            log.printInfo();
+            log.addTag(String.valueOf(i));
 
             segments.get(i).prepareDebug(target, log);
+
+            log.removeLastTag();
         }
+
+        log.removeLastTag();
     }
 
     public void buffer(FSMesh target){
@@ -58,26 +49,17 @@ public class FSBufferTargets{
 
     public void bufferDebug(FSMesh target, VLLog log){
         int size = segments.size();
-
-        log.append("[");
-        log.append(getClass().getSimpleName());
-        log.append("]\n");
-        log.printInfo();
-
-        String name = target.name();
+        log.addTag(getClass().getSimpleName());
 
         for(int i = 0; i < size; i++){
-            log.append("[Segment] [");
-            log.append(i + 1);
-            log.append("/");
-            log.append(size);
-            log.append("] target[");
-            log.append(name);
-            log.append("]");
-            log.printInfo();
+            log.addTag(String.valueOf(i));
 
             segments.get(i).bufferDebug(target, log);
+
+            log.removeLastTag();
         }
+
+        log.removeLastTag();
     }
 
     public void upload(){

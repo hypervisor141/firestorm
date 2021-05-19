@@ -44,9 +44,6 @@ public abstract class FSHScanner{
     void bufferDebugAndFinish(VLLog log){
         buffertarget.bufferDebug(mesh, log);
         program.meshes().add(mesh);
-
-        log.append("[DONE]");
-        log.printInfo();
     }
 
     void uploadBuffer(){

@@ -39,7 +39,9 @@ public abstract class FSP{
         meshes = new VLListType<>(meshcapacity, meshcapacity);
 
         uniformlocation = 0;
-        log = new VLLog(FSControl.LOGTAG, 10);
+
+        log = new VLLog(10);
+        log.addTag(FSControl.LOGTAG);
     }
 
     protected abstract CoreConfig customize(VLListType<FSMesh> meshes, int debug);
@@ -61,10 +63,11 @@ public abstract class FSP{
     }
 
     public FSP build(){
-        log.addTag(getClass().getSimpleName());
-        log.reset();
-
         program = GLES32.glCreateProgram();
+
+        log.addTag(getClass().getSimpleName());
+        log.setTag(log.tags().size() - 1, String.valueOf(program));
+
         coreconfigs = customize(meshes, debug);
 
         int size = meshes.size();
@@ -73,7 +76,6 @@ public abstract class FSP{
             meshes.get(i).programPreBuild(this, coreconfigs, debug);
         }
 
-        log.setTag(1, getClass().getSimpleName() + "-" + program);
         size = shaders.size();
 
         for(int i = 0; i < size; i++){
@@ -91,9 +93,8 @@ public abstract class FSP{
             }
 
             shader.debugInfo(this, log, debug);
+            log.printInfo();
         }
-
-        log.printInfo();
 
         GLES32.glLinkProgram(program);
         FSTools.checkGLError();
@@ -204,58 +205,40 @@ public abstract class FSP{
             log.reset();
 
             if(coreconfigs.setupconfig != null){
-                log.append("[SetupConfig]");
-                log.printInfo();
+                log.addTag("SetupConfig");
 
                 coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                log.printInfo();
+                log.removeLastTag();
             }
-
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
                     FSMesh mesh = meshes.get(i);
-
-                    log.append("[InternalMeshConfig] [");
-                    log.append(i + 1);
-                    log.append("/");
-                    log.append(meshsize);
-                    log.append("] [");
-                    log.append(mesh.name());
-                    log.append("]");
-                    log.printInfo();
+                    log.addTag(mesh.name);
+                    log.addTag("InternalConfig");
 
                     mesh.configureDebug(pass, this, i, passindex, log, debug);
 
-                    log.append("[MeshConfig] [");
-                    log.append(i + 1);
-                    log.append("/");
-                    log.append(meshsize);
-                    log.append("] [");
-                    log.append(mesh.name());
-                    log.append("]");
-                    log.printInfo();
+                    log.removeLastTag();
+                    log.addTag("MeshConfig");
 
                     coreconfigs.meshconfig.runDebug(pass, this, mesh, i, passindex, log, debug);
 
-                    log.printInfo();
+                    log.removeLastTag();
                 }
-
-                log.append("[PostDrawConfig]");
-                log.printInfo();
             }
-
             if(coreconfigs.postdrawconfig != null){
+                log.addTag("PostDrawConfig");
+
                 coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                log.printInfo();
+                log.removeLastTag();
             }
 
         }else{
             if(coreconfigs.setupconfig != null){
                 coreconfigs.setupconfig.run(pass, this, null, -1, passindex);
             }
-
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
                     FSMesh mesh = meshes.get(i);
@@ -263,7 +246,6 @@ public abstract class FSP{
                     coreconfigs.meshconfig.run(pass, this, mesh, i, passindex);
                 }
             }
-
             if(coreconfigs.postdrawconfig != null){
                 coreconfigs.postdrawconfig.run(pass, this, null, -1, passindex);
             }
@@ -285,13 +267,11 @@ public abstract class FSP{
 
             if(debug > FSControl.DEBUG_DISABLED){
                 log.reset();
-
-                log.append("[PostFrameConfig]");
-                log.printInfo();
+                log.addTag("PostFrameConfig");
 
                 coreconfigs.postframeconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                log.printInfo();
+                log.removeLastTag();
 
             }else{
                 coreconfigs.postframeconfig.run(pass, this, null, -1, passindex);

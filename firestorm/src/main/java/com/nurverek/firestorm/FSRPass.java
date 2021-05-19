@@ -44,7 +44,7 @@ public class FSRPass{
         if(debug >= FSControl.DEBUG_NORMAL){
             log = new VLLog(new String[]{
                     FSControl.LOGTAG, getClass().getSimpleName() + "-" + id
-            });
+            }, 20);
         }
     }
 

@@ -22,7 +22,8 @@ public class FSCFrames{
     private final static Object LOCK = new Object();
 
     protected static void initialize(int maxunchangedframes, int maxqueuedframes){
-        LOG = new VLLog(FSControl.LOGTAG, 1);
+        LOG = new VLLog(1);
+        LOG.addTag(FSControl.LOGTAG);
 
         synchronized(LOCK){
             TOTAL_FRAMES = 0;

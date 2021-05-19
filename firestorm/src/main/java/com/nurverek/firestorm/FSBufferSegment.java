@@ -18,7 +18,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
     protected int totalstride;
     protected int instanceoffset;
-    protected int instancecount;;
+    protected int instancecount;
 
     protected boolean interleaved;
     protected boolean uploaded;
@@ -71,32 +71,39 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
         int size2 = entries.size();
 
+        log.addTag("Segment");
+
         for(int i = 0; i < size; i++){
             FSInstance instance = target.get(i);
 
+            log.addTag(instance.name);
+            log.addTag(String.valueOf(i));
+
             for(int i2 = 0; i2 < size2; i2++){
-                log.append("[");
-                log.append(instance.name());
-                log.append("] instance[");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("] entry[");
-                log.append(i2 + 1);
-                log.append("/");
-                log.append(size2 + 1);
-                log.append("]");
+                log.addTag("Entry");
+                log.addTag(String.valueOf(i2));
 
                 try{
                     buffer.adjustPreInitCapacity(entries.get(i2).calculateNeededSize(instance));
-                    log.append(" [SUCCESS]\n");
+                    log.append("[SUCCESS]\n");
+                    log.printInfo();
 
                 }catch(Exception ex){
-                    log.append(" [FAILED]\n");
+                    log.append("[FAILED]\n");
+                    log.printError();
+
                     throw new RuntimeException(ex);
                 }
+
+                log.removeLastTag();
+                log.removeLastTag();
             }
+
+            log.removeLastTag();
+            log.removeLastTag();
         }
+
+        log.removeLastTag();
     }
 
     public FSBufferSegment<BUFFER> add(EntryType<BUFFER> entry){
@@ -155,15 +162,16 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     public void bufferDebug(FSMesh target, VLLog log){
         int entrysize = entries.size();
 
-        log.append("[");
-        log.append(getClass().getSimpleName());
-        log.append("] stride[");
+        log.append("stride[");
         log.append(totalstride);
+        log.append("] entrySize[");
+        log.append(entrysize);
         log.append("] instanceOffset[");
         log.append(instanceoffset);
         log.append("] instanceCount[");
         log.append(instancecount < 0 ? "MAX" : instancecount);
         log.append("]\n");
+        log.printInfo();
 
         if(!debuggedsegmentstructure){
             if(totalstride <= 0){
@@ -213,16 +221,12 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                 for(int i2 = 0; i2 < size; i2++){
                     entry.checkForInterleavingErrors(target, target.get(i2), unitcountrequired, log);
-                    log.append("\n");
                 }
             }
-
-            log.printInfo();
         }
 
-        int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
-
         checkInitialize();
+        int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
 
         if(interleaved){
             int size2 = entries.size() - 1;
@@ -231,22 +235,18 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             for(int i = 0; i < size; i++){
                 FSInstance instance = target.get(i);
 
+                log.addTag(instance.name);
+                log.addTag(String.valueOf(i));
+
                 for(int i2 = 0; i2 < size2; i2++){
                     entry = entries.get(i2);
                     int initialoffset = buffer.position();
 
-                    log.append("[");
-                    log.append(instance.name());
-                    log.append("] instance[");
-                    log.append(i + 1);
-                    log.append("/");
-                    log.append(size);
-                    log.append("] entry[");
-                    log.append(i2 + 1);
-                    log.append("/");
-                    log.append(size2 + 1);
-                    log.append("] bufferOffset[");
-                    log.append(initialoffset);
+                    log.addTag("Entry");
+                    log.addTag(String.valueOf(i2));
+
+                    log.append(" bufferOffset[");
+                    log.append(buffer.position());
                     log.append("] bufferCapacity[");
                     log.append(buffer.size());
                     log.append("]");
@@ -258,32 +258,28 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                         log.append(" bufferPosition[");
                         log.append(buffer.position());
                         log.append("] [SUCCESS]\n");
+                        log.printInfo();
 
                     }catch(Exception ex){
-                        log.append(" [FAILED]\n");
+                        log.append("[FAILED]\n");
 
                         entry.log(log, null);
                         log.printError();
 
                         throw new RuntimeException("Buffering failed.", ex);
                     }
+
+                    log.removeLastTag();
+                    log.removeLastTag();
                 }
 
-                int initialoffset = buffer.position();
                 entry = entries.get(size2);
 
-                log.append("[");
-                log.append(instance.name());
-                log.append("] instance[");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("] entry[");
-                log.append(size2 + 1);
-                log.append("/");
-                log.append(size2 + 1);
-                log.append("] bufferOffset[");
-                log.append(initialoffset);
+                log.addTag("Entry");
+                log.addTag(String.valueOf(size2));
+
+                log.append(" bufferOffset[");
+                log.append(buffer.position());
                 log.append("] bufferCapacity[");
                 log.append(buffer.size());
                 log.append("]");
@@ -294,6 +290,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                     log.append(" bufferPosition[");
                     log.append(buffer.position());
                     log.append("] [SUCCESS]\n");
+                    log.printInfo();
 
                 }catch(Exception ex){
                     log.append(" [FAILED]\n");
@@ -303,6 +300,11 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                     throw new RuntimeException(ex);
                 }
+
+                log.removeLastTag();
+                log.removeLastTag();
+                log.removeLastTag();
+                log.removeLastTag();
             }
 
         }else{
@@ -311,20 +313,16 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             for(int i = 0; i < size; i++){
                 FSInstance instance = target.get(i);
 
+                log.addTag(instance.name);
+                log.addTag(String.valueOf(i));
+
                 for(int i2 = 0; i2 < size2; i2++){
                     EntryType<BUFFER> entry = entries.get(i2);
 
-                    log.append("[");
-                    log.append(instance.name());
-                    log.append("] [");
-                    log.append(i + 1);
-                    log.append("/");
-                    log.append(size);
-                    log.append("] [Entry] [");
-                    log.append(i2 + 1);
-                    log.append("/");
-                    log.append(size2 + 1);
-                    log.append("] bufferOffset[");
+                    log.addTag("Entry");
+                    log.addTag(String.valueOf(i2));
+
+                    log.append(" bufferOffset[");
                     log.append(buffer.position());
                     log.append("] bufferCapacity[");
                     log.append(buffer.size());
@@ -336,6 +334,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                         log.append(" bufferPosition[");
                         log.append(buffer.position());
                         log.append("] [SUCCESS]\n");
+                        log.printInfo();
 
                     }catch(Exception ex){
                         log.append(" [FAILED]\n");
@@ -344,9 +343,19 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
                         throw new RuntimeException(ex);
                     }
+
+                    log.removeLastTag();
+                    log.removeLastTag();
                 }
+
+                log.removeLastTag();
+                log.removeLastTag();
             }
         }
+    }
+
+    private void bufferFunc(){
+
     }
 
     public void upload(){

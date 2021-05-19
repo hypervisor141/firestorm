@@ -26,81 +26,44 @@ public class FSAutomator{
 
     public void scan(int debug){
         scanners = new VLListType<>(100, 100);
-        int filesize = files.size();
 
         if(debug > FSControl.DEBUG_DISABLED){
             log = new VLLog(new String[]{
                     FSControl.LOGTAG, getClass().getSimpleName()
+            }, 50);
+
+            log.setDebugTagsOffsetHere();
+            log.printInfo("[Automated Scan Initiated]");
+
+            fileDebugLoop("Assembler Check Stage", log, new LoopOperation<FileTarget>(){
+
+                @Override
+                public void run(FileTarget target, VLLog log){
+                    target.checkAssembler(log);
+                }
+            });
+            fileDebugLoop("Build Stage", log, new LoopOperation<FileTarget>(){
+
+                @Override
+                public void run(FileTarget target, VLLog log) throws Exception{
+                    target.scan(FSAutomator.this);
+                }
+            });
+            fileDebugLoop("Results Check Stage", log, new LoopOperation<FileTarget>(){
+
+                @Override
+                public void run(FileTarget target, VLLog log){
+                    target.checkResults(log);
+                    target.offloadResults(FSAutomator.this);
+                }
             });
 
-            log.printInfo("[Automated Scan Initiated]");
-            log.printInfo("[Assembler Check Stage]");
-
-            for(int i = 0; i < filesize; i++){
-                FileTarget file = files.get(i);
-
-                log.append("[");
-                log.append(i + 1);
-                log.append("/");
-                log.append(filesize);
-                log.append("]\n");
-
-                try{
-                    file.checkAssembler(log);
-
-                }catch(Exception ex){
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            log.printInfo("[Build Stage]");
-
-            for(int i = 0; i < filesize; i++){
-                FileTarget file = files.get(i);
-
-                log.append("File[");
-                log.append(i + 1);
-                log.append("/");
-                log.append(filesize);
-                log.append("]\n");
-
-                try{
-                    file.scan(this);
-                    log.append(" [SUCCESS]\n");
-
-                }catch(IOException ex){
-                    log.append(" [FAILED]\n");
-                    throw new RuntimeException("Error loading from file", ex);
-                }
-            }
-
-            log.printInfo();
-            log.printInfo("[DONE]");
-            log.printInfo("[Checking Scan Results]");
-
-            for(int i = 0; i < filesize; i++){
-                FileTarget file = files.get(i);
-
-                log.append("File[");
-                log.append(i + 1);
-                log.append("/");
-                log.append(filesize);
-                log.append("]\n");
-
-                try{
-                    file.checkResults(log);
-                    file.offloadResults(this);
-
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                }
-            }
-
-            log.printInfo();
             log.printInfo("[Automated Scan And Build Complete]");
 
         }else{
-            for(int i = 0; i < filesize; i++){
+            int size = files.size();
+
+            for(int i = 0; i < size; i++){
                 try{
                     FileTarget file = files.get(i);
 
@@ -121,136 +84,48 @@ public class FSAutomator{
     }
 
     public void buffer(int debug){
-        int size = scanners.size();
-
         if(debug > FSControl.DEBUG_DISABLED){
             log = new VLLog(new String[]{
                     FSControl.LOGTAG, getClass().getSimpleName()
+            }, 50);
+
+            log.setDebugTagsOffsetHere();
+            log.printInfo("[Automated Buffering Initiated]");
+
+            scannerDebugLoop("Measurement Stage", log, new LoopOperation<FSHScanner>(){
+
+                @Override
+                public void run(FSHScanner target, VLLog log){
+                    target.adjustBufferCapacityDebug(log);
+                }
+            });
+            scannerDebugLoop("Buffer Build Stage", log, new LoopOperation<FSHScanner>(){
+
+                @Override
+                public void run(FSHScanner target, VLLog log){
+                    target.bufferDebugAndFinish(log);
+                }
+            });
+            scannerDebugLoop("Buffer Upload Stage", log, new LoopOperation<FSHScanner>(){
+
+                @Override
+                public void run(FSHScanner target, VLLog log){
+                    target.uploadBuffer();
+                }
+            });
+            scannerDebugLoop("Signal Complete Stage", log, new LoopOperation<FSHScanner>(){
+
+                @Override
+                public void run(FSHScanner target, VLLog log){
+                    target.signalBufferComplete();
+                }
             });
 
-            log.printInfo("[Automated Buffering Initiated]");
-            log.printInfo("[Measuring Buffer Size]");
-
-            for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
-
-                log.append("[measuringBufferSize] [");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("]\n");
-
-                try{
-                    entry.adjustBufferCapacityDebug(log);
-
-                }catch(Exception ex){
-                    log.append("[Error accounting for buffer size] [");
-                    log.append(entry.name);
-                    log.append("]\n [Assembler Configuration]\n");
-
-                    entry.assembler.log(log, null);
-                    log.printError();
-
-                    throw new RuntimeException(ex);
-                }
-
-                log.printInfo();
-            }
-
-            log.printInfo("[Buffer Size Measurement Complete]");
-            log.printInfo("[Buffering Data]");
-
-            for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
-
-                log.append("[Buffering] [");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("]\n");
-
-                try{
-                    entry.bufferDebugAndFinish(log);
-
-                }catch(Exception ex){
-                    log.append("[Buffering Failed] [");
-                    log.append(entry.name);
-                    log.append("]\n");
-                    log.append("[Assembler Configuration]\n");
-
-                    entry.assembler.log(log, null);
-                    log.printError();
-
-                    throw new RuntimeException(ex);
-                }
-
-                log.printInfo();
-            }
-
-            log.printInfo("[Buffer Complete]");
-            log.printInfo("[Uploading Buffers]");
-
-            for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
-
-                log.append("[Uploading] [");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("]\n");
-
-                try{
-                    entry.uploadBuffer();
-
-                }catch(Exception ex){
-                    log.append("[Failed to upload] [");
-                    log.append(entry.name);
-                    log.append("]\n");
-                    log.append("[Assembler Configuration]\n");
-
-                    entry.assembler.log(log, null);
-                    log.printError();
-
-                    throw new RuntimeException(ex);
-                }
-
-                log.printInfo();
-            }
-
-            log.printInfo("[Upload Complete]");
-            log.printInfo("[Signaling Buffer Complete]");
-
-            for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
-
-                log.append("[Signalling] [");
-                log.append(i + 1);
-                log.append("/");
-                log.append(size);
-                log.append("]\n");
-
-                try{
-                    entry.signalBufferComplete();
-
-                }catch(Exception ex){
-                    log.append("[Failed to signal buffer completion] [");
-                    log.append(entry.name);
-                    log.append("]\n");
-                    log.append("[Assembler Configuration]\n");
-
-                    entry.assembler.log(log, null);
-                    log.printError();
-
-                    throw new RuntimeException(ex);
-                }
-
-                log.printInfo();
-            }
-
-            log.printInfo();
             log.printInfo("[Automated Buffer Procedure Complete]");
 
         }else{
+            int size = scanners.size();
+
             for(int i = 0; i < size; i++){
                 scanners.get(i).adjustBufferCapacity();
             }
@@ -264,6 +139,69 @@ public class FSAutomator{
                 scanners.get(i).signalBufferComplete();
             }
         }
+    }
+
+    private void fileDebugLoop(String title, VLLog log, LoopOperation<FileTarget> task){
+        log.addTag(title);
+
+        int size = files.size();
+
+        for(int i = 0; i < size; i++){
+            FileTarget entry = files.get(i);
+            log.addTag(String.valueOf(i));
+
+            try{
+                task.run(entry, log);
+
+                log.append("[SUCCESS]\n");
+                log.printInfo();
+
+            }catch(Exception ex){
+                log.append("[FAILED]\n");
+                log.printError();
+
+                throw new RuntimeException(ex);
+            }
+
+            log.removeLastTag();
+        }
+
+        log.removeLastTag();
+    }
+
+    private void scannerDebugLoop(String title, VLLog log, LoopOperation<FSHScanner> task){
+        log.addTag(title);
+
+        int size = scanners.size();
+
+        for(int i = 0; i < size; i++){
+            FSHScanner entry = scanners.get(i);
+            log.addTag(entry.name);
+            log.addTag(String.valueOf(i));
+
+            try{
+                task.run(entry, log);
+
+                log.append("[SUCCESS]\n");
+                log.printInfo();
+
+            }catch(Exception ex){
+                log.append("[FAILED]\n");
+                log.printError();
+
+                throw new RuntimeException(ex);
+            }
+
+            log.removeLastTag();
+            log.removeLastTag();
+        }
+
+        log.removeLastTag();
+    }
+
+    private interface LoopOperation<TARGET>{
+
+        void run(TARGET target, VLLog log) throws Exception;
     }
 
     public final static class FileTarget{
@@ -292,18 +230,17 @@ public class FSAutomator{
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
+                log.addTag(entry.name);
 
                 try{
-                    log.append("Scanner[");
-                    log.append(entry.name);
-                    log.append("]");
-
                     entry.assembler.checkDebug();
-
-                    log.append(" [SUCCESS]\n");
+                    log.append("[SUCCESS]\n");
+                    log.printInfo();
 
                 }catch(Exception ex){
-                    log.append("[FAILED] [Invalid assembler configuration detected]\n");
+                    log.append("[FAILED]\n");
+                    log.printError();
+
                     log.append("[Assembler Configuration]\n");
 
                     entry.assembler.log(log, null);
@@ -311,10 +248,9 @@ public class FSAutomator{
 
                     throw new RuntimeException("Invalid assembler configuration", ex);
                 }
-            }
 
-            log.printInfo();
-            log.printInfo("[DONE]");
+                log.removeLastTag();
+            }
         }
 
         void scan(FSAutomator automator) throws IOException{
