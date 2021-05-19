@@ -141,7 +141,7 @@ public class FSAutomator{
                 log.append("]\n");
 
                 try{
-                    entry.adjustBufferCapacity();
+                    entry.adjustBufferCapacityDebug(log);
 
                 }catch(Exception ex){
                     log.append("[Error accounting for buffer size] [");

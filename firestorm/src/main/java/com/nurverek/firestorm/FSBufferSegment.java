@@ -67,6 +67,38 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
+    public void prepareDebug(FSMesh target, VLLog log){
+        int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
+        int size2 = entries.size();
+
+        for(int i = 0; i < size; i++){
+            FSInstance instance = target.get(i);
+
+            for(int i2 = 0; i2 < size2; i2++){
+                log.append("[");
+                log.append(instance.name());
+                log.append("] [");
+                log.append(i + 1);
+                log.append("/");
+                log.append(size);
+                log.append("] [Entry] [");
+                log.append(i2 + 1);
+                log.append("/");
+                log.append(size2 + 1);
+                log.append("]");
+
+                try{
+                    buffer.adjustPreInitCapacity(entries.get(i2).calculateNeededSize(instance));
+                    log.append(" [SUCCESS]\n");
+
+                }catch(Exception ex){
+                    log.append(" [FAILED]\n");
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
     public FSBufferSegment<BUFFER> add(EntryType<BUFFER> entry){
         totalstride += entry.unitSizeOnBuffer();
         entries.add(entry);

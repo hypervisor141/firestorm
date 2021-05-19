@@ -32,6 +32,10 @@ public abstract class FSHScanner{
         buffertarget.prepare(mesh);
     }
 
+    void adjustBufferCapacityDebug(VLLog log){
+        buffertarget.prepareDebug(mesh, log);
+    }
+
     void bufferAndFinish(){
         buffertarget.buffer(mesh);
         program.meshes().add(mesh);
