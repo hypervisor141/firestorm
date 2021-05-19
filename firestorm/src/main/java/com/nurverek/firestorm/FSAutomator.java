@@ -88,7 +88,8 @@ public class FSAutomator{
                 log.append("]\n");
 
                 try{
-                    file.checkAndOffloadResults(this, log);
+                    file.checkResults(log);
+                    file.offloadResults(this);
 
                 }catch(Exception ex){
                     ex.printStackTrace();
@@ -101,7 +102,10 @@ public class FSAutomator{
         }else{
             for(int i = 0; i < filesize; i++){
                 try{
-                    files.get(i).scan(this);
+                    FileTarget file = files.get(i);
+
+                    file.scan(this);
+                    file.offloadResults(this);
 
                 }catch(IOException ex){
                     throw new RuntimeException("IO error when loading file.", ex);
@@ -330,7 +334,7 @@ public class FSAutomator{
             }
         }
 
-        void checkAndOffloadResults(FSAutomator automator, VLLog log){
+        void checkResults(VLLog log){
             int size = scanners.size();
 
             for(int i = 0; i < size; i++){
@@ -348,7 +352,9 @@ public class FSAutomator{
                     throw new RuntimeException("Mesh Scan Error");
                 }
             }
+        }
 
+        void offloadResults(FSAutomator automator){
             automator.scanners.add(scanners);
             scanners = null;
         }
