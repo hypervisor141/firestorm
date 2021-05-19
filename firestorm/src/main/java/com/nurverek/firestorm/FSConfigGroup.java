@@ -52,14 +52,9 @@ public class FSConfigGroup extends FSConfig{
 
     @Override
     public final void configureDebug(FSRPass pass, FSP program, FSMesh mesh, int meshindex, int passindex, VLLog log, int debug){
-        String classname = getClass().getSimpleName();
         int size = configs.size();
 
-        log.append("ENTERING [");
-        log.append(classname);
-        log.append("] configs[");
-        log.append(size);
-        log.append("]\n");
+        log.addTag(getClass().getSimpleName());
 
         for(int i = 0; i < size; i++){
             log.append("[");
@@ -71,9 +66,7 @@ public class FSConfigGroup extends FSConfig{
             configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
         }
 
-        log.append("EXITING [");
-        log.append(classname);
-        log.append("]\n");
+        log.removeLastTag();
     }
 
     @Override
