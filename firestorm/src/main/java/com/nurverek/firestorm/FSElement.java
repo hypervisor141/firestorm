@@ -559,11 +559,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
             binding.vbuffer.log(log, null);
             log.append("] tracker[");
             binding.tracker.log(log, null);
-            log.append("] data[");
+            log.append("] data");
             log.append(Arrays.toString(this.data.provider()));
-            log.append("] bufferedData[");
+            log.append(" bufferedData");
             log.append(Arrays.toString(results));
-            log.append("]");
         }
     }
 
@@ -628,11 +627,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
             binding.vbuffer.log(log, null);
             log.append("] tracker[");
             binding.tracker.log(log, null);
-            log.append("] data[");
+            log.append("] data");
             log.append(Arrays.toString(this.data.provider()));
-            log.append("] bufferedData[");
+            log.append(" bufferedData");
             log.append(Arrays.toString(results));
-            log.append("]");
         }
     }
 
@@ -697,11 +695,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
             binding.vbuffer.log(log, null);
             log.append("] tracker[");
             binding.tracker.log(log, null);
-            log.append("] data[");
+            log.append("] data");
             log.append(Arrays.toString(this.data.provider()));
-            log.append("] bufferedData[");
+            log.append(" bufferedData");
             log.append(Arrays.toString(results));
-            log.append("]");
         }
     }
 
@@ -768,11 +765,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
             binding.vbuffer.log(log, null);
             log.append("] tracker[");
             binding.tracker.log(log, null);
-            log.append("] data[");
+            log.append("] data");
             log.append(Arrays.toString(this.data.provider()));
-            log.append("] bufferedData[");
+            log.append(" bufferedData");
             log.append(Arrays.toString(results));
-            log.append("]");
         }
     }
 
@@ -840,11 +836,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
             binding.vbuffer.log(log, null);
             log.append("] tracker[");
             binding.tracker.log(log, null);
-            log.append("] data[");
+            log.append("] data");
             log.append(Arrays.toString(this.data.provider()));
-            log.append("] bufferedData[");
+            log.append(" bufferedData");
             log.append(Arrays.toString(results));
-            log.append("]");
         }
     }
 
@@ -911,11 +906,10 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
             binding.vbuffer.log(log, null);
             log.append("] tracker[");
             binding.tracker.log(log, null);
-            log.append("] data[");
+            log.append("] data");
             log.append(Arrays.toString(this.data.provider()));
-            log.append("] bufferedData[");
+            log.append(" bufferedData");
             log.append(Arrays.toString(results));
-            log.append("]");
         }
     }
 }

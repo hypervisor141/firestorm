@@ -1,11 +1,8 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLBuffer;
-import vanguard.VLBufferFloat;
 import vanguard.VLBufferTracker;
 import vanguard.VLCopyable;
-import vanguard.VLLog;
-import vanguard.VLLoggable;
 
 public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSBufferBinding<BUFFER>>{
 
