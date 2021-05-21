@@ -621,7 +621,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
             FSBufferBinding<VLBufferShort> binding = bindings.get(index);
 
-            byte[] results = new byte[binding.tracker.count];
+            short[] results = new short[binding.tracker.count];
             binding.buffer.read(binding.tracker, results, 0);
 
             log.append("vBuffer[");
@@ -690,7 +690,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
             FSBufferBinding<VLBufferInt> binding = bindings.get(index);
 
-            byte[] results = new byte[binding.tracker.count];
+            int[] results = new int[binding.tracker.count];
             binding.buffer.read(binding.tracker, results, 0);
 
             log.append("vBuffer[");
@@ -761,7 +761,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
             FSBufferBinding<VLBufferLong> binding = bindings.get(index);
 
-            byte[] results = new byte[binding.tracker.count];
+            long[] results = new long[binding.tracker.count];
             binding.buffer.read(binding.tracker, results, 0);
 
             log.append("vBuffer[");
@@ -833,7 +833,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
             FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
 
-            byte[] results = new byte[binding.tracker.count];
+            float[] results = new float[binding.tracker.count];
             binding.buffer.read(binding.tracker, results, 0);
 
             log.append("vBuffer[");
@@ -904,7 +904,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
             FSBufferBinding<VLBufferDouble> binding = bindings.get(index);
 
-            byte[] results = new byte[binding.tracker.count];
+            double[] results = new double[binding.tracker.count];
             binding.buffer.read(binding.tracker, results, 0);
 
             log.append("vBuffer[");
