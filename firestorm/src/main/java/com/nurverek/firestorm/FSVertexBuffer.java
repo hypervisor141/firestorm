@@ -229,7 +229,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         log.append(sizebytes);
         log.append("] bindPoint[");
         log.append(bindpoint);
-        log.append("] backingBuffer[ ");
+        log.append("] backingBuffer[");
         log.append(buffer.getClass().getSimpleName());
         log.append("]");
     }
