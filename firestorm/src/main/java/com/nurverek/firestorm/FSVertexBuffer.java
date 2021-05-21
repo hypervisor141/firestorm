@@ -221,9 +221,17 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
 
     @Override
     public void log(VLLog log, Object data){
-        log.append("[VertexBuffer] backBuffer[ ");
-        buffer.log(log, data);
-        log.append(" ]");
+        log.append("id[");
+        log.append(id);
+        log.append("] accessMode[");
+        log.append(accessmode);
+        log.append("] sizeBytes[");
+        log.append(sizebytes);
+        log.append("] bindPoint[");
+        log.append(bindpoint);
+        log.append("] backingBuffer[ ");
+        log.append(buffer.getClass().getSimpleName());
+        log.append("]");
     }
 
     public void destroy(){

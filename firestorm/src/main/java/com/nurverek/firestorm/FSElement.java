@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import java.util.Arrays;
+
 import vanguard.VLArrayByte;
 import vanguard.VLArrayDouble;
 import vanguard.VLArrayFloat;
@@ -20,10 +22,12 @@ import vanguard.VLDouble;
 import vanguard.VLFloat;
 import vanguard.VLInt;
 import vanguard.VLListType;
+import vanguard.VLLog;
+import vanguard.VLLoggable;
 import vanguard.VLLong;
 import vanguard.VLShort;
 
-public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSElement<DATA, BUFFER>>{
+public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSElement<DATA, BUFFER>>, VLLoggable{
 
     public int element;
     public DATA data;
@@ -210,6 +214,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public Byte duplicate(long flags){
             return new Byte(this, flags);
         }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferByte> binding = bindings.get(index);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(this.data.get());
+            log.append("] bufferedData[");
+            log.append(binding.buffer.read(binding.tracker.offset));
+            log.append("]");
+        }
     }
 
     public static class Short extends PrimitiveType<VLShort, VLBufferShort>{
@@ -245,6 +266,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         @Override
         public Short duplicate(long flags){
             return new Short(this, flags);
+        }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferShort> binding = bindings.get(index);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(this.data.get());
+            log.append("] bufferedData[");
+            log.append(binding.buffer.read(binding.tracker.offset));
+            log.append("]");
         }
     }
 
@@ -282,6 +320,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public Int duplicate(long flags){
             return new Int(this, flags);
         }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferInt> binding = bindings.get(index);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(this.data.get());
+            log.append("] bufferedData[");
+            log.append(binding.buffer.read(binding.tracker.offset));
+            log.append("]");
+        }
     }
 
     public static class Long extends PrimitiveType<VLLong, VLBufferLong>{
@@ -317,6 +372,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         @Override
         public Long duplicate(long flags){
             return new Long(this, flags);
+        }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferLong> binding = bindings.get(index);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(this.data.get());
+            log.append("] bufferedData[");
+            log.append(binding.buffer.read(binding.tracker.offset));
+            log.append("]");
         }
     }
 
@@ -354,6 +426,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public Float duplicate(long flags){
             return new Float(this, flags);
         }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(this.data.get());
+            log.append("] bufferedData[");
+            log.append(binding.buffer.read(binding.tracker.offset));
+            log.append("]");
+        }
     }
 
     public static class Double extends PrimitiveType<VLDouble, VLBufferDouble>{
@@ -389,6 +478,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         @Override
         public Double duplicate(long flags){
             return new Double(this, flags);
+        }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferDouble> binding = bindings.get(index);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(this.data.get());
+            log.append("] bufferedData[");
+            log.append(binding.buffer.read(binding.tracker.offset));
+            log.append("]");
         }
     }
 
@@ -439,6 +545,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public ByteArray duplicate(long flags){
             return new ByteArray(this, flags);
         }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferByte> binding = bindings.get(index);
+
+            byte[] results = new byte[binding.tracker.count];
+            binding.buffer.read(binding.tracker, results, 0);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(Arrays.toString(this.data.provider()));
+            log.append("] bufferedData[");
+            log.append(Arrays.toString(results));
+            log.append("]");
+        }
     }
 
     public static class ShortArray extends FSElement<VLArrayShort, VLBufferShort>{
@@ -488,6 +614,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public ShortArray duplicate(long flags){
             return new ShortArray(this, flags);
         }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferShort> binding = bindings.get(index);
+
+            byte[] results = new byte[binding.tracker.count];
+            binding.buffer.read(binding.tracker, results, 0);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(Arrays.toString(this.data.provider()));
+            log.append("] bufferedData[");
+            log.append(Arrays.toString(results));
+            log.append("]");
+        }
     }
 
     public static class IntArray extends FSElement<VLArrayInt, VLBufferInt>{
@@ -536,6 +682,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         @Override
         public IntArray duplicate(long flags){
             return new IntArray(this, flags);
+        }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferInt> binding = bindings.get(index);
+
+            byte[] results = new byte[binding.tracker.count];
+            binding.buffer.read(binding.tracker, results, 0);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(Arrays.toString(this.data.provider()));
+            log.append("] bufferedData[");
+            log.append(Arrays.toString(results));
+            log.append("]");
         }
     }
 
@@ -587,6 +753,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         @Override
         public LongArray duplicate(long flags){
             return new LongArray(this, flags);
+        }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferLong> binding = bindings.get(index);
+
+            byte[] results = new byte[binding.tracker.count];
+            binding.buffer.read(binding.tracker, results, 0);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(Arrays.toString(this.data.provider()));
+            log.append("] bufferedData[");
+            log.append(Arrays.toString(results));
+            log.append("]");
         }
     }
 
@@ -640,6 +826,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public FloatArray duplicate(long flags){
             return new FloatArray(this, flags);
         }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
+
+            byte[] results = new byte[binding.tracker.count];
+            binding.buffer.read(binding.tracker, results, 0);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(Arrays.toString(this.data.provider()));
+            log.append("] bufferedData[");
+            log.append(Arrays.toString(results));
+            log.append("]");
+        }
     }
 
     public static class DoubleArray extends FSElement<VLArrayDouble, VLBufferDouble>{
@@ -690,6 +896,26 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         @Override
         public DoubleArray duplicate(long flags){
             return new DoubleArray(this, flags);
+        }
+
+        @Override
+        public void log(VLLog log, Object data){
+            int index = data == null ? 0 : (int)data;
+
+            FSBufferBinding<VLBufferDouble> binding = bindings.get(index);
+
+            byte[] results = new byte[binding.tracker.count];
+            binding.buffer.read(binding.tracker, results, 0);
+
+            log.append("vBuffer[");
+            binding.vbuffer.log(log, null);
+            log.append("] tracker[");
+            binding.tracker.log(log, null);
+            log.append("] data[");
+            log.append(Arrays.toString(this.data.provider()));
+            log.append("] bufferedData[");
+            log.append(Arrays.toString(results));
+            log.append("]");
         }
     }
 }

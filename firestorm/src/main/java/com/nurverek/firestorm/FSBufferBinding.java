@@ -4,6 +4,8 @@ import vanguard.VLBuffer;
 import vanguard.VLBufferFloat;
 import vanguard.VLBufferTracker;
 import vanguard.VLCopyable;
+import vanguard.VLLog;
+import vanguard.VLLoggable;
 
 public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSBufferBinding<BUFFER>>{
 
@@ -45,10 +47,10 @@ public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyabl
             tracker = src.tracker;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            Helper.throwUnsupportedFlag("FLAG_DUPLICATE");
+            VLCopyable.Helper.throwUnsupportedFlag("FLAG_DUPLICATE");
 
         }else{
-            Helper.throwMissingDefaultFlags();
+            VLCopyable.Helper.throwMissingDefaultFlags();
         }
 
         vbuffer = src.vbuffer;
