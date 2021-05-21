@@ -273,42 +273,6 @@ public class FSMesh implements VLCopyable<FSMesh>, FSMeshType{
     }
 
     @Override
-    public void updateVertexBuffer(int element){
-        int size = instances.size();
-
-        for(int i = 0; i < size; i++){
-            instances.get(i).updateVertexBuffer(element);
-        }
-    }
-
-    @Override
-    public void updateVertexBufferStrict(int element){
-        int size = instances.size();
-
-        for(int i = 0; i < size; i++){
-            instances.get(i).updateVertexBufferStrict(element);
-        }
-    }
-
-    @Override
-    public void updateBufferPipeline(int element){
-        int size = instances.size();
-
-        for(int i = 0; i < size; i++){
-            instances.get(i).updateBufferPipeline(element);
-        }
-    }
-
-    @Override
-    public void updateBufferPipelineStrict(int element){
-        int size = instances.size();
-
-        for(int i = 0; i < size; i++){
-            instances.get(i).updateBufferPipelineStrict(element);
-        }
-    }
-
-    @Override
     public void copy(FSMesh src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             instances = src.instances;

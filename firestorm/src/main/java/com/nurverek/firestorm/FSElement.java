@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.util.Log;
+
 import java.util.Arrays;
 
 import vanguard.VLArrayByte;
@@ -72,7 +74,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
     @Override
     public abstract FSElement<DATA, BUFFER> duplicate(long flags);
     public abstract int size();
-    public abstract void updateBuffer(int index);
+    public abstract void updateBuffer(int bindingindex);
 
     public VLBufferTracker buffer(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer){
         VLBufferTracker tracker = new VLBufferTracker();
@@ -103,58 +105,6 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         for(int i = 0; i < size; i++){
             updateBuffer(i);
         }
-    }
-
-    public void updateVertexBuffer(){
-        int size = bindings.size();
-
-        for(int i = 0; i < size; i++){
-            bindings.get(i).updateVertexBuffer();
-        }
-    }
-
-    public void updateVertexBufferStrict(){
-        int size = bindings.size();
-
-        for(int i = 0; i < size; i++){
-            bindings.get(i).updateVertexBufferStrict();
-        }
-    }
-
-    public void updateBufferPipeline(){
-        int size = bindings.size();
-
-        for(int i = 0; i < size; i++){
-            updateBuffer(i);
-            updateVertexBuffer(i);
-        }
-    }
-
-    public void updateBufferPipelineStrict(){
-        int size = bindings.size();
-
-        for(int i = 0; i < size; i++){
-            updateBuffer(i);
-            updateVertexBufferStrict(i);
-        }
-    }
-
-    public void updateVertexBuffer(int index){
-        bindings.get(index).updateVertexBuffer();
-    }
-
-    public void updateVertexBufferStrict(int index){
-        bindings.get(index).updateVertexBufferStrict();
-    }
-
-    public void updateBufferPipeline(int index){
-        updateBuffer(index);
-        updateVertexBuffer(index);
-    }
-
-    public void updateBufferPipelineStrict(int index){
-        updateBuffer(index);
-        updateVertexBufferStrict(index);
     }
 
     private static abstract class PrimitiveType<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> extends FSElement<DATA, BUFFER>{
@@ -205,8 +155,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferByte> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferByte> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.get());
         }
 
@@ -258,8 +208,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferShort> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferShort> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.get());
         }
 
@@ -311,8 +261,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferInt> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferInt> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.get());
         }
 
@@ -364,8 +314,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferLong> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferLong> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.get());
         }
 
@@ -417,8 +367,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferFloat> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.get());
         }
 
@@ -470,8 +420,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferDouble> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferDouble> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.get());
         }
 
@@ -536,8 +486,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferByte> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferByte> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
         }
 
@@ -604,8 +554,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferShort> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferShort> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
         }
 
@@ -672,8 +622,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferInt> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferInt> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
         }
 
@@ -742,8 +692,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferLong> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferLong> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
         }
 
@@ -813,9 +763,11 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferFloat> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferFloat> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
+
+            Log.d("wtf", VLLoggable.Helper.getString("TEST", binding.buffer,1500));
         }
 
         @Override
@@ -883,8 +835,8 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         }
 
         @Override
-        public void updateBuffer(int index){
-            FSBufferBinding<VLBufferDouble> binding = bindings.get(index);
+        public void updateBuffer(int bindingindex){
+            FSBufferBinding<VLBufferDouble> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
         }
 

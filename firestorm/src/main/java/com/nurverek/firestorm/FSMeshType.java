@@ -13,9 +13,5 @@ public interface FSMeshType{
     void markSchematicsForUpdate();
     void applyModelMatrix();
     void updateBuffer(int element);
-    void updateVertexBuffer(int element);
-    void updateVertexBufferStrict(int element);
-    void updateBufferPipeline(int element);
-    void updateBufferPipelineStrict(int element);
     void destroy();
 }

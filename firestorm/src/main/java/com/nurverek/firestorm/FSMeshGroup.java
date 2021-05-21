@@ -131,42 +131,6 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     }
 
     @Override
-    public void updateVertexBuffer(int element){
-        int size = group.size();
-
-        for(int i = 0; i < size; i++){
-            group.get(i).updateVertexBuffer(element);
-        }
-    }
-
-    @Override
-    public void updateVertexBufferStrict(int element){
-        int size = group.size();
-
-        for(int i = 0; i < size; i++){
-            group.get(i).updateVertexBufferStrict(element);
-        }
-    }
-
-    @Override
-    public void updateBufferPipeline(int element){
-        int size = group.size();
-
-        for(int i = 0; i < size; i++){
-            group.get(i).updateBufferPipeline(element);
-        }
-    }
-
-    @Override
-    public void updateBufferPipelineStrict(int element){
-        int size = group.size();
-
-        for(int i = 0; i < size; i++){
-            group.get(i).updateBufferPipelineStrict(element);
-        }
-    }
-
-    @Override
     public void copy(FSMeshGroup src, long flags){
 
     }

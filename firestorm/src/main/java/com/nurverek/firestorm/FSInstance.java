@@ -219,44 +219,16 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
         element(element).updateBuffer();
     }
 
-    @Override
-    public void updateVertexBuffer(int element){
-        element(element).updateVertexBuffer();
-    }
-
-    @Override
-    public void updateVertexBufferStrict(int element){
-        element(element).updateVertexBufferStrict();
-    }
-
-    @Override
-    public void updateBufferPipeline(int element){
-        element(element).updateBufferPipeline();
-    }
-
-    public void updateBufferPipeline(int element, int bindingindex){
-        element(element).updateBufferPipeline(bindingindex);
-    }
-
-    @Override
-    public void updateBufferPipelineStrict(int element){
-        element(element).updateBufferPipelineStrict();
-    }
-
     public void updateBuffer(int element, int bindingindex){
         element(element).updateBuffer(bindingindex);
     }
 
     public void updateVertexBuffer(int element, int bindingindex){
-        element(element).updateVertexBuffer(bindingindex);
+        element(element).bindings.get(bindingindex).updateVertexBuffer();
     }
 
     public void updateVertexBufferStrict(int element, int bindingindex){
-        element(element).updateVertexBufferStrict(bindingindex);
-    }
-
-    public void updateBufferPipelineStrict(int element, int bindingindex){
-        element(element).updateBufferPipelineStrict(bindingindex);
+        element(element).bindings.get(bindingindex).updateVertexBufferStrict();
     }
 
     @Override
