@@ -24,6 +24,14 @@ public class FSAutomator{
         return entry;
     }
 
+    public FileTarget get(int index){
+        return files.get(index);
+    }
+
+    public int size(){
+        return files.size();
+    }
+
     public void scan(int debug){
         scanners = new VLListType<>(100, 100);
 
