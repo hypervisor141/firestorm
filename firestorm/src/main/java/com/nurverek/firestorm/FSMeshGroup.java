@@ -15,6 +15,10 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
         copy(src, flags);
     }
 
+    public FSMeshGroup(){
+
+    }
+
     public VLListType<FSMesh> get(){
         return group;
     }
