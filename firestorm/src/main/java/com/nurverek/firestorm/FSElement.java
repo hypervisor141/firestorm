@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import android.util.Log;
-
 import java.util.Arrays;
 
 import vanguard.VLArrayByte;
@@ -766,8 +764,6 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         public void updateBuffer(int bindingindex){
             FSBufferBinding<VLBufferFloat> binding = bindings.get(bindingindex);
             binding.buffer.update(binding.tracker, data.provider());
-
-            Log.d("wtf", VLLoggable.Helper.getString("TEST", binding.buffer,1500));
         }
 
         @Override

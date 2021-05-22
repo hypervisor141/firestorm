@@ -2,7 +2,6 @@ package com.nurverek.firestorm;
 
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
-import vanguard.VLCopyable;
 import vanguard.VLListFloat;
 import vanguard.VLListType;
 import vanguard.VLLog;
@@ -97,7 +96,7 @@ public class FSHAssembler implements VLLoggable{
             firstfuncs.add(POSITION_INIT_SCHEMATICS);
 
             if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                firstfuncs.add(POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE);
+                firstfuncs.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
             }
 
             if(INSTANCE_SHARE_POSITIONS){
@@ -109,11 +108,10 @@ public class FSHAssembler implements VLLoggable{
                     }
 
                     restfuncs.add(POSITION_INIT_SCHEMATICS);
-                    restfuncs.add(POSITION_BUILD_MODELMATRIX);
+                    restfuncs.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
                 }
 
                 restfuncs.add(POSITION_SHARED);
-                restfuncs.add(POSITION_SHARE_SCHEMATICS);
 
             }else{
                 restfuncs.add(POSITION_SET);
@@ -125,7 +123,7 @@ public class FSHAssembler implements VLLoggable{
                 restfuncs.add(POSITION_INIT_SCHEMATICS);
 
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                    restfuncs.add(POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE);
+                    restfuncs.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
                 }
             }
         }
@@ -219,7 +217,7 @@ public class FSHAssembler implements VLLoggable{
         }
     }
 
-    private void buildModelClusterFromSchematics(FSInstance instance){
+    private void buildModelMatrixFromSchematics(FSInstance instance){
         FSSchematics schematics = instance.schematics;
 
         instance.modelMatrix().addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
@@ -427,18 +425,11 @@ public class FSHAssembler implements VLLoggable{
             assembler.unIndexPositions(instance);
         }
     };
-    private static final BuildStep POSITION_BUILD_MODELMATRIX = new BuildStep(){
+    private static final BuildStep POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX = new BuildStep(){
 
         @Override
         public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
-            assembler.buildModelClusterFromSchematics(instance);
-        }
-    };
-    private static final BuildStep POSITION_BUILD_MODELMATRIX_AND_CENTRALIZE = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
-            assembler.buildModelClusterFromSchematics(instance);
+            assembler.buildModelMatrixFromSchematics(instance);
             assembler.centralizePositions(instance);
         }
     };
@@ -449,13 +440,6 @@ public class FSHAssembler implements VLLoggable{
             FSSchematics schematics = instance.schematics;
             schematics.initialize();
             schematics.updateBoundaries();
-        }
-    };
-    private static final BuildStep POSITION_SHARE_SCHEMATICS = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSMesh mesh, FSInstance instance, FSElementStore store, FSM.Data data){
-            instance.schematics = new FSSchematics(mesh.first().schematics, VLCopyable.FLAG_DUPLICATE);
         }
     };
 
