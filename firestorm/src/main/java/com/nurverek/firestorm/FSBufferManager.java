@@ -9,9 +9,7 @@ public abstract class FSBufferManager{
     protected VLListType<FSVertexBuffer<?>> vbuffers;
     protected VLListType<FSBufferTargets> targets;
 
-    public FSBufferManager(int capacity, int resizer){
-        targets = new VLListType<>(capacity, resizer);
-
+    public FSBufferManager(){
         buffers = generateBuffers();
         vbuffers = generateVertexBuffers();
         targets = generateBufferTargets();
