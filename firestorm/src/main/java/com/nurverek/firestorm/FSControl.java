@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.content.Context;
+
 public final class FSControl{
 
     public static final String LOGTAG = "FIRESTORM";
@@ -11,6 +13,7 @@ public final class FSControl{
     protected static FSView view;
     protected static FSEvents events;
     protected static FSSurface surface;
+    protected static Context appcontext;
 
     protected static boolean destroyonpause;
     protected static boolean isalive;
@@ -18,7 +21,8 @@ public final class FSControl{
     private static long GLOBAL_ID;
     private static final Object IDLOCK = new Object();
 
-    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, FSRGlobal global, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
+    public static void initialize(Context appcontext, FSSurface surface, FSView view, FSRInterface threadinterface, FSRGlobal global, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
+        FSControl.appcontext = appcontext;
         FSControl.surface = surface;
         FSControl.events = surface.events();
         FSControl.view = view;
@@ -52,8 +56,16 @@ public final class FSControl{
         return destroyonpause;
     }
 
-    protected static FSSurface surface(){
+    public static FSSurface surface(){
         return surface;
+    }
+
+    public static Context surfaceContext(){
+        return surface.getContext();
+    }
+
+    public static Context appContext(){
+        return appcontext;
     }
 
     protected static FSEvents events(){
@@ -80,6 +92,7 @@ public final class FSControl{
             GLOBAL_ID = -1;
             isalive = false;
 
+            appcontext = null;
             surface = null;
             events = null;
             view = null;
