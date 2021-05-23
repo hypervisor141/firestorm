@@ -25,7 +25,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
     protected String name;
     protected long id;
 
-    protected FSInstance(FSMesh mesh, String name){
+    public FSInstance(FSMesh mesh, String name){
         this.name = name;
         this.mesh = mesh;
 
@@ -34,7 +34,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
         id = FSControl.getNextID();
     }
 
-    protected FSInstance(FSInstance src, long flags){
+    public FSInstance(FSInstance src, long flags){
         copy(src, flags);
     }
 
