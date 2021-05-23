@@ -73,6 +73,8 @@ public class FSHAssembler implements VLLoggable{
         configureTexCoords();
         configureNormals();
         configureIndices();
+
+        checkDebug();
     }
 
     public VLListType<BuildStep> customSteps(){

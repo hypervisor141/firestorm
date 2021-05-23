@@ -43,14 +43,7 @@ public class FSAutomator{
             log.setDebugTagsOffsetHere();
             log.printInfo("[Automated Scan Initiated]");
 
-            fileDebugLoop("Assembler Check Stage", log, new LoopOperation<FileTarget>(){
-
-                @Override
-                public void run(FileTarget target, VLLog log){
-                    target.checkAssembler(log);
-                }
-            });
-            fileDebugLoop("Build Stage", log, new LoopOperation<FileTarget>(){
+            fileDebugLoop("Scan Stage", log, new LoopOperation<FileTarget>(){
 
                 @Override
                 public void run(FileTarget target, VLLog log) throws Exception{
@@ -231,34 +224,6 @@ public class FSAutomator{
 
         public void register(Registrable target, String scanterm, FSGlobal global){
             scanners.add(target.generateScanner(scanterm, global));
-        }
-
-        void checkAssembler(VLLog log){
-            int size = scanners.size();
-
-            for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
-                log.addTag(entry.name);
-
-                try{
-                    entry.assembler.checkDebug();
-                    log.append("[SUCCESS]\n");
-                    log.printInfo();
-
-                }catch(Exception ex){
-                    log.append("[FAILED]\n");
-                    log.printError();
-
-                    log.append("[Assembler Configuration]\n");
-
-                    entry.assembler.log(log, null);
-                    log.printError();
-
-                    throw new RuntimeException("Invalid assembler configuration", ex);
-                }
-
-                log.removeLastTag();
-            }
         }
 
         void scan(FSAutomator automator) throws IOException{
