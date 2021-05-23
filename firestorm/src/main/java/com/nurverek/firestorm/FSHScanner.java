@@ -10,10 +10,10 @@ public abstract class FSHScanner{
     protected FSMesh<?> mesh;
     protected String name;
 
-    protected FSHScanner(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name){
+    protected FSHScanner(FSMesh<?> mesh, FSP program, FSBufferPool pool, int targetindex, FSHAssembler assembler, String name){
         this.mesh = mesh;
         this.program = program;
-        this.buffertarget = buffertarget;
+        this.buffertarget = pool.get(targetindex);
         this.assembler = assembler;
         this.name = name.toLowerCase();
     }
@@ -52,8 +52,8 @@ public abstract class FSHScanner{
 
     public static class Singular extends FSHScanner{
 
-        public Singular(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name, int drawmode){
-            super(mesh, program, buffertarget, assembler, name);
+        public Singular(FSMesh<?> mesh, FSP program, FSBufferPool pool, int targetindex, FSHAssembler assembler, String name, int drawmode){
+            super(mesh, program, pool, targetindex, assembler, name);
             mesh.initialize(drawmode);
         }
 
@@ -79,8 +79,8 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname, int drawmode){
-            super(mesh, program, buffertarget, assembler, substringname);
+        public Instanced(FSMesh<?> mesh, FSP program, FSBufferPool pool, int targetindex, FSHAssembler assembler, String substringname, int drawmode){
+            super(mesh, program, pool, targetindex, assembler, substringname);
             mesh.initialize(drawmode);
         }
 
@@ -110,8 +110,8 @@ public abstract class FSHScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
-            super(mesh, program, buffertarget, assembler, prefixname);
+        public InstancedCopy(FSMesh<?> mesh, FSP program, FSBufferPool pool, int targetindex, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
+            super(mesh, program, pool, targetindex, assembler, prefixname);
 
             this.copycount = copycount;
             mesh.initialize(drawmode);

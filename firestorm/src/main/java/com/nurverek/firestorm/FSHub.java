@@ -6,16 +6,21 @@ import vanguard.VLListType;
 
 public abstract class FSHub{
 
+    protected FSBufferPool bufferpool;
+
     public FSHub(){
 
     }
 
     public void initialize(Context context){
-        assemble(context, FSR.getRenderPasses());
+        assemble(context, bufferpool, FSR.getRenderPasses());
     }
 
-    protected abstract void assemble(Context context, VLListType<FSRPass> targets);
+    protected abstract void assemble(Context context, FSBufferPool bufferpool, VLListType<FSRPass> passes);
     public abstract void paused();
     public abstract void resumed();
-    public abstract void destroy();
+
+    protected void destroy(){
+        bufferpool.destroy();
+    }
 }
