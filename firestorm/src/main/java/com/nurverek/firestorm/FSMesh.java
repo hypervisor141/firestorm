@@ -4,7 +4,7 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<FSMesh>, FSMeshType, FSAutomator.Registrable{
+public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<FSMesh<INSTANCE>>, FSMeshType, FSAutomator.Registrable{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -23,7 +23,7 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
 
     }
 
-    public FSMesh(FSMesh src, long flags){
+    public FSMesh(FSMesh<INSTANCE> src, long flags){
         copy(src, flags);
     }
 
@@ -272,7 +272,7 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
     }
 
     @Override
-    public void copy(FSMesh src, long flags){
+    public void copy(FSMesh<INSTANCE> src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             instances = src.instances;
             configs = src.configs;

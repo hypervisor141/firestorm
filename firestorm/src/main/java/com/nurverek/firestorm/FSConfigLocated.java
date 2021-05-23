@@ -40,7 +40,7 @@ public abstract class FSConfigLocated extends FSConfig{
     public abstract FSConfigLocated duplicate(long flags);
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh mesh, VLLog log, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSMesh<?> mesh, VLLog log, int debug){
         super.debugInfo(pass, program, mesh, log, debug);
 
         log.append(" location[");
