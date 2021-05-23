@@ -45,6 +45,8 @@ public abstract class FSRGlobal{
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
     protected abstract VLListType<FSHub> generateHubs(Context context);
     protected abstract void postSetup();
+    protected abstract void paused();
+    protected abstract void resumed();
 
     public FSHAssembler assembler(int index){
         return assemblers.get(index);
@@ -138,20 +140,24 @@ public abstract class FSRGlobal{
         }
     }
 
-    void paused(){
+    void notifyPaused(){
         int size = hubs.size();
 
         for(int i = 0; i < size; i++){
             hubs.get(i).paused();
         }
+
+        paused();
     }
 
-    void resumed(){
+    void notifyResumed(){
         int size = hubs.size();
 
         for(int i = 0; i < size; i++){
             hubs.get(i).resumed();
         }
+
+        resumed();
     }
 
     public void destroy(){

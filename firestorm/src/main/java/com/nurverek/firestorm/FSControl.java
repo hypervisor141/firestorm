@@ -31,7 +31,6 @@ public final class FSControl{
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
             FSR.initialize(threadinterface, global);
-            FSCThreads.initialize();
         }
     }
 

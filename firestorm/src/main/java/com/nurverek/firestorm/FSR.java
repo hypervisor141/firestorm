@@ -92,7 +92,7 @@ public class FSR{
         events.GLPostCreated(surface, context, continuing);
 
         if(continuing){
-            FSR.resumed();
+            FSR.notifyResumed();
         }
     }
 
@@ -165,25 +165,24 @@ public class FSR{
         FSCFrames.finalizeFrame();
     }
 
-    protected static void paused(){
-        global.paused();
+    protected static void notifyPaused(){
+        global.notifyPaused();
     }
 
-    protected static void resumed(){
-        global.resumed();
+    protected static void notifyResumed(){
+        global.notifyResumed();
     }
 
     protected static void destroy(){
         renderthread.lockdown();
 
         if(!FSControl.getDestroyOnPause()){
-            FSR.paused();
+            FSR.notifyPaused();
 
         }else{
             renderthread.requestDestruction();
             renderthread = null;
 
-            FSCThreads.destroy();
             global.destroy();
 
             CURRENT_PASS_INDEX = -1;
