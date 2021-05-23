@@ -1,7 +1,5 @@
 package com.nurverek.firestorm;
 
-import vanguard.VLListType;
-
 public abstract class FSMeshRegisrableGroup extends FSMeshGroup{
 
     public FSMeshRegisrableGroup(int capacity, int resizer){
@@ -12,5 +10,5 @@ public abstract class FSMeshRegisrableGroup extends FSMeshGroup{
 
     }
 
-    public abstract void register(FSAutomator automator, FSRGlobal global);
+    public abstract void register(FSAutomator automator, FSGlobal global);
 }

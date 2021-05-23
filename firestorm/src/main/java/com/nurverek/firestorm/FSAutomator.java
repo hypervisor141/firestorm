@@ -229,7 +229,7 @@ public class FSAutomator{
             scanners = new VLListType<>(scancapacity, scancapacity);
         }
 
-        public void register(Registrable target, String scanterm, FSRGlobal global){
+        public void register(Registrable target, String scanterm, FSGlobal global){
             scanners.add(target.generateScanner(scanterm, global));
         }
 
@@ -306,6 +306,6 @@ public class FSAutomator{
 
     public interface Registrable{
 
-        FSHScanner generateScanner(String scanterm, FSRGlobal global);
+        FSHScanner generateScanner(String scanterm, FSGlobal global);
     }
 }

@@ -7,7 +7,7 @@ import vanguard.VLListType;
 import vanguard.VLThread;
 import vanguard.VLThreadManager;
 
-public abstract class FSRGlobal{
+public abstract class FSGlobal{
 
     protected VLThreadManager threadmanager;
     protected VLListType<FSHAssembler> assemblers;
@@ -18,7 +18,7 @@ public abstract class FSRGlobal{
     protected VLListType<FSRPass> passes;
     protected VLListType<FSHub> hubs;
 
-    public FSRGlobal(){
+    public FSGlobal(){
 
     }
 

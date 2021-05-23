@@ -21,7 +21,7 @@ public final class FSControl{
     private static long GLOBAL_ID;
     private static final Object IDLOCK = new Object();
 
-    public static void initialize(Context appcontext, FSSurface surface, FSView view, FSRInterface threadinterface, FSRGlobal global, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
+    public static void initialize(Context appcontext, FSSurface surface, FSView view, FSRInterface threadinterface, FSGlobal global, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
         FSControl.appcontext = appcontext;
         FSControl.surface = surface;
         FSControl.events = surface.events();

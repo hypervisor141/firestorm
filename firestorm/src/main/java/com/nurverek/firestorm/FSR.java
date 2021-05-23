@@ -24,7 +24,7 @@ public class FSR{
     };
 
     private static FSRInterface threadinterface;
-    private static FSRGlobal global;
+    private static FSGlobal global;
     private static Choreographer choreographer;
     private static volatile FSRThread renderthread;
 
@@ -36,7 +36,7 @@ public class FSR{
     public static int CURRENT_PASS_INDEX;
     public static int CURRENT_PASS_ENTRY_INDEX;
 
-    protected static void initialize(FSRInterface threadsrc, FSRGlobal global){
+    protected static void initialize(FSRInterface threadsrc, FSGlobal global){
         FSR.threadinterface = threadsrc;
         FSR.global = global;
 
@@ -148,7 +148,7 @@ public class FSR{
         return CURRENT_PASS_INDEX;
     }
 
-    public static FSRGlobal getGlobal(){
+    public static FSGlobal getGlobal(){
         return global;
     }
 
