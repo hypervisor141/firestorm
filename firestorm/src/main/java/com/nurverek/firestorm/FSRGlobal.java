@@ -5,12 +5,13 @@ import vanguard.VLListType;
 
 public abstract class FSRGlobal{
 
-    protected VLListType<FSRPass> passes;
     protected VLListType<FSHAssembler> assemblers;
     protected VLListType<VLBuffer<?, ?>> buffers;
     protected VLListType<FSVertexBuffer<?>> vbuffers;
     protected VLListType<FSBufferTargets> targets;
     protected VLListType<FSP> programs;
+    protected VLListType<FSRPass> passes;
+    protected VLListType<FSHub> hubs;
 
     public FSRGlobal(){
         assemblers = generateAssemblers();
@@ -19,6 +20,7 @@ public abstract class FSRGlobal{
         targets = generateBufferTargets();
         programs = generatePrograms();
         passes = generateRenderPasses();
+        hubs = generateHubs();
     }
 
     protected abstract VLListType<FSHAssembler> generateAssemblers();
@@ -27,6 +29,7 @@ public abstract class FSRGlobal{
     protected abstract VLListType<FSBufferTargets> generateBufferTargets();
     protected abstract VLListType<FSP> generatePrograms();
     protected abstract VLListType<FSRPass> generateRenderPasses();
+    protected abstract VLListType<FSHub> generateHubs();
 
     public FSHAssembler assembler(int index){
         return assemblers.get(index);
@@ -50,6 +53,10 @@ public abstract class FSRGlobal{
 
     public FSRPass pass(int index){
         return passes.get(index);
+    }
+
+    public FSHub hub(int index){
+        return hubs.get(index);
     }
 
     public VLListType<FSHAssembler> assemblers(){
@@ -76,12 +83,40 @@ public abstract class FSRGlobal{
         return passes;
     }
 
+    public VLListType<FSHub> hubs(){
+        return hubs;
+    }
+
     public void releaseAssemblers(){
         assemblers = null;
     }
 
     public void releaseBufferTargets(){
         targets = null;
+    }
+
+    void notifyFrameSwap(){
+        int size = passes.size();
+
+        for(int i = 0; i < size; i++){
+            passes.get(i).noitifyPostFrameSwap();
+        }
+    }
+
+    void paused(){
+        int size = hubs.size();
+
+        for(int i = 0; i < size; i++){
+            hubs.get(i).paused();
+        }
+    }
+
+    void resumed(){
+        int size = hubs.size();
+
+        for(int i = 0; i < size; i++){
+            hubs.get(i).resumed();
+        }
     }
 
     public void destroy(){
@@ -97,11 +132,18 @@ public abstract class FSRGlobal{
             programs.get(i).destroy();
         }
 
+        size = hubs.size();
+
+        for(int i = 0; i < size; i++){
+            hubs.get(i).destroy();
+        }
+
         assemblers = null;
         buffers = null;
         vbuffers = null;
         targets = null;
         programs = null;
         passes = null;
+        hubs = null;
     }
 }

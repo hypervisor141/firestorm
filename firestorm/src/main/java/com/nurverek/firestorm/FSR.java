@@ -23,14 +23,13 @@ public class FSR{
         }
     };
 
-    private static VLListType<FSHub> hubs;
-    private static VLListType<FSRTask> tasks;
-    private static VLListType<FSRTask> taskcache;
-
-    private static FSRGlobal global;
     private static FSRInterface threadinterface;
+    private static FSRGlobal global;
     private static Choreographer choreographer;
     private static volatile FSRThread renderthread;
+
+    private static VLListType<FSRTask> tasks;
+    private static VLListType<FSRTask> taskcache;
 
     protected static boolean isInitialized;
 
@@ -43,7 +42,6 @@ public class FSR{
 
         choreographer = Choreographer.getInstance();
 
-        hubs = new VLListType<>(10, 100);
         tasks = new VLListType<>(10, 100);
         taskcache = new VLListType<>(10, 100);
 
@@ -139,20 +137,12 @@ public class FSR{
         finishFrame();
     }
 
-    public static void addHub(FSHub hub){
-        hubs.add(hub);
-    }
-
     public static FSRThread getRenderThread(){
         return renderthread;
     }
 
     public static int getCurrentPassIndex(){
         return CURRENT_PASS_INDEX;
-    }
-
-    public static FSHub getHub(int index){
-        return hubs.get(index);
     }
 
     public static FSRGlobal getGlobal(){
@@ -165,46 +155,19 @@ public class FSR{
         }
     }
 
-    public static FSHub removeHub(int index){
-        FSHub item = hubs.get(index);
-        hubs.remove(index);
-
-        return item;
-    }
-
-    public static int getHubsSize(){
-        return hubs.size();
-    }
-
     protected static void finishFrame(){
         FSCFrames.timeFrameEnded();
         FSCEGL.swapBuffers();
-
-        VLListType<FSRPass> passes = global.passes;
-
-        int size = passes.size();
-
-        for(int i = 0; i < size; i++){
-            passes.get(i).noitifyPostFrameSwap();
-        }
-
+        global.notifyFrameSwap();
         FSCFrames.finalizeFrame();
     }
 
     protected static void paused(){
-        int size = hubs.size();
-
-        for(int i = 0; i < size; i++){
-            hubs.get(i).paused();
-        }
+        global.paused();
     }
 
     protected static void resumed(){
-        int size = hubs.size();
-
-        for(int i = 0; i < size; i++){
-            hubs.get(i).resumed();
-        }
+        global.resumed();
     }
 
     protected static void destroy(){
@@ -218,12 +181,7 @@ public class FSR{
             renderthread = null;
 
             FSCThreads.destroy();
-
-            int size = hubs.size();
-
-            for(int i = 0; i < size; i++){
-                hubs.get(i).destroy();
-            }
+            global.destroy();
 
             CURRENT_PASS_INDEX = -1;
             CURRENT_PASS_ENTRY_INDEX = -1;
