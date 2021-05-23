@@ -2,6 +2,8 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
+import vanguard.VLListType;
+
 public class FSElementRegisry{
 
     protected FSElementRegisry(){}
@@ -24,8 +26,14 @@ public class FSElementRegisry{
     public static int CUSTOM_ELEMENT_OFFSET = DEFAULT_ELEMENT_COUNT;
     public static int COUNT;
 
-    protected static void initialize(int extraelementscount){
-        COUNT = DEFAULT_ELEMENT_COUNT + extraelementscount;
+    protected static void initialize(CustomElements customs){
+        COUNT = DEFAULT_ELEMENT_COUNT;
+        VLListType<Registry> customlist = null;
+
+        if(customs != null){
+            customlist = customs.generate();
+            COUNT += customlist.size();
+        }
 
         NAMES = new String[COUNT];
         ELEMENTS = new int[COUNT];
@@ -40,6 +48,15 @@ public class FSElementRegisry{
         register("texturecoordinates", ELEMENT_TEXCOORD, GLES32.GL_FLOAT, Float.SIZE / 8, 2);
         register("normal", ELEMENT_NORMAL, GLES32.GL_FLOAT, Float.SIZE / 8, 3);
         register("index", ELEMENT_INDEX, GLES32.GL_UNSIGNED_SHORT, Short.SIZE / 8, 1);
+
+        if(customlist != null){
+            int size = customlist.size();
+
+            for(int i = 0; i < size; i++){
+                Registry entry = customlist.get(i);
+                register(entry.name, entry.element, entry.gltype, entry.bytes, entry.unitsize);
+            }
+        }
     }
 
     public static void register(String name, int element, int gltype, int bytes, int unitsize){
@@ -61,6 +78,28 @@ public class FSElementRegisry{
             UNIT_BYTES = null;
 
             COUNT = -1;
+        }
+    }
+
+    public interface CustomElements{
+
+        VLListType<Registry> generate();
+    }
+
+    public static final class Registry{
+
+        public String name;
+        public int element;
+        public int gltype;
+        public int bytes;
+        public int unitsize;
+
+        public Registry(String name, int element, int gltype, int bytes, int unitsize){
+            this.name = name;
+            this.element = element;
+            this.gltype = gltype;
+            this.bytes = bytes;
+            this.unitsize = unitsize;
         }
     }
 }
