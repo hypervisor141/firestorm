@@ -1,5 +1,7 @@
 package com.nurverek.firestorm;
 
+import android.content.Context;
+
 import vanguard.VLBuffer;
 import vanguard.VLListType;
 
@@ -13,23 +15,23 @@ public abstract class FSRGlobal{
     protected VLListType<FSRPass> passes;
     protected VLListType<FSHub> hubs;
 
-    public FSRGlobal(){
-        assemblers = generateAssemblers();
-        buffers = generateBuffers();
-        vbuffers = generateVertexBuffers();
-        targets = generateBufferTargets();
-        programs = generatePrograms();
-        passes = generateRenderPasses();
-        hubs = generateHubs();
+    public FSRGlobal(Context context){
+        assemblers = generateAssemblers(context);
+        buffers = generateBuffers(context);
+        vbuffers = generateVertexBuffers(context);
+        targets = generateBufferTargets(context);
+        programs = generatePrograms(context);
+        passes = generateRenderPasses(context);
+        hubs = generateHubs(context);
     }
 
-    protected abstract VLListType<FSHAssembler> generateAssemblers();
-    protected abstract VLListType<VLBuffer<?, ?>> generateBuffers();
-    protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers();
-    protected abstract VLListType<FSBufferTargets> generateBufferTargets();
-    protected abstract VLListType<FSP> generatePrograms();
-    protected abstract VLListType<FSRPass> generateRenderPasses();
-    protected abstract VLListType<FSHub> generateHubs();
+    protected abstract VLListType<FSHAssembler> generateAssemblers(Context context);
+    protected abstract VLListType<VLBuffer<?, ?>> generateBuffers(Context context);
+    protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers(Context context);
+    protected abstract VLListType<FSBufferTargets> generateBufferTargets(Context context);
+    protected abstract VLListType<FSP> generatePrograms(Context context);
+    protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
+    protected abstract VLListType<FSHub> generateHubs(Context context);
 
     public FSHAssembler assembler(int index){
         return assemblers.get(index);

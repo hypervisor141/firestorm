@@ -1,5 +1,6 @@
 package com.nurverek.firestorm;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public abstract class FSActivity extends AppCompatActivity{
     }
 
     private void generateSurface(){
-        FSSurface surface = createSurface();
+        FSSurface surface = createSurface(getApplicationContext());
         surface.setId(View.generateViewId());
         surface.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         surface.setX(0);
@@ -32,7 +33,7 @@ public abstract class FSActivity extends AppCompatActivity{
         BASE.addView(surface, 0);
     }
 
-    protected abstract FSSurface createSurface();
+    protected abstract FSSurface createSurface(Context appcontext);
 
     protected abstract void modifyUI(RelativeLayout base);
 
