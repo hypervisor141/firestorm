@@ -31,7 +31,7 @@ public abstract class FSBufferManager{
     protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers();
     protected abstract VLListType<FSBufferTargets> generateBufferTargets();
 
-    protected void destroy(){
+    public void destroy(){
         int size = vbuffers.size();
 
         for(int i = 0; i < size; i++){
