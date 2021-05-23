@@ -14,7 +14,6 @@ public abstract class FSHub{
         assemble(context, FSR.getRenderPasses());
     }
 
-    protected abstract FSBufferPool generateBufferPool();
     protected abstract void assemble(Context context, VLListType<FSRPass> passes);
     protected abstract void paused();
     protected abstract void resumed();
