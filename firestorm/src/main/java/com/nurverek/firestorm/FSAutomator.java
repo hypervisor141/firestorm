@@ -229,7 +229,7 @@ public class FSAutomator{
             scanners = new VLListType<>(scancapacity, scancapacity);
         }
 
-        public void register(Registrable target, String scanterm, FSP program, FSHAssembler assembler, FSBufferPool pool){
+        public void register(Registrable target, String scanterm, FSP program, FSHAssembler assembler, FSBufferManager pool){
             scanners.add(target.generateScanner(scanterm, program, assembler, pool));
         }
 
@@ -306,6 +306,6 @@ public class FSAutomator{
 
     public interface Registrable{
 
-        FSHScanner generateScanner(String scanterm, FSP program, FSHAssembler assembler, FSBufferPool pool);
+        FSHScanner generateScanner(String scanterm, FSP program, FSHAssembler assembler, FSBufferManager pool);
     }
 }
