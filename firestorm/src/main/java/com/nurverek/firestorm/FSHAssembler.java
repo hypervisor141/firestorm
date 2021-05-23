@@ -8,7 +8,7 @@ import vanguard.VLLog;
 import vanguard.VLLoggable;
 import vanguard.VLV;
 
-public abstract class FSHAssembler implements VLLoggable{
+public class FSHAssembler implements VLLoggable{
 
     public boolean LOAD_MODELS = false;
     public boolean LOAD_POSITIONS = false;
@@ -41,8 +41,6 @@ public abstract class FSHAssembler implements VLLoggable{
         setDefaultAll();
     }
 
-    protected abstract void setup(VLListType<BuildStep> firstInstanceSteps, VLListType<BuildStep> otherInstanceSteps, VLListType<BuildStep> customInstanceSteps);
-
     public void setDefaultAll(){
         LOAD_MODELS = true;
         LOAD_POSITIONS = true;
@@ -68,8 +66,6 @@ public abstract class FSHAssembler implements VLLoggable{
         otherInstanceSteps.clear();
         firstInstanceSteps.clear();
         customInstanceSteps.clear();
-
-        setup(firstInstanceSteps, otherInstanceSteps, customInstanceSteps);
 
         configureModels();
         configurePositions();

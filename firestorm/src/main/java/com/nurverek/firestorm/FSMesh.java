@@ -23,10 +23,6 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
 
     }
 
-    public FSMesh(FSMesh<INSTANCE> src, long flags){
-        copy(src, flags);
-    }
-
     public void initialize(int drawmode){
         this.drawmode = drawmode;
         bindings = new VLListType[FSGlobal.COUNT];
