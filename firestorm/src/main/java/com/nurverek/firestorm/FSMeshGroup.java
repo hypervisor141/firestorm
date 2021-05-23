@@ -3,7 +3,7 @@ package com.nurverek.firestorm;
 import vanguard.VLCopyable;
 import vanguard.VLListType;
 
-public abstract class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
+public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
 
     private VLListType<FSMeshType> group;
 
@@ -11,7 +11,11 @@ public abstract class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType
         group = new VLListType<>(capacity, resizer);
     }
 
-    public FSMeshGroup(){
+    public FSMeshGroup(FSMeshGroup src, long flags){
+        copy(src, flags);
+    }
+
+    protected FSMeshGroup(){
 
     }
 
@@ -30,8 +34,6 @@ public abstract class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType
     public int size(){
         return group.size();
     }
-
-    protected abstract void register(FSAutomator automator, FSRGlobal global);
 
     @Override
     public void allocateElement(int element, int capacity, int resizer){
@@ -143,6 +145,11 @@ public abstract class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType
         }else{
             VLCopyable.Helper.throwMissingDefaultFlags();
         }
+    }
+
+    @Override
+    public FSMeshGroup duplicate(long flags){
+        return new FSMeshGroup(this, flags);
     }
 
     @Override
