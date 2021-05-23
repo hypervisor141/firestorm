@@ -4,9 +4,12 @@ import android.content.Context;
 
 import vanguard.VLBuffer;
 import vanguard.VLListType;
+import vanguard.VLThread;
+import vanguard.VLThreadManager;
 
 public abstract class FSRGlobal{
 
+    protected VLThreadManager threadmanager;
     protected VLListType<FSHAssembler> assemblers;
     protected VLListType<VLBuffer<?, ?>> buffers;
     protected VLListType<FSVertexBuffer<?>> vbuffers;
@@ -20,6 +23,7 @@ public abstract class FSRGlobal{
     }
 
     void initialize(Context context){
+        threadmanager = generateThreads(context);
         assemblers = generateAssemblers(context);
         buffers = generateBuffers(context);
         vbuffers = generateVertexBuffers(context);
@@ -32,6 +36,7 @@ public abstract class FSRGlobal{
         postSetup();
     }
 
+    protected abstract VLThreadManager generateThreads(Context context);
     protected abstract VLListType<FSHAssembler> generateAssemblers(Context context);
     protected abstract VLListType<VLBuffer<?, ?>> generateBuffers(Context context);
     protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers(Context context);
@@ -69,6 +74,10 @@ public abstract class FSRGlobal{
         return hubs.get(index);
     }
 
+    public VLThread worker(int index){
+        return threadmanager.workers().get(index);
+    }
+
     public VLListType<FSHAssembler> assemblers(){
         return assemblers;
     }
@@ -95,6 +104,14 @@ public abstract class FSRGlobal{
 
     public VLListType<FSHub> hubs(){
         return hubs;
+    }
+
+    public VLThreadManager threadManager(){
+        return threadmanager;
+    }
+
+    public VLListType<VLThread> workers(){
+        return threadmanager.workers();
     }
 
     public void releaseAssemblers(){
@@ -156,6 +173,8 @@ public abstract class FSRGlobal{
             hubs.get(i).destroy();
         }
 
+        threadmanager.destroy();
+
         assemblers = null;
         buffers = null;
         vbuffers = null;
@@ -163,5 +182,6 @@ public abstract class FSRGlobal{
         programs = null;
         passes = null;
         hubs = null;
+        threadmanager = null;
     }
 }
