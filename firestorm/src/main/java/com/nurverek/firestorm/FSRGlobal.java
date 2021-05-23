@@ -33,7 +33,7 @@ public abstract class FSRGlobal{
         hubs = generateHubs(context);
 
         buildPrograms();
-        postSetup();
+        postSetup(context);
     }
 
     protected abstract VLThreadManager generateThreads(Context context);
@@ -44,7 +44,7 @@ public abstract class FSRGlobal{
     protected abstract VLListType<FSP> generatePrograms(Context context);
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
     protected abstract VLListType<FSHub> generateHubs(Context context);
-    protected abstract void postSetup();
+    protected abstract void postSetup(Context context);
     protected abstract void paused();
     protected abstract void resumed();
 
