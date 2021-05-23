@@ -4,14 +4,14 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutomator.Registrable{
+public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<FSMesh>, FSMeshType, FSAutomator.Registrable{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_INSTANCES = 0x1000L;
     public static final long FLAG_DUPLICATE_CONFIGS = 0x100000L;
 
-    protected VLListType<FSInstance> instances;
+    protected VLListType<INSTANCE> instances;
     protected VLListType<FSBufferBinding<?>>[] bindings;
     protected FSConfigGroup configs;
     protected String name;
@@ -36,13 +36,14 @@ public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutoma
         id = FSControl.getNextID();
     }
 
-    public abstract VLListType<FSInstance> generateInstanceList();
+    public abstract VLListType<INSTANCE> generateInstanceList();
+    public abstract INSTANCE generateInstance(String name);
     public abstract FSConfigGroup generateOptionalConfigs();
     public abstract void scanComplete();
     public abstract void bufferComplete();
 
-    public FSInstance generateInstance(String name){
-        FSInstance instance = new FSInstance(this, name);
+    public INSTANCE addNewInstance(String name){
+        INSTANCE instance = generateInstance(name);
         instances.add(instance);
 
         return instance;
@@ -60,11 +61,11 @@ public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutoma
         this.name = name;
     }
 
-    public FSInstance first(){
+    public INSTANCE first(){
         return instances.get(0);
     }
 
-    public FSInstance get(int index){
+    public INSTANCE get(int index){
         return instances.get(index);
     }
 
@@ -115,8 +116,8 @@ public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutoma
         return bindings;
     }
 
-    public FSInstance remove(int index){
-        FSInstance instance = instances.get(index);
+    public INSTANCE remove(int index){
+        INSTANCE instance = instances.get(index);
         instances.remove(index);
         instance.mesh = null;
 
@@ -131,7 +132,7 @@ public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutoma
         return name;
     }
 
-    public VLListType<FSInstance> get(){
+    public VLListType<INSTANCE> get(){
         return instances;
     }
 

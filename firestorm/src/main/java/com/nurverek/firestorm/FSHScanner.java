@@ -7,10 +7,10 @@ public abstract class FSHScanner{
     protected FSHAssembler assembler;
     protected FSBufferTargets buffertarget;
     protected FSP program;
-    protected FSMesh mesh;
+    protected FSMesh<?> mesh;
     protected String name;
 
-    protected FSHScanner(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name){
+    protected FSHScanner(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name){
         this.mesh = mesh;
         this.program = program;
         this.buffertarget = buffertarget;
@@ -52,7 +52,7 @@ public abstract class FSHScanner{
 
     public static class Singular extends FSHScanner{
 
-        public Singular(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name, int drawmode){
+        public Singular(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name, int drawmode){
             super(mesh, program, buffertarget, assembler, name);
             mesh.initialize(drawmode);
         }
@@ -65,7 +65,7 @@ public abstract class FSHScanner{
                 }
 
                 mesh.name(name);
-                FSInstance instance = mesh.generateInstance(data.name);
+                FSInstance instance = mesh.addNewInstance(data.name);
 
                 assembler.buildFirst(instance, this, data);
                 mesh.scanComplete(instance);
@@ -79,7 +79,7 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname, int drawmode){
+        public Instanced(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname, int drawmode){
             super(mesh, program, buffertarget, assembler, substringname);
             mesh.initialize(drawmode);
         }
@@ -87,7 +87,7 @@ public abstract class FSHScanner{
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
-                FSInstance instance = mesh.generateInstance(data.name);
+                FSInstance instance = mesh.addNewInstance(data.name);
 
                 if(mesh.size() == 1){
                     mesh.name(name);
@@ -110,7 +110,7 @@ public abstract class FSHScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
+        public InstancedCopy(FSMesh<?> mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int drawmode, int copycount){
             super(mesh, program, buffertarget, assembler, prefixname);
 
             this.copycount = copycount;
@@ -121,13 +121,13 @@ public abstract class FSHScanner{
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
                 mesh.name(name);
-                FSInstance instance = mesh.generateInstance(data.name);
+                FSInstance instance = mesh.addNewInstance(data.name);
 
                 assembler.buildFirst(instance, this, data);
                 mesh.scanComplete(instance);
 
                 for(int i = 0; i < copycount; i++){
-                    instance = mesh.generateInstance(data.name);
+                    instance = mesh.addNewInstance(data.name);
 
                     assembler.buildFirst(instance, this, data);
                     mesh.scanComplete(instance);
