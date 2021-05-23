@@ -9,18 +9,21 @@ public abstract class FSGlobalData{
     protected VLListType<VLBuffer<?, ?>> buffers;
     protected VLListType<FSVertexBuffer<?>> vbuffers;
     protected VLListType<FSBufferTargets> targets;
+    protected VLListType<FSP> programs;
 
     public FSGlobalData(){
         assemblers = generateAssemblers();
         buffers = generateBuffers();
         vbuffers = generateVertexBuffers();
         targets = generateBufferTargets();
+        programs = generatePrograms();
     }
 
     protected abstract VLListType<FSHAssembler> generateAssemblers();
     protected abstract VLListType<VLBuffer<?, ?>> generateBuffers();
     protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers();
     protected abstract VLListType<FSBufferTargets> generateBufferTargets();
+    protected abstract VLListType<FSP> generatePrograms();
 
     public FSHAssembler assembler(int index){
         return assemblers.get(index);
@@ -36,6 +39,10 @@ public abstract class FSGlobalData{
 
     public FSBufferTargets bufferTarget(int index){
         return targets.get(index);
+    }
+
+    public FSP program(int index){
+        return programs.get(index);
     }
 
     public VLListType<FSHAssembler> assemblers(){
@@ -54,6 +61,10 @@ public abstract class FSGlobalData{
         return targets;
     }
 
+    public VLListType<FSP> programs(){
+        return programs;
+    }
+
     public void releaseAssemblers(){
         assemblers = null;
     }
@@ -69,9 +80,16 @@ public abstract class FSGlobalData{
             vbuffers.get(i).destroy();
         }
 
+        size = programs.size();
+
+        for(int i = 0; i < size; i++){
+            programs.get(i).destroy();
+        }
+
         assemblers = null;
         buffers = null;
         vbuffers = null;
         targets = null;
+        programs = null;
     }
 }
