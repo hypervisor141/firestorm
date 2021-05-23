@@ -5,7 +5,7 @@ import vanguard.VLListType;
 
 public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
 
-    private VLListType<FSMesh> group;
+    private VLListType<FSMeshType> group;
 
     public FSMeshGroup(int capacity, int resizer){
         group = new VLListType<>(capacity, resizer);
@@ -19,15 +19,15 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
 
     }
 
-    public VLListType<FSMesh> get(){
+    public VLListType<FSMeshType> get(){
         return group;
     }
 
-    public FSMesh get(int index){
+    public FSMeshType get(int index){
         return group.get(index);
     }
 
-    public void add(FSMesh mesh){
+    public void add(FSMeshType mesh){
         group.add(mesh);
     }
 
