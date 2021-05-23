@@ -4,7 +4,7 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public class FSMesh implements VLCopyable<FSMesh>, FSMeshType{
+public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutomator.Registrable{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -319,11 +319,6 @@ public class FSMesh implements VLCopyable<FSMesh>, FSMeshType{
         }else{
             Helper.throwMissingAllFlags();
         }
-    }
-
-    @Override
-    public FSMesh duplicate(long flags){
-        return new FSMesh(this, flags);
     }
 
     @Override

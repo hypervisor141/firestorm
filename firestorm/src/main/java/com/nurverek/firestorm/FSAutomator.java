@@ -229,8 +229,8 @@ public class FSAutomator{
             scanners = new VLListType<>(scancapacity, scancapacity);
         }
 
-        public void register(FSHScanner scanner){
-            scanners.add(scanner);
+        public void register(Registrable target){
+            scanners.add(target.generateScanner());
         }
 
         void checkAssembler(VLLog log){
@@ -302,5 +302,10 @@ public class FSAutomator{
             automator.scanners.add(scanners);
             scanners = null;
         }
+    }
+
+    public interface Registrable{
+
+        FSHScanner generateScanner();
     }
 }
