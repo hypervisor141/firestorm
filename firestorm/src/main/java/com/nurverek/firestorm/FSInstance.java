@@ -14,7 +14,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
     public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
 
-    protected FSMesh mesh;
+    protected FSMesh<? extends FSInstance> mesh;
     protected FSElementStore store;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
@@ -25,7 +25,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
     protected String name;
     protected long id;
 
-    public FSInstance(FSMesh mesh, String name){
+    public FSInstance(FSMesh<? extends FSInstance> mesh, String name){
         this.name = name;
         this.mesh = mesh;
 
@@ -105,7 +105,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
         return positions().size() / FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION];
     }
 
-    public FSMesh mesh(){
+    public FSMesh<? extends FSInstance> mesh(){
         return mesh;
     }
 
