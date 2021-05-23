@@ -54,7 +54,7 @@ public abstract class FSHScanner{
 
         public Singular(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name, int drawmode){
             super(mesh, program, buffertarget, assembler, name);
-            mesh.initialize(drawmode, 1, 0);
+            mesh.initialize(drawmode);
         }
 
         @Override
@@ -79,9 +79,9 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname, int drawmode, int estimatedsize){
+        public Instanced(FSMesh mesh, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname, int drawmode){
             super(mesh, program, buffertarget, assembler, substringname);
-            mesh.initialize(drawmode, estimatedsize, (int)Math.ceil(estimatedsize / 2f));
+            mesh.initialize(drawmode);
         }
 
         @Override
@@ -114,7 +114,7 @@ public abstract class FSHScanner{
             super(mesh, program, buffertarget, assembler, prefixname);
 
             this.copycount = copycount;
-            mesh.initialize(drawmode, copycount, 0);
+            mesh.initialize(drawmode);
         }
 
         @Override

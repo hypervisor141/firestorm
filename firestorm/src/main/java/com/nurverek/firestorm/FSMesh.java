@@ -27,17 +27,19 @@ public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutoma
         copy(src, flags);
     }
 
-    public void initialize(int drawmode, int capacity, int resizer){
+    public void initialize(int drawmode){
         this.drawmode = drawmode;
-
-        instances = new VLListType<>(capacity, resizer);
         bindings = new VLListType[FSGlobal.COUNT];
+
+        instances = generateInstanceList();;
+        configs = generateOptionalConfigs();
         id = FSControl.getNextID();
     }
 
-    public void initConfigs(FSConfig.Mode mode, int capacity, int resizer){
-        this.configs = new FSConfigGroup(mode, capacity, resizer);
-    }
+    public abstract VLListType<FSInstance> generateInstanceList();
+    public abstract FSConfigGroup generateOptionalConfigs();
+    public abstract void scanComplete();
+    public abstract void bufferComplete();
 
     public FSInstance generateInstance(String name){
         FSInstance instance = new FSInstance(this, name);
@@ -160,10 +162,6 @@ public abstract class FSMesh implements VLCopyable<FSMesh>, FSMeshType, FSAutoma
     public void bufferComplete(FSInstance instance, int element, int storeindex){
         instance.bufferComplete(element, storeindex);
     }
-
-    public void scanComplete(){}
-
-    public void bufferComplete(){}
 
     public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){
         int size = instances.size();
