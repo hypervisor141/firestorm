@@ -3,20 +3,22 @@ package com.nurverek.firestorm;
 import vanguard.VLBuffer;
 import vanguard.VLListType;
 
-public abstract class FSGlobalData{
+public abstract class FSRGlobal{
 
+    protected VLListType<FSRPass> passes;
     protected VLListType<FSHAssembler> assemblers;
     protected VLListType<VLBuffer<?, ?>> buffers;
     protected VLListType<FSVertexBuffer<?>> vbuffers;
     protected VLListType<FSBufferTargets> targets;
     protected VLListType<FSP> programs;
 
-    public FSGlobalData(){
+    public FSRGlobal(){
         assemblers = generateAssemblers();
         buffers = generateBuffers();
         vbuffers = generateVertexBuffers();
         targets = generateBufferTargets();
         programs = generatePrograms();
+        passes = generateRenderPasses();
     }
 
     protected abstract VLListType<FSHAssembler> generateAssemblers();
@@ -24,6 +26,7 @@ public abstract class FSGlobalData{
     protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers();
     protected abstract VLListType<FSBufferTargets> generateBufferTargets();
     protected abstract VLListType<FSP> generatePrograms();
+    protected abstract VLListType<FSRPass> generateRenderPasses();
 
     public FSHAssembler assembler(int index){
         return assemblers.get(index);
@@ -45,6 +48,10 @@ public abstract class FSGlobalData{
         return programs.get(index);
     }
 
+    public FSRPass pass(int index){
+        return passes.get(index);
+    }
+
     public VLListType<FSHAssembler> assemblers(){
         return assemblers;
     }
@@ -57,12 +64,16 @@ public abstract class FSGlobalData{
         return vbuffers;
     }
 
-    public VLListType<FSBufferTargets> targets(){
+    public VLListType<FSBufferTargets> bufferTargets(){
         return targets;
     }
 
     public VLListType<FSP> programs(){
         return programs;
+    }
+
+    public VLListType<FSRPass> passes(){
+        return passes;
     }
 
     public void releaseAssemblers(){
@@ -91,5 +102,6 @@ public abstract class FSGlobalData{
         vbuffers = null;
         targets = null;
         programs = null;
+        passes = null;
     }
 }

@@ -23,11 +23,11 @@ public class FSR{
         }
     };
 
-    private static VLListType<FSRPass> passes;
     private static VLListType<FSHub> hubs;
     private static VLListType<FSRTask> tasks;
     private static VLListType<FSRTask> taskcache;
 
+    private static FSRGlobal global;
     private static FSRInterface threadinterface;
     private static Choreographer choreographer;
     private static volatile FSRThread renderthread;
@@ -37,11 +37,12 @@ public class FSR{
     public static int CURRENT_PASS_INDEX;
     public static int CURRENT_PASS_ENTRY_INDEX;
 
-    protected static void initialize(FSRInterface threadsrc){
-        threadinterface = threadsrc;
+    protected static void initialize(FSRInterface threadsrc, FSRGlobal global){
+        FSR.threadinterface = threadsrc;
+        FSR.global = global;
+
         choreographer = Choreographer.getInstance();
 
-        passes = new VLListType<>(10, 10);
         hubs = new VLListType<>(10, 100);
         tasks = new VLListType<>(10, 100);
         taskcache = new VLListType<>(10, 100);
@@ -109,6 +110,8 @@ public class FSR{
         FSEvents events = FSControl.events();
         events.GLPreDraw();
 
+        VLListType<FSRPass> passes = global.passes;
+
         int size = passes.size();
 
         for(int i = 0; i < size; i++){
@@ -136,10 +139,6 @@ public class FSR{
         finishFrame();
     }
 
-    public static void addRenderPass(FSRPass pass){
-        passes.add(pass);
-    }
-
     public static void addHub(FSHub hub){
         hubs.add(hub);
     }
@@ -152,39 +151,18 @@ public class FSR{
         return CURRENT_PASS_INDEX;
     }
 
-    public static FSRPass getRenderPass(int index){
-        return passes.get(index);
-    }
-
     public static FSHub getHub(int index){
         return hubs.get(index);
     }
 
-    public static VLListType<FSRPass> getRenderPasses(){
-        return passes;
+    public static FSRGlobal getGlobal(){
+        return global;
     }
 
     public static void post(FSRTask task){
         synchronized(tasks){
             tasks.add(task);
         }
-    }
-
-    public static void removeRenderPass(FSRPass pass){
-        int size = passes.size();
-
-        for(int i = 0; i < size; i++){
-            if(passes.get(i).id() == pass.id()){
-                passes.remove(i);
-            }
-        }
-    }
-
-    public static FSRPass removeRenderPass(int index){
-        FSRPass item = passes.get(index);
-        passes.remove(index);
-
-        return item;
     }
 
     public static FSHub removeHub(int index){
@@ -194,10 +172,6 @@ public class FSR{
         return item;
     }
 
-    public static int getRenderPassesSize(){
-        return passes.size();
-    }
-
     public static int getHubsSize(){
         return hubs.size();
     }
@@ -205,6 +179,8 @@ public class FSR{
     protected static void finishFrame(){
         FSCFrames.timeFrameEnded();
         FSCEGL.swapBuffers();
+
+        VLListType<FSRPass> passes = global.passes;
 
         int size = passes.size();
 
@@ -255,8 +231,8 @@ public class FSR{
             isInitialized = false;
 
             threadinterface = null;
+            global = null;
             choreographer = null;
-            passes = null;
             tasks = null;
             taskcache = null;
         }

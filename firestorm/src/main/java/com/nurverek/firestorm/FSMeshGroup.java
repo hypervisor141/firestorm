@@ -31,7 +31,7 @@ public abstract class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType
         return group.size();
     }
 
-    protected abstract void register(FSAutomator automator, FSGlobalData global);
+    protected abstract void register(FSAutomator automator, FSRGlobal global);
 
     @Override
     public void allocateElement(int element, int capacity, int resizer){

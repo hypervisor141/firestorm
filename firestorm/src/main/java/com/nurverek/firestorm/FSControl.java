@@ -18,7 +18,7 @@ public final class FSControl{
     private static long GLOBAL_ID;
     private static final Object IDLOCK = new Object();
 
-    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
+    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, FSRGlobal global, boolean destroyonpause, int extraelementscount, int maxunchangedframes, int maxqueuedframes){
         FSControl.surface = surface;
         FSControl.events = surface.events();
         FSControl.view = view;
@@ -30,7 +30,7 @@ public final class FSControl{
             FSElementRegisry.initialize(extraelementscount);
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
-            FSR.initialize(threadinterface);
+            FSR.initialize(threadinterface, global);
             FSCThreads.initialize();
         }
     }

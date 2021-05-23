@@ -11,10 +11,10 @@ public abstract class FSHub{
     }
 
     public void initialize(Context context){
-        assemble(context, FSR.getRenderPasses());
+        assemble(context);
     }
 
-    protected abstract void assemble(Context context, VLListType<FSRPass> passes);
+    protected abstract void assemble(Context context);
     protected abstract void paused();
     protected abstract void resumed();
     protected abstract void destroy();
