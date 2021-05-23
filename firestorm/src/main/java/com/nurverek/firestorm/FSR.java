@@ -86,6 +86,9 @@ public class FSR{
         FSEvents events = FSControl.events();
 
         events.GLPreCreated(surface, context, continuing);
+
+        global.initialize(context);
+
         events.GLPostCreated(surface, context, continuing);
 
         if(continuing){

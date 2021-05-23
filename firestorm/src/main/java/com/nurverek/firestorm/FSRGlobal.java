@@ -15,7 +15,11 @@ public abstract class FSRGlobal{
     protected VLListType<FSRPass> passes;
     protected VLListType<FSHub> hubs;
 
-    public FSRGlobal(Context context){
+    public FSRGlobal(){
+
+    }
+
+    void initialize(Context context){
         assemblers = generateAssemblers(context);
         buffers = generateBuffers(context);
         vbuffers = generateVertexBuffers(context);
@@ -23,6 +27,9 @@ public abstract class FSRGlobal{
         programs = generatePrograms(context);
         passes = generateRenderPasses(context);
         hubs = generateHubs(context);
+
+        buildPrograms();
+        postSetup();
     }
 
     protected abstract VLListType<FSHAssembler> generateAssemblers(Context context);
@@ -32,6 +39,7 @@ public abstract class FSRGlobal{
     protected abstract VLListType<FSP> generatePrograms(Context context);
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
     protected abstract VLListType<FSHub> generateHubs(Context context);
+    protected abstract void postSetup();
 
     public FSHAssembler assembler(int index){
         return assemblers.get(index);
@@ -97,7 +105,7 @@ public abstract class FSRGlobal{
         targets = null;
     }
 
-    protected final void buildPrograms(){
+    final void buildPrograms(){
         int size = programs.size();
 
         for(int i = 0; i < size; i++){
