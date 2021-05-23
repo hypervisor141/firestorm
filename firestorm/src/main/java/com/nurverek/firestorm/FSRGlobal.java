@@ -97,6 +97,14 @@ public abstract class FSRGlobal{
         targets = null;
     }
 
+    protected final void buildPrograms(){
+        int size = programs.size();
+
+        for(int i = 0; i < size; i++){
+            programs.get(i).build();
+        }
+    }
+
     void notifyFrameSwap(){
         int size = passes.size();
 
