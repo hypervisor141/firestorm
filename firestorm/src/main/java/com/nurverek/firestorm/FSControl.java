@@ -27,7 +27,7 @@ public final class FSControl{
         if(!isAlive()){
             GLOBAL_ID = 1000;
 
-            FSGlobal.initialize(extraelementscount);
+            FSElementRegisry.initialize(extraelementscount);
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
             FSR.initialize(threadinterface);
@@ -75,7 +75,7 @@ public final class FSControl{
         FSCEGL.destroy();
         FSCInput.destroy();
         FSCFrames.destroy();
-        FSGlobal.destroy();
+        FSElementRegisry.destroy();
 
         if(!destroyonpause){
             GLOBAL_ID = -1;

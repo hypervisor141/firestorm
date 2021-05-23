@@ -101,7 +101,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void initialize(){
-        bounds = new float[FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION] * 2];
+        bounds = new float[FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION] * 2];
         centroid = new float[4];
         centroidmodel = new float[4];
         centroidmvp = new float[4];
@@ -130,7 +130,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
         centroid[1] = 0;
         centroid[2] = 0;
 
-        for(int index = 0; index < size; index += FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION]){
+        for(int index = 0; index < size; index += FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION]){
             x = vertices[index];
             y = vertices[index + 1];
             z = vertices[index + 2];
@@ -166,7 +166,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             }
         }
 
-        int pointcount = size / FSGlobal.UNIT_SIZES[FSGlobal.ELEMENT_POSITION];
+        int pointcount = size / FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION];
 
         centroid[0] /= pointcount;
         centroid[1] /= pointcount;

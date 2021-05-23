@@ -79,7 +79,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         bindings.add(new FSBufferBinding<>(vbuffer, buffer, tracker));
 
         tracker.unitoffset = 0;
-        tracker.unitsize = FSGlobal.UNIT_SIZES[element];
+        tracker.unitsize = FSElementRegisry.UNIT_SIZES[element];
         tracker.unitsubcount = tracker.unitsize;
         tracker.stride = tracker.unitsize;
 

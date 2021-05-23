@@ -1,7 +1,6 @@
 package com.nurverek.firestorm;
 
 import vanguard.VLCopyable;
-import vanguard.VLListInt;
 import vanguard.VLListType;
 
 public final class FSElementStore implements VLCopyable<FSElementStore>{
@@ -10,8 +9,8 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
     protected int[] active;
 
     protected FSElementStore(){
-        vault = new VLListType[FSGlobal.COUNT];
-        active = new int[FSGlobal.COUNT];
+        vault = new VLListType[FSElementRegisry.COUNT];
+        active = new int[FSElementRegisry.COUNT];
     }
 
     public FSElementStore(FSElementStore src, long flags){

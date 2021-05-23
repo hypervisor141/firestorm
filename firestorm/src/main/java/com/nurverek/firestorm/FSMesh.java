@@ -25,7 +25,7 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
 
     public void initialize(int drawmode){
         this.drawmode = drawmode;
-        bindings = new VLListType[FSGlobal.COUNT];
+        bindings = new VLListType[FSElementRegisry.COUNT];
 
         instances = generateInstanceList();;
         configs = generateOptionalConfigs();

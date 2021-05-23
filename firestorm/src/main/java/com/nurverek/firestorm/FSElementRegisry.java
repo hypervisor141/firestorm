@@ -2,9 +2,9 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-public class FSGlobal{
+public class FSElementRegisry{
 
-    protected FSGlobal(){}
+    protected FSElementRegisry(){}
 
     public static final int ELEMENT_MODEL = 0;
     public static final int ELEMENT_POSITION = 1;
