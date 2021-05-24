@@ -18,12 +18,8 @@ public class FSAutomator{
         scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
-    public void registerFileTarget(FileTarget entry){
+    public void register(FileTarget entry){
         files.add(entry);
-    }
-
-    public void registerScanTarget(Registrable target){
-        target.register(this, FSR.getGlobal());
     }
 
     public FileTarget get(int index){
@@ -197,7 +193,7 @@ public class FSAutomator{
         protected boolean fullsizedposition;
         protected int scancapacity;
 
-        private FileTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
+        public FileTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
