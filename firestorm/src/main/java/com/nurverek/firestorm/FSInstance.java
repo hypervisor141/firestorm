@@ -14,6 +14,7 @@ public class FSInstance implements FSRenderableType{
     public static final long FLAG_DUPLICATE_SCHEMATICS = 0x10000L;
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
     public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
+    public static final long FLAG_DUPLICATE_CONFIGS = 0x100000000L;
 
     protected FSMesh<FSInstance> parent;
     protected FSElementStore store;
@@ -308,35 +309,38 @@ public class FSInstance implements FSRenderableType{
             }else{
                 store = target.store.duplicate(FLAG_REFERENCE);
             }
+
             if((flags & FLAG_DUPLICATE_SCHEMATICS) == FLAG_DUPLICATE_SCHEMATICS){
                 schematics = target.schematics.duplicate(FLAG_DUPLICATE);
 
             }else{
                 schematics = target.schematics.duplicate(FLAG_REFERENCE);
             }
-            if(material != null && (flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
+
+            if(target.material != null && (flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
                 material = target.material.duplicate(VLCopyable.FLAG_DUPLICATE);
-
-            }else{
-                material = target.material.duplicate(VLCopyable.FLAG_REFERENCE);
             }
-            if(modelmatrix != null && (flags & FLAG_DUPLICATE_MODEL_MATRIX) == FLAG_DUPLICATE_MODEL_MATRIX){
+
+            if(target.modelmatrix != null && (flags & FLAG_DUPLICATE_MODEL_MATRIX) == FLAG_DUPLICATE_MODEL_MATRIX){
                 modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
-
-            }else{
-                modelmatrix = target.modelmatrix.duplicate(FLAG_REFERENCE);
             }
+
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
                 id = FSControl.getNextID();
 
             }else{
                 id = target.id;
             }
+
             if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
                 name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
             }else{
                 name = target.name;
+            }
+
+            if(target.configs != null && (flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
+                configs = configs.duplicate(VLCopyable.FLAG_DUPLICATE);
             }
 
         }else{

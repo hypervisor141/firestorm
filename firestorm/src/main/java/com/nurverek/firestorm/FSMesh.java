@@ -23,12 +23,10 @@ public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRendera
         bindings = new VLListType[FSElementRegisry.COUNT];
 
         entries = generateEntryList();
-        configs = generateInternalConfigs();
         id = FSControl.getNextID();
     }
 
     public abstract VLListType<TYPE> generateEntryList();
-    public abstract FSConfigGroup generateInternalConfigs();
 
     public void register(FSAutomator automator, String searchterm, FSGlobal global){
         name(searchterm);
@@ -293,23 +291,23 @@ public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRendera
             }else{
                 entries = target.entries.duplicate(VLListType.FLAG_REFERENCE);
             }
-            if((flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
-                configs = target.configs.duplicate(FLAG_DUPLICATE);
 
-            }else{
-                configs = target.configs.duplicate(FLAG_REFERENCE);
-            }
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
                 id = FSControl.getNextID();
 
             }else{
                 id = target.id;
             }
+
             if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
                 name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
             }else{
                 name = target.name;
+            }
+
+            if(target.configs != null && (flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
+                configs = target.configs.duplicate(FLAG_DUPLICATE);
             }
 
         }else{
