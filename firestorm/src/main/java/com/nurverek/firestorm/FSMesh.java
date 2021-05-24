@@ -28,8 +28,8 @@ public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRendera
 
     public abstract VLListType<TYPE> generateEntryList();
 
-    public void register(FSAutomator automator, String searchterm, FSGlobal global){
-        name(searchterm);
+    public void register(FSAutomator automator, String name, FSGlobal global){
+        name(name);
     }
 
     public void add(TYPE entry){
