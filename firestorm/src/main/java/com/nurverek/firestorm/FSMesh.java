@@ -36,7 +36,7 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
 
     }
 
-    public void register(FSAutomator automator, String name, FSGlobal global){
+    public void register(FSAutomator automator, FSGlobal global){
 
     }
 
