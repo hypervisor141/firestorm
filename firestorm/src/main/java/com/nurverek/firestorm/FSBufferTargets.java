@@ -16,7 +16,7 @@ public class FSBufferTargets{
         return this;
     }
 
-    public void prepare(FSMesh target){
+    public void prepare(FSMesh<?> target){
         int size = segments.size();
 
         for(int i = 0; i < size; i++){
@@ -24,7 +24,7 @@ public class FSBufferTargets{
         }
     }
 
-    public void prepareDebug(FSMesh target, VLLog log){
+    public void prepareDebug(FSMesh<?> target, VLLog log){
         int size = segments.size();
         log.addTag(getClass().getSimpleName());
 
@@ -39,7 +39,7 @@ public class FSBufferTargets{
         log.removeLastTag();
     }
 
-    public void buffer(FSMesh target){
+    public void buffer(FSMesh<?> target){
         int size = segments.size();
 
         for(int i = 0; i < size; i++){
@@ -47,7 +47,7 @@ public class FSBufferTargets{
         }
     }
 
-    public void bufferDebug(FSMesh target, VLLog log){
+    public void bufferDebug(FSMesh<?> target, VLLog log){
         int size = segments.size();
         log.addTag(getClass().getSimpleName());
 

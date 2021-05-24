@@ -5,7 +5,7 @@ import vanguard.VLArrayShort;
 import vanguard.VLCopyable;
 import vanguard.VLVMatrix;
 
-public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
+public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSInstance>{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -93,10 +93,12 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
         store.activate(element, store.size(element) - 1);
     }
 
+    @Override
     public String name(){
         return name;
     }
 
+    @Override
     public long id(){
         return id;
     }
@@ -193,11 +195,12 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
         return (FSElement.Short)element(FSElementRegisry.ELEMENT_INDEX);
     }
 
-    public void scanComplete(){}
-
-    public void bufferComplete(int element, int storeindex){}
-
     public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
+
+    @Override
+    public void register(FSAutomator automator, FSGlobal global){
+        throw new RuntimeException("Default instance type is not registrable");
+    }
 
     @Override
     public void updateSchematicBoundaries(){
@@ -230,6 +233,15 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
     public void updateVertexBufferStrict(int element, int bindingindex){
         element(element).bindings.get(bindingindex).updateVertexBufferStrict();
     }
+
+    @Override
+    public void scanComplete(){}
+
+    @Override
+    public void bufferComplete(){}
+
+    @Override
+    public void buildComplete(){}
 
     @Override
     public void copy(FSInstance src, long flags){
@@ -276,10 +288,10 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
                 schematics = src.schematics.duplicate(FLAG_REFERENCE);
             }
             if(material != null && (flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
-                material = src.material.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+                material = src.material.duplicate(VLCopyable.FLAG_DUPLICATE);
 
             }else{
-                material = src.material.duplicate(FLAG_REFERENCE);
+                material = src.material.duplicate(VLCopyable.FLAG_REFERENCE);
             }
             if(modelmatrix != null && (flags & FLAG_DUPLICATE_MODEL_MATRIX) == FLAG_DUPLICATE_MODEL_MATRIX){
                 modelmatrix = src.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
@@ -287,17 +299,17 @@ public class FSInstance implements VLCopyable<FSInstance>, FSMeshType{
             }else{
                 modelmatrix = src.modelmatrix.duplicate(FLAG_REFERENCE);
             }
-            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
-                name = src.name.concat("_duplicate").concat(String.valueOf(id));
-
-            }else{
-                name = src.name;
-            }
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
                 id = FSControl.getNextID();
 
             }else{
                 id = src.id;
+            }
+            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
+                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+
+            }else{
+                name = src.name;
             }
 
         }else{

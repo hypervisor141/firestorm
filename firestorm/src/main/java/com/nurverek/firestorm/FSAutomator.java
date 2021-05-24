@@ -13,15 +13,17 @@ public class FSAutomator{
     protected VLListType<FSHScanner> scanners;
     protected VLLog log;
 
-    public FSAutomator(int filecapacity){
+    public FSAutomator(int filecapacity, int scancapacity){
         files = new VLListType<>(filecapacity, filecapacity);
+        scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
-    public FileTarget registerFile(InputStream src, ByteOrder order, boolean fullsizedposition, int estimatedsize){
-        FileTarget entry = new FileTarget(src, order, fullsizedposition, estimatedsize);
+    public void registerFileTarget(FileTarget entry){
         files.add(entry);
+    }
 
-        return entry;
+    public void registerScanTarget(Registrable target){
+        target.register(this, FSR.getGlobal());
     }
 
     public FileTarget get(int index){
@@ -32,16 +34,14 @@ public class FSAutomator{
         return files.size();
     }
 
-    public void scan(int debug){
-        scanners = new VLListType<>(100, 100);
-
+    public void build(int debug){
         if(debug > FSControl.DEBUG_DISABLED){
             log = new VLLog(new String[]{
                     FSControl.LOGTAG, getClass().getSimpleName()
             }, 50);
 
             log.setDebugTagsOffsetHere();
-            log.printInfo("[Automated Scan Initiated]");
+            log.printInfo("[Automated Build Initiated]");
 
             fileDebugLoop("Scan Stage", log, new LoopOperation<FileTarget>(){
 
@@ -54,45 +54,16 @@ public class FSAutomator{
 
                 @Override
                 public void run(FileTarget target, VLLog log){
-                    target.checkResults(log);
-                    target.offloadResults(FSAutomator.this);
+                    target.checkResults(FSAutomator.this, log);
                 }
             });
+            scannerDebugLoop("Signal Scan Complete", log, new LoopOperation<FSHScanner>(){
 
-            log.printInfo("[Automated Scan And Build Complete]");
-
-        }else{
-            int size = files.size();
-
-            for(int i = 0; i < size; i++){
-                try{
-                    FileTarget file = files.get(i);
-
-                    file.scan(this);
-                    file.offloadResults(this);
-
-                }catch(IOException ex){
-                    throw new RuntimeException("IO error when loading file.", ex);
+                @Override
+                public void run(FSHScanner target, VLLog log){
+                    target.signalScanComplete();
                 }
-            }
-        }
-
-        int size = scanners.size();
-
-        for(int i = 0; i < size; i++){
-            scanners.get(i).signalScanComplete();
-        }
-    }
-
-    public void buffer(int debug){
-        if(debug > FSControl.DEBUG_DISABLED){
-            log = new VLLog(new String[]{
-                    FSControl.LOGTAG, getClass().getSimpleName()
-            }, 50);
-
-            log.setDebugTagsOffsetHere();
-            log.printInfo("[Automated Buffering Initiated]");
-
+            });
             scannerDebugLoop("Measurement Stage", log, new LoopOperation<FSHScanner>(){
 
                 @Override
@@ -114,19 +85,33 @@ public class FSAutomator{
                     target.uploadBuffer();
                 }
             });
-            scannerDebugLoop("Signal Complete Stage", log, new LoopOperation<FSHScanner>(){
+            scannerDebugLoop("Signal Build Complete Stage", log, new LoopOperation<FSHScanner>(){
 
                 @Override
                 public void run(FSHScanner target, VLLog log){
-                    target.signalBufferComplete();
+                    target.signalBuildComplete();
                 }
             });
 
             log.printInfo("[Automated Buffer Procedure Complete]");
 
         }else{
-            int size = scanners.size();
+            int size = files.size();
 
+            for(int i = 0; i < size; i++){
+                try{
+                    files.get(i).scan(this);
+
+                }catch(IOException ex){
+                    throw new RuntimeException("IO error when loading file.", ex);
+                }
+            }
+
+            size = scanners.size();
+
+            for(int i = 0; i < size; i++){
+                scanners.get(i).signalScanComplete();
+            }
             for(int i = 0; i < size; i++){
                 scanners.get(i).adjustBufferCapacity();
             }
@@ -137,7 +122,7 @@ public class FSAutomator{
                 scanners.get(i).uploadBuffer();
             }
             for(int i = 0; i < size; i++){
-                scanners.get(i).signalBufferComplete();
+                scanners.get(i).signalBuildComplete();
             }
         }
     }
@@ -211,25 +196,18 @@ public class FSAutomator{
         protected ByteOrder order;
         protected boolean fullsizedposition;
         protected int scancapacity;
-        protected VLListType<FSHScanner> scanners;
 
-        private FileTarget(InputStream src, ByteOrder order, boolean fullsizedposition, int scancapacity){
+        private FileTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
-            this.scancapacity = scancapacity;
-
-            scanners = new VLListType<>(scancapacity, scancapacity);
-        }
-
-        public void register(Registrable target, String scanterm, FSGlobal global){
-            scanners.add(target.generateScanner(scanterm, global));
         }
 
         void scan(FSAutomator automator) throws IOException{
             FSM fsm = new FSM();
             fsm.loadFromFile(src, order, fullsizedposition, scancapacity);
             VLListType<FSM.Data> content = fsm.data;
+            VLListType<FSHScanner> scanners = automator.scanners;
 
             int size = content.size();
             int size2 = scanners.size();
@@ -243,13 +221,14 @@ public class FSAutomator{
             }
         }
 
-        void checkResults(VLLog log){
+        void checkResults(FSAutomator automator, VLLog log){
+            VLListType<FSHScanner> scanners = automator.scanners;
             int size = scanners.size();
 
             for(int i = 0; i < size; i++){
                 FSHScanner entry = scanners.get(i);
 
-                if(entry.mesh.size() == 0){
+                if(entry.target.size() == 0){
                     log.append("Incomplete scan : found no instance for mesh with keyword[");
                     log.append(entry.name);
                     log.append("]\n");
@@ -262,15 +241,10 @@ public class FSAutomator{
                 }
             }
         }
-
-        void offloadResults(FSAutomator automator){
-            automator.scanners.add(scanners);
-            scanners = null;
-        }
     }
 
     public interface Registrable{
 
-        FSHScanner generateScanner(String scanterm, FSGlobal global);
+        void register(FSAutomator automator, FSGlobal global);
     }
 }

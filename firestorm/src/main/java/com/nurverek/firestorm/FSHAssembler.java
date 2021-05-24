@@ -326,7 +326,7 @@ public class FSHAssembler implements VLLoggable{
     }
 
     private void buildTarget(VLListType<BuildStep> funcs, FSInstance instance, FSHScanner scanner, FSM.Data data){
-        FSMesh<?> mesh = scanner.mesh;
+        FSMesh<?> mesh = scanner.target;
         int funcsize = funcs.size();
 
         FSElementStore store = instance.storage();

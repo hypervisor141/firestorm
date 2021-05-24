@@ -9,8 +9,6 @@ import vanguard.VLLoggable;
 
 public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
-    private static final int BUFFER_PRINT_LIMIT = 100;
-
     protected FSVertexBuffer<BUFFER> vbuffer;
     protected BUFFER buffer;
 
@@ -451,7 +449,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             item.buffer(vbuffer, buffer);
 
             target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
-            target.bufferComplete(instance, element, storeindex);
+            instance.bufferComplete();
         }
 
         @Override
@@ -460,7 +458,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             item.buffer(vbuffer, buffer, unitoffset, unitsize, unitsubcount, stride);
 
             target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
-            target.bufferComplete(instance, element, storeindex);
+            instance.bufferComplete();
         }
 
         @Override
@@ -519,7 +517,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             item.buffer(vbuffer, buffer);
 
             target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
-            target.bufferComplete(instance, element, instance.store.active[element]);
+            instance.bufferComplete();
         }
 
         @Override
@@ -530,7 +528,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             item.buffer(vbuffer, buffer, unitoffset, unitsize, unitsubcount, stride);
 
             target.bindManual(element, item.bindings.get(item.bindings.size() - 1));
-            target.bufferComplete(instance, element, instance.store.active[element]);
+            instance.bufferComplete();
         }
 
         @Override

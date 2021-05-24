@@ -4,14 +4,14 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<FSMesh<INSTANCE>>, FSMeshType, FSAutomator.Registrable{
+public abstract class FSMesh<TYPE extends FSInstance> implements FSRenderableType<FSMesh<TYPE>>, FSAutomator.Registrable{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_INSTANCES = 0x1000L;
     public static final long FLAG_DUPLICATE_CONFIGS = 0x100000L;
 
-    protected VLListType<INSTANCE> instances;
+    protected VLListType<TYPE> instances;
     protected VLListType<FSBufferBinding<?>>[] bindings;
     protected FSConfigGroup configs;
     protected String name;
@@ -19,27 +19,26 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
     protected int drawmode;
     protected long id;
 
-    public FSMesh(){
-
-    }
-
-    public void initialize(int drawmode){
+    public FSMesh(int drawmode){
         this.drawmode = drawmode;
         bindings = new VLListType[FSElementRegisry.COUNT];
 
-        instances = generateInstanceList();;
+        instances = generateInstanceList();
         configs = generateOptionalConfigs();
         id = FSControl.getNextID();
     }
 
-    public abstract VLListType<INSTANCE> generateInstanceList();
-    public abstract INSTANCE generateInstance(String name);
-    public abstract FSConfigGroup generateOptionalConfigs();
-    public abstract void scanComplete();
-    public abstract void bufferComplete();
+    protected FSMesh(){
 
-    public INSTANCE addNewInstance(String name){
-        INSTANCE instance = generateInstance(name);
+    }
+
+    public abstract VLListType<TYPE> generateInstanceList();
+    public abstract TYPE generateInstance(String name);
+    public abstract FSConfigGroup generateOptionalConfigs();
+    public abstract void register(FSAutomator automator, FSGlobal global);
+
+    public TYPE addNewInstance(String name){
+        TYPE instance = generateInstance(name);
         instances.add(instance);
 
         return instance;
@@ -57,11 +56,11 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
         this.name = name;
     }
 
-    public INSTANCE first(){
+    public TYPE first(){
         return instances.get(0);
     }
 
-    public INSTANCE get(int index){
+    public TYPE get(int index){
         return instances.get(index);
     }
 
@@ -112,8 +111,8 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
         return bindings;
     }
 
-    public INSTANCE remove(int index){
-        INSTANCE instance = instances.get(index);
+    public TYPE remove(int index){
+        TYPE instance = instances.get(index);
         instances.remove(index);
         instance.mesh = null;
 
@@ -124,14 +123,16 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
         return drawmode;
     }
 
+    @Override
     public String name(){
         return name;
     }
 
-    public VLListType<INSTANCE> get(){
+    public VLListType<TYPE> get(){
         return instances;
     }
 
+    @Override
     public long id(){
         return id;
     }
@@ -152,15 +153,16 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
         }
     }
 
-    protected void scanComplete(FSInstance instance){
-        instance.scanComplete();
-    }
+    @Override
+    public void scanComplete(){}
 
-    public void bufferComplete(FSInstance instance, int element, int storeindex){
-        instance.bufferComplete(element, storeindex);
-    }
+    @Override
+    public void bufferComplete(){}
 
-    public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){
+    @Override
+    public void buildComplete(){}
+
+    protected void programPreBuild(FSP program, FSP.CoreConfig core, int debug){
         int size = instances.size();
 
         for(int i = 0; i < size; i++){
@@ -268,7 +270,7 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
     }
 
     @Override
-    public void copy(FSMesh<INSTANCE> src, long flags){
+    public void copy(FSMesh<TYPE> src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             instances = src.instances;
             configs = src.configs;
@@ -285,7 +287,7 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_FORCE_DUPLICATE_INSTANCES) == FLAG_FORCE_DUPLICATE_INSTANCES){
-                instances = src.instances.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+                instances = src.instances.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             }else{
                 instances = src.instances.duplicate(VLListType.FLAG_REFERENCE);
@@ -296,17 +298,17 @@ public abstract class FSMesh<INSTANCE extends FSInstance> implements VLCopyable<
             }else{
                 configs = src.configs.duplicate(FLAG_REFERENCE);
             }
-            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
-                name = src.name.concat("_duplicate").concat(String.valueOf(id));
-
-            }else{
-                name = src.name;
-            }
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
                 id = FSControl.getNextID();
 
             }else{
                 id = src.id;
+            }
+            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
+                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+
+            }else{
+                name = src.name;
             }
 
             drawmode = src.drawmode;

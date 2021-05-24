@@ -1,34 +1,48 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.nurverek.firestorm;
 
 import vanguard.VLCopyable;
 import vanguard.VLListType;
 
-public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
+public class FSMeshGroup implements FSRenderableType<FSMeshGroup>{
 
-    private VLListType<FSMeshType> group;
+    public static final long FLAG_UNIQUE_ID = 0x10L;
+    public static final long FLAG_UNIQUE_NAME = 0x100L;
+    public static final long FLAG_FORCE_DUPLICATE_LIST = 0x1000L;
+    
+    private VLListType<FSRenderableType<?>> group;
+    private long id;
+    private String name;
 
-    public FSMeshGroup(int capacity, int resizer){
+    public FSMeshGroup(String name, int capacity, int resizer){
+        this.name = name;
+        id = FSControl.getNextID();
+
         group = new VLListType<>(capacity, resizer);
     }
 
     public FSMeshGroup(FSMeshGroup src, long flags){
-        copy(src, flags);
+        this.copy(src, flags);
     }
 
     protected FSMeshGroup(){
 
     }
 
-    public VLListType<FSMeshType> get(){
+    public void add(FSRenderableType<?> mesh){
+        group.add(mesh);
+    }
+
+    public VLListType<FSRenderableType<?>> get(){
         return group;
     }
 
-    public FSMeshType get(int index){
+    public FSRenderableType<?> get(int index){
         return group.get(index);
-    }
-
-    public void add(FSMeshType mesh){
-        group.add(mesh);
     }
 
     public int size(){
@@ -36,10 +50,56 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     }
 
     @Override
+    public String name(){
+        return name;
+    }
+
+    @Override
+    public long id(){
+        return id;
+    }
+
+    @Override
+    public void register(FSAutomator automator, FSGlobal global){
+        int size = group.size();
+
+        for(int i = 0; i < size; ++i){
+            group.get(i).register(automator, global);
+        }
+    }
+
+    @Override
+    public void scanComplete(){
+        int size = group.size();
+
+        for(int i = 0; i < size; ++i){
+            group.get(i).scanComplete();
+        }
+    }
+
+    @Override
+    public void bufferComplete(){
+        int size = group.size();
+
+        for(int i = 0; i < size; ++i){
+            group.get(i).bufferComplete();
+        }
+    }
+
+    @Override
+    public void buildComplete(){
+        int size = group.size();
+
+        for(int i = 0; i < size; ++i){
+            group.get(i).buildComplete();
+        }
+    }
+
+    @Override
     public void allocateElement(int element, int capacity, int resizer){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).allocateElement(element, capacity, resizer);
         }
     }
@@ -48,7 +108,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void storeElement(int element, FSElement<?, ?> data){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).storeElement(element, data);
         }
     }
@@ -57,7 +117,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void activateFirstElement(int element){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).activateFirstElement(element);
         }
     }
@@ -66,7 +126,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void activateLastElement(int element){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).activateLastElement(element);
         }
     }
@@ -75,7 +135,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void material(FSLightMaterial material){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).material(material);
         }
     }
@@ -84,7 +144,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void lightMap(FSLightMap map){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).lightMap(map);
         }
     }
@@ -93,7 +153,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void colorTexture(FSTexture tex){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).colorTexture(tex);
         }
     }
@@ -102,7 +162,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void updateSchematicBoundaries(){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).updateSchematicBoundaries();
         }
     }
@@ -111,7 +171,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void markSchematicsForUpdate(){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).markSchematicsForUpdate();
         }
     }
@@ -120,7 +180,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void applyModelMatrix(){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).applyModelMatrix();
         }
     }
@@ -129,7 +189,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void updateBuffer(int element){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).updateBuffer(element);
         }
     }
@@ -137,14 +197,38 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     @Override
     public void copy(FSMeshGroup src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            id = FSControl.getNextID();
             group = src.group;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            id = FSControl.getNextID();
             group.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
+        }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
+            if((flags & FLAG_FORCE_DUPLICATE_LIST) == FLAG_FORCE_DUPLICATE_LIST){
+                group = src.group.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+
+            }else{
+                group = src.group.duplicate(VLCopyable.FLAG_REFERENCE);
+            }
+            if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
+                id = FSControl.getNextID();
+
+            }else{
+                id = src.id;
+            }
+            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
+                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+
+            }else{
+                name = src.name;
+            }
+
         }else{
-            VLCopyable.Helper.throwMissingDefaultFlags();
+            Helper.throwMissingAllFlags();
         }
+
+        name = src.name;
     }
 
     @Override
@@ -156,7 +240,7 @@ public class FSMeshGroup implements VLCopyable<FSMeshGroup>, FSMeshType{
     public void destroy(){
         int size = group.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; ++i){
             group.get(i).destroy();
         }
     }

@@ -1,7 +1,12 @@
 package com.nurverek.firestorm;
 
-public interface FSMeshType{
+import vanguard.VLCopyable;
 
+public interface FSRenderableType<TYPE> extends VLCopyable<TYPE>, FSAutomator.Registrable{
+
+    void scanComplete();
+    void bufferComplete();
+    void buildComplete();
     void allocateElement(int element, int capacity, int resizer);
     void storeElement(int element, FSElement<?, ?> data);
     void activateFirstElement(int element);
@@ -14,4 +19,7 @@ public interface FSMeshType{
     void applyModelMatrix();
     void updateBuffer(int element);
     void destroy();
+
+    String name();
+    long id();
 }
