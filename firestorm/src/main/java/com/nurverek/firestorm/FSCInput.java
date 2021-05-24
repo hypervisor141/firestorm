@@ -165,11 +165,11 @@ public final class FSCInput{
 
     public static class MeshEntry implements Entry{
 
-        public FSMesh mesh;
+        public FSMesh<? extends FSInstance> mesh;
         public CollisionListener listener;
         public int instanceindex;
 
-        public MeshEntry(FSMesh mesh, int instanceindex, CollisionListener listener){
+        public MeshEntry(FSMesh<? extends FSInstance> mesh, int instanceindex, CollisionListener listener){
             this.mesh = mesh;
             this.instanceindex = instanceindex;
             this.listener = listener;
