@@ -14,7 +14,7 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
     protected FSRenderableType parent;
     protected VLListType<TYPE> entries;
     protected VLListType<FSBufferBinding<?>>[] bindings;
-    protected FSConfig configs;
+    protected FSConfigGroup configs;
     protected String name;
 
     protected long id;
@@ -22,6 +22,7 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
     public FSMesh(String name, int capacity, int resizer){
         this.name = name;
 
+        configs = generateInternalConfigs();
         bindings = new VLListType[FSElementRegisry.COUNT];
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();
@@ -37,6 +38,10 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
 
     public void register(FSAutomator automator, String name, FSGlobal global){
 
+    }
+
+    public FSConfigGroup generateInternalConfigs(){
+        return null;
     }
 
     public void add(TYPE entry){

@@ -23,7 +23,7 @@ public class FSInstance implements FSRenderableType{
     protected FSTexture colortexture;
     protected FSLightMaterial material;
     protected FSLightMap lightmap;
-    protected FSConfig configs;
+    protected FSConfigGroup configs;
 
     protected String name;
     protected long id;
@@ -33,6 +33,7 @@ public class FSInstance implements FSRenderableType{
 
         store = new FSElementStore();
         schematics = new FSSchematics(this);
+        configs = generateInternalConfigs();
         id = FSControl.getNextID();
     }
 
@@ -42,6 +43,10 @@ public class FSInstance implements FSRenderableType{
 
     protected FSInstance(){
 
+    }
+
+    public FSConfigGroup generateInternalConfigs(){
+        return null;
     }
 
     public void name(String name){
