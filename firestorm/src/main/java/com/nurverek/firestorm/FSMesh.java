@@ -19,9 +19,10 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
 
     protected long id;
 
-    public FSMesh(int capacity, int resizer){
-        bindings = new VLListType[FSElementRegisry.COUNT];
+    public FSMesh(String name, int capacity, int resizer){
+        this.name = name;
 
+        bindings = new VLListType[FSElementRegisry.COUNT];
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();
     }
@@ -35,7 +36,7 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
     }
 
     public void register(FSAutomator automator, String name, FSGlobal global){
-        name(name);
+
     }
 
     public void add(TYPE entry){
