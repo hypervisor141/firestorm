@@ -238,9 +238,4 @@ public class FSAutomator{
             }
         }
     }
-
-    public interface Registrable{
-
-        void register(FSAutomator automator, FSGlobal global);
-    }
 }

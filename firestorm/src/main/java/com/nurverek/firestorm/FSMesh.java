@@ -4,95 +4,63 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSMesh<TYPE extends FSInstance> implements FSRenderableType<FSMesh<TYPE>>, FSAutomator.Registrable{
+public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRenderableType<FSMesh<TYPE>>{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
-    public static final long FLAG_FORCE_DUPLICATE_INSTANCES = 0x1000L;
+    public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
     public static final long FLAG_DUPLICATE_CONFIGS = 0x100000L;
 
-    protected VLListType<TYPE> instances;
+    protected FSRenderableType<?> parent;
+    protected VLListType<TYPE> entries;
     protected VLListType<FSBufferBinding<?>>[] bindings;
     protected FSConfigGroup configs;
     protected String name;
 
-    protected int drawmode;
     protected long id;
 
-    public FSMesh(int drawmode){
-        this.drawmode = drawmode;
+    protected FSMesh(){
         bindings = new VLListType[FSElementRegisry.COUNT];
 
-        instances = generateInstanceList();
-        configs = generateOptionalConfigs();
+        entries = generateEntryList();
+        configs = generateInternalConfigs();
         id = FSControl.getNextID();
     }
 
-    protected FSMesh(){
+    public abstract VLListType<TYPE> generateEntryList();
+    public abstract TYPE generateEntry(String name);
+    public abstract FSConfigGroup generateInternalConfigs();
 
+    public void register(FSAutomator automator, String searchterm, FSGlobal global){
+        name(searchterm);
     }
 
-    public abstract VLListType<TYPE> generateInstanceList();
-    public abstract TYPE generateInstance(String name);
-    public abstract FSConfigGroup generateOptionalConfigs();
-    public abstract void register(FSAutomator automator, FSGlobal global);
+    public TYPE add(String name){
+        TYPE entry = generateEntry(name);
 
-    public TYPE addNewInstance(String name){
-        TYPE instance = generateInstance(name);
-        instances.add(instance);
+        entry.parent(this);
+        entries.add(entry);
 
-        return instance;
+        return entry;
     }
 
-    public void add(FSConfig config){
-        configs.add(config);
-    }
-
-    public void drawMode(int mode){
-        drawmode = mode;
+    public void bindManual(int element, FSBufferBinding<?> binding){
+        bindings[element].add(binding);
     }
 
     public void name(String name){
         this.name = name;
     }
 
-    public TYPE first(){
-        return instances.get(0);
-    }
-
-    public TYPE get(int index){
-        return instances.get(index);
-    }
-
-    public FSConfig config(int index){
-        return configs.configs().get(index);
-    }
-
-    public FSConfigGroup configs(){
-        return configs;
+    @Override
+    public void parent(FSRenderableType<?> parent){
+        this.parent = parent;
     }
 
     public void allocateBinding(int element, int capacity, int resizer){
         if(bindings[element] == null){
             bindings[element] = new VLListType<>(capacity, resizer);
         }
-    }
-
-    public void bindFromStorage(int instanceindex, int element, int storageindex, int bindingindex){
-        bindings[element].add(instances.get(instanceindex).storage().get(element).get(storageindex).bindings.get(bindingindex));
-    }
-
-    public void bindFromStorageLatest(int instanceindex, int element, int storageindex){
-        VLListType<?> list = instances.get(instanceindex).storage().get(element).get(storageindex).bindings;
-        bindings[element].add((FSBufferBinding<?>)list.get(list.size() - 1));
-    }
-
-    public void bindFromActive(int instanceindex, int element, int bindingindex){
-        bindings[element].add(instances.get(instanceindex).element(element).bindings.get(bindingindex));
-    }
-
-    public void bindManual(int element, FSBufferBinding<?> binding){
-        bindings[element].add(binding);
     }
 
     public void unbind(int element, int index){
@@ -111,25 +79,47 @@ public abstract class FSMesh<TYPE extends FSInstance> implements FSRenderableTyp
         return bindings;
     }
 
-    public TYPE remove(int index){
-        TYPE instance = instances.get(index);
-        instances.remove(index);
-        instance.mesh = null;
-
-        return instance;
+    public TYPE first(){
+        return entries.get(0);
     }
 
-    public int drawMode(){
-        return drawmode;
+    public TYPE get(int index){
+        return entries.get(index);
+    }
+
+    public FSConfigGroup internalConfigs(){
+        return configs;
+    }
+
+    public void remove(TYPE entry){
+        remove(entries.indexOf(entry));
+    }
+
+    public TYPE remove(int index){
+        TYPE entry = entries.get(index);
+        entries.remove(index);
+        entry.parent(null);
+
+        return entry;
+    }
+
+    public VLListType<TYPE> get(){
+        return entries;
+    }
+
+    @Override
+    public FSRenderableType<?> parent(){
+        return parent;
+    }
+
+    @Override
+    public FSRenderableType<?> parentRoot(){
+        return parent == null ? null : parent.parentRoot();
     }
 
     @Override
     public String name(){
         return name;
-    }
-
-    public VLListType<TYPE> get(){
-        return instances;
     }
 
     @Override
@@ -138,159 +128,146 @@ public abstract class FSMesh<TYPE extends FSInstance> implements FSRenderableTyp
     }
 
     public int size(){
-        return instances.size();
-    }
-
-    public void configure(FSRPass pass, FSP program, int meshindex, int passindex){
-        if(configs != null){
-            configs.configure(pass, program, this, meshindex, passindex);
-        }
-    }
-
-    public void configureDebug(FSRPass pass, FSP program, int meshindex, int passindex, VLLog log, int debug){
-        if(configs != null){
-            configs.configureDebug(pass, program, this, meshindex, passindex, log, debug);
-        }
+        return entries.size();
     }
 
     @Override
-    public void scanComplete(){}
-
-    @Override
-    public void bufferComplete(){}
-
-    @Override
-    public void buildComplete(){}
-
-    protected void programPreBuild(FSP program, FSP.CoreConfig core, int debug){
-        int size = instances.size();
+    public void scanComplete(){
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).programPreBuild(program, core, debug);
+            entries.get(i).scanComplete();
+        }
+    }
+
+    @Override
+    public void buildComplete(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).buildComplete();
         }
     }
 
     @Override
     public void allocateElement(int element, int capacity, int resizer){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).allocateElement(element, capacity, resizer);
+            entries.get(i).allocateElement(element, capacity, resizer);
         }
     }
 
     @Override
     public void storeElement(int element, FSElement<?, ?> data){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).storeElement(element, data);
+            entries.get(i).storeElement(element, data);
         }
     }
 
     @Override
     public void activateFirstElement(int element){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).activateFirstElement(element);
+            entries.get(i).activateFirstElement(element);
         }
     }
 
     @Override
     public void activateLastElement(int element){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).activateLastElement(element);
+            entries.get(i).activateLastElement(element);
         }
     }
 
     @Override
     public void material(FSLightMaterial material){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).material(material);
+            entries.get(i).material(material);
         }
     }
 
     @Override
     public void lightMap(FSLightMap map){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).lightMap(map);
+            entries.get(i).lightMap(map);
         }
     }
 
     @Override
     public void colorTexture(FSTexture tex){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).colorTexture(tex);
+            entries.get(i).colorTexture(tex);
         }
     }
 
     @Override
     public void updateSchematicBoundaries(){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).updateSchematicBoundaries();
+            entries.get(i).updateSchematicBoundaries();
         }
     }
 
     @Override
     public void markSchematicsForUpdate(){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).markSchematicsForUpdate();
+            entries.get(i).markSchematicsForUpdate();
         }
     }
 
     @Override
     public void applyModelMatrix(){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).applyModelMatrix();
+            entries.get(i).applyModelMatrix();
         }
     }
 
     @Override
     public void updateBuffer(int element){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).updateBuffer(element);
+            entries.get(i).updateBuffer(element);
         }
     }
 
     @Override
     public void copy(FSMesh<TYPE> src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
-            instances = src.instances;
+            entries = src.entries;
             configs = src.configs;
             name = src.name;
-            drawmode = src.drawmode;
             id = src.id;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            instances = src.instances.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            entries = src.entries.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
             configs = src.configs.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
             name = src.name.concat("_duplicate").concat(String.valueOf(id));
-            drawmode = src.drawmode;
             id = FSControl.getNextID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            if((flags & FLAG_FORCE_DUPLICATE_INSTANCES) == FLAG_FORCE_DUPLICATE_INSTANCES){
-                instances = src.instances.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            if((flags & FLAG_FORCE_DUPLICATE_entryS) == FLAG_FORCE_DUPLICATE_entryS){
+                entries = src.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             }else{
-                instances = src.instances.duplicate(VLListType.FLAG_REFERENCE);
+                entries = src.entries.duplicate(VLListType.FLAG_REFERENCE);
             }
             if((flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
                 configs = src.configs.duplicate(FLAG_DUPLICATE);
@@ -311,8 +288,6 @@ public abstract class FSMesh<TYPE extends FSInstance> implements FSRenderableTyp
                 name = src.name;
             }
 
-            drawmode = src.drawmode;
-
         }else{
             Helper.throwMissingAllFlags();
         }
@@ -320,19 +295,19 @@ public abstract class FSMesh<TYPE extends FSInstance> implements FSRenderableTyp
 
     @Override
     public void destroy(){
-        int size = instances.size();
+        int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            instances.get(i).destroy();
+            entries.get(i).destroy();
         }
 
-        name = null;
-        instances = null;
+        parent = null;
+        entries = null;
         bindings = null;
         configs = null;
+        name = null;
 
         id = -1;
-        drawmode = -1;
     }
 
 }

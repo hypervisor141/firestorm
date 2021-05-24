@@ -13,22 +13,28 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
 
     public static int CURRENT_ACTIVE_BUFFER = 0;
 
-    private BUFFER buffer;
+    protected BUFFER buffer;
 
-    private int target;
-    private int accessmode;
-    private int bindpoint;
-    private int sizebytes;
-    private int id;
+    protected int target;
+    protected int accessmode;
+    protected int bindpoint;
+    protected int sizebytes;
+    protected int id;
 
-    private boolean mapped;
-    private boolean needsupdate;
+    protected boolean mapped;
+    protected boolean needsupdate;
+    protected boolean uploaded;
 
     public FSVertexBuffer(BUFFER buffer, int target, int accessmode){
         this.buffer = buffer;
         this.target = target;
         this.accessmode = accessmode;
 
+        mapped = false;
+        needsupdate = false;
+        uploaded = false;
+        bindpoint = -1;
+        sizebytes = -1;
         id = -1;
     }
 
@@ -38,15 +44,11 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         this.accessmode = accessmode;
         this.bindpoint = bindpoint;
 
+        mapped = false;
+        needsupdate = false;
+        uploaded = false;
+        sizebytes = -1;
         id = -1;
-    }
-
-    public FSVertexBuffer(BUFFER buffer, int id, int target, int accessmode, int bindpoint){
-        this.buffer = buffer;
-        this.id = id;
-        this.target = target;
-        this.accessmode = accessmode;
-        this.bindpoint = bindpoint;
     }
 
     public void initialize(){
@@ -69,13 +71,16 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
     }
 
     public void upload(){
-        sizebytes = buffer.sizeBytes();
-        bind();
+        if(!uploaded){
+            sizebytes = buffer.sizeBytes();
+            bind();
 
-        buffer.position(0);
-        GLES32.glBufferData(target, sizebytes, buffer.provider(), accessmode);
+            buffer.position(0);
+            GLES32.glBufferData(target, sizebytes, buffer.provider(), accessmode);
 
-        needsupdate = false;
+            needsupdate = false;
+            uploaded = true;
+        }
     }
 
     public void update(int offset, int count){
@@ -87,6 +92,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         GLES32.glBufferSubData(target, offset * bytes, count * bytes, buffer.provider());
 
         needsupdate = false;
+        uploaded = true;
     }
 
     public void update(){
@@ -116,6 +122,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         buffer.initialize(b);
 
         needsupdate = false;
+        uploaded = true;
         mapped = true;
     }
 
@@ -152,6 +159,10 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
 
     public void markForUpdate(){
         needsupdate = true;
+    }
+
+    public void allowUpload(){
+        uploaded = false;
     }
 
     public void bindBufferBase(){
@@ -206,13 +217,12 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         return needsupdate;
     }
 
-    public int bindPoint(){
-        return bindpoint;
+    public boolean uploaded(){
+        return uploaded;
     }
 
-    public void resize(int size){
-        buffer.resize(size);
-        upload();
+    public int bindPoint(){
+        return bindpoint;
     }
 
     public int sizeBytes(){

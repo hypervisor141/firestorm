@@ -14,7 +14,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
     public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
 
-    protected FSMesh<? extends FSInstance> mesh;
+    protected FSMesh<? extends FSInstance> parent;
     protected FSElementStore store;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
@@ -25,9 +25,9 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     protected String name;
     protected long id;
 
-    public FSInstance(FSMesh<? extends FSInstance> mesh, String name){
+    public FSInstance(FSMesh<? extends FSInstance> parent, String name){
         this.name = name;
-        this.mesh = mesh;
+        this.parent = parent;
 
         store = new FSElementStore();
         schematics = new FSSchematics(this);
@@ -52,6 +52,11 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
 
     public void modelMatrix(FSMatrixModel set){
         modelmatrix = set;
+    }
+
+    @Override
+    public void parent(FSRenderableType<?> parent){
+        this.parent = (FSMesh<? extends FSInstance>)parent;
     }
 
     @Override
@@ -94,6 +99,16 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     @Override
+    public FSMesh<? extends FSInstance> parent(){
+        return parent;
+    }
+
+    @Override
+    public FSRenderableType<?> parentRoot(){
+        return parent == null ? null : parent.parentRoot();
+    }
+
+    @Override
     public String name(){
         return name;
     }
@@ -108,7 +123,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     public FSMesh<? extends FSInstance> mesh(){
-        return mesh;
+        return parent;
     }
 
     public FSTexture colorTexture(){
@@ -195,13 +210,6 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
         return (FSElement.Short)element(FSElementRegisry.ELEMENT_INDEX);
     }
 
-    public void programPreBuild(FSP program, FSP.CoreConfig core, int debug){}
-
-    @Override
-    public void register(FSAutomator automator, FSGlobal global){
-        throw new RuntimeException("Default instance type is not registrable");
-    }
-
     @Override
     public void updateSchematicBoundaries(){
         schematics.updateBoundaries();
@@ -236,9 +244,6 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
 
     @Override
     public void scanComplete(){}
-
-    @Override
-    public void bufferComplete(){}
 
     @Override
     public void buildComplete(){}
@@ -315,8 +320,6 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
         }else{
             Helper.throwMissingAllFlags();
         }
-
-        mesh = src.mesh;
     }
 
     @Override
@@ -326,7 +329,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
 
     @Override
     public void destroy(){
-        mesh = null;
+        parent = null;
         schematics = null;
         modelmatrix = null;
         colortexture = null;
