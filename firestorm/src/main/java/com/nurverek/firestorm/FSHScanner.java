@@ -7,15 +7,17 @@ public abstract class FSHScanner{
     protected FSHAssembler assembler;
     protected FSBufferTargets buffertarget;
     protected FSP program;
-    protected FSMesh<? extends FSInstance> target;
+    protected FSMesh<FSInstance> target;
     protected String name;
 
-    protected FSHScanner(FSMesh<? extends FSInstance> target, FSP program, FSBufferTargets buffetarget, FSHAssembler assembler, String name){
+    protected FSHScanner(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffetarget, FSHAssembler assembler, String name){
         this.target = target;
         this.program = program;
         this.buffertarget = buffetarget;
         this.assembler = assembler;
         this.name = name.toLowerCase();
+
+        target.name(name);
     }
 
     abstract boolean scan(FSAutomator automator, FSM.Data data);
@@ -65,7 +67,7 @@ public abstract class FSHScanner{
 
     public static class Singular extends FSHScanner{
 
-        public Singular(FSMesh<? extends FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name){
+        public Singular(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name){
             super(target, program, buffertarget, assembler, name);
         }
 
@@ -76,8 +78,8 @@ public abstract class FSHScanner{
                     throw new RuntimeException("Found more than one instance for a singular scanner [" + target.name() + "]");
                 }
 
-                target.name(name);
-                FSInstance instance = target.add(data.name);
+                FSInstance instance = new FSInstance(data.name);
+                target.add(instance);
 
                 assembler.buildFirst(instance, this, data);
                 return true;
@@ -89,17 +91,17 @@ public abstract class FSHScanner{
 
     public static class Instanced extends FSHScanner{
 
-        public Instanced(FSMesh<? extends FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname){
+        public Instanced(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname){
             super(target, program, buffertarget, assembler, substringname);
         }
 
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
-                FSInstance instance = target.add(data.name);
+                FSInstance instance = new FSInstance(data.name);
+                target.add(instance);
 
                 if(target.size() == 1){
-                    target.name(name);
                     assembler.buildFirst(instance, this, data);
 
                 }else{
@@ -117,7 +119,7 @@ public abstract class FSHScanner{
 
         private final int copycount;
 
-        public InstancedCopy(FSMesh<? extends FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int copycount){
+        public InstancedCopy(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int copycount){
             super(target, program, buffertarget, assembler, prefixname);
             this.copycount = copycount;
         }
@@ -125,13 +127,14 @@ public abstract class FSHScanner{
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
-                target.name(name);
-                FSInstance instance = target.add(data.name);
+                FSInstance instance = new FSInstance(data.name);
+                target.add(instance);
 
                 assembler.buildFirst(instance, this, data);
 
                 for(int i = 0; i < copycount; i++){
-                    instance = target.add(data.name);
+                    instance = new FSInstance(data.name);
+                    target.add(instance);
 
                     assembler.buildFirst(instance, this, data);
                 }

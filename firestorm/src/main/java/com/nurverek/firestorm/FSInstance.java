@@ -14,7 +14,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
     public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
 
-    protected FSMesh<? extends FSInstance> parent;
+    protected FSMesh<FSInstance> parent;
     protected FSElementStore store;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
@@ -25,9 +25,8 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     protected String name;
     protected long id;
 
-    public FSInstance(FSMesh<? extends FSInstance> parent, String name){
+    public FSInstance(String name){
         this.name = name;
-        this.parent = parent;
 
         store = new FSElementStore();
         schematics = new FSSchematics(this);
@@ -56,7 +55,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
 
     @Override
     public void parent(FSRenderableType<?> parent){
-        this.parent = (FSMesh<? extends FSInstance>)parent;
+        this.parent = (FSMesh<FSInstance>)parent;
     }
 
     @Override
@@ -99,7 +98,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     @Override
-    public FSMesh<? extends FSInstance> parent(){
+    public FSMesh<FSInstance> parent(){
         return parent;
     }
 
@@ -122,7 +121,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
         return positions().size() / FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION];
     }
 
-    public FSMesh<? extends FSInstance> mesh(){
+    public FSMesh<FSInstance> mesh(){
         return parent;
     }
 

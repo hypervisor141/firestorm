@@ -28,20 +28,15 @@ public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRend
     }
 
     public abstract VLListType<TYPE> generateEntryList();
-    public abstract TYPE generateEntry(String name);
     public abstract FSConfigGroup generateInternalConfigs();
 
     public void register(FSAutomator automator, String searchterm, FSGlobal global){
         name(searchterm);
     }
 
-    public TYPE add(String name){
-        TYPE entry = generateEntry(name);
-
-        entry.parent(this);
+    public void add(TYPE entry){
         entries.add(entry);
-
-        return entry;
+        entry.parent(this);
     }
 
     public void bindManual(int element, FSBufferBinding<?> binding){
