@@ -22,6 +22,10 @@ public class FSAutomator{
         files.add(entry);
     }
 
+    public void add(FSHScanner scanner){
+        scanners.add(scanner);
+    }
+
     public FileTarget get(int index){
         return files.get(index);
     }
