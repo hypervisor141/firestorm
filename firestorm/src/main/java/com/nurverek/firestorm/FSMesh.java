@@ -4,7 +4,7 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
+public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -19,14 +19,20 @@ public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRendera
 
     protected long id;
 
-    protected FSMesh(){
+    public FSMesh(int capacity, int resizer){
         bindings = new VLListType[FSElementRegisry.COUNT];
 
-        entries = generateEntryList();
+        entries = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();
     }
 
-    public abstract VLListType<TYPE> generateEntryList();
+    public FSMesh(FSMesh<TYPE> src, long flags){
+        copy(src, flags);
+    }
+
+    protected FSMesh(){
+
+    }
 
     public void register(FSAutomator automator, String name, FSGlobal global){
         name(name);
@@ -313,6 +319,11 @@ public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRendera
         }else{
             Helper.throwMissingAllFlags();
         }
+    }
+
+    @Override
+    public FSRenderableType duplicate(long flags){
+        return new FSMesh<TYPE>(this, flags);
     }
 
     @Override
