@@ -5,7 +5,7 @@ import vanguard.VLListType;
 import vanguard.VLLog;
 import vanguard.VLLoggable;
 
-public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable{
+public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSConfigType{
 
     public static final Mode MODE_FULLTIME = new Mode(){
 
@@ -116,10 +116,12 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable{
 
     public abstract int getGLSLSize();
 
+    @Override
     public void run(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
         mode.configure(pass, this, program, mesh, meshindex, passindex);
     }
 
+    @Override
     public void runDebug(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
         mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
     }

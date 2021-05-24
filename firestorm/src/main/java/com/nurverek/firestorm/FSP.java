@@ -211,9 +211,7 @@ public abstract class FSP{
                     log.addTag(mesh.name);
                     log.addTag("InternalConfig");
 
-                    if(mesh.configs != null){
-                        mesh.configs.configureDebug(pass, this, mesh, i, passindex, log, debug);
-                    }
+                    mesh.runDebug(pass, this, mesh, i, passindex, log, debug);
 
                     log.removeLastTag();
                     log.addTag("MeshConfig");
@@ -239,10 +237,7 @@ public abstract class FSP{
                 for(int i = 0; i < meshsize; i++){
                     FSMesh<FSInstance> mesh = meshes.get(i);
 
-                    if(mesh.configs != null){
-                        mesh.configs.configure(pass, this, mesh, i, passindex);
-                    }
-
+                    mesh.run(pass, this, mesh, i, passindex);
                     coreconfigs.meshconfig.run(pass, this, mesh, i, passindex);
                 }
             }

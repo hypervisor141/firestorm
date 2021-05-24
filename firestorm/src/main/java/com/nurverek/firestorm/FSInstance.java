@@ -3,9 +3,10 @@ package com.nurverek.firestorm;
 import vanguard.VLArrayFloat;
 import vanguard.VLArrayShort;
 import vanguard.VLCopyable;
+import vanguard.VLLog;
 import vanguard.VLVMatrix;
 
-public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSInstance>{
+public class FSInstance implements FSRenderableType{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -21,6 +22,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     protected FSTexture colortexture;
     protected FSLightMaterial material;
     protected FSLightMap lightmap;
+    protected FSConfig configs;
 
     protected String name;
     protected long id;
@@ -54,7 +56,7 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     @Override
-    public void parent(FSRenderableType<?> parent){
+    public void parent(FSRenderableType parent){
         this.parent = (FSMesh<FSInstance>)parent;
     }
 
@@ -103,8 +105,13 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     @Override
-    public FSRenderableType<?> parentRoot(){
+    public FSRenderableType parentRoot(){
         return parent == null ? null : parent.parentRoot();
+    }
+
+    @Override
+    public FSConfig configs(){
+        return configs;
     }
 
     @Override
@@ -210,6 +217,26 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     @Override
+    public void run(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
+        if(configs != null){
+            configs.run(pass, program, mesh, meshindex, passindex);
+        }
+    }
+
+    @Override
+    public void runDebug(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+        if(configs != null){
+            configs.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+        }
+    }
+
+    @Override
+    public void scanComplete(){}
+
+    @Override
+    public void buildComplete(){}
+
+    @Override
     public void updateSchematicBoundaries(){
         schematics.updateBoundaries();
     }
@@ -242,78 +269,74 @@ public class FSInstance implements VLCopyable<FSInstance>, FSRenderableType<FSIn
     }
 
     @Override
-    public void scanComplete(){}
+    public void copy(FSRenderableType src, long flags){
+        FSInstance target = (FSInstance)src;
 
-    @Override
-    public void buildComplete(){}
-
-    @Override
-    public void copy(FSInstance src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
-            store = src.store;
-            schematics = src.schematics;
-            modelmatrix = src.modelmatrix;
-            colortexture = src.colortexture;
-            material = src.material;
-            lightmap = src.lightmap;
-            name = src.name;
-            id = src.id;
+            store = target.store;
+            schematics = target.schematics;
+            modelmatrix = target.modelmatrix;
+            colortexture = target.colortexture;
+            material = target.material;
+            lightmap = target.lightmap;
+            name = target.name;
+            id = target.id;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            store = src.store.duplicate(FLAG_DUPLICATE);
-            schematics = src.schematics.duplicate(FLAG_DUPLICATE);
+            store = target.store.duplicate(FLAG_DUPLICATE);
+            schematics = target.schematics.duplicate(FLAG_DUPLICATE);
 
             if(modelmatrix != null){
-                modelmatrix = src.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+                modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
             }
             if(material != null){
-                material = src.material.duplicate(FLAG_DUPLICATE);
+                material = target.material.duplicate(FLAG_DUPLICATE);
             }
 
-            colortexture = src.colortexture;
-            lightmap = src.lightmap;
-            name = src.name.concat("_duplicate").concat(String.valueOf(id));
+            colortexture = target.colortexture;
+            lightmap = target.lightmap;
+            name = target.name.concat("_duplicate").concat(String.valueOf(id));
             id = FSControl.getNextID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            colortexture = src.colortexture;
-            lightmap = src.lightmap;
+            colortexture = target.colortexture;
+            lightmap = target.lightmap;
 
             if((flags & FLAG_FORCE_DUPLICATE_STORAGE) == FLAG_FORCE_DUPLICATE_STORAGE){
-                store = src.store.duplicate(FLAG_DUPLICATE);
+                store = target.store.duplicate(FLAG_DUPLICATE);
 
             }else{
-                store = src.store.duplicate(FLAG_REFERENCE);
+                store = target.store.duplicate(FLAG_REFERENCE);
             }
             if((flags & FLAG_DUPLICATE_SCHEMATICS) == FLAG_DUPLICATE_SCHEMATICS){
-                schematics = src.schematics.duplicate(FLAG_DUPLICATE);
+                schematics = target.schematics.duplicate(FLAG_DUPLICATE);
 
             }else{
-                schematics = src.schematics.duplicate(FLAG_REFERENCE);
+                schematics = target.schematics.duplicate(FLAG_REFERENCE);
             }
             if(material != null && (flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
-                material = src.material.duplicate(VLCopyable.FLAG_DUPLICATE);
+                material = target.material.duplicate(VLCopyable.FLAG_DUPLICATE);
 
             }else{
-                material = src.material.duplicate(VLCopyable.FLAG_REFERENCE);
+                material = target.material.duplicate(VLCopyable.FLAG_REFERENCE);
             }
             if(modelmatrix != null && (flags & FLAG_DUPLICATE_MODEL_MATRIX) == FLAG_DUPLICATE_MODEL_MATRIX){
-                modelmatrix = src.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+                modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
 
             }else{
-                modelmatrix = src.modelmatrix.duplicate(FLAG_REFERENCE);
+                modelmatrix = target.modelmatrix.duplicate(FLAG_REFERENCE);
             }
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
                 id = FSControl.getNextID();
 
             }else{
-                id = src.id;
+                id = target.id;
             }
             if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
-                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+                name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
             }else{
-                name = src.name;
+                name = target.name;
             }
 
         }else{

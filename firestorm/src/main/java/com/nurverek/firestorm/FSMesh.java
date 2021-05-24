@@ -4,17 +4,17 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLLog;
 
-public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRenderableType<FSMesh<TYPE>>{
+public abstract class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
     public static final long FLAG_DUPLICATE_CONFIGS = 0x100000L;
 
-    protected FSRenderableType<?> parent;
+    protected FSRenderableType parent;
     protected VLListType<TYPE> entries;
     protected VLListType<FSBufferBinding<?>>[] bindings;
-    protected FSConfigGroup configs;
+    protected FSConfig configs;
     protected String name;
 
     protected long id;
@@ -48,7 +48,7 @@ public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRend
     }
 
     @Override
-    public void parent(FSRenderableType<?> parent){
+    public void parent(FSRenderableType parent){
         this.parent = parent;
     }
 
@@ -82,7 +82,8 @@ public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRend
         return entries.get(index);
     }
 
-    public FSConfigGroup internalConfigs(){
+    @Override
+    public FSConfig configs(){
         return configs;
     }
 
@@ -103,12 +104,12 @@ public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRend
     }
 
     @Override
-    public FSRenderableType<?> parent(){
+    public FSRenderableType parent(){
         return parent;
     }
 
     @Override
-    public FSRenderableType<?> parentRoot(){
+    public FSRenderableType parentRoot(){
         return parent == null ? null : parent.parentRoot();
     }
 
@@ -124,6 +125,32 @@ public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRend
 
     public int size(){
         return entries.size();
+    }
+
+    @Override
+    public void run(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
+        if(configs != null){
+            configs.run(pass, program, mesh, meshindex, passindex);
+        }
+
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).run(pass, program, mesh, meshindex, passindex);
+        }
+    }
+
+    @Override
+    public void runDebug(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+        if(configs != null){
+            configs.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+        }
+
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+        }
     }
 
     @Override
@@ -244,43 +271,45 @@ public abstract class FSMesh<TYPE extends FSRenderableType<?>> implements FSRend
     }
 
     @Override
-    public void copy(FSMesh<TYPE> src, long flags){
+    public void copy(FSRenderableType src, long flags){
+        FSMesh<TYPE> target = (FSMesh<TYPE>)src;
+
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
-            entries = src.entries;
-            configs = src.configs;
-            name = src.name;
-            id = src.id;
+            entries = target.entries;
+            configs = target.configs;
+            name = target.name;
+            id = target.id;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            entries = src.entries.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
-            configs = src.configs.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
-            name = src.name.concat("_duplicate").concat(String.valueOf(id));
+            entries = target.entries.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            configs = target.configs.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            name = target.name.concat("_duplicate").concat(String.valueOf(id));
             id = FSControl.getNextID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_FORCE_DUPLICATE_entryS) == FLAG_FORCE_DUPLICATE_entryS){
-                entries = src.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+                entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             }else{
-                entries = src.entries.duplicate(VLListType.FLAG_REFERENCE);
+                entries = target.entries.duplicate(VLListType.FLAG_REFERENCE);
             }
             if((flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
-                configs = src.configs.duplicate(FLAG_DUPLICATE);
+                configs = target.configs.duplicate(FLAG_DUPLICATE);
 
             }else{
-                configs = src.configs.duplicate(FLAG_REFERENCE);
+                configs = target.configs.duplicate(FLAG_REFERENCE);
             }
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
                 id = FSControl.getNextID();
 
             }else{
-                id = src.id;
+                id = target.id;
             }
             if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
-                name = src.name.concat("_duplicate").concat(String.valueOf(id));
+                name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
             }else{
-                name = src.name;
+                name = target.name;
             }
 
         }else{
