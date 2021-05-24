@@ -362,6 +362,7 @@ public class FSInstance implements FSRenderableType{
         material = null;
         lightmap = null;
         store = null;
+        configs = null;
         name = null;
 
         id = -1;
