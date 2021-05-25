@@ -120,7 +120,7 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
 
     @Override
     public FSRenderableType parentRoot(){
-        return parent == null ? null : parent.parentRoot();
+        return parent == null ? this : parent.parentRoot();
     }
 
     @Override
