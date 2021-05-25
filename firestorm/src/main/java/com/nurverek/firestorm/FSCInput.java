@@ -121,11 +121,11 @@ public final class FSCInput{
 
     private static final class TaskProcessInput implements FSRTask{
 
-        protected final Type type;
-        protected final MotionEvent e1;
-        protected final MotionEvent e2;
-        protected final float f1;
-        protected final float f2;
+        protected Type type;
+        protected MotionEvent e1;
+        protected MotionEvent e2;
+        protected float f1;
+        protected float f2;
 
         protected TaskProcessInput(Type type, MotionEvent e1, MotionEvent e2, float f1, float f2){
             this.type = type;
@@ -133,6 +133,10 @@ public final class FSCInput{
             this.e2 = e2;
             this.f1 = f1;
             this.f2 = f2;
+        }
+
+        protected TaskProcessInput(){
+
         }
 
         @Override
@@ -173,6 +177,10 @@ public final class FSCInput{
             this.mesh = mesh;
             this.instanceindex = instanceindex;
             this.listener = listener;
+        }
+
+        protected MeshEntry(){
+
         }
 
         @Override

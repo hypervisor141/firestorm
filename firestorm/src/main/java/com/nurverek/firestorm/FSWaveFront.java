@@ -13,18 +13,21 @@ public final class FSWaveFront{
 
     public VLListType<Data> data;
 
-    private final int dataresizer;
-    private int pdivider;
+    protected int dataresizer;
+    protected int pdivider;
 
-    private int positioncount;
-    private int uvcount;
-    private int normalcount;
+    protected int positioncount;
+    protected int uvcount;
+    protected int normalcount;
 
     public FSWaveFront(int objcapacity, int subdataresizer){
         data = new VLListType<>(objcapacity, objcapacity);
         this.dataresizer = subdataresizer;
     }
 
+    protected FSWaveFront(){
+
+    }
 
     public void load(InputStream input, boolean fullsizedposition) throws IOException{
         InputStreamReader isr = new InputStreamReader(input);

@@ -23,7 +23,7 @@ public class FSMesh<TYPE extends FSRenderableType> implements FSRenderableType{
         this.name = name;
 
         configs = generateInternalConfigs();
-        bindings = new VLListType[FSElementRegisry.COUNT];
+        bindings = new VLListType[FSElements.COUNT];
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();
     }

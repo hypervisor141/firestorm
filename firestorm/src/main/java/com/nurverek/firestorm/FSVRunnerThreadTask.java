@@ -20,4 +20,8 @@ public class FSVRunnerThreadTask extends VLVRunnerThreadTask{
     public FSVRunnerThreadTask(VLVTypeRunner root, long freqmillis, int freqextrananos, boolean enablecomensator, PostReporter reporter, boolean debug){
         super(root, freqmillis, freqextrananos, enablecomensator, reporter, debug);
     }
+
+    protected FSVRunnerThreadTask(){
+
+    }
 }

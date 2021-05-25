@@ -12,6 +12,10 @@ public final class FSLightMap{
         this.normal = normal;
     }
 
+    protected FSLightMap(){
+
+    }
+
     public FSTexture diffuse(){
         return diffuse;
     }

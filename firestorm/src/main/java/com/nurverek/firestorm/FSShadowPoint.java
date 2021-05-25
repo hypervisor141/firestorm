@@ -9,7 +9,7 @@ import vanguard.VLInt;
 
 public final class FSShadowPoint extends FSShadow<FSLightPoint>{
 
-    private final VLArrayFloat[] lightvp;
+    private VLArrayFloat[] lightvp;
     protected VLFloat znear;
     protected VLFloat zfar;
 
@@ -26,6 +26,10 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
         }
 
         updateLightVP();
+    }
+
+    protected FSShadowPoint(){
+
     }
 
     @Override

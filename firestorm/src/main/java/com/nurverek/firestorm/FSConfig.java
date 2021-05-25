@@ -90,7 +90,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSCo
         }
     };
 
-    private Mode mode;
+    protected Mode mode;
 
     public FSConfig(Mode mode){
         this.mode = mode;

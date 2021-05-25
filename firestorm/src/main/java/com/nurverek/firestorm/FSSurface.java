@@ -13,11 +13,10 @@ import androidx.core.view.GestureDetectorCompat;
 
 public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, GestureDetector.OnGestureListener{
 
-    private GestureDetectorCompat gesture;
-    private Config config;
-    private FSEvents events;
-
-    private final int[] eglconfig;
+    protected GestureDetectorCompat gesture;
+    protected Config config;
+    protected FSEvents events;
+    protected int[] eglconfig;
 
     public FSSurface(Context context, int[] eglconfig, FSEvents events){
         super(context);
@@ -46,6 +45,10 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
         this.events = events;
 
         initializeFields();
+    }
+
+    protected FSSurface(Context context){
+        super(context);
     }
 
     private void initializeFields(){
@@ -182,7 +185,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     public static class Config{
 
-        private boolean touchable;
+        protected boolean touchable;
 
         public Config(){
             touchable = true;

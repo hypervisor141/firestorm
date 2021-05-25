@@ -5,8 +5,8 @@ import vanguard.VLLog;
 
 public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
 
-    private TYPE config;
-    private int glslsize;
+    protected TYPE config;
+    protected int glslsize;
 
     public FSConfigDynamic(Mode mode, TYPE config){
         super(mode);

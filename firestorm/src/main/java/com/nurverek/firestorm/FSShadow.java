@@ -27,6 +27,10 @@ public abstract class FSShadow<LIGHT extends FSLight>{
         this.maxbias = maxbias;
     }
 
+    protected FSShadow(){
+
+    }
+
     public void initialize(VLInt texunit){
         texture = initializeTexture(texunit, width, height);
         framebuffer = initializeFrameBuffer(texture);

@@ -20,6 +20,10 @@ public abstract class FSHScanner{
         target.name(name);
     }
 
+    protected FSHScanner(){
+
+    }
+
     abstract boolean scan(FSAutomator automator, FSM.Data data);
 
     void signalScanComplete(){
@@ -71,6 +75,10 @@ public abstract class FSHScanner{
             super(target, program, buffertarget, assembler, name);
         }
 
+        protected Singular(){
+
+        }
+
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.equalsIgnoreCase(name)){
@@ -95,6 +103,10 @@ public abstract class FSHScanner{
             super(target, program, buffertarget, assembler, substringname);
         }
 
+        protected Instanced(){
+
+        }
+
         @Override
         boolean scan(FSAutomator automator, FSM.Data data){
             if(data.name.contains(name)){
@@ -117,11 +129,15 @@ public abstract class FSHScanner{
 
     public static class InstancedCopy extends FSHScanner{
 
-        private final int copycount;
+        protected int copycount;
 
         public InstancedCopy(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int copycount){
             super(target, program, buffertarget, assembler, prefixname);
             this.copycount = copycount;
+        }
+
+        protected InstancedCopy(){
+
         }
 
         @Override

@@ -22,13 +22,17 @@ public class FSArrayModel extends VLArrayFloat{
         super(s);
     }
 
-    public FSArrayModel(){
-        super(new float[FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_MODEL]]);
+    public FSArrayModel(int size){
+        super(size);
         identity();
     }
 
     public FSArrayModel(FSArrayModel src, long flags){
         copy(src, flags);
+    }
+
+    protected FSArrayModel(){
+
     }
 
     @Override

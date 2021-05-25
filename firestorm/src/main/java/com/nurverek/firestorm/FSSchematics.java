@@ -4,9 +4,9 @@ import vanguard.VLCopyable;
 import vanguard.VLListType;
 import vanguard.VLUpdater;
 
-public final class FSSchematics implements VLCopyable<FSSchematics>{
+public class FSSchematics implements VLCopyable<FSSchematics>{
 
-    private static final VLUpdater<FSSchematics> UPDATE_CENTROID = new VLUpdater<FSSchematics>(){
+    protected static final VLUpdater<FSSchematics> UPDATE_CENTROID = new VLUpdater<FSSchematics>(){
 
         @Override
         public void update(FSSchematics s){
@@ -14,7 +14,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             s.centroidupdater = UPDATE_NOTHING;
         }
     };
-    private static final VLUpdater<FSSchematics> UPDATE_MODEL = new VLUpdater<FSSchematics>(){
+    protected static final VLUpdater<FSSchematics> UPDATE_MODEL = new VLUpdater<FSSchematics>(){
 
         @Override
         public void update(FSSchematics s){
@@ -22,7 +22,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             s.modelupdater = UPDATE_NOTHING;
         }
     };
-    private static final VLUpdater<FSSchematics> UPDATE_MVP = new VLUpdater<FSSchematics>(){
+    protected static final VLUpdater<FSSchematics> UPDATE_MVP = new VLUpdater<FSSchematics>(){
 
         @Override
         public void update(FSSchematics s){
@@ -31,24 +31,24 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
         }
     };
 
-    private static final FSBounds.Collision COLLISIONCACHE = new FSBounds.Collision();
+    protected static final FSBounds.Collision COLLISIONCACHE = new FSBounds.Collision();
 
-    private FSInstance instance;
+    protected FSInstance instance;
 
-    private VLUpdater<FSSchematics> centroidupdater;
-    private VLUpdater<FSSchematics> modelupdater;
-    private VLUpdater<FSSchematics> mvpupdater;
+    protected VLUpdater<FSSchematics> centroidupdater;
+    protected VLUpdater<FSSchematics> modelupdater;
+    protected VLUpdater<FSSchematics> mvpupdater;
 
-    private VLListType<FSBounds> mainbounds;
-    private VLListType<FSBounds> inputbounds;
+    protected VLListType<FSBounds> mainbounds;
+    protected VLListType<FSBounds> inputbounds;
 
-    private float[] centroid;
-    private float[] centroidmodel;
-    private float[] centroidmvp;
+    protected float[] centroid;
+    protected float[] centroidmodel;
+    protected float[] centroidmvp;
 
-    private float[] bounds;
-    private float[] boundsmodel;
-    private float[] boundsmvp;
+    protected float[] bounds;
+    protected float[] boundsmodel;
+    protected float[] boundsmvp;
 
     public FSSchematics(FSInstance instance){
         this.instance = instance;
@@ -59,6 +59,10 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
 
     public FSSchematics(FSSchematics src, long flags){
         copy(src, flags);
+    }
+
+    protected FSSchematics(){
+
     }
 
     @Override
@@ -101,7 +105,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void initialize(){
-        bounds = new float[FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION] * 2];
+        bounds = new float[FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION] * 2];
         centroid = new float[4];
         centroidmodel = new float[4];
         centroidmvp = new float[4];
@@ -130,7 +134,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
         centroid[1] = 0;
         centroid[2] = 0;
 
-        for(int index = 0; index < size; index += FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION]){
+        for(int index = 0; index < size; index += FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION]){
             x = vertices[index];
             y = vertices[index + 1];
             z = vertices[index + 2];
@@ -166,7 +170,7 @@ public final class FSSchematics implements VLCopyable<FSSchematics>{
             }
         }
 
-        int pointcount = size / FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION];
+        int pointcount = size / FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
         centroid[0] /= pointcount;
         centroid[1] /= pointcount;

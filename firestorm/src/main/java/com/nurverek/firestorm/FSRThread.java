@@ -9,19 +9,23 @@ import vanguard.VLThreadTaskType;
 public class FSRThread extends VLThread{
 
     public FSRThread(){
-        super(50);
+        super(10);
     }
 
     public static class TaskCreateContext implements VLThreadTaskType{
 
-        private SurfaceHolder holder;
-        private final int[] attributes;
-        private final boolean continuing;
+        protected SurfaceHolder holder;
+        protected int[] attributes;
+        protected boolean continuing;
 
         protected TaskCreateContext(SurfaceHolder holder, int[] attributes, boolean continuing){
             this.holder = holder;
             this.attributes = attributes;
             this.continuing = continuing;
+        }
+
+        protected TaskCreateContext(){
+
         }
 
         @Override
@@ -33,15 +37,19 @@ public class FSRThread extends VLThread{
 
     public static class TaskSignalSurfaceCreated implements VLThreadTaskType{
 
-        private FSSurface surface;
-        private Context context;
+        protected FSSurface surface;
+        protected Context context;
 
-        private final boolean continuing;
+        private boolean continuing;
 
         protected TaskSignalSurfaceCreated(FSSurface surface, Context context, boolean continuing){
             this.surface = surface;
             this.context = context;
             this.continuing = continuing;
+        }
+
+        protected TaskSignalSurfaceCreated(){
+
         }
 
         @Override
@@ -52,12 +60,12 @@ public class FSRThread extends VLThread{
 
     public static class TaskSignalSurfaceChanged implements VLThreadTaskType{
 
-        private FSSurface surface;
-        private Context context;
+        protected FSSurface surface;
+        protected Context context;
 
-        private final int format;
-        private final int width;
-        private final int height;
+        protected int format;
+        protected int width;
+        protected int height;
 
         protected TaskSignalSurfaceChanged(FSSurface surface, Context context, int format, int width, int height){
             this.surface = surface;
@@ -65,6 +73,10 @@ public class FSRThread extends VLThread{
             this.format = format;
             this.width = width;
             this.height = height;
+        }
+
+        protected TaskSignalSurfaceChanged(){
+
         }
 
         @Override

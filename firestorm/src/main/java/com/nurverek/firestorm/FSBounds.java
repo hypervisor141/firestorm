@@ -85,7 +85,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     public static final int DEPTH_SHALLOW_POINTS = 1;
 
     protected FSSchematics schematics;
-    private VLUpdater<FSBounds> updater;
+    protected VLUpdater<FSBounds> updater;
 
     protected Point offset;
     protected VLListType<Point> points;
@@ -230,6 +230,10 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             copy(src, flags);
         }
 
+        protected Point(){
+
+        }
+
         @Override
         public void copy(Point src, long flags){
             if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
@@ -308,7 +312,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             this.distance = src.distance;
         }
 
-        public Collision(){
+        protected Collision(){
 
         }
     }

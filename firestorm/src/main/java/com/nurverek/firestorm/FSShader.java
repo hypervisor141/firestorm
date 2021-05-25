@@ -51,6 +51,10 @@ public final class FSShader implements VLLoggable{
         program.shaders.add(this);
     }
 
+    protected FSShader(){
+
+    }
+
     public FSP program(){
         return program;
     }

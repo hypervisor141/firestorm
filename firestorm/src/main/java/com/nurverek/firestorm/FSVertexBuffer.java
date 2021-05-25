@@ -51,6 +51,10 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         id = -1;
     }
 
+    protected FSVertexBuffer(){
+
+    }
+
     public void initialize(){
         destroy();
 

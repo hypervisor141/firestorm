@@ -20,7 +20,7 @@ public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyabl
         copy(src, flags);
     }
 
-    public FSBufferBinding(){
+    protected FSBufferBinding(){
 
     }
 

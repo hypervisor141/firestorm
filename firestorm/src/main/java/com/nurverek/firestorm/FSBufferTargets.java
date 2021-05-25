@@ -11,6 +11,10 @@ public class FSBufferTargets{
         segments = new VLListType<>(capacity, capacity);
     }
 
+    protected FSBufferTargets(){
+
+    }
+
     public FSBufferTargets add(FSBufferSegment<?> segment){
         segments.add(segment);
         return this;

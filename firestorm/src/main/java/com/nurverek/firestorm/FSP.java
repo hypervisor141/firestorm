@@ -26,7 +26,7 @@ public abstract class FSP{
 
     protected CoreConfig coreconfigs;
 
-    protected final VLLog log;
+    protected VLLog log;
     protected int program;
     protected int debug;
     protected int uniformlocation;
@@ -42,6 +42,10 @@ public abstract class FSP{
 
         log = new VLLog(10);
         log.addTag(FSControl.LOGTAG);
+    }
+
+    protected FSP(){
+
     }
 
     protected abstract CoreConfig customize(VLListType<FSMesh<FSInstance>> meshes, int debug);
@@ -381,6 +385,10 @@ public abstract class FSP{
             this.postdrawconfig = postdrawconfig;
             this.postframeconfig = postframeconfig;
         }
+
+        protected CoreConfig(){
+
+        }
     }
 
     public static class Clear extends FSConfig{
@@ -393,8 +401,11 @@ public abstract class FSP{
         }
 
         public Clear(Clear src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Clear(){
+
         }
 
         @Override
@@ -438,8 +449,11 @@ public abstract class FSP{
         }
 
         public ClearColor(ClearColor src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected ClearColor(){
+
         }
 
         @Override
@@ -501,8 +515,11 @@ public abstract class FSP{
         }
 
         public ViewPort(ViewPort src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected ViewPort(){
+
         }
 
         @Override
@@ -567,8 +584,11 @@ public abstract class FSP{
         }
 
         public DepthMask(DepthMask src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected DepthMask(){
+
         }
 
         @Override
@@ -612,8 +632,11 @@ public abstract class FSP{
         }
 
         public CullFace(CullFace src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected CullFace(){
+
         }
 
         @Override
@@ -657,8 +680,11 @@ public abstract class FSP{
         }
 
         public AttribDivisor(AttribDivisor src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribDivisor(){
+
         }
 
         @Override
@@ -702,8 +728,11 @@ public abstract class FSP{
         }
 
         public ReadBuffer(ReadBuffer src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected ReadBuffer(){
+
         }
 
         @Override
@@ -750,6 +779,10 @@ public abstract class FSP{
             copy(src, flags);
         }
 
+        protected AttribEnable(){
+
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
             GLES32.glEnableVertexAttribArray(config.location());
@@ -793,8 +826,11 @@ public abstract class FSP{
         }
 
         public AttribDisable(AttribDisable src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribDisable(){
+
         }
 
         @Override
@@ -950,8 +986,8 @@ public abstract class FSP{
 
     public abstract static class ArrayElement<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
 
-        private int instance;
-        private int element;
+        protected int instance;
+        protected int element;
 
         public ArrayElement(Mode mode, int element, int instance, int offset, int count){
             super(mode, null, offset, count);
@@ -962,6 +998,10 @@ public abstract class FSP{
 
         public ArrayElement(Mode mode){
             super(mode);
+        }
+
+        protected ArrayElement(){
+
         }
 
         public final void set(int instance, int element){
@@ -1000,7 +1040,7 @@ public abstract class FSP{
             log.append(" instance[");
             log.append(instance);
             log.append("] element[");
-            log.append(FSElementRegisry.NAMES[element]);
+            log.append(FSElements.NAMES[element]);
             log.append("] array[");
 
             if(array == null){
@@ -1033,8 +1073,11 @@ public abstract class FSP{
         }
 
         public AttribPointer(AttribPointer src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribPointer(){
+
         }
 
         @Override
@@ -1045,7 +1088,7 @@ public abstract class FSP{
             int bytesize = tracker.typebytesize;
             binding.vbuffer.bind();
 
-            GLES32.glVertexAttribPointer(location, tracker.unitsubcount, FSElementRegisry.GLTYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
+            GLES32.glVertexAttribPointer(location, tracker.unitsubcount, FSElements.GLTYPES[element], normalized, tracker.stride * bytesize, tracker.offset * bytesize);
         }
 
         @Override
@@ -1074,7 +1117,7 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
-            log.append(FSElementRegisry.NAMES[element]);
+            log.append(FSElements.NAMES[element]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] normalized[");
@@ -1110,8 +1153,11 @@ public abstract class FSP{
         }
 
         public AttribIPointer(AttribIPointer src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribIPointer(){
+
         }
 
         @Override
@@ -1123,7 +1169,7 @@ public abstract class FSP{
 
             binding.vbuffer.bind();
 
-            GLES32.glVertexAttribIPointer(location, tracker.unitsubcount, FSElementRegisry.GLTYPES[element], tracker.stride * bytesize, tracker.offset * bytesize);
+            GLES32.glVertexAttribIPointer(location, tracker.unitsubcount, FSElements.GLTYPES[element], tracker.stride * bytesize, tracker.offset * bytesize);
         }
 
         @Override
@@ -1151,7 +1197,7 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
-            log.append(FSElementRegisry.NAMES[element]);
+            log.append(FSElements.NAMES[element]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] tracker[");
@@ -1179,8 +1225,11 @@ public abstract class FSP{
         }
 
         public UniformMatrix4fvd(UniformMatrix4fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected UniformMatrix4fvd(){
+
         }
 
         @Override
@@ -1201,8 +1250,11 @@ public abstract class FSP{
         }
 
         public UniformMatrix4fve(UniformMatrix4fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected UniformMatrix4fve(){
+
         }
 
         @Override
@@ -1224,8 +1276,11 @@ public abstract class FSP{
         }
 
         public Uniform4fvd(Uniform4fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform4fvd(){
+
         }
 
         @Override
@@ -1246,8 +1301,11 @@ public abstract class FSP{
         }
 
         public Uniform4fve(Uniform4fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform4fve(){
+
         }
 
         @Override
@@ -1270,8 +1328,11 @@ public abstract class FSP{
         }
 
         public Uniform3fvd(Uniform3fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform3fvd(){
+
         }
 
         @Override
@@ -1292,8 +1353,11 @@ public abstract class FSP{
         }
 
         public Uniform3fve(Uniform3fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform3fve(){
+
         }
 
         @Override
@@ -1315,8 +1379,11 @@ public abstract class FSP{
         }
 
         public Uniform2fvd(Uniform2fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform2fvd(){
+
         }
 
         @Override
@@ -1337,8 +1404,11 @@ public abstract class FSP{
         }
 
         public Uniform2fve(Uniform2fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform2fve(){
+
         }
 
         @Override
@@ -1360,8 +1430,11 @@ public abstract class FSP{
         }
 
         public Uniform1fvd(Uniform1fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform1fvd(){
+
         }
 
         @Override
@@ -1382,8 +1455,11 @@ public abstract class FSP{
         }
 
         public Uniform1fve(Uniform1fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform1fve(){
+
         }
 
         @Override
@@ -1415,8 +1491,11 @@ public abstract class FSP{
         }
 
         public Uniform4f(Uniform4f src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform4f(){
+
         }
 
         @Override
@@ -1465,8 +1544,11 @@ public abstract class FSP{
         }
 
         public Uniform3f(Uniform3f src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform3f(){
+
         }
 
         @Override
@@ -1511,8 +1593,11 @@ public abstract class FSP{
         }
 
         public Uniform2f(Uniform2f src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform2f(){
+
         }
 
         @Override
@@ -1552,8 +1637,11 @@ public abstract class FSP{
         }
 
         public Uniform1f(Uniform1f src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform1f(){
+
         }
 
         @Override
@@ -1588,8 +1676,11 @@ public abstract class FSP{
         }
 
         public Uniform4ivd(Uniform4ivd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform4ivd(){
+
         }
 
         @Override
@@ -1610,8 +1701,11 @@ public abstract class FSP{
         }
 
         public Uniform4ive(Uniform4ive src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform4ive(){
+
         }
 
         @Override
@@ -1636,6 +1730,10 @@ public abstract class FSP{
             copy(src, flags);
         }
 
+        protected Uniform3ivd(){
+
+        }
+
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
@@ -1654,8 +1752,11 @@ public abstract class FSP{
         }
 
         public Uniform3ive(Uniform3ive src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform3ive(){
+
         }
 
         @Override
@@ -1677,8 +1778,11 @@ public abstract class FSP{
         }
 
         public Uniform2ivd(Uniform2ivd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform2ivd(){
+
         }
 
         @Override
@@ -1699,8 +1803,11 @@ public abstract class FSP{
         }
 
         public Uniform2ive(Uniform2ive src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform2ive(){
+
         }
 
         @Override
@@ -1722,8 +1829,11 @@ public abstract class FSP{
         }
 
         public Uniform1ivd(Uniform1ivd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform1ivd(){
+
         }
 
         @Override
@@ -1744,8 +1854,11 @@ public abstract class FSP{
         }
 
         public Uniform1ive(Uniform1ive src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform1ive(){
+
         }
 
         @Override
@@ -1777,8 +1890,11 @@ public abstract class FSP{
         }
 
         public Uniform4i(Uniform4i src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform4i(){
+
         }
 
         @Override
@@ -1850,8 +1966,11 @@ public abstract class FSP{
         }
 
         public Uniform3i(Uniform3i src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform3i(){
+
         }
 
         @Override
@@ -1917,8 +2036,11 @@ public abstract class FSP{
         }
 
         public Uniform2i(Uniform2i src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform2i(){
+
         }
 
         @Override
@@ -1977,8 +2099,11 @@ public abstract class FSP{
         }
 
         public Uniform1i(Uniform1i src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Uniform1i(){
+
         }
 
         @Override
@@ -2028,8 +2153,11 @@ public abstract class FSP{
         }
 
         public Attrib4fvd(Attrib4fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib4fvd(){
+
         }
 
         @Override
@@ -2050,8 +2178,11 @@ public abstract class FSP{
         }
 
         public Attrib4fve(Attrib4fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib4fve(){
+
         }
 
         @Override
@@ -2073,8 +2204,11 @@ public abstract class FSP{
         }
 
         public Attrib3fvd(Attrib3fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib3fvd(){
+
         }
 
         @Override
@@ -2095,8 +2229,11 @@ public abstract class FSP{
         }
 
         public Attrib3fve(Attrib3fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib3fve(){
+
         }
 
         @Override
@@ -2118,8 +2255,11 @@ public abstract class FSP{
         }
 
         public Attrib2fvd(Attrib2fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib2fvd(){
+
         }
 
         @Override
@@ -2140,8 +2280,11 @@ public abstract class FSP{
         }
 
         public Attrib2fve(Attrib2fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib2fve(){
+
         }
 
         @Override
@@ -2163,8 +2306,11 @@ public abstract class FSP{
         }
 
         public Attrib1fvd(Attrib1fvd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib1fvd(){
+
         }
 
         @Override
@@ -2185,8 +2331,11 @@ public abstract class FSP{
         }
 
         public Attrib1fve(Attrib1fve src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected Attrib1fve(){
+
         }
 
         @Override
@@ -2218,8 +2367,11 @@ public abstract class FSP{
         }
 
         public AttribI4i(AttribI4i src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribI4i(){
+
         }
 
         @Override
@@ -2283,8 +2435,11 @@ public abstract class FSP{
         }
 
         public AttribI4ivd(AttribI4ivd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribI4ivd(){
+
         }
 
         @Override
@@ -2305,8 +2460,11 @@ public abstract class FSP{
         }
 
         public AttribI4ive(AttribI4ive src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribI4ive(){
+
         }
 
         @Override
@@ -2328,8 +2486,11 @@ public abstract class FSP{
         }
 
         public AttribI4uivd(AttribI4uivd src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribI4uivd(){
+
         }
 
         @Override
@@ -2350,8 +2511,11 @@ public abstract class FSP{
         }
 
         public AttribI4uive(AttribI4uive src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected AttribI4uive(){
+
         }
 
         @Override
@@ -2382,8 +2546,11 @@ public abstract class FSP{
         }
 
         public UniformBlockElement(UniformBlockElement src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected UniformBlockElement(){
+
         }
 
         @Override
@@ -2425,7 +2592,7 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
-            log.append(FSElementRegisry.NAMES[element]);
+            log.append(FSElements.NAMES[element]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] tracker[");
@@ -2459,8 +2626,11 @@ public abstract class FSP{
         }
 
         public UniformBlockData(UniformBlockData src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected UniformBlockData(){
+
         }
 
         @Override
@@ -2516,8 +2686,11 @@ public abstract class FSP{
         }
 
         public TextureBind(TextureBind src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected TextureBind(){
+
         }
 
         @Override
@@ -2556,8 +2729,11 @@ public abstract class FSP{
         }
 
         public TextureColorBind(TextureColorBind src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected TextureColorBind(){
+
         }
 
         @Override
@@ -2591,8 +2767,11 @@ public abstract class FSP{
         }
 
         public TextureColorUnit(TextureColorUnit src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected TextureColorUnit(){
+
         }
 
         @Override
@@ -2627,8 +2806,11 @@ public abstract class FSP{
         }
 
         public DrawArrays(DrawArrays src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected DrawArrays(){
+
         }
 
         @Override
@@ -2668,8 +2850,11 @@ public abstract class FSP{
         }
 
         public DrawArraysInstanced(DrawArraysInstanced src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected DrawArraysInstanced(){
+
         }
 
         @Override
@@ -2714,17 +2899,20 @@ public abstract class FSP{
         }
 
         public DrawElements(DrawElements src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected DrawElements(){
+
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
-            FSBufferBinding<?> binding = mesh.binding(FSElementRegisry.ELEMENT_INDEX, bindingindex);
+            FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
-            GLES32.glDrawElements(drawmode, tracker.count, FSElementRegisry.GLTYPES[FSElementRegisry.ELEMENT_INDEX], tracker.offset * FSElementRegisry.BYTES[FSElementRegisry.ELEMENT_INDEX]);
+            GLES32.glDrawElements(drawmode, tracker.count, FSElements.GLTYPES[FSElements.ELEMENT_INDEX], tracker.offset * FSElements.BYTES[FSElements.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2748,12 +2936,12 @@ public abstract class FSP{
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
-            log.append(FSElementRegisry.NAMES[FSElementRegisry.ELEMENT_INDEX]);
+            log.append(FSElements.NAMES[FSElements.ELEMENT_INDEX]);
             log.append("] bindingIndex[");
             log.append(bindingindex);
             log.append("] buffer[");
 
-            mesh.binding(FSElementRegisry.ELEMENT_INDEX, bindingindex).vbuffer.log(log, BUFFER_PRINT_LIMIT);
+            mesh.binding(FSElements.ELEMENT_INDEX, bindingindex).vbuffer.log(log, BUFFER_PRINT_LIMIT);
 
             log.append("]");
         }
@@ -2772,17 +2960,20 @@ public abstract class FSP{
         }
 
         public DrawElementsInstanced(DrawElementsInstanced src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected DrawElementsInstanced(){
+
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
-            FSBufferBinding<?> binding = mesh.binding(FSElementRegisry.ELEMENT_INDEX, bindingindex);
+            FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
-            GLES32.glDrawElementsInstanced(drawmode, tracker.count, FSElementRegisry.GLTYPES[FSElementRegisry.ELEMENT_INDEX], tracker.offset * FSElementRegisry.BYTES[FSElementRegisry.ELEMENT_INDEX], mesh.size());
+            GLES32.glDrawElementsInstanced(drawmode, tracker.count, FSElements.GLTYPES[FSElements.ELEMENT_INDEX], tracker.offset * FSElements.BYTES[FSElements.ELEMENT_INDEX], mesh.size());
         }
 
         @Override
@@ -2814,7 +3005,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBinding<?> binding = mesh.binding(FSElementRegisry.ELEMENT_INDEX, bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
 
                 binding.tracker.log(log, null);
                 log.append("] buffer[");
@@ -2848,17 +3039,20 @@ public abstract class FSP{
         }
 
         public DrawRangeElements(DrawRangeElements src, long flags){
-            super(null);
             copy(src, flags);
+        }
+
+        protected DrawRangeElements(){
+
         }
 
         @Override
         public void configure(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
-            FSBufferBinding<?> binding = mesh.binding(FSElementRegisry.ELEMENT_INDEX, bindingindex);
+            FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
             binding.vbuffer.bind();
-            GLES32.glDrawRangeElements(drawmode, start, end, count, FSElementRegisry.GLTYPES[FSElementRegisry.ELEMENT_INDEX], tracker.offset * FSElementRegisry.BYTES[FSElementRegisry.ELEMENT_INDEX]);
+            GLES32.glDrawRangeElements(drawmode, start, end, count, FSElements.GLTYPES[FSElements.ELEMENT_INDEX], tracker.offset * FSElements.BYTES[FSElements.ELEMENT_INDEX]);
         }
 
         @Override
@@ -2899,7 +3093,7 @@ public abstract class FSP{
             log.append("] tracker[");
 
             try{
-                FSBufferBinding<?> binding = mesh.binding(FSElementRegisry.ELEMENT_INDEX, bindingindex);
+                FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
 
                 binding.tracker.log(log, null);
                 log.append("] buffer[");
@@ -2923,7 +3117,7 @@ public abstract class FSP{
         public int[] type = new int[1];
         public byte[] name = new byte[BUFFER_SIZE];
 
-        private QueryResults(){
+        protected QueryResults(){
 
         }
 

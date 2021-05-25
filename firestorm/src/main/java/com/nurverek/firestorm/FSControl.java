@@ -21,7 +21,7 @@ public final class FSControl{
     private static long GLOBAL_ID;
     private static final Object IDLOCK = new Object();
 
-    public static void initialize(Context appcontext, FSSurface surface, FSView view, FSRInterface threadinterface, FSGlobal global, FSElementRegisry.CustomElements customelements, boolean destroyonpause, int maxunchangedframes, int maxqueuedframes){
+    public static void initialize(Context appcontext, FSSurface surface, FSView view, FSRInterface threadinterface, FSGlobal global, FSElements.CustomElements customelements, boolean destroyonpause, int maxunchangedframes, int maxqueuedframes){
         FSControl.appcontext = appcontext;
         FSControl.surface = surface;
         FSControl.events = surface.events();
@@ -31,7 +31,7 @@ public final class FSControl{
         if(!isAlive()){
             GLOBAL_ID = 1000;
 
-            FSElementRegisry.initialize(customelements);
+            FSElements.initialize(customelements);
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
             FSR.initialize(threadinterface, global);
@@ -86,7 +86,7 @@ public final class FSControl{
         FSCEGL.destroy();
         FSCInput.destroy();
         FSCFrames.destroy();
-        FSElementRegisry.destroy();
+        FSElements.destroy();
 
         if(!destroyonpause){
             GLOBAL_ID = -1;

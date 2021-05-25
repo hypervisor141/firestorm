@@ -17,6 +17,10 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         config.setOrthographicMode();
     }
 
+    protected FSShadowDirect(){
+
+    }
+
     @Override
     protected FSTexture initializeTexture(VLInt texunit, VLInt width, VLInt height){
         FSTexture texture = new FSTexture(new VLInt(GLES32.GL_TEXTURE_2D), texunit);

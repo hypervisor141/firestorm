@@ -31,7 +31,7 @@ public class FSInstance implements FSRenderableType{
     public FSInstance(String name){
         this.name = name;
 
-        store = new FSElementStore();
+        store = new FSElementStore(FSElements.COUNT);
         schematics = new FSSchematics(this);
         configs = generateInternalConfigs();
         id = FSControl.getNextID();
@@ -131,7 +131,7 @@ public class FSInstance implements FSRenderableType{
     }
 
     public int vertexSize(){
-        return positions().size() / FSElementRegisry.UNIT_SIZES[FSElementRegisry.ELEMENT_POSITION];
+        return positions().size() / FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
     }
 
     public FSMesh<FSInstance> mesh(){
@@ -159,7 +159,7 @@ public class FSInstance implements FSRenderableType{
     }
 
     public int elementUnitsCount(int element){
-        return element(element).size() / FSElementRegisry.UNIT_SIZES[element];
+        return element(element).size() / FSElements.UNIT_SIZES[element];
     }
 
     public Object elementData(int element){
@@ -175,51 +175,51 @@ public class FSInstance implements FSRenderableType{
     }
 
     public FSArrayModel model(){
-        return (FSArrayModel)elementData(FSElementRegisry.ELEMENT_MODEL);
+        return (FSArrayModel)elementData(FSElements.ELEMENT_MODEL);
     }
 
     public VLArrayFloat positions(){
-        return (VLArrayFloat)elementData(FSElementRegisry.ELEMENT_POSITION);
+        return (VLArrayFloat)elementData(FSElements.ELEMENT_POSITION);
     }
 
     public VLArrayFloat colors(){
-        return (VLArrayFloat)elementData(FSElementRegisry.ELEMENT_COLOR);
+        return (VLArrayFloat)elementData(FSElements.ELEMENT_COLOR);
     }
 
     public VLArrayFloat texCoords(){
-        return (VLArrayFloat)elementData(FSElementRegisry.ELEMENT_TEXCOORD);
+        return (VLArrayFloat)elementData(FSElements.ELEMENT_TEXCOORD);
     }
 
     public VLArrayFloat normals(){
-        return (VLArrayFloat)elementData(FSElementRegisry.ELEMENT_NORMAL);
+        return (VLArrayFloat)elementData(FSElements.ELEMENT_NORMAL);
     }
 
     public VLArrayShort indices(){
-        return (VLArrayShort)elementData(FSElementRegisry.ELEMENT_INDEX);
+        return (VLArrayShort)elementData(FSElements.ELEMENT_INDEX);
     }
 
     public FSElement.FloatArray modelEntry(){
-        return (FSElement.FloatArray)element(FSElementRegisry.ELEMENT_MODEL);
+        return (FSElement.FloatArray)element(FSElements.ELEMENT_MODEL);
     }
 
     public FSElement.FloatArray positionsEntry(){
-        return (FSElement.FloatArray)element(FSElementRegisry.ELEMENT_POSITION);
+        return (FSElement.FloatArray)element(FSElements.ELEMENT_POSITION);
     }
 
     public FSElement.FloatArray colorsEntry(){
-        return (FSElement.FloatArray)element(FSElementRegisry.ELEMENT_COLOR);
+        return (FSElement.FloatArray)element(FSElements.ELEMENT_COLOR);
     }
 
     public FSElement.FloatArray texCoordsEntry(){
-        return (FSElement.FloatArray)element(FSElementRegisry.ELEMENT_TEXCOORD);
+        return (FSElement.FloatArray)element(FSElements.ELEMENT_TEXCOORD);
     }
 
     public FSElement.FloatArray normalsEntry(){
-        return (FSElement.FloatArray)element(FSElementRegisry.ELEMENT_NORMAL);
+        return (FSElement.FloatArray)element(FSElements.ELEMENT_NORMAL);
     }
 
     public FSElement.Short indicesEntry(){
-        return (FSElement.Short)element(FSElementRegisry.ELEMENT_INDEX);
+        return (FSElement.Short)element(FSElements.ELEMENT_INDEX);
     }
 
     @Override

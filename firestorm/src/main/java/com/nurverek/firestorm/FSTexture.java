@@ -10,10 +10,10 @@ import vanguard.VLInt;
 
 public class FSTexture{
 
-    private VLInt target;
-    private VLInt texunit;
+    protected VLInt target;
+    protected VLInt texunit;
 
-    private int id;
+    protected int id;
     
     public FSTexture(VLInt target, VLInt texunit){
         initialize(target, texunit);
@@ -24,8 +24,8 @@ public class FSTexture{
         initialize(target, texunit);
     }
 
-    public FSTexture(){
-        id = -1;
+    protected FSTexture(){
+
     }
 
     public void initialize(VLInt target, VLInt texunit){

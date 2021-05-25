@@ -4,9 +4,9 @@ import android.opengl.GLES32;
 
 import vanguard.VLListType;
 
-public class FSElementRegisry{
+public class FSElements{
 
-    protected FSElementRegisry(){}
+    protected FSElements(){}
 
     public static final int ELEMENT_MODEL = 0;
     public static final int ELEMENT_POSITION = 1;

@@ -19,7 +19,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     protected int instancecount;
 
     protected boolean interleaved;
-    private boolean debuggedsegmentstructure;
+    protected boolean debuggedsegmentstructure;
 
     public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int capacity){
         initialize(vbuffer, vbuffer.provider(), interleaved, 0, -1, capacity);
@@ -35,6 +35,10 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
     public FSBufferSegment(BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
         initialize(null, buffer, interleaved, instanceoffset, instancecount, capacity);
+    }
+
+    protected FSBufferSegment(){
+        
     }
 
     private void initialize(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
@@ -399,7 +403,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
             log.append("[");
             log.append(getClass().getSimpleName());
             log.append("] element[");
-            log.append(FSElementRegisry.NAMES[element]);
+            log.append(FSElements.NAMES[element]);
             log.append("] unitOffset[");
             log.append(unitoffset);
             log.append("] unitSize[");
@@ -420,12 +424,12 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         public ElementStore(int element, int storeindex, int storecount){
-            super(element, 0, FSElementRegisry.UNIT_SIZES[element], FSElementRegisry.UNIT_SIZES[element]);
+            super(element, 0, FSElements.UNIT_SIZES[element], FSElements.UNIT_SIZES[element]);
             this.storeindex = storeindex;
         }
 
         public ElementStore(int element){
-            super(element, 0, FSElementRegisry.UNIT_SIZES[element], FSElementRegisry.UNIT_SIZES[element]);
+            super(element, 0, FSElements.UNIT_SIZES[element], FSElements.UNIT_SIZES[element]);
             this.storeindex = 0;
         }
 
@@ -458,7 +462,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
             if(size2 != unitcountrequired){
                 log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] element[");
-                log.append(FSElementRegisry.NAMES[element]);
+                log.append(FSElements.NAMES[element]);
                 log.append("] referenceSize[");
                 log.append(unitcountrequired);
                 log.append("] actualSize[");
@@ -492,7 +496,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         public ElementActive(int element){
-            super(element, 0, FSElementRegisry.UNIT_SIZES[element], FSElementRegisry.UNIT_SIZES[element]);
+            super(element, 0, FSElements.UNIT_SIZES[element], FSElements.UNIT_SIZES[element]);
         }
 
         @Override
@@ -526,7 +530,7 @@ public final class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
             if(size != unitcountrequired){
                 log.append("[FAILED] [Segment is on interleaving mode but there is a mismatch between target unit sizes] element[");
-                log.append(FSElementRegisry.NAMES[element]);
+                log.append(FSElements.NAMES[element]);
                 log.append("] referenceSize[");
                 log.append(unitcountrequired);
                 log.append("] actualSize[");

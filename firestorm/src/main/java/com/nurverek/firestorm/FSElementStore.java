@@ -8,13 +8,17 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
     protected VLListType<FSElement<?, ?>>[] vault;
     protected int[] active;
 
-    protected FSElementStore(){
-        vault = new VLListType[FSElementRegisry.COUNT];
-        active = new int[FSElementRegisry.COUNT];
+    protected FSElementStore(int size){
+        vault = new VLListType[size];
+        active = new int[size];
     }
 
     public FSElementStore(FSElementStore src, long flags){
         copy(src, flags);
+    }
+
+    protected FSElementStore(){
+
     }
 
     public void allocateElement(int element, int capacity, int resizer){

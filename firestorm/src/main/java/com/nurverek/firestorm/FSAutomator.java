@@ -18,6 +18,10 @@ public class FSAutomator{
         scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
+    protected FSAutomator(){
+
+    }
+
     public void register(FileTarget entry){
         files.add(entry);
     }
@@ -201,6 +205,10 @@ public class FSAutomator{
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
+        }
+
+        protected FileTarget(){
+
         }
 
         void scan(FSAutomator automator) throws IOException{

@@ -2,9 +2,9 @@ package com.nurverek.firestorm;
 
 import android.opengl.GLES32;
 
-public final class FSVertexArray{
+public class FSVertexArray{
 
-    private int id = 0;
+    protected int id = 0;
 
     public FSVertexArray(int id){
         this.id = id;

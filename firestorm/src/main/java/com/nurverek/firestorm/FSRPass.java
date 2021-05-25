@@ -7,17 +7,17 @@ import vanguard.VLLog;
 
 public class FSRPass{
 
-    private VLListType<FSP> entries;
-    
-    private long id;
-    private final int debug;
+    protected VLListType<FSP> entries;
 
-    private float[] clearcolor;
-    private int clearbits;
+    protected long id;
+    protected int debug;
 
-    private FSConfigGroup preconfig;
-    private FSConfigGroup postconfig;
-    private VLLog log;
+    protected float[] clearcolor;
+    protected int clearbits;
+
+    protected FSConfigGroup preconfig;
+    protected FSConfigGroup postconfig;
+    protected VLLog log;
     
     public FSRPass(float[] clearcolor, int clearbits, FSConfigGroup preconfig, FSConfigGroup postconfig, int capacity, int debug){
         this.clearcolor = clearcolor;
@@ -35,6 +35,10 @@ public class FSRPass{
         this.debug = debug;
 
         initialize(capacity);
+    }
+
+    protected FSRPass(){
+
     }
 
     private void initialize(int capacity){
