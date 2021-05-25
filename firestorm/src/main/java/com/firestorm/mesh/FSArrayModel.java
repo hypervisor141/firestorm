@@ -2,6 +2,7 @@ package com.firestorm.mesh;
 
 import android.opengl.Matrix;
 
+import vanguard.annotation.VLANTModConstructor;
 import vanguard.array.VLArrayFloat;
 import vanguard.list.VLListType;
 import vanguard.variable.VLV;
@@ -30,13 +31,15 @@ public class FSArrayModel extends VLArrayFloat{
     public FSArrayModel(FSArrayModel src, long flags){
         copy(src, flags);
     }
-
+    
     protected FSArrayModel(){
 
     }
 
     @Override
     public void transform(int index, VLVMatrix matrix, boolean replace){
+        new FSArrayModel();
+
         if(replace){
             identity();
         }
