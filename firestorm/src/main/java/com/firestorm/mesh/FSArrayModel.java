@@ -2,7 +2,7 @@ package com.firestorm.mesh;
 
 import android.opengl.Matrix;
 
-import vanguard.annotation.VLANTModConstructor;
+import sentinel.VLANTRestrictedConstructor;
 import vanguard.array.VLArrayFloat;
 import vanguard.list.VLListType;
 import vanguard.variable.VLV;
@@ -28,6 +28,7 @@ public class FSArrayModel extends VLArrayFloat{
         identity();
     }
 
+    @VLANTRestrictedConstructor
     public FSArrayModel(FSArrayModel src, long flags){
         copy(src, flags);
     }
