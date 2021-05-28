@@ -1,6 +1,5 @@
 package hypervisor.firestorm.program;
 
-import hypervisor.firestorm.shading.FSAttenuation;
 import hypervisor.vanguard.array.VLArrayFloat;
 
 public class FSLightPoint extends FSLight{

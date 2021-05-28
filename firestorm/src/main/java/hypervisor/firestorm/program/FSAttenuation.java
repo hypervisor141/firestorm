@@ -1,4 +1,4 @@
-package hypervisor.firestorm.shading;
+package hypervisor.firestorm.program;
 
 import hypervisor.vanguard.primitive.VLFloat;
 import hypervisor.vanguard.utils.VLCopyable;
