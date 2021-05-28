@@ -1,36 +1,101 @@
-plugins {
+plugins{
     id 'com.android.library'
+    id 'maven-publish'
 }
 
-android {
+android{
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
-    defaultConfig {
+    defaultConfig{
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 13000
         versionName "13.4.0"
-
+        
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
-    buildTypes {
-        release {
+    buildTypes{
+        release{
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
+    compileOptions{
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
-dependencies {
+dependencies{
 
+    implementation 'hypervisor:sentinel:1.1.0'
+    implementation 'hypervisor:vanguard:9.2.5'
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.3.0'
-    implementation fileTree(dir: '../libs', include: ['*.aar', '*.jar'], exclude: [])
+}
+
+publishing{
+    publications{
+        String desc = "A simple but powerful modular graphics engine built on top of the OpenGL API"
+        String aardir = "${buildDir}/outputs/aar/"
+        String group = "hypervisor"
+        String devname = "Shayan Aria"
+        String devemail = "hypervisor141@gmail.com"
+        String artid = "${project.name}"
+        String versionname = "${android.defaultConfig.versionName}"
+
+        release(MavenPublication){
+            artifact file("${aardir}${project.name}-debug.aar")
+            groupId = "$group"
+            artifactId = "${artid}"
+            version = "${versionname}"
+
+            pom{
+                name = "${project.name}"
+                description = "${desc}"
+
+                licenses{
+                    license{
+                        name = "The GNU General Public License, Version 3.0"
+                        url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    }
+                }
+                developers{
+                    developer{
+                        id = "${group}"
+                        name = "${devname}"
+                        email = "${devemail}"
+                    }
+                }
+            }
+        }
+        debug(MavenPublication){
+            artifact file("${aardir}${project.name}-debug.aar")
+            groupId = "$group"
+            artifactId = "${artid}"
+            version = "${versionname}"
+
+            pom{
+                name = "${project.name}"
+                description = "${desc}"
+
+                licenses{
+                    license{
+                        name = "The GNU General Public License, Version 3.0"
+                        url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    }
+                }
+                developers{
+                    developer{
+                        id = "${group}"
+                        name = "${devname}"
+                        email = "${devemail}"
+                    }
+                }
+            }
+        }
+    }
 }

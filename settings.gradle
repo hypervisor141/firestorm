@@ -1,3 +1,4 @@
 include ':firestorm'
-include ':app'
+
 rootProject.name = "firestorm"
+
