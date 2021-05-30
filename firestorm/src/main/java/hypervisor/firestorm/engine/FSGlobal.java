@@ -17,7 +17,7 @@ public abstract class FSGlobal{
     protected VLListType<FSHAssembler> assemblers;
     protected VLListType<VLBuffer<?, ?>> buffers;
     protected VLListType<FSVertexBuffer<?>> vbuffers;
-    protected VLListType<FSBufferMap> targets;
+    protected VLListType<FSBufferMap> buffermaps;
     protected VLListType<FSP> programs;
     protected VLListType<FSRPass> passes;
     protected VLListType<FSHub> hubs;
@@ -31,7 +31,7 @@ public abstract class FSGlobal{
         assemblers = generateAssemblers(context);
         buffers = generateBuffers(context);
         vbuffers = generateVertexBuffers(context);
-        targets = generateBufferTargets(context);
+        buffermaps = generateBufferMaps(context);
         programs = generatePrograms(context);
         passes = generateRenderPasses(context);
         hubs = generateHubs(context);
@@ -44,7 +44,7 @@ public abstract class FSGlobal{
     protected abstract VLListType<FSHAssembler> generateAssemblers(Context context);
     protected abstract VLListType<VLBuffer<?, ?>> generateBuffers(Context context);
     protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers(Context context);
-    protected abstract VLListType<FSBufferMap> generateBufferTargets(Context context);
+    protected abstract VLListType<FSBufferMap> generateBufferMaps(Context context);
     protected abstract VLListType<FSP> generatePrograms(Context context);
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
     protected abstract VLListType<FSHub> generateHubs(Context context);
@@ -64,8 +64,8 @@ public abstract class FSGlobal{
         return vbuffers.get(index);
     }
 
-    public FSBufferMap bufferTarget(int index){
-        return targets.get(index);
+    public FSBufferMap bufferMap(int index){
+        return buffermaps.get(index);
     }
 
     public FSP program(int index){
@@ -96,8 +96,8 @@ public abstract class FSGlobal{
         return vbuffers;
     }
 
-    public VLListType<FSBufferMap> bufferTargets(){
-        return targets;
+    public VLListType<FSBufferMap> bufferMaps(){
+        return buffermaps;
     }
 
     public VLListType<FSP> programs(){
@@ -124,8 +124,8 @@ public abstract class FSGlobal{
         assemblers = null;
     }
 
-    public void releaseBufferTargets(){
-        targets = null;
+    public void releasebufferMaps(){
+        buffermaps = null;
     }
 
     final void buildPrograms(){
@@ -188,7 +188,7 @@ public abstract class FSGlobal{
         assemblers = null;
         buffers = null;
         vbuffers = null;
-        targets = null;
+        buffermaps = null;
         programs = null;
         passes = null;
         hubs = null;

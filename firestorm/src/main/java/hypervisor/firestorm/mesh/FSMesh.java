@@ -3,7 +3,6 @@ package hypervisor.firestorm.mesh;
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
-import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
