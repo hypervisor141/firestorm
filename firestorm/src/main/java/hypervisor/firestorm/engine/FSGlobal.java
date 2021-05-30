@@ -2,7 +2,7 @@ package hypervisor.firestorm.engine;
 
 import android.content.Context;
 
-import hypervisor.firestorm.automation.FSBufferTargets;
+import hypervisor.firestorm.automation.FSBufferMap;
 import hypervisor.firestorm.automation.FSHAssembler;
 import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSVertexBuffer;
@@ -17,7 +17,7 @@ public abstract class FSGlobal{
     protected VLListType<FSHAssembler> assemblers;
     protected VLListType<VLBuffer<?, ?>> buffers;
     protected VLListType<FSVertexBuffer<?>> vbuffers;
-    protected VLListType<FSBufferTargets> targets;
+    protected VLListType<FSBufferMap> targets;
     protected VLListType<FSP> programs;
     protected VLListType<FSRPass> passes;
     protected VLListType<FSHub> hubs;
@@ -44,7 +44,7 @@ public abstract class FSGlobal{
     protected abstract VLListType<FSHAssembler> generateAssemblers(Context context);
     protected abstract VLListType<VLBuffer<?, ?>> generateBuffers(Context context);
     protected abstract VLListType<FSVertexBuffer<?>> generateVertexBuffers(Context context);
-    protected abstract VLListType<FSBufferTargets> generateBufferTargets(Context context);
+    protected abstract VLListType<FSBufferMap> generateBufferTargets(Context context);
     protected abstract VLListType<FSP> generatePrograms(Context context);
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
     protected abstract VLListType<FSHub> generateHubs(Context context);
@@ -64,7 +64,7 @@ public abstract class FSGlobal{
         return vbuffers.get(index);
     }
 
-    public FSBufferTargets bufferTarget(int index){
+    public FSBufferMap bufferTarget(int index){
         return targets.get(index);
     }
 
@@ -96,7 +96,7 @@ public abstract class FSGlobal{
         return vbuffers;
     }
 
-    public VLListType<FSBufferTargets> bufferTargets(){
+    public VLListType<FSBufferMap> bufferTargets(){
         return targets;
     }
 

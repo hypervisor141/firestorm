@@ -3,8 +3,6 @@ package hypervisor.firestorm.mesh;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.engine.FSRPass;
-import hypervisor.firestorm.program.FSConfig;
-import hypervisor.firestorm.program.FSConfigGroup;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSP;
@@ -12,10 +10,9 @@ import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.array.VLArrayFloat;
 import hypervisor.vanguard.array.VLArrayShort;
 import hypervisor.vanguard.utils.VLCopyable;
-import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.variable.VLVMatrix;
 
-public class FSInstance implements FSRenderableType{
+public class FSInstance implements FSTypeInstance{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -23,16 +20,14 @@ public class FSInstance implements FSRenderableType{
     public static final long FLAG_DUPLICATE_SCHEMATICS = 0x10000L;
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
     public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
-    public static final long FLAG_DUPLICATE_CONFIGS = 0x100000000L;
 
-    protected FSMesh<FSInstance> parent;
+    protected FSTypeRenderGroup<FSInstance> parent;
     protected FSElementStore store;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
     protected FSTexture colortexture;
     protected FSLightMaterial material;
     protected FSLightMap lightmap;
-    protected FSConfigGroup configs;
 
     protected String name;
     protected long id;
@@ -42,7 +37,6 @@ public class FSInstance implements FSRenderableType{
 
         store = new FSElementStore(FSElements.COUNT);
         schematics = new FSSchematics(this);
-        configs = generateInternalConfigs();
         id = FSControl.getNextID();
     }
 
@@ -54,25 +48,24 @@ public class FSInstance implements FSRenderableType{
 
     }
 
-    public FSConfigGroup generateInternalConfigs(){
-        return null;
-    }
-
+    @Override
     public void name(String name){
         this.name = name;
     }
 
+    @Override
     public void storage(FSElementStore store){
         this.store = store;
     }
 
+    @Override
     public void modelMatrix(FSMatrixModel set){
         modelmatrix = set;
     }
 
     @Override
-    public void parent(FSRenderableType parent){
-        this.parent = (FSMesh<FSInstance>)parent;
+    public void parent(FSTypeRenderGroup<?> parent){
+        this.parent = (FSTypeRenderGroup<FSInstance>)parent;
     }
 
     @Override
@@ -115,18 +108,13 @@ public class FSInstance implements FSRenderableType{
     }
 
     @Override
-    public FSMesh<FSInstance> parent(){
+    public FSTypeRenderGroup<FSInstance> parent(){
         return parent;
     }
 
     @Override
-    public FSRenderableType parentRoot(){
-        return parent == null ? this : parent.parentRoot();
-    }
-
-    @Override
-    public FSConfig configs(){
-        return configs;
+    public FSTypeRenderGroup<?> parentRoot(){
+        return parent == null ? null : parent.parentRoot();
     }
 
     @Override
@@ -139,117 +127,138 @@ public class FSInstance implements FSRenderableType{
         return id;
     }
 
+    @Override
     public int vertexSize(){
         return positions().size() / FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
     }
 
-    public FSMesh<FSInstance> mesh(){
-        return parent;
-    }
-
+    @Override
     public FSTexture colorTexture(){
         return colortexture;
     }
 
+    @Override
     public FSLightMaterial material(){
         return material;
     }
 
+    @Override
     public FSLightMap lightMap(){
         return lightmap;
     }
 
-    public FSSchematics schematics(){
-        return schematics;
-    }
-
+    @Override
     public FSMatrixModel modelMatrix(){
         return modelmatrix;
     }
 
-    public int elementUnitsCount(int element){
-        return element(element).size() / FSElements.UNIT_SIZES[element];
+    @Override
+    public FSSchematics schematics(){
+        return schematics;
     }
 
-    public Object elementData(int element){
-        return store.active(element).data;
-    }
-
-    public FSElement<?, ?> element(int element){
-        return store.active(element);
-    }
-
+    @Override
     public FSElementStore storage(){
         return store;
     }
 
+    @Override
+    public int elementUnitsCount(int element){
+        return element(element).size() / FSElements.UNIT_SIZES[element];
+    }
+
+    @Override
+    public Object elementData(int element){
+        return store.active(element).data;
+    }
+
+    @Override
+    public FSElement<?, ?> element(int element){
+        return store.active(element);
+    }
+
+    @Override
     public FSArrayModel model(){
         return (FSArrayModel)elementData(FSElements.ELEMENT_MODEL);
     }
 
+    @Override
     public VLArrayFloat positions(){
         return (VLArrayFloat)elementData(FSElements.ELEMENT_POSITION);
     }
 
+    @Override
     public VLArrayFloat colors(){
         return (VLArrayFloat)elementData(FSElements.ELEMENT_COLOR);
     }
 
+    @Override
     public VLArrayFloat texCoords(){
         return (VLArrayFloat)elementData(FSElements.ELEMENT_TEXCOORD);
     }
 
+    @Override
     public VLArrayFloat normals(){
         return (VLArrayFloat)elementData(FSElements.ELEMENT_NORMAL);
     }
 
+    @Override
     public VLArrayShort indices(){
         return (VLArrayShort)elementData(FSElements.ELEMENT_INDEX);
     }
 
-    public FSElement.FloatArray modelEntry(){
+    @Override
+    public FSElement.FloatArray modelElement(){
         return (FSElement.FloatArray)element(FSElements.ELEMENT_MODEL);
     }
 
-    public FSElement.FloatArray positionsEntry(){
+    @Override
+    public FSElement.FloatArray positionsElement(){
         return (FSElement.FloatArray)element(FSElements.ELEMENT_POSITION);
     }
 
-    public FSElement.FloatArray colorsEntry(){
+    @Override
+    public FSElement.FloatArray colorsElement(){
         return (FSElement.FloatArray)element(FSElements.ELEMENT_COLOR);
     }
 
-    public FSElement.FloatArray texCoordsEntry(){
+    @Override
+    public FSElement.FloatArray texCoordsElement(){
         return (FSElement.FloatArray)element(FSElements.ELEMENT_TEXCOORD);
     }
 
-    public FSElement.FloatArray normalsEntry(){
+    @Override
+    public FSElement.FloatArray normalsElement(){
         return (FSElement.FloatArray)element(FSElements.ELEMENT_NORMAL);
     }
 
-    public FSElement.Short indicesEntry(){
+    @Override
+    public FSElement.Short indicesElement(){
         return (FSElement.Short)element(FSElements.ELEMENT_INDEX);
     }
 
     @Override
-    public void run(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex){
-        if(configs != null){
-            configs.run(pass, program, mesh, meshindex, passindex);
-        }
+    public void configure(FSP program, FSRPass pass, int targetindex, int passindex){}
+
+    @Override
+    public void updateBuffer(int element){
+        element(element).updateBuffer();
     }
 
     @Override
-    public void runDebug(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
-        if(configs != null){
-            configs.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
-        }
+    public void updateBuffer(int element, int bindingindex){
+        element(element).updateBuffer(bindingindex);
     }
 
     @Override
-    public void scanComplete(){}
+    public void updateVertexBuffer(int element, int bindingindex){
+        element(element).bindings.get(bindingindex).updateVertexBuffer();
+    }
 
     @Override
-    public void buildComplete(){}
+    public void updateVertexBufferStrict(int element, int bindingindex){
+        element(element).bindings.get(bindingindex).updateVertexBufferStrict();
+    }
 
     @Override
     public void updateSchematicBoundaries(){
@@ -267,24 +276,21 @@ public class FSInstance implements FSRenderableType{
     }
 
     @Override
-    public void updateBuffer(int element){
-        element(element).updateBuffer();
-    }
-
-    public void updateBuffer(int element, int bindingindex){
-        element(element).updateBuffer(bindingindex);
-    }
-
-    public void updateVertexBuffer(int element, int bindingindex){
-        element(element).bindings.get(bindingindex).updateVertexBuffer();
-    }
-
-    public void updateVertexBufferStrict(int element, int bindingindex){
-        element(element).bindings.get(bindingindex).updateVertexBufferStrict();
+    public void dispatch(FSTypeRenderGroup.Dispatch<FSTypeRender> dispatch){
+        dispatch.process(this);
     }
 
     @Override
-    public void copy(FSRenderableType src, long flags){
+    public void scanComplete(){}
+
+    @Override
+    public void bufferComplete(){}
+
+    @Override
+    public void buildComplete(){}
+
+    @Override
+    public void copy(FSTypeRender src, long flags){
         FSInstance target = (FSInstance)src;
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
@@ -353,10 +359,6 @@ public class FSInstance implements FSRenderableType{
                 name = target.name;
             }
 
-            if(target.configs != null && (flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
-                configs = configs.duplicate(VLCopyable.FLAG_DUPLICATE);
-            }
-
         }else{
             Helper.throwMissingAllFlags();
         }
@@ -376,7 +378,6 @@ public class FSInstance implements FSRenderableType{
         material = null;
         lightmap = null;
         store = null;
-        configs = null;
         name = null;
 
         id = -1;

@@ -1,18 +1,18 @@
 package hypervisor.firestorm.automation;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteOrder;
+
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.io.FSM;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteOrder;
-
 public class FSAutomator{
 
     protected VLListType<FileTarget> files;
-    protected VLListType<FSHScanner> scanners;
+    protected VLListType<FSHScanner<?>> scanners;
     protected VLLog log;
 
     public FSAutomator(int filecapacity, int scancapacity){
@@ -28,7 +28,7 @@ public class FSAutomator{
         files.add(entry);
     }
 
-    public void add(FSHScanner scanner){
+    public void add(FSHScanner<?> scanner){
         scanners.add(scanner);
     }
 
@@ -63,39 +63,46 @@ public class FSAutomator{
                     target.checkResults(FSAutomator.this, log);
                 }
             });
-            scannerDebugLoop("Signal Scan Complete", log, new LoopOperation<FSHScanner>(){
+            scannerDebugLoop("Signal Scan Complete", log, new LoopOperation<FSHScanner<?>>(){
 
                 @Override
-                public void run(FSHScanner target, VLLog log){
+                public void run(FSHScanner<?> target, VLLog log){
                     target.signalScanComplete();
                 }
             });
-            scannerDebugLoop("Measurement Stage", log, new LoopOperation<FSHScanner>(){
+            scannerDebugLoop("Measurement Stage", log, new LoopOperation<FSHScanner<?>>(){
 
                 @Override
-                public void run(FSHScanner target, VLLog log){
-                    target.adjustBufferCapacityDebug(log);
+                public void run(FSHScanner<?> target, VLLog log){
+                    target.accountForTargetSizeDebug(log);
                 }
             });
-            scannerDebugLoop("Buffer Build Stage", log, new LoopOperation<FSHScanner>(){
+            scannerDebugLoop("Buffer Build Stage", log, new LoopOperation<FSHScanner<?>>(){
 
                 @Override
-                public void run(FSHScanner target, VLLog log){
-                    target.bufferDebugAndFinish(log);
+                public void run(FSHScanner<?> target, VLLog log){
+                    target.bufferDebug(log);
                 }
             });
-            scannerDebugLoop("Buffer Upload Stage", log, new LoopOperation<FSHScanner>(){
+            scannerDebugLoop("Buffer Upload Stage", log, new LoopOperation<FSHScanner<?>>(){
 
                 @Override
-                public void run(FSHScanner target, VLLog log){
+                public void run(FSHScanner<?> target, VLLog log){
                     target.uploadBuffer();
                 }
             });
-            scannerDebugLoop("Signal Build Complete Stage", log, new LoopOperation<FSHScanner>(){
+            scannerDebugLoop("Signal Buffer Complete", log, new LoopOperation<FSHScanner<?>>(){
 
                 @Override
-                public void run(FSHScanner target, VLLog log){
-                    target.signalBuildComplete();
+                public void run(FSHScanner<?> target, VLLog log){
+                    target.signalBufferComplete();
+                }
+            });
+            scannerDebugLoop("Signal Build Complete Stage", log, new LoopOperation<FSHScanner<?>>(){
+
+                @Override
+                public void run(FSHScanner<?> target, VLLog log){
+                    target.finalizeBuild();
                 }
             });
 
@@ -119,16 +126,16 @@ public class FSAutomator{
                 scanners.get(i).signalScanComplete();
             }
             for(int i = 0; i < size; i++){
-                scanners.get(i).adjustBufferCapacity();
+                scanners.get(i).accountForTargetSize();
             }
             for(int i = 0; i < size; i++){
-                scanners.get(i).bufferAndFinish();
+                scanners.get(i).buffer();
             }
             for(int i = 0; i < size; i++){
                 scanners.get(i).uploadBuffer();
             }
             for(int i = 0; i < size; i++){
-                scanners.get(i).signalBuildComplete();
+                scanners.get(i).finalizeBuild();
             }
         }
     }
@@ -161,14 +168,14 @@ public class FSAutomator{
         log.removeLastTag();
     }
 
-    private void scannerDebugLoop(String title, VLLog log, LoopOperation<FSHScanner> task){
+    private void scannerDebugLoop(String title, VLLog log, LoopOperation<FSHScanner<?>> task){
         log.addTag(title);
 
         int size = scanners.size();
 
         for(int i = 0; i < size; i++){
-            FSHScanner entry = scanners.get(i);
-            log.addTag(entry.name);
+            FSHScanner<?> entry = scanners.get(i);
+            log.addTag(entry.target.name());
             log.addTag(String.valueOf(i));
 
             try{
@@ -217,7 +224,7 @@ public class FSAutomator{
             FSM fsm = new FSM();
             fsm.loadFromFile(src, order, fullsizedposition, scancapacity);
             VLListType<FSM.Data> content = fsm.data;
-            VLListType<FSHScanner> scanners = automator.scanners;
+            VLListType<FSHScanner<?>> scanners = automator.scanners;
 
             int size = content.size();
             int size2 = scanners.size();
@@ -226,28 +233,22 @@ public class FSAutomator{
                 FSM.Data data = content.get(i);
 
                 for(int i2 = 0; i2 < size2; i2++){
-                    scanners.get(i2).scan(automator, data);
+                    scanners.get(i2).scan(data);
                 }
             }
         }
 
         void checkResults(FSAutomator automator, VLLog log){
-            VLListType<FSHScanner> scanners = automator.scanners;
+            VLListType<FSHScanner<?>> scanners = automator.scanners;
             int size = scanners.size();
 
             for(int i = 0; i < size; i++){
-                FSHScanner entry = scanners.get(i);
+                FSHScanner<?> entry = scanners.get(i);
 
                 if(entry.target.size() == 0){
                     log.append("Incomplete scan : found no instance for mesh with keyword[");
-                    log.append(entry.name);
+                    log.append(entry.target.name());
                     log.append("]\n");
-                    log.append("[Assembler Configuration]\n");
-
-                    entry.assembler.log(log, null);
-
-                    log.printError();
-                    throw new RuntimeException("Mesh Scan Error");
                 }
             }
         }

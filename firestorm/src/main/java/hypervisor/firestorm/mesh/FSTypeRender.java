@@ -1,33 +1,40 @@
 package hypervisor.firestorm.mesh;
 
-import hypervisor.firestorm.program.FSConfig;
-import hypervisor.firestorm.program.FSConfigType;
+import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
+import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.utils.VLCopyable;
 
-public interface FSRenderableType extends VLCopyable<FSRenderableType>, FSConfigType{
+public interface FSTypeRender extends VLCopyable<FSTypeRender>{
 
     void scanComplete();
+    void bufferComplete();
     void buildComplete();
     void allocateElement(int element, int capacity, int resizer);
     void storeElement(int element, FSElement<?, ?> data);
     void activateFirstElement(int element);
     void activateLastElement(int element);
-    void parent(FSRenderableType parent);
+    void name(String name);
+    void parent(FSTypeRenderGroup<?> parent);
     void material(FSLightMaterial material);
     void lightMap(FSLightMap map);
-    void colorTexture(FSTexture tex);
+    void colorTexture(FSTexture texture);
+    void configure(FSP program, FSRPass pass, int targetindex, int passindex);
+    void dispatch(Dispatch<FSTypeRender> dispatch);
+    void updateBuffer(int element);
     void updateSchematicBoundaries();
     void markSchematicsForUpdate();
     void applyModelMatrix();
-    void updateBuffer(int element);
     void destroy();
 
-    FSRenderableType parent();
-    FSRenderableType parentRoot();
-    FSConfig configs();
+    FSTypeRenderGroup<?> parent();
+    FSTypeRenderGroup<?> parentRoot();
     String name();
     long id();
+
+    interface Dispatch<TYPE extends FSTypeRender>{
+        void process(TYPE target);
+    }
 }

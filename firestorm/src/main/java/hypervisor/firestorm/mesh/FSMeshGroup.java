@@ -2,8 +2,6 @@ package hypervisor.firestorm.mesh;
 
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
-import hypervisor.firestorm.engine.FSElements;
-import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
@@ -12,31 +10,29 @@ import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
-public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh<ENTRY>{
+public abstract class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMeshGroup<ENTRY>{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
 
-    protected FSTypeRenderGroup<FSMesh<ENTRY>> parent;
+    protected FSTypeRenderGroup<FSMeshGroup<ENTRY>> parent;
     protected VLListType<ENTRY> entries;
-    protected VLListType<FSBufferBinding<?>>[] bindings;
     protected String name;
     protected long id;
 
-    public FSMesh(String name, int capacity, int resizer){
+    public FSMeshGroup(String name, int capacity, int resizer){
         this.name = name;
 
-        bindings = new VLListType[FSElements.COUNT];
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();
     }
 
-    public FSMesh(FSMesh<ENTRY> src, long flags){
+    public FSMeshGroup(FSMeshGroup<ENTRY> src, long flags){
         copy(src, flags);
     }
 
-    protected FSMesh(){
+    protected FSMeshGroup(){
 
     }
 
@@ -47,39 +43,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void parent(FSTypeRenderGroup<?> parent){
-        this.parent = (FSTypeRenderGroup<FSMesh<ENTRY>>)parent;
-    }
-
-    @Override
-    public void allocateBinding(int element, int capacity, int resizer){
-        if(bindings[element] == null){
-            bindings[element] = new VLListType<>(capacity, resizer);
-        }
-    }
-
-    @Override
-    public void bindManual(int element, FSBufferBinding<?> binding){
-        bindings[element].add(binding);
-    }
-
-    @Override
-    public FSBufferBinding<?> binding(int element, int index){
-        return bindings[element].get(index);
-    }
-
-    @Override
-    public void unbind(int element, int index){
-        bindings[element].remove(index);
-    }
-
-    @Override
-    public VLListType<FSBufferBinding<?>> bindings(int element){
-        return bindings[element];
-    }
-
-    @Override
-    public VLListType<FSBufferBinding<?>>[] bindings(){
-        return bindings;
+        this.parent = (FSTypeRenderGroup<FSMeshGroup<ENTRY>>)parent;
     }
 
     @Override
@@ -174,13 +138,16 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void register(FSHScanner<?> scanner){
-        scanner.register((FSTypeMesh<FSTypeInstance>)this);
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).register(scanner);
+        }
     }
 
     @Override
     public void configure(FSP program, FSRPass pass, int targetindex, int passindex){
         int size = entries.size();
-        program.configureMesh(pass, (FSTypeMesh<FSTypeInstance>)this, targetindex, passindex);
 
         for(int i = 0; i < size; i++){
             entries.get(i).configure(program, pass, targetindex, passindex);
@@ -298,7 +265,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void copy(FSTypeRender src, long flags){
-        FSMesh<ENTRY> target = (FSMesh<ENTRY>)src;
+        FSMeshGroup<ENTRY> target = (FSMeshGroup<ENTRY>)src;
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             entries = target.entries;
@@ -347,7 +314,6 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
         parent = null;
         entries = null;
-        bindings = null;
         name = null;
 
         id = -1;

@@ -1,8 +1,8 @@
 package hypervisor.firestorm.program;
 
 import hypervisor.firestorm.engine.FSRPass;
-import hypervisor.firestorm.mesh.FSInstance;
-import hypervisor.firestorm.mesh.FSMesh;
+import hypervisor.firestorm.mesh.FSTypeInstance;
+import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.vanguard.utils.VLLog;
 
 public abstract class FSConfigLocated extends FSConfig{
@@ -43,7 +43,7 @@ public abstract class FSConfigLocated extends FSConfig{
     public abstract FSConfigLocated duplicate(long flags);
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSMesh<FSInstance> mesh, VLLog log, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
         super.debugInfo(pass, program, mesh, log, debug);
 
         log.append(" location[");

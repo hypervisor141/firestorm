@@ -1,168 +1,171 @@
 package hypervisor.firestorm.automation;
 
+import hypervisor.firestorm.engine.FSGlobal;
+import hypervisor.firestorm.engine.FSR;
 import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSInstance;
-import hypervisor.firestorm.mesh.FSMesh;
-import hypervisor.firestorm.program.FSP;
+import hypervisor.firestorm.mesh.FSTypeInstance;
+import hypervisor.firestorm.mesh.FSTypeMesh;
+import hypervisor.firestorm.mesh.FSTypeRender;
+import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
-public abstract class FSHScanner{
+public class FSHScanner<TYPE extends FSTypeMesh<?>>{
 
-    protected FSHAssembler assembler;
-    protected FSBufferTargets buffertarget;
-    protected FSP program;
-    protected FSMesh<FSInstance> target;
-    protected String name;
+    protected TYPE target;
+    protected VLListType<FSTypeMesh<FSTypeInstance>> targets;
 
-    protected FSHScanner(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffetarget, FSHAssembler assembler, String name){
+    public FSHScanner(TYPE target, int capacity){
         this.target = target;
-        this.program = program;
-        this.buffertarget = buffetarget;
-        this.assembler = assembler;
-        this.name = name.toLowerCase();
+        targets = new VLListType<>(capacity, capacity);
 
-        target.name(name);
+        target.register(this);
     }
 
     protected FSHScanner(){
 
     }
 
-    abstract boolean scan(FSAutomator automator, FSM.Data data);
-
-    void signalScanComplete(){
-        target.parentRoot().scanComplete();
+    public void register(FSTypeMesh<FSTypeInstance> target){
+        targets.add(target);
     }
 
-    void signalBuildComplete(){
-        target.parentRoot().buildComplete();
-    }
+    protected void scan(FSM.Data data){
+        int size = targets.size();
 
-    void adjustBufferCapacity(){
-        if(buffertarget != null){
-            buffertarget.prepare(target);
+        FSGlobal global = FSR.getGlobal();
+
+        for(int i = 0; i < size; i++){
+            FSTypeMesh<FSTypeInstance> target = targets.get(i);
+            target.getScanFunction(global).scan(target, target.getAssembler(global), data);
         }
     }
 
-    void adjustBufferCapacityDebug(VLLog log){
-        if(buffertarget != null){
-            buffertarget.prepareDebug(target, log);
+    public void signalScanComplete(){
+        target.scanComplete();
+    }
+
+    public void signalBufferComplete(){
+        target.bufferComplete();
+    }
+
+    public void finalizeBuild(){
+        target.getProgram(FSR.getGlobal()).targets().add(target);
+        target.buildComplete();
+    }
+
+    public void accountForTargetSize(){
+        int size = targets.size();
+        FSGlobal global = FSR.getGlobal();
+
+        for(int i = 0; i < size; i++){
+            FSBufferMap map = targets.get(i).getBufferMap(global);
+
+            if(map != null){
+                map.accountFor(targets.get(i));
+            }
         }
     }
 
-    void bufferAndFinish(){
-        if(buffertarget != null){
-            buffertarget.buffer(target);
-            program.meshes().add(target);
+    public void accountForTargetSizeDebug(VLLog log){
+        int size = targets.size();
+        FSGlobal global = FSR.getGlobal();
+
+        for(int i = 0; i < size; i++){
+            FSBufferMap map = targets.get(i).getBufferMap(global);
+
+            if(map != null){
+                map.accountForDebug(targets.get(i), log);
+            }
         }
     }
 
-    void bufferDebugAndFinish(VLLog log){
-        if(buffertarget != null){
-            buffertarget.bufferDebug(target, log);
-            program.meshes().add(target);
+    public void buffer(){
+        int size = targets.size();
+        FSGlobal global = FSR.getGlobal();
+
+        for(int i = 0; i < size; i++){
+            FSBufferMap map = targets.get(i).getBufferMap(global);
+
+            if(map != null){
+                map.buffer(targets.get(i));
+            }
+        }
+    }
+
+    public void bufferDebug(VLLog log){
+        int size = targets.size();
+        FSGlobal global = FSR.getGlobal();
+
+        if(size > 0){
+            for(int i = 0; i < size; i++){
+                FSBufferMap map = targets.get(i).getBufferMap(global);
+
+                if(map != null){
+                    map.bufferDebug(targets.get(i), log);
+
+                }else{
+                    log.append("[Buffering disabled for submesh] [");
+                    log.append(targets.get(i).name());
+                    log.append("] ");
+                }
+            }
 
         }else{
             log.append("[Buffering disabled] ");
         }
     }
 
-    void uploadBuffer(){
-        if(buffertarget != null){
-            buffertarget.upload();
-        }
-    }
+    public void uploadBuffer(){
+        int size = targets.size();
+        FSGlobal global = FSR.getGlobal();
 
-    public static class Singular extends FSHScanner{
+        for(int i = 0; i < size; i++){
+            FSBufferMap map = targets.get(i).getBufferMap(global);
 
-        public Singular(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String name){
-            super(target, program, buffertarget, assembler, name);
-        }
-
-        protected Singular(){
-
-        }
-
-        @Override
-        boolean scan(FSAutomator automator, FSM.Data data){
-            if(data.name.equalsIgnoreCase(name)){
-                if(target.size() > 0){
-                    throw new RuntimeException("Found more than one instance for a singular scanner [" + target.name() + "]");
-                }
-
-                FSInstance instance = new FSInstance(data.name);
-                target.add(instance);
-
-                assembler.buildFirst(instance, this, data);
-                return true;
+            if(map != null){
+                map.upload();
             }
-
-            return false;
         }
     }
 
-    public static class Instanced extends FSHScanner{
+    public interface ScanFunction{
 
-        public Instanced(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String substringname){
-            super(target, program, buffertarget, assembler, substringname);
-        }
+        ScanFunction SCAN_SINGULAR = new ScanFunction(){
 
-        protected Instanced(){
-
-        }
-
-        @Override
-        boolean scan(FSAutomator automator, FSM.Data data){
-            if(data.name.contains(name)){
-                FSInstance instance = new FSInstance(data.name);
-                target.add(instance);
-
-                if(target.size() == 1){
-                    assembler.buildFirst(instance, this, data);
-
-                }else{
-                    assembler.buildRest(instance, this, data);
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    public static class InstancedCopy extends FSHScanner{
-
-        protected int copycount;
-
-        public InstancedCopy(FSMesh<FSInstance> target, FSP program, FSBufferTargets buffertarget, FSHAssembler assembler, String prefixname, int copycount){
-            super(target, program, buffertarget, assembler, prefixname);
-            this.copycount = copycount;
-        }
-
-        protected InstancedCopy(){
-
-        }
-
-        @Override
-        boolean scan(FSAutomator automator, FSM.Data data){
-            if(data.name.contains(name)){
-                FSInstance instance = new FSInstance(data.name);
-                target.add(instance);
-
-                assembler.buildFirst(instance, this, data);
-
-                for(int i = 0; i < copycount; i++){
-                    instance = new FSInstance(data.name);
+            @Override
+            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
+                if(data.name.contains(target.name())){
+                    FSInstance instance = new FSInstance(data.name);
                     target.add(instance);
 
-                    assembler.buildFirst(instance, this, data);
+                    if(target.size() == 1){
+                        assembler.buildFirst(instance, target, data);
+
+                    }else{
+                        assembler.buildRest(instance, target, data);
+                    }
                 }
-
-                return true;
             }
+        };
 
-            return false;
-        }
+        ScanFunction SCAN_INSTANCED = new ScanFunction(){
+
+            @Override
+            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
+                if(data.name.equalsIgnoreCase(target.name())){
+                    if(target.size() > 0){
+                        throw new RuntimeException("Found more than one instance with a singular scanner [" + target.name() + "]");
+                    }
+
+                    FSInstance instance = new FSInstance(data.name);
+                    target.add(instance);
+
+                    assembler.buildFirst(instance, target, data);
+                }
+            }
+        };
+
+        void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data);
     }
 }
