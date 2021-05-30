@@ -32,10 +32,6 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         id = FSControl.getNextID();
     }
 
-    public FSMesh(FSMesh<ENTRY> src, long flags){
-        copy(src, flags);
-    }
-
     protected FSMesh(){
 
     }

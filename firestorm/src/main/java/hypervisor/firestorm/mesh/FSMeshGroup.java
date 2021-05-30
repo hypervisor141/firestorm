@@ -2,6 +2,7 @@ package hypervisor.firestorm.mesh;
 
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
+import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
@@ -10,7 +11,7 @@ import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
-public abstract class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMeshGroup<ENTRY>{
+public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMeshGroup<ENTRY>{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
@@ -33,6 +34,11 @@ public abstract class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements
     }
 
     protected FSMeshGroup(){
+
+    }
+
+    @Override
+    public void build(FSGlobal global){
 
     }
 
@@ -302,6 +308,11 @@ public abstract class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements
         }else{
             Helper.throwMissingAllFlags();
         }
+    }
+
+    @Override
+    public FSTypeRender duplicate(long flags){
+        return new FSMeshGroup<>(this, flags);
     }
 
     @Override
