@@ -2,10 +2,8 @@ package hypervisor.firestorm.mesh;
 
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
-import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
-import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.array.VLArrayFloat;
 import hypervisor.vanguard.array.VLArrayShort;
@@ -21,7 +19,7 @@ public class FSInstance implements FSTypeInstance{
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
     public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
 
-    protected FSTypeRenderGroup<FSInstance> parent;
+    protected FSTypeRenderGroup<?> parent;
     protected FSElementStore store;
     protected FSSchematics schematics;
     protected FSMatrixModel modelmatrix;
@@ -65,7 +63,7 @@ public class FSInstance implements FSTypeInstance{
 
     @Override
     public void parent(FSTypeRenderGroup<?> parent){
-        this.parent = (FSTypeRenderGroup<FSInstance>)parent;
+        this.parent = parent;
     }
 
     @Override
@@ -108,7 +106,7 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public FSTypeRenderGroup<FSInstance> parent(){
+    public FSTypeRenderGroup<?> parent(){
         return parent;
     }
 
@@ -236,9 +234,6 @@ public class FSInstance implements FSTypeInstance{
     public FSElement.Short indicesElement(){
         return (FSElement.Short)element(FSElements.ELEMENT_INDEX);
     }
-
-    @Override
-    public void configure(FSP program, FSRPass pass, int targetindex, int passindex){}
 
     @Override
     public void updateBuffer(int element){

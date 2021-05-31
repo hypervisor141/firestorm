@@ -6,11 +6,12 @@ import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSInstance;
 import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
-import hypervisor.firestorm.mesh.FSTypeRender;
+import hypervisor.firestorm.mesh.FSTypeRenderGroup;
+import hypervisor.firestorm.program.FSP;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
-public class FSHScanner<TYPE extends FSTypeMesh<?>>{
+public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     protected TYPE target;
     protected VLListType<FSTypeMesh<FSTypeInstance>> targets;
@@ -50,7 +51,13 @@ public class FSHScanner<TYPE extends FSTypeMesh<?>>{
     }
 
     public void finalizeBuild(){
-        target.getProgram(FSR.getGlobal()).targets().add(target);
+        int size = targets.size();
+        FSGlobal global = FSR.getGlobal();
+
+        for(int i = 0; i < size; i++){
+            targets.get(i).addToDefinedProgram();
+        }
+
         target.buildComplete();
     }
 

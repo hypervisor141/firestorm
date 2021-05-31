@@ -3,6 +3,7 @@ package hypervisor.firestorm.mesh;
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
+import hypervisor.firestorm.engine.FSR;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
@@ -17,7 +18,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
 
-    protected FSTypeRenderGroup<FSMesh<ENTRY>> parent;
+    protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;
     protected VLListType<FSBufferBinding<?>>[] bindings;
     protected String name;
@@ -42,7 +43,12 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void parent(FSTypeRenderGroup<?> parent){
-        this.parent = (FSTypeRenderGroup<FSMesh<ENTRY>>)parent;
+        this.parent = parent;
+    }
+
+    @Override
+    public void addToDefinedProgram(){
+        getProgram(FSR.getGlobal()).targets().add(this);
     }
 
     @Override
@@ -174,12 +180,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void configure(FSP program, FSRPass pass, int targetindex, int passindex){
-        int size = entries.size();
-        program.configureMesh(pass, (FSTypeMesh<FSTypeInstance>)this, targetindex, passindex);
 
-        for(int i = 0; i < size; i++){
-            entries.get(i).configure(program, pass, targetindex, passindex);
-        }
     }
 
     @Override

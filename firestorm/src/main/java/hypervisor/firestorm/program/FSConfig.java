@@ -3,7 +3,6 @@ package hypervisor.firestorm.program;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.engine.FSTools;
-import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
@@ -16,12 +15,12 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         private static final String NAME = "FULLTIME";
 
         @Override
-        public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){
             self.configure(program, pass, mesh, meshindex, passindex);
         }
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
             self.configureDebug(pass, program, mesh, meshindex, passindex, log, debug);
         }
 
@@ -43,13 +42,13 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         private static final String NAME = "ONETIME";
 
         @Override
-        public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){
             self.configure(program, pass, mesh, meshindex, passindex);
             self.mode = MODE_DISABLED;
         }
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
             self.configureDebug(pass, program, mesh, meshindex, passindex, log, debug);
             self.mode = MODE_DISABLED;
         }
@@ -72,10 +71,10 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         private static final String NAME = "DISABLED";
 
         @Override
-        public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){}
+        public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){}
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
             self.printHeader(log);
             log.append("\n");
         }
@@ -121,18 +120,18 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
     public abstract int getGLSLSize();
 
     @Override
-    public void run(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+    public void run(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){
         mode.configure(pass, this, program, mesh, meshindex, passindex);
     }
 
     @Override
-    public void runDebug(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public void runDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
     }
 
-    protected abstract void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex);
+    protected abstract void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex);
 
-    protected void configureDebug(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+    protected void configureDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         try{
             printDebugInfo(pass, program, mesh, log, debug);
 
@@ -161,7 +160,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         }
     }
 
-    protected void printDebugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+    protected void printDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
         if(log != null){
             printHeader(log);
 
@@ -192,7 +191,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
     @Override
     public abstract FSConfig duplicate(long flags);
 
-    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
         log.append("GLSLSize[");
         log.append(getGLSLSize());
         log.append("]");
@@ -205,8 +204,8 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
 
     public interface Mode extends VLCopyable<Mode>{
 
-        void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex);
-        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug);
+        void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex);
+        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug);
         String getModeName();
     }
 }

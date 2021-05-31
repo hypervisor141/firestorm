@@ -11,9 +11,7 @@ import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.engine.FSTools;
 import hypervisor.firestorm.engine.FSView;
 import hypervisor.firestorm.mesh.FSBufferBinding;
-import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
-import hypervisor.firestorm.mesh.FSTypeRender;
 import hypervisor.vanguard.array.VLArray;
 import hypervisor.vanguard.array.VLArrayFloat;
 import hypervisor.vanguard.array.VLArrayInt;
@@ -31,7 +29,7 @@ public abstract class FSP{
     private static final int BUFFER_PRINT_LIMIT = 50;
 
     protected VLListType<FSShader> shaders;
-    protected VLListType<FSTypeRender> targets;
+    protected VLListType<FSTypeMesh<?>> targets;
 
     protected CoreConfig coreconfigs;
 
@@ -57,9 +55,9 @@ public abstract class FSP{
 
     }
 
-    protected abstract CoreConfig generateConfigurations(VLListType<FSTypeRender> targets, int debug);
+    protected abstract CoreConfig generateConfigurations(VLListType<FSTypeMesh<?>> targets, int debug);
 
-    public VLListType<FSTypeRender> targets(){
+    public VLListType<FSTypeMesh<?>> targets(){
         return targets;
     }
 
@@ -220,12 +218,13 @@ public abstract class FSP{
             }
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
-                    FSTypeRender target = targets.get(i);
+                    FSTypeMesh<?> target = targets.get(i);
 
                     log.addTag(target.name());
                     log.addTag("TargetConfig");
 
                     target.configure(this, pass, i, passindex);
+                    coreconfigs.meshconfig.configure(this, pass, target, i, passindex);
 
                     log.removeLastTag();
                 }
@@ -244,7 +243,10 @@ public abstract class FSP{
             }
             if(coreconfigs.meshconfig != null){
                 for(int i = 0; i < meshsize; i++){
-                    targets.get(i).configure(this, pass, i, passindex);
+                    FSTypeMesh<?> target = targets.get(i);
+
+                    target.configure(this, pass, i, passindex);
+                    coreconfigs.meshconfig.configure(this, pass, target, i, passindex);
                 }
             }
             if(coreconfigs.postdrawconfig != null){
@@ -280,7 +282,7 @@ public abstract class FSP{
         }
     }
 
-    public void configureMesh(FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int targetindex, int passindex){
+    public void configureMesh(FSRPass pass, FSTypeMesh<?> mesh, int targetindex, int passindex){
         coreconfigs.meshconfig.configure(this, pass, mesh, targetindex, passindex);
     }
 
@@ -415,7 +417,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glClear(flag);
         }
 
@@ -436,7 +438,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" flag[");
@@ -463,7 +465,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glClearColor(color[0], color[1], color[2], color[3]);
         }
 
@@ -493,7 +495,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" color[");
@@ -529,7 +531,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             view.viewPort(x, y, width, height);
         }
 
@@ -566,7 +568,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -598,7 +600,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glDepthMask(mask);
         }
 
@@ -619,7 +621,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" mask[");
@@ -646,7 +648,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glCullFace(cullmode);
         }
 
@@ -667,7 +669,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" mode[");
@@ -694,7 +696,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttribDivisor(location, divisor);
         }
 
@@ -715,7 +717,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" divisor[");
@@ -742,7 +744,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glReadBuffer(readmode);
         }
 
@@ -763,7 +765,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" mode[");
@@ -790,7 +792,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glEnableVertexAttribArray(config.location());
         }
 
@@ -811,7 +813,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" config[");
@@ -840,7 +842,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glDisableVertexAttribArray(config.location());
         }
 
@@ -861,7 +863,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" config[");
@@ -956,7 +958,7 @@ public abstract class FSP{
         public abstract Array<TYPE> duplicate(long flags);
 
         @Override
-        public abstract void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug);
+        public abstract void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug);
     }
 
     public abstract static class ArrayDirect<TYPE extends VLArray<?, ?>> extends Array<TYPE>{
@@ -974,7 +976,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             log.append(" offset[");
             log.append(offset);
             log.append("] count[");
@@ -1024,7 +1026,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             array = (TYPE)mesh.get(instance).elementData(element);
         }
 
@@ -1042,7 +1044,7 @@ public abstract class FSP{
         public abstract ArrayElement<TYPE> duplicate(long flags);
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             log.append(" instance[");
             log.append(instance);
             log.append("] element[");
@@ -1087,7 +1089,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
@@ -1119,7 +1121,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
@@ -1167,7 +1169,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSBufferBinding<?> binding = mesh.binding(element, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
@@ -1199,7 +1201,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
@@ -1239,7 +1241,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniformMatrix4fv(location, count(), false, array().provider(), offset());
         }
 
@@ -1264,7 +1266,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniformMatrix4fv(location, count(), false, array().provider(), offset());
         }
@@ -1290,7 +1292,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform4fv(location, count(), array().provider(), offset());
         }
 
@@ -1315,7 +1317,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
 
             GLES32.glUniform4fv(location, count(), array().provider(), offset());
@@ -1342,7 +1344,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform3fv(location, count(), array().provider(), offset());
         }
 
@@ -1367,7 +1369,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform3fv(location, count(), array().provider(), offset());
         }
@@ -1393,7 +1395,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform2fv(location, count(), array().provider(), offset());
         }
 
@@ -1418,7 +1420,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform2fv(location, count(), array().provider(), offset());
         }
@@ -1444,7 +1446,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform1fv(location, count(), array().provider(), offset());
         }
 
@@ -1469,7 +1471,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform1fv(location, count(), array().provider(), offset());
         }
@@ -1505,7 +1507,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform4f(location, x.get(), y.get(), z.get(), w.get());
         }
 
@@ -1520,7 +1522,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -1558,7 +1560,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform3f(location, x.get(), y.get(), z.get());
         }
 
@@ -1573,7 +1575,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -1607,7 +1609,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform2f(location, x.get(), y.get());
         }
 
@@ -1622,7 +1624,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -1651,7 +1653,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform1f(location, x.get());
         }
 
@@ -1666,7 +1668,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -1690,7 +1692,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
 
@@ -1715,7 +1717,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
@@ -1741,7 +1743,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
 
@@ -1766,7 +1768,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
@@ -1792,7 +1794,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
 
@@ -1817,7 +1819,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform4iv(location, count(), array().provider(), offset());
         }
@@ -1843,7 +1845,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform1iv(location, count(), array().provider(), offset());
         }
 
@@ -1868,7 +1870,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glUniform1iv(location, count(), array().provider(), offset());
         }
@@ -1904,7 +1906,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform4i(location, x.get(), y.get(), z.get(), w.get());
         }
 
@@ -1942,7 +1944,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -1980,7 +1982,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform3i(location, x.get(), y.get(), z.get());
         }
 
@@ -2016,7 +2018,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -2050,7 +2052,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform2i(location, x.get(), y.get());
         }
 
@@ -2084,7 +2086,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -2113,7 +2115,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform1i(location, x.get());
         }
 
@@ -2143,7 +2145,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -2167,7 +2169,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib4fv(location, array().provider(), offset());
         }
 
@@ -2192,7 +2194,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glVertexAttrib4fv(location, array().provider(), offset());
         }
@@ -2218,7 +2220,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib3fv(location, array().provider(), offset());
         }
 
@@ -2243,7 +2245,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glVertexAttrib3fv(location, array().provider(), offset());
         }
@@ -2269,7 +2271,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib2fv(location, array().provider(), offset());
         }
 
@@ -2294,7 +2296,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glVertexAttrib2fv(location, array().provider(), offset());
         }
@@ -2320,7 +2322,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttrib1fv(location, array().provider(), offset());
         }
 
@@ -2345,7 +2347,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glVertexAttrib1fv(location, array().provider(), offset());
         }
@@ -2381,7 +2383,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4i(location, x.get(), y.get(), z.get(), w.get());
         }
 
@@ -2419,7 +2421,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" x[");
@@ -2449,7 +2451,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4iv(location, array().provider(), offset());
         }
 
@@ -2474,7 +2476,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glVertexAttribI4iv(location, array().provider(), offset());
         }
@@ -2500,7 +2502,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glVertexAttribI4uiv(location, array().provider(), offset());
         }
 
@@ -2525,7 +2527,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             super.configure(program, pass, mesh, meshindex, passindex);
             GLES32.glVertexAttribI4uiv(location, array().provider(), offset());
         }
@@ -2566,7 +2568,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSVertexBuffer<?> buffer = mesh.binding(element, bindingindex).vbuffer;
 
             program.uniformBlockBinding(location, buffer.bindPoint());
@@ -2594,7 +2596,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
@@ -2646,7 +2648,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             program.uniformBlockBinding(location, vbuffer.bindPoint());
             vbuffer.bindBufferBase();
         }
@@ -2671,7 +2673,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[NONE] ");
@@ -2700,7 +2702,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             texture.activateUnit();
             texture.bind();
         }
@@ -2722,7 +2724,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
             log.append(" [DYNAMIC]");
         }
@@ -2743,7 +2745,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSTexture t = mesh.first().colorTexture();
             t.activateUnit();
             t.bind();
@@ -2760,7 +2762,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
             log.append(" [DYNAMIC]");
         }
@@ -2781,7 +2783,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glUniform1i(location, mesh.first().colorTexture().unit().get());
         }
 
@@ -2796,7 +2798,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
             log.append(" [DYNAMIC]");
         }
@@ -2820,7 +2822,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glDrawArrays(drawmode, 0, mesh.first().vertexSize());
         }
 
@@ -2835,7 +2837,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" drawMode[");
@@ -2864,7 +2866,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             GLES32.glDrawArraysInstanced(drawmode, 0, mesh.first().vertexSize(), mesh.size());
         }
 
@@ -2879,7 +2881,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" drawMode[");
@@ -2913,7 +2915,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
@@ -2938,7 +2940,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" element[");
@@ -2974,7 +2976,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
@@ -2999,7 +3001,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" drawMode[");
@@ -3053,7 +3055,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
             FSBufferBinding<?> binding = mesh.binding(FSElements.ELEMENT_INDEX, bindingindex);
             VLBufferTracker tracker = binding.tracker;
 
@@ -3083,7 +3085,7 @@ public abstract class FSP{
         }
 
         @Override
-        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+        public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.debugInfo(pass, program, mesh, log, debug);
 
             log.append(" drawMode[");

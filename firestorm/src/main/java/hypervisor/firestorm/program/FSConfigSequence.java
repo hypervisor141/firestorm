@@ -2,7 +2,6 @@ package hypervisor.firestorm.program;
 
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSRPass;
-import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
@@ -61,7 +60,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configure(FSP program, FSRPass pass, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex){
+    public final void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
         int size = configs.size();
 
         int loc = location;
@@ -76,7 +75,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configureDebug(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public final void configureDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         int size = configs.size();
         int loc = location;
 
@@ -138,7 +137,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<FSTypeInstance> mesh, VLLog log, int debug){
+    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 

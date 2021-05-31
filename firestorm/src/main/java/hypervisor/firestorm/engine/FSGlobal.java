@@ -124,7 +124,7 @@ public abstract class FSGlobal{
         assemblers = null;
     }
 
-    public void releasebufferMaps(){
+    public void releaseBufferMaps(){
         buffermaps = null;
     }
 

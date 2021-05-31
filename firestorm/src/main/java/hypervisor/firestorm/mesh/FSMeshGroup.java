@@ -3,10 +3,8 @@ package hypervisor.firestorm.mesh;
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSGlobal;
-import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
-import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
@@ -17,7 +15,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
 
-    protected FSTypeRenderGroup<FSMeshGroup<ENTRY>> parent;
+    protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;
     protected String name;
     protected long id;
@@ -49,7 +47,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void parent(FSTypeRenderGroup<?> parent){
-        this.parent = (FSTypeRenderGroup<FSMeshGroup<ENTRY>>)parent;
+        this.parent = parent;
     }
 
     @Override
@@ -148,15 +146,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
         for(int i = 0; i < size; i++){
             entries.get(i).register(scanner);
-        }
-    }
-
-    @Override
-    public void configure(FSP program, FSRPass pass, int targetindex, int passindex){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).configure(program, pass, targetindex, passindex);
         }
     }
 

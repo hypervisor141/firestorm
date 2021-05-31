@@ -1,9 +1,7 @@
 package hypervisor.firestorm.mesh;
 
-import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
-import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSTexture;
 import hypervisor.vanguard.utils.VLCopyable;
 
@@ -21,7 +19,6 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void material(FSLightMaterial material);
     void lightMap(FSLightMap map);
     void colorTexture(FSTexture texture);
-    void configure(FSP program, FSRPass pass, int targetindex, int passindex);
     void dispatch(Dispatch<FSTypeRender> dispatch);
     void updateBuffer(int element);
     void updateSchematicBoundaries();

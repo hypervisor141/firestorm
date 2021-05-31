@@ -4,6 +4,7 @@ import hypervisor.firestorm.automation.FSBufferMap;
 import hypervisor.firestorm.automation.FSHAssembler;
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSGlobal;
+import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSP;
 import hypervisor.vanguard.list.VLListType;
 
@@ -14,6 +15,8 @@ public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGr
     FSHScanner.ScanFunction getScanFunction(FSGlobal global);
     FSP getProgram(FSGlobal global);
 
+    void addToDefinedProgram();
+    void configure(FSP program, FSRPass pass, int targetindex, int passindex);
     void allocateBinding(int element, int capacity, int resizer);
     void bindManual(int element, FSBufferBinding<?> binding);
     FSBufferBinding<?> binding(int element, int index);
