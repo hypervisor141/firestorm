@@ -159,6 +159,23 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
             @Override
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
+                if(data.name.equalsIgnoreCase(target.name())){
+                    if(target.size() > 0){
+                        throw new RuntimeException("Found more than one instance with a singular scanner [" + target.name() + "]");
+                    }
+
+                    FSInstance instance = new FSInstance(data.name);
+                    target.add(instance);
+
+                    assembler.buildFirst(instance, target, data);
+                }
+            }
+        };
+
+        ScanFunction SCAN_INSTANCED = new ScanFunction(){
+
+            @Override
+            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
                 if(data.name.contains(target.name())){
                     FSInstance instance = new FSInstance(data.name);
                     target.add(instance);
@@ -169,23 +186,6 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
                     }else{
                         assembler.buildRest(instance, target, data);
                     }
-                }
-            }
-        };
-
-        ScanFunction SCAN_INSTANCED = new ScanFunction(){
-
-            @Override
-            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(data.name.equalsIgnoreCase(target.name())){
-                    if(target.size() > 0){
-                        throw new RuntimeException("Found more than one instance with a singular scanner [" + target.name() + "]");
-                    }
-
-                    FSInstance instance = new FSInstance(data.name);
-                    target.add(instance);
-
-                    assembler.buildFirst(instance, target, data);
                 }
             }
         };
