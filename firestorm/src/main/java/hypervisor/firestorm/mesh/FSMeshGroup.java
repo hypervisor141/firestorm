@@ -21,7 +21,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     protected long id;
 
     public FSMeshGroup(String name, int capacity, int resizer){
-        this.name = name;
+        this.name = name.toLowerCase();
 
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.getNextID();

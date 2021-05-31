@@ -25,7 +25,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     protected long id;
 
     public FSMesh(String name, int capacity, int resizer){
-        this.name = name;
+        this.name = name.toLowerCase();
 
         bindings = new VLListType[FSElements.COUNT];
         entries = new VLListType<>(capacity, resizer);

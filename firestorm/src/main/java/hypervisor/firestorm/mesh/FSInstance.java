@@ -31,7 +31,7 @@ public class FSInstance implements FSTypeInstance{
     protected long id;
 
     public FSInstance(String name){
-        this.name = name;
+        this.name = name.toLowerCase();
 
         store = new FSElementStore(FSElements.COUNT);
         schematics = new FSSchematics(this);
