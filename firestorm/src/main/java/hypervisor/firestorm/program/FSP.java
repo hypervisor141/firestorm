@@ -150,7 +150,7 @@ public abstract class FSP{
                     coreconfigs.setupconfig.notifyProgramBuilt(this);
                 }
                 if(coreconfigs.meshconfig != null){
-                    log.append("[Notifying program built for TargetConfig]\n");
+                    log.append("[Notifying program built for MeshConfig]\n");
                     coreconfigs.meshconfig.notifyProgramBuilt(this);
                 }
                 if(coreconfigs.postdrawconfig != null){
@@ -211,29 +211,27 @@ public abstract class FSP{
 
             if(coreconfigs.setupconfig != null){
                 log.addTag("SetupConfig");
-
                 coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex, log, debug);
-
                 log.removeLastTag();
             }
             if(coreconfigs.meshconfig != null){
+                log.addTag("MeshConfig");
+
                 for(int i = 0; i < meshsize; i++){
                     FSTypeMesh<?> target = targets.get(i);
-
                     log.addTag(target.name());
-                    log.addTag("TargetConfig");
 
                     target.configure(this, pass, i, passindex);
                     coreconfigs.meshconfig.configureDebug(this, pass, target, i, passindex, log, debug);
 
                     log.removeLastTag();
                 }
+
+                log.removeLastTag();
             }
             if(coreconfigs.postdrawconfig != null){
                 log.addTag("PostDrawConfig");
-
                 coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex, log, debug);
-
                 log.removeLastTag();
             }
 
