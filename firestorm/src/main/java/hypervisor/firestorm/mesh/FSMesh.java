@@ -288,7 +288,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            dispatch(dispatch);
+            entries.get(i).dispatch(dispatch);
         }
     }
 
