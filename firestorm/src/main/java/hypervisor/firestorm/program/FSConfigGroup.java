@@ -54,7 +54,7 @@ public class FSConfigGroup extends FSConfig{
     }
 
     @Override
-    public final void configureDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public final void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         int size = configs.size();
 
         log.addTag(getClass().getSimpleName());

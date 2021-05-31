@@ -43,7 +43,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    public void configureDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         printDebugInfo(pass, program, mesh, log, debug);
 
         config.location(location);

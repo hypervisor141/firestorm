@@ -224,7 +224,7 @@ public abstract class FSP{
                     log.addTag("TargetConfig");
 
                     target.configure(this, pass, i, passindex);
-                    coreconfigs.meshconfig.configure(this, pass, target, i, passindex);
+                    coreconfigs.meshconfig.configureDebug(this, pass, target, i, passindex, log, debug);
 
                     log.removeLastTag();
                 }
