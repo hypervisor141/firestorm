@@ -42,6 +42,23 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
         }
     }
 
+    public void checkResults(VLLog log){
+        int size = targets.size();
+
+        for(int i = 0; i < size; i++){
+            FSTypeMesh<FSTypeInstance> entry = targets.get(i);
+
+            if(entry.size() == 0){
+                log.append("Incomplete scan : found no instance for mesh with keyword[");
+                log.append(entry.name());
+                log.append("]\n");
+                log.printError();
+
+                throw new RuntimeException();
+            }
+        }
+    }
+
     public void signalScanComplete(){
         target.scanComplete();
     }

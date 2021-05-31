@@ -56,11 +56,11 @@ public class FSAutomator{
                     target.scan(FSAutomator.this);
                 }
             });
-            fileDebugLoop("Results Check Stage", log, new LoopOperation<FileTarget>(){
+            scannerDebugLoop("Results Check Stage", log, new LoopOperation<FSHScanner<?>>(){
 
                 @Override
-                public void run(FileTarget target, VLLog log){
-                    target.checkResults(FSAutomator.this, log);
+                public void run(FSHScanner<?> target, VLLog log){
+                    target.checkResults(log);
                 }
             });
             scannerDebugLoop("Signal Scan Complete", log, new LoopOperation<FSHScanner<?>>(){
@@ -234,21 +234,6 @@ public class FSAutomator{
 
                 for(int i2 = 0; i2 < size2; i2++){
                     scanners.get(i2).scan(data);
-                }
-            }
-        }
-
-        void checkResults(FSAutomator automator, VLLog log){
-            VLListType<FSHScanner<?>> scanners = automator.scanners;
-            int size = scanners.size();
-
-            for(int i = 0; i < size; i++){
-                FSHScanner<?> entry = scanners.get(i);
-
-                if(entry.target.size() == 0){
-                    log.append("Incomplete scan : found no instance for mesh with keyword[");
-                    log.append(entry.target.name());
-                    log.append("]\n");
                 }
             }
         }
