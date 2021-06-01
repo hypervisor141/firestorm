@@ -34,7 +34,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
     protected void scan(FSM.Data data){
         int size = targets.size();
 
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             FSTypeMesh<FSTypeInstance> target = targets.get(i);
@@ -69,7 +69,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void finalizeBuild(){
         int size = targets.size();
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             targets.get(i).addToDefinedProgram();
@@ -80,7 +80,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void accountForTargetSize(){
         int size = targets.size();
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             FSBufferMap map = targets.get(i).getBufferMap(global);
@@ -93,7 +93,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void accountForTargetSizeDebug(VLLog log){
         int size = targets.size();
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             FSBufferMap map = targets.get(i).getBufferMap(global);
@@ -106,7 +106,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void buffer(){
         int size = targets.size();
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             FSBufferMap map = targets.get(i).getBufferMap(global);
@@ -119,7 +119,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void bufferDebug(VLLog log){
         int size = targets.size();
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         if(size > 0){
             for(int i = 0; i < size; i++){
@@ -142,7 +142,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void uploadBuffer(){
         int size = targets.size();
-        FSGlobal global = FSR.getGlobal();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             FSBufferMap map = targets.get(i).getBufferMap(global);

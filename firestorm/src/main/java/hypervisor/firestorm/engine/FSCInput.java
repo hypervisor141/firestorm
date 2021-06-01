@@ -111,8 +111,8 @@ public final class FSCInput{
         FSR.post(new TaskProcessInput(type, e1, e2, f1, f2));
     }
 
-    protected static void destroy(){
-        if(FSControl.getDestroyOnPause()){
+    protected static void destroy(boolean destroyonpause){
+        if(destroyonpause){
             LIST_TOUCH = null;
             LIST_DOWN = null;
             LIST_SINGLETAP = null;

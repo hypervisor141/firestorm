@@ -24,7 +24,6 @@ public class FSR{
     };
 
     private static FSRInterface threadinterface;
-    private static FSGlobal global;
     private static Choreographer choreographer;
     private static volatile FSRThread renderthread;
 
@@ -36,9 +35,8 @@ public class FSR{
     public static int CURRENT_PASS_INDEX;
     public static int CURRENT_PASS_ENTRY_INDEX;
 
-    protected static void initialize(FSRInterface threadsrc, FSGlobal global){
+    protected static void initialize(FSRInterface threadsrc){
         FSR.threadinterface = threadsrc;
-        FSR.global = global;
 
         choreographer = Choreographer.getInstance();
 
@@ -87,7 +85,7 @@ public class FSR{
 
         events.GLPreCreated(surface, context, continuing);
 
-        global.initialize(context);
+        FSGlobal.get().initialize(context);
 
         events.GLPostCreated(surface, context, continuing);
 
@@ -111,7 +109,7 @@ public class FSR{
         FSEvents events = FSControl.events();
         events.GLPreDraw();
 
-        VLListType<FSRPass> passes = global.passes;
+        VLListType<FSRPass> passes = FSGlobal.get().passes;
 
         int size = passes.size();
 
@@ -148,10 +146,6 @@ public class FSR{
         return CURRENT_PASS_INDEX;
     }
 
-    public static FSGlobal getGlobal(){
-        return global;
-    }
-
     public static void post(FSRTask task){
         synchronized(tasks){
             tasks.add(task);
@@ -161,29 +155,27 @@ public class FSR{
     protected static void finishFrame(){
         FSCFrames.timeFrameEnded();
         FSCEGL.swapBuffers();
-        global.notifyFrameSwap();
+        FSGlobal.get().notifyFrameSwap();
         FSCFrames.finalizeFrame();
     }
 
     protected static void notifyPaused(){
-        global.notifyPaused();
+        FSGlobal.get().notifyPaused();
     }
 
     protected static void notifyResumed(){
-        global.notifyResumed();
+        FSGlobal.get().notifyResumed();
     }
 
-    protected static void destroy(){
+    protected static void destroy(boolean destroyonpause){
         renderthread.lockdown();
 
-        if(!FSControl.getDestroyOnPause()){
+        if(!destroyonpause){
             FSR.notifyPaused();
 
         }else{
             renderthread.requestDestruction();
             renderthread = null;
-
-            global.destroy();
 
             CURRENT_PASS_INDEX = -1;
             CURRENT_PASS_ENTRY_INDEX = -1;
@@ -191,7 +183,6 @@ public class FSR{
             isInitialized = false;
 
             threadinterface = null;
-            global = null;
             choreographer = null;
             tasks = null;
             taskcache = null;

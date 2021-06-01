@@ -91,7 +91,7 @@ public final class FSCDimensions{
         return realasp;
     }
     
-    protected static void destroy(){
+    protected static void destroy(boolean destroyonpause){
         mainw = 0;
         mainh = 0;
         mainasp = 0;

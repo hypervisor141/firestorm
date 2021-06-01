@@ -34,7 +34,8 @@ public final class FSControl{
             FSElements.initialize(customelements);
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
-            FSR.initialize(threadinterface, global);
+            FSR.initialize(threadinterface);
+            FSGlobal.initialize(global);
         }
     }
 
@@ -81,12 +82,13 @@ public final class FSControl{
     }
 
     protected static void destroy(){
-        FSR.destroy();
-        FSCDimensions.destroy();
-        FSCEGL.destroy();
-        FSCInput.destroy();
-        FSCFrames.destroy();
-        FSElements.destroy();
+        FSR.destroy(destroyonpause);
+        FSGlobal.destroy(destroyonpause);
+        FSCDimensions.destroy(destroyonpause);
+        FSCEGL.destroy(destroyonpause);
+        FSCInput.destroy(destroyonpause);
+        FSCFrames.destroy(destroyonpause);
+        FSElements.destroy(destroyonpause);
 
         if(!destroyonpause){
             GLOBAL_ID = -1;

@@ -62,11 +62,11 @@ public class FSCEGL{
         GLES32.glGetError();
     }
 
-    public static void destroy(){
+    public static void destroy(boolean destroyonpause){
         EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
         FSTools.checkEGLError();
 
-        if(FSControl.getDestroyOnPause()){
+        if(destroyonpause){
             EGL14.eglDestroySurface(display, surface);
             FSTools.checkEGLError();
 

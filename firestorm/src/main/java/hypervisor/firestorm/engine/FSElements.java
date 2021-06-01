@@ -68,8 +68,8 @@ public class FSElements{
         UNIT_BYTES[element] = unitsize * bytes;
     }
 
-    protected static void destroy(){
-        if(FSControl.getDestroyOnPause()){
+    protected static void destroy(boolean destroyonpause){
+        if(destroyonpause){
             NAMES = null;
             ELEMENTS = null;
             GLTYPES = null;

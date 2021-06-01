@@ -13,6 +13,8 @@ import hypervisor.vanguard.list.VLListType;
 
 public abstract class FSGlobal{
 
+    private static FSGlobal GLOBAL;
+
     protected VLThreadManager threadmanager;
     protected VLListType<FSHAssembler> assemblers;
     protected VLListType<VLBuffer<?, ?>> buffers;
@@ -38,6 +40,14 @@ public abstract class FSGlobal{
 
         buildPrograms();
         postSetup(context);
+    }
+
+    public static void initialize(FSGlobal global){
+        GLOBAL = global;
+    }
+
+    public static FSGlobal get(){
+        return GLOBAL;
     }
 
     protected abstract VLThreadManager generateThreads(Context context);
@@ -193,5 +203,11 @@ public abstract class FSGlobal{
         passes = null;
         hubs = null;
         threadmanager = null;
+    }
+
+    protected static void destroy(boolean destroyonpause){
+        if(destroyonpause){
+            GLOBAL = null;
+        }
     }
 }

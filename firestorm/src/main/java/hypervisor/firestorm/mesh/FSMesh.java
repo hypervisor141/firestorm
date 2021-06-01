@@ -3,6 +3,7 @@ package hypervisor.firestorm.mesh;
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
+import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.engine.FSR;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
@@ -48,7 +49,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void addToDefinedProgram(){
-        getProgram(FSR.getGlobal()).targets().add(this);
+        getProgram(FSGlobal.get()).targets().add(this);
     }
 
     @Override
