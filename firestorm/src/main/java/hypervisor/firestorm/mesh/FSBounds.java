@@ -86,8 +86,6 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
     protected FSSchematics schematics;
     protected VLUpdater<FSBounds> updater;
-
-    protected Point offset;
     protected VLListType<Point> points;
 
     protected FSBounds(FSSchematics schematics){
@@ -99,9 +97,9 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     }
 
     protected final void initialize(Point offset, int pointscapacity){
-        this.offset = offset;
         this.points = new VLListType<>(pointscapacity, pointscapacity);
 
+        points.add(offset);
         markForUpdate();
     }
 
@@ -130,7 +128,6 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
         schematics = src.schematics;
         updater = src.updater;
-        offset = src.offset;
     }
 
     @Override
@@ -145,7 +142,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     }
 
     public Point offset(){
-        return offset;
+        return points.get(0);
     }
 
     public Point point(int index){
@@ -165,6 +162,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     }
 
     protected final void recalculate(){
+        Point offset = offset();
         offset.calculate(schematics);
         float[] offsetcoords = offset.coordinates;
 

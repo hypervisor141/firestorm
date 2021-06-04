@@ -36,14 +36,14 @@ public class FSBoundsSphere extends FSBounds{
 
     @Override
     protected void notifyBasePointsUpdated(){
-        radius = VLMath.euclideanDistance(point(0).coordinates, 0, offset.coordinates, 0, 3);
+        radius = VLMath.euclideanDistance(point(0).coordinates, 0, offset().coordinates, 0, 3);
     }
 
     @Override
     public void check(Collision results, FSBoundsSphere bounds){
         super.check(results, bounds);
 
-        results.distance = VLMath.euclideanDistance(point(0).coordinates, 0, offset.coordinates, 0, 3) - radius - bounds.radius;
+        results.distance = VLMath.euclideanDistance(point(0).coordinates, 0, offset().coordinates, 0, 3) - radius - bounds.radius;
         results.collided = results.distance <= 0;
     }
 
@@ -58,7 +58,7 @@ public class FSBoundsSphere extends FSBounds{
     public void checkPoint(Collision results, float[] point){
         super.checkPoint(results, point);
 
-        results.distance = VLMath.euclideanDistance(point, 0, offset.coordinates, 0, 3) - radius;
+        results.distance = VLMath.euclideanDistance(point, 0, offset().coordinates, 0, 3) - radius;
         results.collided = results.distance <= 0;
     }
 
@@ -66,7 +66,7 @@ public class FSBoundsSphere extends FSBounds{
     public void checkInput(Collision results, float[] near, float[] far){
         super.checkInput(results, near, far);
 
-        VLMath.closestPointOfRay(near, 0, far, 0, offset.coordinates, 0, FSCache.FLOAT4_2, 0);
+        VLMath.closestPointOfRay(near, 0, far, 0, offset().coordinates, 0, FSCache.FLOAT4_2, 0);
         checkPoint(results, FSCache.FLOAT4_2);
     }
 }

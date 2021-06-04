@@ -275,10 +275,15 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         modelupdater = UPDATE_MODEL;
         mvpupdater = UPDATE_MVP;
 
-        for(int i = 0; i < mainbounds.size(); i++){
+        int size = mainbounds.size();
+
+        for(int i = 0; i < size; i++){
             mainbounds.get(i).markForUpdate();
         }
-        for(int i = 0; i < inputbounds.size(); i++){
+
+        size = inputbounds.size();
+
+        for(int i = 0; i < size; i++){
             inputbounds.get(i).markForUpdate();
         }
     }
