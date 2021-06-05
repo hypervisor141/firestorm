@@ -121,12 +121,13 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void updateBoundaries(){
-        float maxx = -Float.MAX_VALUE;
         float minx = Float.MAX_VALUE;
-        float maxy = -Float.MAX_VALUE;
         float miny = Float.MAX_VALUE;
-        float maxz = -Float.MAX_VALUE;
         float minz = Float.MAX_VALUE;
+
+        float maxx = -Float.MAX_VALUE;
+        float maxy = -Float.MAX_VALUE;
+        float maxz = -Float.MAX_VALUE;
 
         float[] vertices = instance.positions().provider();
         int size = vertices.length;
