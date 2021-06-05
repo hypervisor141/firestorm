@@ -168,7 +168,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
         int size = points.size();
 
-        for(int i = 0; i < size; i++){
+        for(int i = 1; i < size; i++){
             Point point = points.get(i);
             point.calculate(schematics);
             point.offsetBy(offsetcoords);

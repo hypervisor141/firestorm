@@ -132,7 +132,6 @@ public class FSBoundsCuboid extends FSBounds {
         super.checkInput(results, near, far);
 
         VLMath.closestPointOfRay(near, 0, far, 0, offset().coordinates, 0, FSCache.FLOAT4_2, 0);
-
         checkPoint(results, FSCache.FLOAT4_2);
         Log.d("wtf", schematics.instance.name + " Offset " + Arrays.toString(offset().coordinates) + "  Second point " + Arrays.toString(points.get(1).coordinates) + "  Near "  + Arrays.toString(near) + "  Far "  + Arrays.toString(far) + "  Final Input " + Arrays.toString(FSCache.FLOAT4_2) + "  " + results.collided);
     }
