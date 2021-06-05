@@ -36,14 +36,14 @@ public class FSBoundsSphere extends FSBounds{
 
     @Override
     protected void notifyBasePointsUpdated(){
-        radius = VLMath.euclideanDistance(point(0).coordinates, 0, offset().coordinates, 0, 3);
+        radius = VLMath.euclideanDistance(point(1).coordinates, 0, offset().coordinates, 0, 3);
     }
 
     @Override
     public void check(Collision results, FSBoundsSphere bounds){
         super.check(results, bounds);
 
-        results.distance = VLMath.euclideanDistance(point(0).coordinates, 0, offset().coordinates, 0, 3) - radius - bounds.radius;
+        results.distance = VLMath.euclideanDistance(point(1).coordinates, 0, offset().coordinates, 0, 3) - radius - bounds.radius;
         results.collided = results.distance <= 0;
     }
 

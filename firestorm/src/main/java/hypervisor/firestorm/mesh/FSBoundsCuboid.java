@@ -1,9 +1,5 @@
 package hypervisor.firestorm.mesh;
 
-import android.util.Log;
-
-import java.util.Arrays;
-
 import hypervisor.firestorm.engine.FSCache;
 import hypervisor.vanguard.math.VLMath;
 
@@ -66,7 +62,7 @@ public class FSBoundsCuboid extends FSBounds {
     @Override
     protected void notifyBasePointsUpdated(){
         float[] offsetcoords = offset().coordinates;
-        float[] point1 = point(0).coordinates;
+        float[] point1 = point(1).coordinates;
 
         halfwidth = (point1[0] - offsetcoords[0]);
         halfheight = (point1[1] - offsetcoords[1]);
@@ -117,13 +113,13 @@ public class FSBoundsCuboid extends FSBounds {
         super.checkPoint(results, point);
 
         VLMath.difference(offset().coordinates, 0, point, 0, FSCache.FLOAT4, 0, 3);
-        float origindistance = VLMath.length(FSCache.FLOAT4, 0, 3);
+        float length = VLMath.length(FSCache.FLOAT4, 0, 3);
 
         FSCache.FLOAT4[0] = VLMath.clamp(FSCache.FLOAT4[0], -halfwidth, halfwidth);
         FSCache.FLOAT4[1] = VLMath.clamp(FSCache.FLOAT4[1], -halfheight, halfheight);
         FSCache.FLOAT4[2] = VLMath.clamp(FSCache.FLOAT4[2], -halfdepth, halfdepth);
 
-        results.distance = origindistance - VLMath.length(FSCache.FLOAT4, 0, 3);
+        results.distance = length - VLMath.length(FSCache.FLOAT4, 0, 3);
         results.collided = results.distance <= 0;
     }
 
@@ -133,6 +129,5 @@ public class FSBoundsCuboid extends FSBounds {
 
         VLMath.closestPointOfRay(near, 0, far, 0, offset().coordinates, 0, FSCache.FLOAT4_2, 0);
         checkPoint(results, FSCache.FLOAT4_2);
-        Log.d("wtf", schematics.instance.name + " Offset " + Arrays.toString(offset().coordinates) + "  Second point " + Arrays.toString(points.get(1).coordinates) + "  Near "  + Arrays.toString(near) + "  Far "  + Arrays.toString(far) + "  Final Input " + Arrays.toString(FSCache.FLOAT4_2) + "  " + results.collided);
     }
 }
