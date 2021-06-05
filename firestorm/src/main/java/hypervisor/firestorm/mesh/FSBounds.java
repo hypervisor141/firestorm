@@ -292,26 +292,32 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         }
     }
 
-    public static final class Collision{
+    public static class Collision implements VLCopyable<Collision>{
 
         public boolean collided;
-        public int boundsindex;
+        public int initiatorboundsindex;
+        public int targetboundsindex;
         public float distance;
 
-        public Collision(boolean collided, int boundsindex, float distance){
-            this.collided = collided;
-            this.boundsindex = boundsindex;
-            this.distance = distance;
+        public Collision(){
+
         }
 
-        public Collision(Collision src){
-            this.collided = src.collided;
-            this.boundsindex = src.boundsindex;
-            this.distance = src.distance;
+        public Collision(Collision src, long flags){
+            copy(src, flags);
         }
 
-        protected Collision(){
+        @Override
+        public void copy(Collision src, long flags){
+            collided = src.collided;
+            initiatorboundsindex = src.initiatorboundsindex;
+            targetboundsindex = src.targetboundsindex;
+            distance = src.distance;
+        }
 
+        @Override
+        public Collision duplicate(long flags){
+            return new Collision(this, flags);
         }
     }
 }

@@ -1,5 +1,7 @@
 package hypervisor.firestorm.mesh;
 
+import android.view.MotionEvent;
+
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSTexture;
@@ -20,6 +22,7 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void lightMap(FSLightMap map);
     void colorTexture(FSTexture texture);
     void dispatch(Dispatch<FSTypeRender> dispatch);
+    void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     void updateBuffer(int element);
     void updateSchematicBoundaries();
     void markSchematicsForUpdate();

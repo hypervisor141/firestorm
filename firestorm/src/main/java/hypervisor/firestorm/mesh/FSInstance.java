@@ -1,5 +1,8 @@
 package hypervisor.firestorm.mesh;
 
+import android.view.MotionEvent;
+
+import hypervisor.firestorm.engine.FSCInput;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.program.FSLightMap;
@@ -273,6 +276,11 @@ public class FSInstance implements FSTypeInstance{
     @Override
     public void dispatch(FSTypeRenderGroup.Dispatch<FSTypeRender> dispatch){
         dispatch.process(this);
+    }
+
+    @Override
+    public void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+        schematics.checkInputCollision(e1, e2, f1, f2, near, far);
     }
 
     @Override

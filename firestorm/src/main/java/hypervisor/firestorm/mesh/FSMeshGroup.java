@@ -1,5 +1,7 @@
 package hypervisor.firestorm.mesh;
 
+import android.view.MotionEvent;
+
 import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSGlobal;
@@ -255,6 +257,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
         for(int i = 0; i < size; i++){
             entries.get(i).dispatch(dispatch);
+        }
+    }
+
+    @Override
+    public void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).checkInputs(e1, e2, f1, f2, near, far);
         }
     }
 

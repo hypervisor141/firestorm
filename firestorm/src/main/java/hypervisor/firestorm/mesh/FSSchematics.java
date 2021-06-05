@@ -1,5 +1,7 @@
 package hypervisor.firestorm.mesh;
 
+import android.view.MotionEvent;
+
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.engine.FSView;
@@ -34,8 +36,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         }
     };
 
-    protected static final FSBounds.Collision COLLISIONCACHE = new FSBounds.Collision();
-
     protected FSInstance instance;
 
     protected VLUpdater<FSSchematics> centroidupdater;
@@ -43,7 +43,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     protected VLUpdater<FSSchematics> mvpupdater;
 
     protected VLListType<FSBounds> mainbounds;
-    protected VLListType<FSBounds> inputbounds;
+    protected VLListType<InputChecker> inputcheckers;
 
     protected float[] centroid;
     protected float[] centroidmodel;
@@ -57,7 +57,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         this.instance = instance;
 
         mainbounds = new VLListType<>(0, 10);
-        inputbounds = new VLListType<>(0, 10);
+        inputcheckers = new VLListType<>(0, 10);
     }
 
     public FSSchematics(FSSchematics src, long flags){
@@ -74,7 +74,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             mainbounds = src.mainbounds;
-            inputbounds = src.inputbounds;
+            inputcheckers = src.inputcheckers;
             centroid = src.centroid;
             centroidmodel = src.centroidmodel;
             centroidmvp = src.centroidmvp;
@@ -84,7 +84,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             mainbounds = src.mainbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
-            inputbounds = src.inputbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            inputcheckers = src.inputcheckers.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
             centroid = src.centroid.clone();
             centroidmodel = src.centroidmodel.clone();
@@ -211,17 +211,16 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         config.multiplyViewPerspective(boundsmvp, 4, boundsmodel, 4);
     }
 
-    public void checkCollision(InstanceCollision results, FSInstance target){
+    public void checkCollision(FSBounds.Collision results, FSInstance target){
         int index = -1;
         int size = mainbounds.size();
 
         for(int i = 0; i < size; i++){
-            index = target.schematics.checkCollision(COLLISIONCACHE, mainbounds.get(i));
+            index = target.schematics.checkCollision(results, mainbounds.get(i));
 
             if(index != -1){
-                results.collision = new FSBounds.Collision(COLLISIONCACHE);
-                results.sourceindex = i;
-                results.targetindex = index;
+                results.initiatorboundsindex = i;
+                results.targetboundsindex = index;
 
                 return;
             }
@@ -256,19 +255,14 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return -1;
     }
 
-    public FSBounds.Collision checkInputCollision(float[] near, float[] far){
-        int size = inputbounds.size();
+    public void checkInputCollision(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+        int size = inputcheckers.size();
+        FSBounds.Collision results = new FSBounds.Collision();
 
         for(int i = 0; i < size; i++){
-            inputbounds.get(i).checkInput(COLLISIONCACHE, near, far);
-
-            if(COLLISIONCACHE.collided){
-                COLLISIONCACHE.boundsindex = i;
-                return new FSBounds.Collision(COLLISIONCACHE);
-            }
+            results.initiatorboundsindex = i;
+            inputcheckers.get(i).check(results, e1, e2, f1, f2, near, far);
         }
-
-        return null;
     }
 
     public void markForNewUpdates(){
@@ -282,10 +276,10 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
             mainbounds.get(i).markForUpdate();
         }
 
-        size = inputbounds.size();
+        size = inputcheckers.size();
 
         for(int i = 0; i < size; i++){
-            inputbounds.get(i).markForUpdate();
+            inputcheckers.get(i).bounds.markForUpdate();
         }
     }
 
@@ -585,24 +579,59 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return mainbounds;
     }
 
-    public VLListType<FSBounds> inputBounds(){
-        return inputbounds;
+    public VLListType<InputChecker> inputCheckers(){
+        return inputcheckers;
     }
 
-    public static final class InstanceCollision{
+    public static class InputChecker implements VLCopyable<InputChecker>{
 
-        public FSBounds.Collision collision;
-        public int sourceindex;
-        public int targetindex;
+        protected FSBounds bounds;
+        protected InputProcessor processor;
 
-        public InstanceCollision(FSBounds.Collision collision, int sourceindex, int targetindex){
-            this.collision = collision;
-            this.sourceindex = sourceindex;
-            this.targetindex = targetindex;
+        public InputChecker(FSBounds bounds, InputProcessor processor){
+            this.bounds = bounds;
+            this.processor = processor;
         }
 
-        public InstanceCollision(){
+        public InputChecker(InputChecker src, long flags){
+            copy(src, flags);
+        }
+
+        protected InputChecker(){
 
         }
+
+        public void check(FSBounds.Collision results, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+            bounds.checkInput(results, near, far);
+
+            if(results.collided){
+                processor.activated(results, e1, e2, f1, f2, near, far);
+            }
+        }
+
+        @Override
+        public void copy(InputChecker src, long flags){
+            if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+                bounds = src.bounds;
+
+            }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+                bounds = src.bounds.duplicate(FSBounds.FLAG_FORCE_DUPLICATE_POINTS);
+
+            }else{
+                Helper.throwMissingDefaultFlags();
+            }
+
+            processor = src.processor;
+        }
+
+        @Override
+        public InputChecker duplicate(long flags){
+            return new InputChecker(this, flags);
+        }
+    }
+
+    public interface InputProcessor{
+
+        void activated(FSBounds.Collision results, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     }
 }
