@@ -48,7 +48,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelFront() + coefficient;
+            return schematics.modelBack() + coefficient;
         }
     };
     public static final Mode MODE_X_RELATIVE_VOLUMETRIC = new Mode(){
@@ -69,16 +69,16 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelFront() + coefficient * schematics.modelDepth() / 100f;
+            return schematics.modelBack() + coefficient * schematics.modelDepth() / 100f;
         }
     };
     public static final Mode MODE_DIRECT_VALUE = new DirectMode();
 
     private static final VLUpdater<FSBounds> UPDATE = new VLUpdater<FSBounds>(){
         @Override
-        public void update(FSBounds s){
-            s.recalculate();
-            s.updater = UPDATE_NOTHING;
+        public void update(FSBounds target){
+            target.recalculate();
+            target.updater = UPDATE_NOTHING;
         }
     };
 
@@ -171,7 +171,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         for(int i = 0; i < size; i++){
             Point point = points.get(i);
             point.calculate(schematics);
-            point.offset(offsetcoords);
+            point.offsetBy(offsetcoords);
         }
 
         notifyBasePointsUpdated();
@@ -260,7 +260,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             coordinates[2] = modes[2].calculate(schematics, coefficients[2]);
         }
 
-        public void offset(float[] offset){
+        public void offsetBy(float[] offset){
             coordinates[0] += offset[0];
             coordinates[1] += offset[1];
             coordinates[2] += offset[2];

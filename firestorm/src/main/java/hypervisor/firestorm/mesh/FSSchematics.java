@@ -341,7 +341,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float rawDepth(){
-        return Math.abs(rawBack() - rawFront());
+        return Math.abs(rawFront() - rawBack());
     }
 
     public float rawLeft(){
@@ -352,7 +352,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return bounds[1];
     }
 
-    public float rawFront(){
+    public float rawBack(){
         return bounds[2];
     }
 
@@ -364,7 +364,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return bounds[5];
     }
 
-    public float rawBack(){
+    public float rawFront(){
         return bounds[6];
     }
 
@@ -388,18 +388,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return (float)Math.sqrt(Math.pow(rawBoundCenterX() - point[0], 2) + Math.pow(rawBoundCenterY() - point[1], 2) + Math.pow(rawBoundCenterZ() - point[2], 2));
     }
 
-    public float modelX(){
-        return modelRight();
-    }
-
-    public float modelY(){
-        return modelTop();
-    }
-
-    public float modelZ(){
-        return modelFront();
-    }
-
     public float modelBoundCenterX(){
         return (modelLeft() + modelRight()) / 2f;
     }
@@ -409,7 +397,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float modelBoundCenterZ(){
-        return (modelFront() + modelBack()) / 2f;
+        return (modelBack() + modelFront()) / 2f;
     }
 
     public float modelCentroidX(){
@@ -454,7 +442,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return boundsmodel[1];
     }
 
-    public float modelFront(){
+    public float modelBack(){
         modelupdater.update(this);
         return boundsmodel[2];
     }
@@ -469,7 +457,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return boundsmodel[5];
     }
 
-    public float modelBack(){
+    public float modelFront(){
         modelupdater.update(this);
         return boundsmodel[6];
     }
@@ -494,18 +482,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return (float)Math.sqrt(Math.pow(modelBoundCenterX(), 2) + Math.pow(modelBoundCenterY(), 2) + Math.pow(modelBoundCenterZ(), 2));
     }
 
-    public float mvpX(){
-        return mvpRight();
-    }
-
-    public float mvpY(){
-        return mvpTop();
-    }
-
-    public float mvpZ(){
-        return mvpFront();
-    }
-
     public float mvpBoundCenterX(){
         return (mvpLeft() + mvpRight()) / 2f;
     }
@@ -515,7 +491,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float mvpBoundCenterZ(){
-        return (mvpFront() + mvpBack()) / 2f;
+        return (mvpBack() + mvpFront()) / 2f;
     }
 
     public float mvpCentroidX(){
@@ -547,7 +523,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float mvpDepth(){
-        return Math.abs(mvpBack() - mvpFront());
+        return Math.abs(mvpFront() - mvpBack());
     }
 
     public float mvpLeft(){
@@ -560,7 +536,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return boundsmvp[1];
     }
 
-    public float mvpFront(){
+    public float mvpBack(){
         mvpupdater.update(this);
         return boundsmvp[2];
     }
@@ -575,7 +551,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return boundsmvp[5];
     }
 
-    public float mvpBack(){
+    public float mvpFront(){
         mvpupdater.update(this);
         return boundsmvp[6];
     }
