@@ -90,7 +90,7 @@ public final class FSControl{
         FSCFrames.destroy(destroyonpause);
         FSElements.destroy(destroyonpause);
 
-        if(!destroyonpause){
+        if(destroyonpause){
             GLOBAL_ID = -1;
             isalive = false;
 
