@@ -85,7 +85,9 @@ public class FSR{
 
         events.GLPreCreated(surface, context, continuing);
 
-        FSGlobal.get().initialize(context);
+        if(!continuing){
+            FSGlobal.get().initialize(context);
+        }
 
         events.GLPostCreated(surface, context, continuing);
 
