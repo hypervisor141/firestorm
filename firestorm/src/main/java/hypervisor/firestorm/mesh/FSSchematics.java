@@ -284,6 +284,8 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         modelSpace.transformPoint(boundsmodelspace, 0, boundslocalspace, 0);
         modelSpace.transformPoint(boundsmodelspace, 4, boundslocalspace, 4);
+
+        checkSortModelSpaceBounds();
     }
 
     public void directUpdateCentroid(){
