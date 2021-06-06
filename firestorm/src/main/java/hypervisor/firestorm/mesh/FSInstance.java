@@ -258,32 +258,42 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void rebuildSchematics(){
+    public void schematicsRebuild(){
         schematics.rebuild();
     }
 
     @Override
-    public void markSchematicsFullUpdate(){
+    public void schematicsSyncBaseBounds(){
+        schematics.syncBaseBounds();
+    }
+
+    @Override
+    public void schematicsUpdateBaseBounds(){
+        schematics.updateBaseBoundsOrder();
+    }
+
+    @Override
+    public void schematicsMarkFullUpdate(){
         schematics.markFullUpdate();
     }
 
     @Override
-    public void markSchematicsModelBoundsForUpdate(){
+    public void schematicsMarkModelBoundsForUpdate(){
         schematics.markModelBoundsForUpdate();
     }
 
     @Override
-    public void markSchematicsCentroidForUpdate(){
+    public void schematicsMarkCentroidForUpdate(){
         schematics.markCentroidBoundsForUpdate();
     }
 
     @Override
-    public void markSchematicsCollisionBoundsForUpdate(){
+    public void schematicsMarkCollisionBoundsForUpdate(){
         schematics.markCollisionBoundsForUpdate();
     }
 
     @Override
-    public void markSchematicsInputBoundsForUpdate(){
+    public void schematicsMarkInputBoundsForUpdate(){
         schematics.markInputBoundsForUpdate();
     }
 

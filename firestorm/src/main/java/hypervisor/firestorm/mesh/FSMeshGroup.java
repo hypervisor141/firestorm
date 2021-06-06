@@ -224,56 +224,74 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void rebuildSchematics(){
+    public void schematicsRebuild(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).rebuildSchematics();
+            entries.get(i).schematicsRebuild();
         }
     }
 
     @Override
-    public void markSchematicsFullUpdate(){
+    public void schematicsSyncBaseBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsFullUpdate();
+            entries.get(i).schematicsSyncBaseBounds();
         }
     }
 
     @Override
-    public void markSchematicsModelBoundsForUpdate(){
+    public void schematicsUpdateBaseBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsModelBoundsForUpdate();
+            entries.get(i).schematicsUpdateBaseBounds();
         }
     }
 
     @Override
-    public void markSchematicsCentroidForUpdate(){
+    public void schematicsMarkFullUpdate(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsCentroidForUpdate();
+            entries.get(i).schematicsMarkFullUpdate();
         }
     }
 
     @Override
-    public void markSchematicsCollisionBoundsForUpdate(){
+    public void schematicsMarkModelBoundsForUpdate(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsCollisionBoundsForUpdate();
+            entries.get(i).schematicsMarkModelBoundsForUpdate();
         }
     }
 
     @Override
-    public void markSchematicsInputBoundsForUpdate(){
+    public void schematicsMarkCentroidForUpdate(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsInputBoundsForUpdate();
+            entries.get(i).schematicsMarkCentroidForUpdate();
+        }
+    }
+
+    @Override
+    public void schematicsMarkCollisionBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsMarkCollisionBoundsForUpdate();
+        }
+    }
+
+    @Override
+    public void schematicsMarkInputBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsMarkInputBoundsForUpdate();
         }
     }
 

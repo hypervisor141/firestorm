@@ -165,7 +165,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidbase[1] /= vertexcount;
         centroidbase[2] /= vertexcount;
 
-        updateBaseBounds();
+        syncBaseBounds();
     }
 
     public boolean checkBaseBoundsUpdateRequirement(){
@@ -179,7 +179,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
                 positions[boundsindices[5]] != basebounds[6];
     }
 
-    public void updateBaseBounds(){
+    public void syncBaseBounds(){
         int size = basebounds.length;
         float[] positions = instance.positions().provider();
 
@@ -188,6 +188,31 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         }
 
         boundsmodel = basebounds.clone();
+    }
+
+    public void updateBaseBoundsOrder(){
+        int cachei;
+        float cachef;
+
+        for(int i = 0; i < 3; i++){
+            int indicesoffset = i + 3;
+            int boundsoffset = i + 4;
+
+            if(basebounds[i] > basebounds[indicesoffset]){
+                cachei = boundsindices[i];
+
+                boundsindices[i] = boundsindices[indicesoffset];
+                boundsindices[indicesoffset] = cachei;
+
+                cachef = basebounds[i];
+                basebounds[i] = basebounds[boundsoffset];
+                basebounds[boundsoffset] = cachef;
+
+                cachef = boundsmodel[i];
+                boundsmodel[i] = boundsmodel[boundsoffset];
+                boundsmodel[boundsoffset] = cachef;
+            }
+        }
     }
 
     private void updateModelBounds(){
