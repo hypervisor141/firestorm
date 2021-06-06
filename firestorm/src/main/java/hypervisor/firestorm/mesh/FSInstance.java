@@ -273,8 +273,8 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void schematicsMarkFullUpdate(){
-        schematics.markFullUpdate();
+    public void schematicsMarkAllUpdateMarkers(){
+        schematics.markAllUpdateMarkers();
     }
 
     @Override

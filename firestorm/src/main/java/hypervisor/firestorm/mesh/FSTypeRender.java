@@ -27,7 +27,7 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void schematicsRebuild();
     void schematicsSyncBaseBounds();
     void schematicsUpdateBaseBoundsOrder();
-    void schematicsMarkFullUpdate();
+    void schematicsMarkAllUpdateMarkers();
     void schematicsMarkModelBoundsForUpdate();
     void schematicsMarkCentroidForUpdate();
     void schematicsMarkCollisionBoundsForUpdate();

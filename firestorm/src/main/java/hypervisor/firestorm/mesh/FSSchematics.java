@@ -281,7 +281,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         }
     }
 
-    public void markFullUpdate(){
+    public void markAllUpdateMarkers(){
         markModelBoundsForUpdate();
         markCentroidBoundsForUpdate();
         markCollisionBoundsForUpdate();

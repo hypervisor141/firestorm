@@ -323,7 +323,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         schematics.rebuild();
-        schematics.markFullUpdate();
+        schematics.markAllUpdateMarkers();
     }
 
     private void unIndexPositions(FSTypeInstance instance){
@@ -591,7 +591,7 @@ public class FSHAssembler implements VLLoggable{
             FSSchematics schematics = instance.schematics();
             schematics.initialize(instance);
             schematics.rebuild();
-            schematics.markFullUpdate();
+            schematics.markAllUpdateMarkers();
         }
     };
 
