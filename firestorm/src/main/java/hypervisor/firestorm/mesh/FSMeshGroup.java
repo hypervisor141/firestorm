@@ -242,11 +242,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void schematicsUpdateBaseBounds(){
+    public void schematicsUpdateBaseBoundsOrder(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsUpdateBaseBounds();
+            entries.get(i).schematicsUpdateBaseBoundsOrder();
         }
     }
 

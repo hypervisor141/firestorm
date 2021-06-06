@@ -276,11 +276,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void schematicsUpdateBaseBounds(){
+    public void schematicsUpdateBaseBoundsOrder(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsUpdateBaseBounds();
+            entries.get(i).schematicsUpdateBaseBoundsOrder();
         }
     }
 

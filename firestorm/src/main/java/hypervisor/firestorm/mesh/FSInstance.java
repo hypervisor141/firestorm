@@ -268,7 +268,7 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void schematicsUpdateBaseBounds(){
+    public void schematicsUpdateBaseBoundsOrder(){
         schematics.updateBaseBoundsOrder();
     }
 
