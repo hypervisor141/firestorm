@@ -196,9 +196,10 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         for(int i = 0; i < 3; i++){
             int indicesoffset = i + 3;
-            int boundsoffset = i + 4;
 
             if(basebounds[i] > basebounds[indicesoffset]){
+                int boundsoffset = i + 4;
+
                 cachei = boundsindices[i];
 
                 boundsindices[i] = boundsindices[indicesoffset];
