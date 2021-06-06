@@ -1,7 +1,5 @@
 package hypervisor.firestorm.automation;
 
-import java.util.Arrays;
-
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSArrayModel;
