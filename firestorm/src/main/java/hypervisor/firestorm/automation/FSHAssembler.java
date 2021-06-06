@@ -34,6 +34,12 @@ public class FSHAssembler implements VLLoggable{
 
     public boolean FLIP_TEXTURE_U = false;
     public boolean FLIP_TEXTURE_V = false;
+    public boolean FLIP_POSITION_X = false;
+    public boolean FLIP_POSITION_Y = false;
+    public boolean FLIP_POSITION_Z = false;
+    public boolean FLIP_NORMAL_X = false;
+    public boolean FLIP_NORMAL_Y = false;
+    public boolean FLIP_NORMAL_Z = false;
 
     public boolean CONVERT_POSITIONS_TO_MODELARRAYS = false;
     public boolean DRAW_MODE_INDEXED = false;
@@ -70,6 +76,12 @@ public class FSHAssembler implements VLLoggable{
 
         FLIP_TEXTURE_U = false;
         FLIP_TEXTURE_V = false;
+        FLIP_POSITION_X = false;
+        FLIP_POSITION_Y = false;
+        FLIP_POSITION_Z = false;
+        FLIP_NORMAL_X = false;
+        FLIP_NORMAL_Y = false;
+        FLIP_NORMAL_Z = false;
 
         CONVERT_POSITIONS_TO_MODELARRAYS = true;
         DRAW_MODE_INDEXED = true;
@@ -105,6 +117,15 @@ public class FSHAssembler implements VLLoggable{
         if(LOAD_POSITIONS){
             firstInstanceSteps.add(POSITION_SET);
 
+            if(FLIP_POSITION_X){
+                firstInstanceSteps.add(POSITION_FLIP_X);
+            }
+            if(FLIP_POSITION_Y){
+                firstInstanceSteps.add(POSITION_FLIP_Y);
+            }
+            if(FLIP_POSITION_Z){
+                firstInstanceSteps.add(POSITION_FLIP_Z);
+            }
             if(!DRAW_MODE_INDEXED){
                 firstInstanceSteps.add(POSITION_UNINDEX);
             }
@@ -132,6 +153,15 @@ public class FSHAssembler implements VLLoggable{
             }else{
                 otherInstanceSteps.add(POSITION_SET);
 
+                if(FLIP_POSITION_X){
+                    otherInstanceSteps.add(POSITION_FLIP_X);
+                }
+                if(FLIP_POSITION_Y){
+                    otherInstanceSteps.add(POSITION_FLIP_Y);
+                }
+                if(FLIP_POSITION_Z){
+                    otherInstanceSteps.add(POSITION_FLIP_Z);
+                }
                 if(!DRAW_MODE_INDEXED){
                     otherInstanceSteps.add(POSITION_UNINDEX);
                 }
@@ -203,6 +233,15 @@ public class FSHAssembler implements VLLoggable{
         if(LOAD_NORMALS){
             firstInstanceSteps.add(NORMAL_SET);
 
+            if(FLIP_NORMAL_X){
+                firstInstanceSteps.add(NORMAL_FLIP_X);
+            }
+            if(FLIP_NORMAL_Y){
+                firstInstanceSteps.add(NORMAL_FLIP_Y);
+            }
+            if(FLIP_NORMAL_Z){
+                firstInstanceSteps.add(NORMAL_FLIP_Z);
+            }
             if(!DRAW_MODE_INDEXED){
                 firstInstanceSteps.add(NORMAL_UNINDEX);
             }
@@ -213,6 +252,15 @@ public class FSHAssembler implements VLLoggable{
             }else{
                 otherInstanceSteps.add(NORMAL_SET);
 
+                if(FLIP_NORMAL_X){
+                    otherInstanceSteps.add(NORMAL_FLIP_X);
+                }
+                if(FLIP_NORMAL_Y){
+                    otherInstanceSteps.add(NORMAL_FLIP_Y);
+                }
+                if(FLIP_NORMAL_Z){
+                    otherInstanceSteps.add(NORMAL_FLIP_Z);
+                }
                 if(!DRAW_MODE_INDEXED){
                     otherInstanceSteps.add(NORMAL_UNINDEX);
                 }
@@ -423,6 +471,45 @@ public class FSHAssembler implements VLLoggable{
             store.activate(FSElements.ELEMENT_POSITION, 0);
         }
     };
+    private static final BuildStep POSITION_FLIP_X = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            float[] array = instance.normals().provider();
+            int size = array.length;
+            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+
+            for(int i = 0; i < size; i += jumps){
+                array[i] = -array[i];
+            }
+        }
+    };
+    private static final BuildStep POSITION_FLIP_Y = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            float[] array = instance.normals().provider();
+            int size = array.length;
+            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+
+            for(int i = 1; i < size; i += jumps){
+                array[i] = -array[i];
+            }
+        }
+    };
+    private static final BuildStep POSITION_FLIP_Z = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            float[] array = instance.normals().provider();
+            int size = array.length;
+            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+
+            for(int i = 2; i < size; i += jumps){
+                array[i] = -array[i];
+            }
+        }
+    };
     private static final BuildStep POSITION_SHARED = new BuildStep(){
 
         @Override
@@ -544,6 +631,45 @@ public class FSHAssembler implements VLLoggable{
             store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
             store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(data.normals.array())));
             store.activate(FSElements.ELEMENT_NORMAL, 0);
+        }
+    };
+    private static final BuildStep NORMAL_FLIP_X = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            float[] array = instance.normals().provider();
+            int size = array.length;
+            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+
+            for(int i = 0; i < size; i += jumps){
+                array[i] = -array[i];
+            }
+        }
+    };
+    private static final BuildStep NORMAL_FLIP_Y = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            float[] array = instance.normals().provider();
+            int size = array.length;
+            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+
+            for(int i = 1; i < size; i += jumps){
+                array[i] = -array[i];
+            }
+        }
+    };
+    private static final BuildStep NORMAL_FLIP_Z = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            float[] array = instance.normals().provider();
+            int size = array.length;
+            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+
+            for(int i = 2; i < size; i += jumps){
+                array[i] = -array[i];
+            }
         }
     };
     private static final BuildStep NORMAL_UNINDEX = new BuildStep(){
