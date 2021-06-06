@@ -2,8 +2,6 @@ package hypervisor.firestorm.mesh;
 
 import android.util.Log;
 
-import java.util.Arrays;
-
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLUpdater;
@@ -13,75 +11,75 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     public static final long FLAG_FORCE_DUPLICATE_POINTS = 0x1F;
     public static final long FLAG_FORCE_REFERENCE_POINTS = 0x2F;
 
-    public static final Mode MODE_X_VOLUMETRIC = new Mode(){
+    public static final CalculationMethod MODE_X_VOLUMETRIC = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return coefficient * schematics.modelWidth() / 100f;
+            return coefficient * schematics.modelSpaceWidth() / 100f;
         }
     };
-    public static final Mode MODE_Y_VOLUMETRIC = new Mode(){
+    public static final CalculationMethod MODE_Y_VOLUMETRIC = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return coefficient * schematics.modelHeight() / 100f;
+            return coefficient * schematics.modelSpaceHeight() / 100f;
         }
     };
-    public static final Mode MODE_Z_VOLUMETRIC = new Mode(){
+    public static final CalculationMethod MODE_Z_VOLUMETRIC = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return coefficient * schematics.modelDepth() / 100f;
+            return coefficient * schematics.modelSpaceDepth() / 100f;
         }
     };
-    public static final Mode MODE_X_RELATIVE = new Mode(){
+    public static final CalculationMethod MODE_X_RELATIVE = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelLeft() + coefficient;
+            return schematics.modelSpaceLeft() + coefficient;
         }
     };
-    public static final Mode MODE_Y_RELATIVE = new Mode(){
+    public static final CalculationMethod MODE_Y_RELATIVE = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelBottom() + coefficient;
+            return schematics.modelSpaceBottom() + coefficient;
         }
     };
-    public static final Mode MODE_Z_RELATIVE = new Mode(){
+    public static final CalculationMethod MODE_Z_RELATIVE = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelBack() + coefficient;
+            return schematics.modelSpaceBack() + coefficient;
         }
     };
-    public static final Mode MODE_X_RELATIVE_VOLUMETRIC = new Mode(){
+    public static final CalculationMethod MODE_X_RELATIVE_VOLUMETRIC = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelLeft() + coefficient * schematics.modelWidth() / 100f;
+            return schematics.modelSpaceLeft() + coefficient * schematics.modelSpaceWidth() / 100f;
         }
     };
-    public static final Mode MODE_Y_RELATIVE_VOLUMETRIC = new Mode(){
+    public static final CalculationMethod MODE_Y_RELATIVE_VOLUMETRIC = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelBottom() + coefficient * schematics.modelHeight() / 100f;
+            return schematics.modelSpaceBottom() + coefficient * schematics.modelSpaceHeight() / 100f;
         }
     };
-    public static final Mode MODE_Z_RELATIVE_VOLUMETRIC = new Mode(){
+    public static final CalculationMethod MODE_Z_RELATIVE_VOLUMETRIC = new CalculationMethod(){
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){
-            return schematics.modelBack() + coefficient * schematics.modelDepth() / 100f;
+            return schematics.modelSpaceBack() + coefficient * schematics.modelSpaceDepth() / 100f;
         }
     };
-    public static final Mode MODE_DIRECT_VALUE = new DirectMode();
+    public static final CalculationMethod MODE_DIRECT_VALUE = new DirectMethod();
 
     private static final VLUpdater<FSBounds> UPDATE = new VLUpdater<FSBounds>(){
         @Override
         public void update(FSBounds target){
-            target.recalculate();
+            target.forceUpdate();
             target.updater = UPDATE_NOTHING;
         }
     };
@@ -104,7 +102,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         this.points = new VLListType<>(pointscapacity, pointscapacity);
 
         points.add(offset);
-        markForUpdate();
+        requestUpdate();
     }
 
     @Override
@@ -137,10 +135,6 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     @Override
     public abstract FSBounds duplicate(long flags);
 
-    public void markForUpdate(){
-        updater = UPDATE;
-    }
-
     public void add(Point point){
         points.add(point);
     }
@@ -161,11 +155,19 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         return points.size();
     }
 
+    public void requestUpdate(){
+        updater = UPDATE;
+    }
+
     public final void checkForUpdates(){
         updater.update(this);
     }
 
-    protected final void recalculate(){
+    protected abstract void notifyBasePointsUpdated();
+
+    protected final void forceUpdate(){
+        updater = VLUpdater.UPDATE_NOTHING;
+
         Point offset = offset();
         offset.calculate(schematics);
         float[] offsetcoords = offset.coordinates;
@@ -177,13 +179,11 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             point.calculate(schematics);
             point.offsetBy(offsetcoords);
 
-            Log.d("wtf", i + "  Left : " + schematics.modelLeft() + "  Right : " + schematics.modelRight() + "  " + schematics.instance.name());
+            Log.d("wtf", i + "  Left : " + schematics.modelSpaceLeft() + "  Right : " + schematics.modelSpaceRight() + "  " + schematics.instance.name());
         }
 
         notifyBasePointsUpdated();
     }
-
-    protected abstract void notifyBasePointsUpdated();
 
     protected void check(Collision results, FSBounds bounds){
         if(bounds instanceof FSBoundsSphere){
@@ -215,12 +215,12 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
     public static final class Point implements VLCopyable<Point>{
 
-        protected Mode[] modes;
+        protected CalculationMethod[] modes;
         protected float[] coefficients;
         protected float[] coordinates;
 
-        public Point(Mode modeX, Mode modeY, Mode modeZ, float coefficientX, float coefficientY, float coefficientZ){
-            this.modes = new Mode[]{
+        public Point(CalculationMethod modeX, CalculationMethod modeY, CalculationMethod modeZ, float coefficientX, float coefficientY, float coefficientZ){
+            this.modes = new CalculationMethod[]{
                     modeX, modeY, modeZ
             };
             this.coefficients = new float[]{
@@ -272,7 +272,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             coordinates[2] += offset[2];
         }
 
-        public Mode[] modes(){
+        public CalculationMethod[] modes(){
             return modes;
         }
 
@@ -285,12 +285,12 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         }
     }
 
-    public static interface Mode{
+    public interface CalculationMethod{
 
         float calculate(FSSchematics schematics, float coefficient);
     }
 
-    protected static final class DirectMode implements Mode{
+    protected static final class DirectMethod implements CalculationMethod{
 
         @Override
         public float calculate(FSSchematics schematics, float coefficient){

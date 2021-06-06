@@ -24,15 +24,20 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void dispatch(Dispatch<FSTypeRender> dispatch);
     void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     void updateBuffer(int element);
-    void schematicsRebuild();
-    void schematicsSyncBaseBounds();
-    void schematicsUpdateBaseBoundsOrder();
-    void schematicsMarkAllUpdateMarkers();
-    void schematicsMarkModelBoundsForUpdate();
-    void schematicsMarkCentroidForUpdate();
-    void schematicsMarkCollisionBoundsForUpdate();
-    void schematicsMarkInputBoundsForUpdate();
     void applyModelMatrix();
+    void schematicsRebuild();
+    void schematicsRebuildCentroidOnly();
+    void schematicsRequestUpdateModelSpaceBounds();
+    void schematicsRequestUpdateCentroid();
+    void schematicsCheckSortLocalSpaceBounds();
+    void schematicsCheckSortModelSpaceBounds();
+    void schematicsRequestUpdateCollisionBounds();
+    void schematicsRequestUpdateInputBounds();
+    void schematicsDirectReloadLocalSpaceBounds();
+    void schematicsDirectUpdateModelSpaceBounds();
+    void schematicsDirectUpdateCentroid();
+    void schematicsDirectUpdateCollisionBounds();
+    void schematicsDirectUpdateInputBounds();
     void destroy();
 
     FSTypeRenderGroup<?> parent();

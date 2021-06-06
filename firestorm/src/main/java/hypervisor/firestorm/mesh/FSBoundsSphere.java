@@ -7,7 +7,7 @@ public class FSBoundsSphere extends FSBounds{
 
     protected float radius;
 
-    public FSBoundsSphere(FSSchematics schematics, float xoffset, float yoffset, float zoffset, Mode xmode, Mode ymode, Mode zmode, float radius, Mode radiusmode){
+    public FSBoundsSphere(FSSchematics schematics, float xoffset, float yoffset, float zoffset, CalculationMethod xmode, CalculationMethod ymode, CalculationMethod zmode, float radius, CalculationMethod radiusmode){
         super(schematics);
 
         initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, zoffset), 1);

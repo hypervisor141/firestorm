@@ -10,8 +10,8 @@ public class FSBoundsCuboid extends FSBounds {
     protected float halfdepth;
     protected float halfdiameter;
 
-    public FSBoundsCuboid(FSSchematics schematics, float xoffset, float yoffset, float zoffset, Mode xmode, Mode ymode, Mode zmode,
-                          float halfwidth, float halfheight, float halfdepth, Mode wmode, Mode hmode, Mode dmode){
+    public FSBoundsCuboid(FSSchematics schematics, float xoffset, float yoffset, float zoffset, CalculationMethod xmode, CalculationMethod ymode, CalculationMethod zmode,
+                          float halfwidth, float halfheight, float halfdepth, CalculationMethod wmode, CalculationMethod hmode, CalculationMethod dmode){
         super(schematics);
 
         initialize(new Point(xmode, ymode, zmode, xoffset, yoffset, zoffset), 1);

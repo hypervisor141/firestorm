@@ -258,48 +258,73 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
+    public void applyModelMatrix(){
+        model().transform(0, modelmatrix, true);
+    }
+
+    @Override
     public void schematicsRebuild(){
         schematics.rebuild();
     }
 
     @Override
-    public void schematicsSyncBaseBounds(){
-        schematics.syncBaseBounds();
+    public void schematicsRebuildCentroidOnly(){
+        schematics.rebuildCentroidOnly();
     }
 
     @Override
-    public void schematicsUpdateBaseBoundsOrder(){
-        schematics.updateBaseBoundsOrder();
+    public void schematicsRequestUpdateModelSpaceBounds(){
+        schematics.requestUpdateModelSpaceBounds();
     }
 
     @Override
-    public void schematicsMarkAllUpdateMarkers(){
-        schematics.markAllUpdateMarkers();
+    public void schematicsRequestUpdateCentroid(){
+        schematics.requestUpdateCentroid();
     }
 
     @Override
-    public void schematicsMarkModelBoundsForUpdate(){
-        schematics.markModelBoundsForUpdate();
+    public void schematicsCheckSortLocalSpaceBounds(){
+        schematics.checkSortLocalSpaceBounds();
     }
 
     @Override
-    public void schematicsMarkCentroidForUpdate(){
-        schematics.markCentroidBoundsForUpdate();
+    public void schematicsCheckSortModelSpaceBounds(){
+        schematics.checkSortModelSpaceBounds();
     }
 
     @Override
-    public void schematicsMarkCollisionBoundsForUpdate(){
-        schematics.markCollisionBoundsForUpdate();
+    public void schematicsRequestUpdateCollisionBounds(){
+        schematics.requestUpdateCollisionBounds();
     }
 
     @Override
-    public void schematicsMarkInputBoundsForUpdate(){
-        schematics.markInputBoundsForUpdate();
+    public void schematicsRequestUpdateInputBounds(){
+        schematics.requestUpdateInputBounds();
     }
 
     @Override
-    public void applyModelMatrix(){
-        model().transform(0, modelmatrix, true);
+    public void schematicsDirectReloadLocalSpaceBounds(){
+        schematics.directReloadLocalSpaceBounds();
+    }
+
+    @Override
+    public void schematicsDirectUpdateModelSpaceBounds(){
+        schematics.directUpdateModelSpaceBounds();
+    }
+
+    @Override
+    public void schematicsDirectUpdateCentroid(){
+        schematics.directUpdateCentroid();
+    }
+
+    @Override
+    public void schematicsDirectUpdateCollisionBounds(){
+        schematics.directUpdateCollisionBounds();
+    }
+
+    @Override
+    public void schematicsDirectUpdateInputBounds(){
+        schematics.directUpdateInputBounds();
     }
 
     @Override

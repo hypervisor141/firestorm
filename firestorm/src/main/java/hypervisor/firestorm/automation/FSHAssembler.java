@@ -302,7 +302,7 @@ public class FSHAssembler implements VLLoggable{
     private void buildModelMatrixFromSchematics(FSTypeInstance instance){
         FSSchematics schematics = instance.schematics();
 
-        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.baseCentroidX()), new VLV(schematics.baseCentroidY()), new VLV(schematics.baseCentroidZ()));
+        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.localSpaceCentroidX()), new VLV(schematics.localSpaceCentroidY()), new VLV(schematics.localSpaceCentroidZ()));
         instance.model().transform(0, instance.modelMatrix(), true);
     }
 
@@ -310,9 +310,9 @@ public class FSHAssembler implements VLLoggable{
         float[] positions = instance.positions().provider();
         FSSchematics schematics = instance.schematics();
 
-        float x = schematics.baseCentroidX();
-        float y = schematics.baseCentroidY();
-        float z = schematics.baseCentroidZ();
+        float x = schematics.localSpaceCentroidX();
+        float y = schematics.localSpaceCentroidY();
+        float z = schematics.localSpaceCentroidZ();
 
         int size = positions.length;
 
@@ -323,7 +323,6 @@ public class FSHAssembler implements VLLoggable{
         }
 
         schematics.rebuild();
-        schematics.markAllUpdateMarkers();
     }
 
     private void unIndexPositions(FSTypeInstance instance){
@@ -591,7 +590,6 @@ public class FSHAssembler implements VLLoggable{
             FSSchematics schematics = instance.schematics();
             schematics.initialize(instance);
             schematics.rebuild();
-            schematics.markAllUpdateMarkers();
         }
     };
 

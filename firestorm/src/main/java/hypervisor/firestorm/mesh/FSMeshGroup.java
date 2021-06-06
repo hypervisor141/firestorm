@@ -224,6 +224,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
+    public void applyModelMatrix(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).applyModelMatrix();
+        }
+    }
+
+    @Override
     public void schematicsRebuild(){
         int size = entries.size();
 
@@ -233,74 +242,110 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void schematicsSyncBaseBounds(){
+    public void schematicsRebuildCentroidOnly(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsSyncBaseBounds();
+            entries.get(i).schematicsRebuildCentroidOnly();
         }
     }
 
     @Override
-    public void schematicsUpdateBaseBoundsOrder(){
+    public void schematicsRequestUpdateModelSpaceBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsUpdateBaseBoundsOrder();
+            entries.get(i).schematicsRequestUpdateModelSpaceBounds();
         }
     }
 
     @Override
-    public void schematicsMarkAllUpdateMarkers(){
+    public void schematicsRequestUpdateCentroid(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsMarkAllUpdateMarkers();
+            entries.get(i).schematicsRequestUpdateCentroid();
         }
     }
 
     @Override
-    public void schematicsMarkModelBoundsForUpdate(){
+    public void schematicsCheckSortLocalSpaceBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsMarkModelBoundsForUpdate();
+            entries.get(i).schematicsCheckSortLocalSpaceBounds();
         }
     }
 
     @Override
-    public void schematicsMarkCentroidForUpdate(){
+    public void schematicsCheckSortModelSpaceBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsMarkCentroidForUpdate();
+            entries.get(i).schematicsCheckSortModelSpaceBounds();
         }
     }
 
     @Override
-    public void schematicsMarkCollisionBoundsForUpdate(){
+    public void schematicsRequestUpdateCollisionBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsMarkCollisionBoundsForUpdate();
+            entries.get(i).schematicsRequestUpdateCollisionBounds();
         }
     }
 
     @Override
-    public void schematicsMarkInputBoundsForUpdate(){
+    public void schematicsRequestUpdateInputBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsMarkInputBoundsForUpdate();
+            entries.get(i).schematicsRequestUpdateInputBounds();
         }
     }
 
     @Override
-    public void applyModelMatrix(){
+    public void schematicsDirectReloadLocalSpaceBounds(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).applyModelMatrix();
+            entries.get(i).schematicsDirectReloadLocalSpaceBounds();
+        }
+    }
+
+    @Override
+    public void schematicsDirectUpdateModelSpaceBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsDirectUpdateModelSpaceBounds();
+        }
+    }
+
+    @Override
+    public void schematicsDirectUpdateCentroid(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsDirectUpdateCentroid();
+        }
+    }
+
+    @Override
+    public void schematicsDirectUpdateCollisionBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsDirectUpdateCollisionBounds();
+        }
+    }
+
+    @Override
+    public void schematicsDirectUpdateInputBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsDirectUpdateInputBounds();
         }
     }
 
