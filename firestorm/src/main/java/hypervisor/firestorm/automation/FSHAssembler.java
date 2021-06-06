@@ -475,7 +475,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().provider();
+            float[] array = instance.positions().provider();
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
@@ -488,7 +488,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().provider();
+            float[] array = instance.positions().provider();
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
@@ -501,7 +501,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().provider();
+            float[] array = instance.positions().provider();
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
