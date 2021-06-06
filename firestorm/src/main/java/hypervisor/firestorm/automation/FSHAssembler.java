@@ -1,14 +1,16 @@
 package hypervisor.firestorm.automation;
 
+import java.util.Arrays;
+
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSArrayModel;
 import hypervisor.firestorm.mesh.FSElement;
 import hypervisor.firestorm.mesh.FSElementStore;
-import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSMatrixModel;
-import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.firestorm.mesh.FSSchematics;
+import hypervisor.firestorm.mesh.FSTypeInstance;
+import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.vanguard.array.VLArrayFloat;
 import hypervisor.vanguard.array.VLArrayShort;
 import hypervisor.vanguard.list.VLListFloat;
@@ -40,6 +42,8 @@ public class FSHAssembler implements VLLoggable{
     public boolean FLIP_NORMAL_X = false;
     public boolean FLIP_NORMAL_Y = false;
     public boolean FLIP_NORMAL_Z = false;
+    public boolean FLIP_INDICES_TRIANGLES = false;
+    public boolean FLIP_INDICES_QUADS = false;
 
     public boolean CONVERT_POSITIONS_TO_MODELARRAYS = false;
     public boolean DRAW_MODE_INDEXED = false;
@@ -82,6 +86,8 @@ public class FSHAssembler implements VLLoggable{
         FLIP_NORMAL_X = false;
         FLIP_NORMAL_Y = false;
         FLIP_NORMAL_Z = false;
+        FLIP_INDICES_TRIANGLES = false;
+        FLIP_INDICES_QUADS = false;
 
         CONVERT_POSITIONS_TO_MODELARRAYS = true;
         DRAW_MODE_INDEXED = true;
@@ -272,11 +278,25 @@ public class FSHAssembler implements VLLoggable{
         if(LOAD_INDICES){
             firstInstanceSteps.add(INDICES_SET);
 
+            if(FLIP_INDICES_TRIANGLES){
+                firstInstanceSteps.add(INDICES_FLIP_TRIANGLES);
+
+            }else if(FLIP_INDICES_QUADS){
+                firstInstanceSteps.add(INDICES_FLIP_QUADS);
+            }
+
             if(INSTANCE_SHARE_INDICES){
                 otherInstanceSteps.add(INDICES_SHARE);
 
             }else{
                 otherInstanceSteps.add(INDICES_SET);
+
+                if(FLIP_INDICES_TRIANGLES){
+                    otherInstanceSteps.add(INDICES_FLIP_TRIANGLES);
+
+                }else if(FLIP_INDICES_QUADS){
+                    otherInstanceSteps.add(INDICES_FLIP_QUADS);
+                }
             }
         }
     }
@@ -439,7 +459,38 @@ public class FSHAssembler implements VLLoggable{
             store.activate(FSElements.ELEMENT_INDEX, 0);
         }
     };
+    private static final BuildStep INDICES_FLIP_TRIANGLES = new BuildStep(){
 
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            short[] array = instance.indices().provider();
+            int size = array.length;
+
+            for(int i = 0 ; i < size; i += 3){
+                short cache = array[i + 2];
+                array[i + 2] = array[i];
+                array[i] = cache;
+            }
+        }
+    };
+    private static final BuildStep INDICES_FLIP_QUADS = new BuildStep(){
+
+        @Override
+        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
+            short[] array = instance.indices().provider();
+            int size = array.length;
+
+            for(int i = 0 ; i < size; i += 4){
+                short cache = array[i + 3];
+                array[i + 3] = array[i];
+                array[i] = cache;
+
+                cache = array[i + 2];
+                array[i + 2] = array[i + 1];
+                array[i + 1] = cache;
+            }
+        }
+    };
     private static final BuildStep INDICES_SHARE = new BuildStep(){
 
         @Override
