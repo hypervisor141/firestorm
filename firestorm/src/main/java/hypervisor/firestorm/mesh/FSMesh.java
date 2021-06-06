@@ -6,7 +6,6 @@ import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.engine.FSGlobal;
-import hypervisor.firestorm.engine.FSR;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
@@ -259,20 +258,56 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void updateSchematicBoundaries(){
+    public void rebuildSchematics(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).updateSchematicBoundaries();
+            entries.get(i).rebuildSchematics();
         }
     }
 
     @Override
-    public void markSchematicsForUpdate(){
+    public void markSchematicsFullUpdate(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsForUpdate();
+            entries.get(i).markSchematicsFullUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsModelBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsModelBoundsForUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsCentroidForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsCentroidForUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsCollisionBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsCollisionBoundsForUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsInputBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsInputBoundsForUpdate();
         }
     }
 

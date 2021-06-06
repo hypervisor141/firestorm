@@ -2,9 +2,7 @@ package hypervisor.firestorm.mesh;
 
 import android.view.MotionEvent;
 
-import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
-import hypervisor.firestorm.engine.FSView;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLUpdater;
@@ -23,49 +21,32 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         @Override
         public void update(FSSchematics s){
-            s.updateModels();
+            s.updateModelBounds();
             s.modelupdater = UPDATE_NOTHING;
         }
     };
-    protected static final VLUpdater<FSSchematics> UPDATE_MVP = new VLUpdater<FSSchematics>(){
 
-        @Override
-        public void update(FSSchematics s){
-            s.updateMVPs();
-            s.mvpupdater = UPDATE_NOTHING;
-        }
-    };
+    protected FSTypeInstance instance;
 
-    protected FSInstance instance;
-
-    protected VLUpdater<FSSchematics> centroidupdater;
     protected VLUpdater<FSSchematics> modelupdater;
-    protected VLUpdater<FSSchematics> mvpupdater;
+    protected VLUpdater<FSSchematics> centroidupdater;
 
     protected VLListType<FSBounds> mainbounds;
     protected VLListType<InputChecker> inputcheckers;
 
-    protected float[] centroid;
-    protected float[] centroidmodel;
-    protected float[] centroidmvp;
-
-    protected float[] bounds;
+    protected int[] boundsindices;
+    protected float[] basebounds;
     protected float[] boundsmodel;
-    protected float[] boundsmvp;
 
-    public FSSchematics(FSInstance instance){
-        this.instance = instance;
+    protected float[] centroidbase;
+    protected float[] centroidmodel;
 
-        mainbounds = new VLListType<>(0, 10);
-        inputcheckers = new VLListType<>(0, 10);
+    public FSSchematics(){
+
     }
 
     public FSSchematics(FSSchematics src, long flags){
         copy(src, flags);
-    }
-
-    protected FSSchematics(){
-
     }
 
     @Override
@@ -75,31 +56,28 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             mainbounds = src.mainbounds;
             inputcheckers = src.inputcheckers;
-            centroid = src.centroid;
-            centroidmodel = src.centroidmodel;
-            centroidmvp = src.centroidmvp;
-            bounds = src.bounds;
+            boundsindices = src.boundsindices;
+            basebounds = src.basebounds;
             boundsmodel = src.boundsmodel;
-            boundsmvp = src.boundsmvp;
+            centroidbase = src.centroidbase;
+            centroidmodel = src.centroidmodel;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             mainbounds = src.mainbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
             inputcheckers = src.inputcheckers.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
 
-            centroid = src.centroid.clone();
-            centroidmodel = src.centroidmodel.clone();
-            centroidmvp = src.centroidmvp.clone();
-            bounds = src.bounds.clone();
+            boundsindices = src.boundsindices.clone();
+            basebounds = src.basebounds.clone();
             boundsmodel = src.boundsmodel.clone();
-            boundsmvp = src.boundsmvp.clone();
+            centroidbase = src.centroidbase.clone();
+            centroidmodel = src.centroidmodel.clone();
 
         }else{
             Helper.throwMissingDefaultFlags();
         }
 
-        centroidupdater = src.centroidupdater;
         modelupdater = src.modelupdater;
-        mvpupdater = src.mvpupdater;
+        centroidupdater = src.centroidupdater;
     }
 
     @Override
@@ -107,20 +85,23 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return new FSSchematics(this, flags);
     }
 
-    public void initialize(){
-        bounds = new float[FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION] * 2];
-        centroid = new float[4];
-        centroidmodel = new float[4];
-        centroidmvp = new float[4];
-        boundsmodel = new float[bounds.length];
-        boundsmvp = new float[bounds.length];
+    public void initialize(FSTypeInstance instance){
+        this.instance = instance;
 
-        centroidupdater = UPDATE_CENTROID;
+        mainbounds = new VLListType<>(0, 10);
+        inputcheckers = new VLListType<>(0, 10);
+
+        boundsindices = new int[6];
+        basebounds = new float[8];
+        boundsmodel = new float[basebounds.length];
+        centroidbase = new float[4];
+        centroidmodel = new float[4];
+
         modelupdater = UPDATE_MODEL;
-        mvpupdater = UPDATE_MVP;
+        centroidupdater = UPDATE_CENTROID;
     }
 
-    public void updateBoundaries(){
+    public void rebuild(){
         float minx = Float.MAX_VALUE;
         float miny = Float.MAX_VALUE;
         float minz = Float.MAX_VALUE;
@@ -129,94 +110,103 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         float maxy = -Float.MAX_VALUE;
         float maxz = -Float.MAX_VALUE;
 
-        float[] vertices = instance.positions().provider();
-        int size = vertices.length;
+        centroidbase[0] = 0;
+        centroidbase[1] = 0;
+        centroidbase[2] = 0;
 
-        float x, y, z;
+        int unitsize = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+        float[] positions = instance.positions().provider();
+        int size = positions.length;
 
-        centroid[0] = 0;
-        centroid[1] = 0;
-        centroid[2] = 0;
+        for(int index = 0; index < size; index += unitsize){
+            float x = positions[index];
+            float y = positions[index + 1];
+            float z = positions[index + 2];
 
-        for(int index = 0; index < size; index += FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION]){
-            x = vertices[index];
-            y = vertices[index + 1];
-            z = vertices[index + 2];
-
-            centroid[0] += x;
-            centroid[1] += y;
-            centroid[2] += z;
+            centroidbase[0] += x;
+            centroidbase[1] += y;
+            centroidbase[2] += z;
 
             if(minx > x){
                 minx = x;
-                bounds[0] = x;
+                boundsindices[0] = index;
+                basebounds[0] = x;
             }
             if(miny > y){
                 miny = y;
-                bounds[1] = y;
+                boundsindices[1] = index + 1;
+                basebounds[1] = y;
             }
             if(minz > z){
                 minz = z;
-                bounds[2] = z;
+                boundsindices[2] = index + 2;
+                basebounds[2] = z;
             }
 
             if(maxx < x){
                 maxx = x;
-                bounds[4] = x;
+                boundsindices[4] = index + 1;
+                basebounds[4] = x;
             }
             if(maxy < y){
                 maxy = y;
-                bounds[5] = y;
+                boundsindices[5] = index + 2;
+                basebounds[5] = y;
             }
             if(maxz < z){
                 maxz = z;
-                bounds[6] = z;
+                boundsindices[6] = index + 3;
+                basebounds[6] = z;
             }
         }
 
-        int pointcount = size / FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+        int vertexcount = size / unitsize;
+        centroidbase[0] /= vertexcount;
+        centroidbase[1] /= vertexcount;
+        centroidbase[2] /= vertexcount;
 
-        centroid[0] /= pointcount;
-        centroid[1] /= pointcount;
-        centroid[2] /= pointcount;
+        updateBaseBounds();
+    }
 
-        float b;
+    public boolean checkBaseBoundsUpdateRequirement(){
+        float[] positions = instance.positions().provider();
 
-        for(int i = 0; i < bounds.length; i++){
-            b = bounds[i];
+        return positions[boundsindices[0]] != basebounds[0] ||
+                positions[boundsindices[1]] != basebounds[1] ||
+                positions[boundsindices[2]] != basebounds[2] ||
+                positions[boundsindices[3]] != basebounds[4] ||
+                positions[boundsindices[4]] != basebounds[5] ||
+                positions[boundsindices[5]] != basebounds[6];
+    }
 
-            boundsmodel[i] = b;
-            boundsmvp[i] = b;
+    public void updateBaseBounds(){
+        int size = basebounds.length;
+        float[] positions = instance.positions().provider();
+
+        for(int i = 0; i < size; i++){
+            basebounds[i] = positions[boundsindices[i]];
         }
 
-        markForNewUpdates();
+        boundsmodel = basebounds.clone();
+    }
+
+    private void updateModelBounds(){
+        FSArrayModel model = instance.model();
+
+        model.transformPoint(boundsmodel, 0, basebounds, 0);
+        model.transformPoint(boundsmodel, 4, basebounds, 4);
     }
 
     private void updateCentroid(){
-        instance.model().transformPoint(centroidmodel, 0, centroid, 0);
-        FSControl.getView().multiplyViewPerspective(centroidmvp, 0, centroidmodel, 0);
+        instance.model().transformPoint(centroidmodel, 0, centroidbase, 0);
     }
 
-    private void updateModels(){
-        FSArrayModel model = instance.model();
-
-        model.transformPoint(boundsmodel, 0, bounds, 0);
-        model.transformPoint(boundsmodel, 4, bounds, 4);
-    }
-
-    private void updateMVPs(){
-        FSView config = FSControl.getView();
-
-        config.multiplyViewPerspective(boundsmvp, 0, boundsmodel, 0);
-        config.multiplyViewPerspective(boundsmvp, 4, boundsmodel, 4);
-    }
-
-    public void checkCollision(FSBounds.Collision results, FSInstance target){
+    public void checkCollision(FSBounds.Collision results, FSTypeInstance target){
         int index = -1;
         int size = mainbounds.size();
 
         for(int i = 0; i < size; i++){
-            index = target.schematics.checkCollision(results, mainbounds.get(i));
+            index = target.schematics().checkCollision(results, mainbounds.get(i));
 
             if(index != -1){
                 results.initiatorboundsindex = i;
@@ -265,122 +255,135 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         }
     }
 
-    public void markForNewUpdates(){
-        centroidupdater = UPDATE_CENTROID;
-        modelupdater = UPDATE_MODEL;
-        mvpupdater = UPDATE_MVP;
+    public void markFullUpdate(){
+        markModelBoundsForUpdate();
+        markCentroidBoundsForUpdate();
+        markCollisionBoundsForUpdate();
+        markInputBoundsForUpdate();
+    }
 
+    public void markModelBoundsForUpdate(){
+        modelupdater = UPDATE_MODEL;
+    }
+
+    public void markCentroidBoundsForUpdate(){
+        centroidupdater = UPDATE_CENTROID;
+    }
+
+    public void markCollisionBoundsForUpdate(){
         int size = mainbounds.size();
 
         for(int i = 0; i < size; i++){
             mainbounds.get(i).markForUpdate();
         }
+    }
 
-        size = inputcheckers.size();
+    public void markInputBoundsForUpdate(){
+        int size = inputcheckers.size();
 
         for(int i = 0; i < size; i++){
             inputcheckers.get(i).bounds.markForUpdate();
         }
     }
 
-    public float rawX(){
-        return rawRight();
+    public float baseX(){
+        return baseRight();
     }
 
-    public float rawY(){
-        return rawTop();
+    public float baseY(){
+        return baseTop();
     }
 
-    public float rawZ(){
-        return rawFront();
+    public float baseZ(){
+        return baseFront();
     }
 
-    public float rawCentroidX(){
+    public float baseCentroidX(){
         centroidupdater.update(this);
-        return centroid[0];
+        return centroidbase[0];
     }
 
-    public float rawCentroidY(){
+    public float baseCentroidY(){
         centroidupdater.update(this);
-        return centroid[1];
+        return centroidbase[1];
     }
 
-    public float rawCentroidZ(){
+    public float baseCentroidZ(){
         centroidupdater.update(this);
-        return centroid[2];
+        return centroidbase[2];
     }
 
-    public float[] rawCentroid(){
+    public float[] baseCentroid(){
         centroidupdater.update(this);
-        return centroid;
+        return centroidbase;
     }
 
-    public float rawBoundCenterX(){
-        return (rawLeft() + rawRight()) / 2f;
+    public float baseBoundCenterX(){
+        return (baseLeft() + baseRight()) / 2f;
     }
 
-    public float rawBoundCenterY(){
-        return (rawBottom() + rawTop()) / 2f;
+    public float baseBoundCenterY(){
+        return (baseBottom() + baseTop()) / 2f;
     }
 
-    public float rawBoundCenterZ(){
-        return (rawFront() + rawBack()) / 2f;
+    public float baseBoundCenterZ(){
+        return (baseFront() + baseBack()) / 2f;
     }
 
-    public float rawWidth(){
-        return Math.abs(rawRight() - rawLeft());
+    public float baseWidth(){
+        return Math.abs(baseRight() - baseLeft());
     }
 
-    public float rawHeight(){
-        return Math.abs(rawTop() - rawBottom());
+    public float baseHeight(){
+        return Math.abs(baseTop() - baseBottom());
     }
 
-    public float rawDepth(){
-        return Math.abs(rawFront() - rawBack());
+    public float baseDepth(){
+        return Math.abs(baseFront() - baseBack());
     }
 
-    public float rawLeft(){
-        return bounds[0];
+    public float baseLeft(){
+        return basebounds[0];
     }
 
-    public float rawBottom(){
-        return bounds[1];
+    public float baseBottom(){
+        return basebounds[1];
     }
 
-    public float rawBack(){
-        return bounds[2];
+    public float baseBack(){
+        return basebounds[2];
     }
 
-    public float rawRight(){
-        return bounds[4];
+    public float baseRight(){
+        return basebounds[4];
     }
 
-    public float rawTop(){
-        return bounds[5];
+    public float baseTop(){
+        return basebounds[5];
     }
 
-    public float rawFront(){
-        return bounds[6];
+    public float baseFront(){
+        return basebounds[6];
     }
 
-    public void rawBoundCenterPoint(float[] results){
-        results[0] = rawBoundCenterX();
-        results[1] = rawBoundCenterY();
-        results[2] = rawBoundCenterZ();
+    public void baseBoundCenterPoint(float[] results){
+        results[0] = baseBoundCenterX();
+        results[1] = baseBoundCenterY();
+        results[2] = baseBoundCenterZ();
     }
 
-    public void rawBoundCenterDistanceToPoint(float[] results, float[] point){
-        results[0] = rawBoundCenterX() - point[0];
-        results[1] = rawBoundCenterY() - point[1];
-        results[2] = rawBoundCenterZ() - point[2];
+    public void baseBoundCenterDistanceToPoint(float[] results, float[] point){
+        results[0] = baseBoundCenterX() - point[0];
+        results[1] = baseBoundCenterY() - point[1];
+        results[2] = baseBoundCenterZ() - point[2];
     }
 
-    public float rawBoundCenterVectorLength(){
-        return (float)Math.sqrt(Math.pow(rawBoundCenterX(), 2) + Math.pow(rawBoundCenterY(), 2) + Math.pow(rawBoundCenterZ(), 2));
+    public float baseBoundCenterVectorLength(){
+        return (float)Math.sqrt(Math.pow(baseBoundCenterX(), 2) + Math.pow(baseBoundCenterY(), 2) + Math.pow(baseBoundCenterZ(), 2));
     }
 
-    public float rawBoundCenterLengthFromPoint(float[] point){
-        return (float)Math.sqrt(Math.pow(rawBoundCenterX() - point[0], 2) + Math.pow(rawBoundCenterY() - point[1], 2) + Math.pow(rawBoundCenterZ() - point[2], 2));
+    public float baseBoundCenterLengthFromPoint(float[] point){
+        return (float)Math.sqrt(Math.pow(baseBoundCenterX() - point[0], 2) + Math.pow(baseBoundCenterY() - point[1], 2) + Math.pow(baseBoundCenterZ() - point[2], 2));
     }
 
     public float modelBoundCenterX(){
@@ -477,102 +480,28 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return (float)Math.sqrt(Math.pow(modelBoundCenterX(), 2) + Math.pow(modelBoundCenterY(), 2) + Math.pow(modelBoundCenterZ(), 2));
     }
 
-    public float mvpBoundCenterX(){
-        return (mvpLeft() + mvpRight()) / 2f;
-    }
-
-    public float mvpBoundCenterY(){
-        return (mvpBottom() + mvpTop()) / 2f;
-    }
-
-    public float mvpBoundCenterZ(){
-        return (mvpBack() + mvpFront()) / 2f;
-    }
-
-    public float mvpCentroidX(){
-        centroidupdater.update(this);
-        return centroidmodel[0];
-    }
-
-    public float mvpCentroidY(){
-        centroidupdater.update(this);
-        return centroidmodel[1];
-    }
-
-    public float mvpCentroidZ(){
-        centroidupdater.update(this);
-        return centroidmodel[2];
-    }
-
-    public float[] mvpCentroid(){
-        centroidupdater.update(this);
-        return centroidmvp;
-    }
-
-    public float mvpWidth(){
-        return Math.abs(mvpRight() - mvpLeft());
-    }
-
-    public float mvpHeight(){
-        return Math.abs(mvpTop() - mvpBottom());
-    }
-
-    public float mvpDepth(){
-        return Math.abs(mvpFront() - mvpBack());
-    }
-
-    public float mvpLeft(){
-        mvpupdater.update(this);
-        return boundsmvp[0];
-    }
-
-    public float mvpBottom(){
-        mvpupdater.update(this);
-        return boundsmvp[1];
-    }
-
-    public float mvpBack(){
-        mvpupdater.update(this);
-        return boundsmvp[2];
-    }
-
-    public float mvpRight(){
-        mvpupdater.update(this);
-        return boundsmvp[4];
-    }
-
-    public float mvpTop(){
-        mvpupdater.update(this);
-        return boundsmvp[5];
-    }
-
-    public float mvpFront(){
-        mvpupdater.update(this);
-        return boundsmvp[6];
-    }
-
-    public void mvpBoundCenterPoint(float[] results){
-        results[0] = mvpBoundCenterX();
-        results[1] = mvpBoundCenterY();
-        results[2] = mvpBoundCenterZ();
-    }
-
-    public void mvpBoundCenterDistanceFromPoint(float[] results, float[] point){
-        results[0] = mvpBoundCenterX() - point[0];
-        results[1] = mvpBoundCenterY() - point[1];
-        results[2] = mvpBoundCenterZ() - point[2];
-    }
-
-    public float mvpBoundCenterLengthFromPoint(float[] point){
-        return (float)Math.sqrt(Math.pow(mvpBoundCenterX() - point[0], 2) + Math.pow(mvpBoundCenterY() - point[1], 2) + Math.pow(mvpBoundCenterZ() - point[2], 2));
-    }
-
-    public float mvpBoundCenterVectorLength(){
-        return (float)Math.sqrt(Math.pow(mvpBoundCenterX(), 2) + Math.pow(mvpBoundCenterY(), 2) + Math.pow(mvpBoundCenterZ(), 2));
-    }
-
-    public FSInstance instance(){
+    public FSTypeInstance instance(){
         return instance;
+    }
+
+    public int[] baseBoundsIndices(){
+        return boundsindices;
+    }
+
+    public float[] baseBounds(){
+        return basebounds;
+    }
+
+    public float[] modelBounds(){
+        return boundsmodel;
+    }
+
+    public float[] centroidBase(){
+        return centroidbase;
+    }
+
+    public float[] centroidModel(){
+        return centroidmodel;
     }
 
     public VLListType<FSBounds> mainBounds(){

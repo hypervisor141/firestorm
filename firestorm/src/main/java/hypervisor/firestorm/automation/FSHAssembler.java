@@ -302,7 +302,7 @@ public class FSHAssembler implements VLLoggable{
     private void buildModelMatrixFromSchematics(FSTypeInstance instance){
         FSSchematics schematics = instance.schematics();
 
-        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.rawCentroidX()), new VLV(schematics.rawCentroidY()), new VLV(schematics.rawCentroidZ()));
+        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.baseCentroidX()), new VLV(schematics.baseCentroidY()), new VLV(schematics.baseCentroidZ()));
         instance.model().transform(0, instance.modelMatrix(), true);
     }
 
@@ -310,9 +310,9 @@ public class FSHAssembler implements VLLoggable{
         float[] positions = instance.positions().provider();
         FSSchematics schematics = instance.schematics();
 
-        float x = schematics.rawCentroidX();
-        float y = schematics.rawCentroidY();
-        float z = schematics.rawCentroidZ();
+        float x = schematics.baseCentroidX();
+        float y = schematics.baseCentroidY();
+        float z = schematics.baseCentroidZ();
 
         int size = positions.length;
 
@@ -322,7 +322,8 @@ public class FSHAssembler implements VLLoggable{
             positions[i + 2] = positions[i + 2] - z;
         }
 
-        schematics.updateBoundaries();
+        schematics.rebuild();
+        schematics.markFullUpdate();
     }
 
     private void unIndexPositions(FSTypeInstance instance){
@@ -588,8 +589,9 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             FSSchematics schematics = instance.schematics();
-            schematics.initialize();
-            schematics.updateBoundaries();
+            schematics.initialize(instance);
+            schematics.rebuild();
+            schematics.markFullUpdate();
         }
     };
 

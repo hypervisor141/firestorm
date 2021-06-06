@@ -2,7 +2,6 @@ package hypervisor.firestorm.mesh;
 
 import android.view.MotionEvent;
 
-import hypervisor.firestorm.engine.FSCInput;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.program.FSLightMap;
@@ -37,7 +36,7 @@ public class FSInstance implements FSTypeInstance{
         this.name = name.toLowerCase();
 
         store = new FSElementStore(FSElements.COUNT);
-        schematics = new FSSchematics(this);
+        schematics = new FSSchematics();
         id = FSControl.getNextID();
     }
 
@@ -259,13 +258,33 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void updateSchematicBoundaries(){
-        schematics.updateBoundaries();
+    public void rebuildSchematics(){
+        schematics.rebuild();
     }
 
     @Override
-    public void markSchematicsForUpdate(){
-        schematics.markForNewUpdates();
+    public void markSchematicsFullUpdate(){
+        schematics.markFullUpdate();
+    }
+
+    @Override
+    public void markSchematicsModelBoundsForUpdate(){
+        schematics.markModelBoundsForUpdate();
+    }
+
+    @Override
+    public void markSchematicsCentroidForUpdate(){
+        schematics.markCentroidBoundsForUpdate();
+    }
+
+    @Override
+    public void markSchematicsCollisionBoundsForUpdate(){
+        schematics.markCollisionBoundsForUpdate();
+    }
+
+    @Override
+    public void markSchematicsInputBoundsForUpdate(){
+        schematics.markInputBoundsForUpdate();
     }
 
     @Override

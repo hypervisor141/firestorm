@@ -224,20 +224,56 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void updateSchematicBoundaries(){
+    public void rebuildSchematics(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).updateSchematicBoundaries();
+            entries.get(i).rebuildSchematics();
         }
     }
 
     @Override
-    public void markSchematicsForUpdate(){
+    public void markSchematicsFullUpdate(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).markSchematicsForUpdate();
+            entries.get(i).markSchematicsFullUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsModelBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsModelBoundsForUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsCentroidForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsCentroidForUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsCollisionBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsCollisionBoundsForUpdate();
+        }
+    }
+
+    @Override
+    public void markSchematicsInputBoundsForUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).markSchematicsInputBoundsForUpdate();
         }
     }
 
