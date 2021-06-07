@@ -164,8 +164,6 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     protected abstract void notifyBasePointsUpdated();
 
     protected final void forceUpdate(){
-        updater = VLUpdater.UPDATE_NOTHING;
-
         Point offset = offset();
         offset.calculate(schematics);
         float[] offsetcoords = offset.coordinates;
@@ -179,6 +177,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
         }
 
         notifyBasePointsUpdated();
+        updater = VLUpdater.UPDATE_NOTHING;
     }
 
     protected void check(Collision results, FSBounds bounds){

@@ -279,7 +279,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void directUpdateModelSpaceBounds(){
-        modelspaceupdate = VLUpdater.UPDATE_NOTHING;
         FSArrayModel modelSpace = instance.model();
 
         modelSpace.transformPoint(boundsmodelspace, 0, boundslocalspace, 0);
@@ -289,11 +288,13 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
             requestUpdateCollisionBounds();
             requestUpdateInputBounds();
         }
+
+        modelspaceupdate = VLUpdater.UPDATE_NOTHING;
     }
 
     public void directUpdateCentroid(){
-        centroidupdater = VLUpdater.UPDATE_NOTHING;
         instance.model().transformPoint(centroidmodelspace, 0, centroidlocalspace, 0);
+        centroidupdater = VLUpdater.UPDATE_NOTHING;
     }
 
     public void directUpdateCollisionBounds(){
