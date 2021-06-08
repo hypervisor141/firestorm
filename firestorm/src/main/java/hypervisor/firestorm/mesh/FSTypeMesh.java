@@ -15,6 +15,7 @@ public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGr
     FSHScanner.ScanFunction getScanFunction(FSGlobal global);
     FSP getProgram(FSGlobal global);
 
+    ENTRY generateInstance(String name);
     void addToDefinedProgram();
     void configure(FSP program, FSRPass pass, int targetindex, int passindex);
     void allocateBinding(int element, int capacity, int resizer);

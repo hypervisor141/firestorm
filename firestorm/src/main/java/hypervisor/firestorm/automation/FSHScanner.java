@@ -1,13 +1,10 @@
 package hypervisor.firestorm.automation;
 
 import hypervisor.firestorm.engine.FSGlobal;
-import hypervisor.firestorm.engine.FSR;
 import hypervisor.firestorm.io.FSM;
-import hypervisor.firestorm.mesh.FSInstance;
 import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.firestorm.mesh.FSTypeRenderGroup;
-import hypervisor.firestorm.program.FSP;
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
@@ -164,7 +161,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
                         throw new RuntimeException("Found more than one instance with a singular scanner [" + target.name() + "]");
                     }
 
-                    FSInstance instance = new FSInstance(data.name);
+                    FSTypeInstance instance = target.generateInstance(data.name);
                     target.add(instance);
 
                     assembler.buildFirst(instance, target, data);
@@ -177,7 +174,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
             @Override
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
                 if(data.name.contains(target.name())){
-                    FSInstance instance = new FSInstance(data.name);
+                    FSTypeInstance instance = target.generateInstance(data.name);
                     target.add(instance);
 
                     if(target.size() == 1){
