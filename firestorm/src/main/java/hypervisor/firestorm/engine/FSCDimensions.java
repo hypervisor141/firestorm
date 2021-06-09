@@ -1,7 +1,7 @@
 package hypervisor.firestorm.engine;
 
 import android.app.Activity;
-import android.util.DisplayMetrics;
+import android.graphics.Point;
 import android.view.Display;
 
 public final class FSCDimensions{
@@ -21,14 +21,14 @@ public final class FSCDimensions{
     protected static float density;
 
     public static void initialize(Activity act){
-        DisplayMetrics metrics = new DisplayMetrics();
         Display display = act.getWindowManager().getDefaultDisplay();
+        Point point = new Point();
 
-        display.getMetrics(metrics);
-        setMainDimensions(metrics.widthPixels, metrics.heightPixels);
+        display.getSize(point);
+        setMainDimensions(point.x, point.y);
 
-        display.getRealMetrics(metrics);
-        setRealDimensions(metrics.widthPixels, metrics.heightPixels);
+        display.getRealSize(point);
+        setRealDimensions(point.x, point.y);
 
         density = act.getResources().getDisplayMetrics().density;
     }

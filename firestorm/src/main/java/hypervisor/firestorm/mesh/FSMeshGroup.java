@@ -12,7 +12,7 @@ import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
 public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMeshGroup<ENTRY>{
-
+    
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
     public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
