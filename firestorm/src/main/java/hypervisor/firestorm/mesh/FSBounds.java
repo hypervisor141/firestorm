@@ -1,5 +1,9 @@
 package hypervisor.firestorm.mesh;
 
+import android.util.Log;
+
+import java.util.Arrays;
+
 import hypervisor.vanguard.list.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLUpdater;
@@ -77,7 +81,7 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
     private static final VLUpdater<FSBounds> UPDATE = new VLUpdater<FSBounds>(){
         @Override
         public void update(FSBounds target){
-            target.forceUpdate();
+            target.update();
             target.updater = UPDATE_NOTHING;
         }
     };
@@ -163,12 +167,14 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
 
     protected abstract void notifyBasePointsUpdated();
 
-    protected final void forceUpdate(){
+    protected final void update(){
         Point offset = offset();
         offset.calculate(schematics);
         float[] offsetcoords = offset.coordinates;
 
         int size = points.size();
+
+        Log.d("wtf", Arrays.toString(offsetcoords) + " " + schematics.instance.name());
 
         for(int i = 1; i < size; i++){
             Point point = points.get(i);

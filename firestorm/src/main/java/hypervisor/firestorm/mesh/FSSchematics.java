@@ -301,7 +301,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         int size = collisionbounds.size();
 
         for(int i = 0; i < size; i++){
-            collisionbounds.get(i).forceUpdate();
+            collisionbounds.get(i).update();
         }
     }
 
@@ -309,7 +309,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         int size = inputbounds.size();
 
         for(int i = 0; i < size; i++){
-            inputbounds.get(i).bounds.forceUpdate();
+            inputbounds.get(i).bounds.update();
         }
     }
 
@@ -326,15 +326,15 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float localSpaceWidth(){
-        return Math.abs(localSpaceRight() - localSpaceLeft());
+        return localSpaceRight() - localSpaceLeft();
     }
 
     public float localSpaceHeight(){
-        return Math.abs(localSpaceTop() - localSpaceBottom());
+        return localSpaceTop() - localSpaceBottom();
     }
 
     public float localSpaceDepth(){
-        return Math.abs(localSpaceFront() - localSpaceBack());
+        return localSpaceFront() - localSpaceBack();
     }
 
     public float localSpaceLeft(){
@@ -434,15 +434,15 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float modelSpaceWidth(){
-        return Math.abs(modelSpaceRight() - modelSpaceLeft());
+        return modelSpaceRight() - modelSpaceLeft();
     }
 
     public float modelSpaceHeight(){
-        return Math.abs(modelSpaceTop() - modelSpaceBottom());
+        return modelSpaceTop() - modelSpaceBottom();
     }
 
     public float modelSpaceDepth(){
-        return Math.abs(modelSpaceBack() - modelSpaceFront());
+        return modelSpaceBack() - modelSpaceFront();
     }
 
     public float modelSpaceLeft(){
@@ -496,11 +496,10 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void checkCollision(FSBounds.Collision results, FSTypeInstance target){
-        int index = -1;
         int size = collisionbounds.size();
 
         for(int i = 0; i < size; i++){
-            index = target.schematics().checkCollision(results, collisionbounds.get(i));
+            int index = target.schematics().checkCollision(results, collisionbounds.get(i));
 
             if(index != -1){
                 results.initiatorboundsindex = i;
