@@ -152,6 +152,8 @@ public class FSR{
         synchronized(tasks){
             tasks.add(task);
         }
+
+        requestFrame();
     }
 
     protected static void finishFrame(){

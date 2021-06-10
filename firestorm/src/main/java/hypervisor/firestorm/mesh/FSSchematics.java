@@ -13,7 +13,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         @Override
         public void update(FSSchematics target){
-            target.directUpdateCentroid();
+            target.directUpdateModelSpaceCentroid();
         }
     };
     protected static final VLUpdater<FSSchematics> UPDATE_MODEL = new VLUpdater<FSSchematics>(){
@@ -95,8 +95,8 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidlocalspace = new float[4];
         centroidmodelspace = new float[4];
 
-        modelspaceupdate = UPDATE_MODEL;
-        centroidupdater = UPDATE_CENTROID;
+        modelspaceupdate = VLUpdater.UPDATE_NOTHING;
+        centroidupdater = VLUpdater.UPDATE_NOTHING;
     }
 
     public void rebuild(){
@@ -140,7 +140,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
                 boundsindices[2] = index + 2;
                 boundslocalspace[2] = x;
             }
-
             if(maxx < x){
                 maxx = x;
                 boundsindices[3] = index + 1;
@@ -162,9 +161,16 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidlocalspace[0] /= vertexcount;
         centroidlocalspace[1] /= vertexcount;
         centroidlocalspace[2] /= vertexcount;
+
+        checkLocalDimensionsValidity();
+
+        requestUpdateModelSpaceBounds();
+        requestUpdateModelSpaceCentroid();
+        requestUpdateCollisionBounds();
+        requestUpdateInputBounds();
     }
 
-    public void rebuildCentroidOnly(){
+    public void rebuildLocalSpaceCentroid(){
         centroidlocalspace[0] = 0F;
         centroidlocalspace[1] = 0F;
         centroidlocalspace[2] = 0F;
@@ -184,13 +190,15 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidlocalspace[1] /= vertexcount;
         centroidlocalspace[2] /= vertexcount;
         centroidlocalspace[3] = 1F;
+
+        requestUpdateModelSpaceCentroid();
     }
 
     public void requestUpdateModelSpaceBounds(){
         modelspaceupdate = UPDATE_MODEL;
     }
 
-    public void requestUpdateCentroid(){
+    public void requestUpdateModelSpaceCentroid(){
         centroidupdater = UPDATE_CENTROID;
     }
 
@@ -247,6 +255,57 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return reordered;
     }
 
+    private void checkLocalDimensionsValidity(){
+        float[] positions = instance.positions().provider();
+
+        float width = localSpaceWidth();
+        float height = localSpaceHeight();
+        float depth = localSpaceDepth();
+
+        if(width == 0){
+            if(depth != 0){
+                boundsindices[0] = boundsindices[2];
+                boundsindices[3] = boundsindices[5];
+                boundslocalspace[0] = positions[boundsindices[2]];
+                boundslocalspace[4] = positions[boundsindices[5]];
+
+            }else if(height != 0){
+                boundsindices[0] = boundsindices[1];
+                boundsindices[3] = boundsindices[4];
+                boundslocalspace[0] = positions[boundsindices[1]];
+                boundslocalspace[4] = positions[boundsindices[4]];
+            }
+        }
+        if(height == 0){
+            if(width != 0){
+                boundsindices[1] = boundsindices[0];
+                boundsindices[4] = boundsindices[3];
+                boundslocalspace[1] = positions[boundsindices[1]];
+                boundslocalspace[5] = positions[boundsindices[4]];
+
+            }else if(depth != 0){
+                boundsindices[1] = boundsindices[2];
+                boundsindices[4] = boundsindices[5];
+                boundslocalspace[1] = positions[boundsindices[2]];
+                boundslocalspace[5] = positions[boundsindices[5]];
+            }
+        }
+        if(depth == 0){
+            if(height != 0){
+                boundsindices[2] = boundsindices[1];
+                boundsindices[5] = boundsindices[4];
+                boundslocalspace[2] = positions[boundsindices[1]];
+                boundslocalspace[6] = positions[boundsindices[4]];
+
+            }else if(width != 0){
+                boundsindices[2] = boundsindices[0];
+                boundsindices[5] = boundsindices[3];
+                boundslocalspace[2] = positions[boundsindices[0]];
+                boundslocalspace[6] = positions[boundsindices[3]];
+            }
+        }
+    }
+
     public void requestUpdateCollisionBounds(){
         int size = collisionbounds.size();
 
@@ -264,12 +323,16 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void directReloadLocalSpaceBounds(){
-        int size = boundslocalspace.length;
         float[] positions = instance.positions().provider();
 
-        for(int i = 0; i < size; i++){
-            boundslocalspace[i] = positions[boundsindices[i]];
-        }
+        boundslocalspace[0] = positions[boundsindices[0]];
+        boundslocalspace[1] = positions[boundsindices[1]];
+        boundslocalspace[2] = positions[boundsindices[2]];
+        boundslocalspace[4] = positions[boundsindices[3]];
+        boundslocalspace[5] = positions[boundsindices[4]];
+        boundslocalspace[6] = positions[boundsindices[5]];
+
+        checkLocalDimensionsValidity();
 
         if(!checkSortLocalSpaceBounds()){
             requestUpdateModelSpaceBounds();
@@ -292,7 +355,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         modelspaceupdate = VLUpdater.UPDATE_NOTHING;
     }
 
-    public void directUpdateCentroid(){
+    public void directUpdateModelSpaceCentroid(){
         instance.model().transformPoint(centroidmodelspace, 0, centroidlocalspace, 0);
         centroidupdater = VLUpdater.UPDATE_NOTHING;
     }

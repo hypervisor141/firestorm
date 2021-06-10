@@ -26,7 +26,7 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void updateBuffer(int element);
     void applyModelMatrix();
     void schematicsRebuild();
-    void schematicsRebuildCentroidOnly();
+    void schematicsRebuildLocalSpaceCentroid();
     void schematicsRequestUpdateModelSpaceBounds();
     void schematicsRequestUpdateCentroid();
     void schematicsCheckSortLocalSpaceBounds();

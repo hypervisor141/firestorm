@@ -268,8 +268,8 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void schematicsRebuildCentroidOnly(){
-        schematics.rebuildCentroidOnly();
+    public void schematicsRebuildLocalSpaceCentroid(){
+        schematics.rebuildLocalSpaceCentroid();
     }
 
     @Override
@@ -279,7 +279,7 @@ public class FSInstance implements FSTypeInstance{
 
     @Override
     public void schematicsRequestUpdateCentroid(){
-        schematics.requestUpdateCentroid();
+        schematics.requestUpdateModelSpaceCentroid();
     }
 
     @Override
@@ -314,7 +314,7 @@ public class FSInstance implements FSTypeInstance{
 
     @Override
     public void schematicsDirectUpdateCentroid(){
-        schematics.directUpdateCentroid();
+        schematics.directUpdateModelSpaceCentroid();
     }
 
     @Override

@@ -242,11 +242,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void schematicsRebuildCentroidOnly(){
+    public void schematicsRebuildLocalSpaceCentroid(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).schematicsRebuildCentroidOnly();
+            entries.get(i).schematicsRebuildLocalSpaceCentroid();
         }
     }
 
