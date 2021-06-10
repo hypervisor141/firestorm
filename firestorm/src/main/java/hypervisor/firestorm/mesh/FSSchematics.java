@@ -133,12 +133,12 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
             if(miny > y){
                 miny = y;
                 boundsindices[1] = index + 1;
-                boundslocalspace[1] = x;
+                boundslocalspace[1] = y;
             }
             if(minz > z){
                 minz = z;
                 boundsindices[2] = index + 2;
-                boundslocalspace[2] = x;
+                boundslocalspace[2] = z;
             }
             if(maxx < x){
                 maxx = x;
@@ -163,7 +163,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidlocalspace[2] /= vertexcount;
 
         checkLocalDimensionsValidity();
-
         requestUpdateModelSpaceBounds();
         requestUpdateModelSpaceCentroid();
         requestUpdateCollisionBounds();
