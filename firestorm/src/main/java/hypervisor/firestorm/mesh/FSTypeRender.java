@@ -38,6 +38,8 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void schematicsDirectUpdateCentroid();
     void schematicsDirectUpdateCollisionBounds();
     void schematicsDirectUpdateInputBounds();
+    void paused();
+    void resumed();
     void destroy();
 
     FSTypeRenderGroup<?> parent();

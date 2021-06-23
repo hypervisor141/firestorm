@@ -427,6 +427,12 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
+    public void paused(){}
+
+    @Override
+    public void resumed(){}
+
+    @Override
     public void destroy(){
         parent = null;
         schematics = null;

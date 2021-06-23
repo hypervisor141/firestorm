@@ -444,6 +444,12 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
+    public void paused(){}
+
+    @Override
+    public void resumed(){}
+
+    @Override
     public void destroy(){
         int size = entries.size();
 
