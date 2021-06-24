@@ -156,7 +156,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
             @Override
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(data.name.equalsIgnoreCase(target.name())){
+                if(data.name.contains(target.name())){
                     if(target.size() > 0){
                         throw new RuntimeException("Found more than one instance with a singular scanner [" + target.name() + "]");
                     }
