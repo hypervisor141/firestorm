@@ -70,8 +70,8 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         return this;
     }
 
-    public FSLightMaterial map(FSLightMaterial factor){
-        divide(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+    public FSLightMaterial map(FSLightMaterial factor, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+        map(factor.ambient.provider(), ambientfactor, factor.diffuse.provider(), diffusefactor, factor.specular.provider(), specularfactor, factor.shininess.get(), shinefactor);
         return this;
     }
 
