@@ -50,242 +50,193 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         return shininess;
     }
 
-    public FSLightMaterial sum(FSLightMaterial factor){
+    public void sum(FSLightMaterial factor){
         sum(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
-        return this;
     }
 
-    public FSLightMaterial deduct(FSLightMaterial factor){
+    public void deduct(FSLightMaterial factor){
         deduct(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
-        return this;
     }
 
-    public FSLightMaterial multiply(FSLightMaterial factor){
+    public void multiply(FSLightMaterial factor){
         multiply(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
-        return this;
     }
 
-    public FSLightMaterial divide(FSLightMaterial factor){
+    public void divide(FSLightMaterial factor){
         divide(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
-        return this;
     }
 
-    public FSLightMaterial map(FSLightMaterial target, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+    public void map(FSLightMaterial target, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
         map(target.ambient.provider(), ambientfactor, target.diffuse.provider(), diffusefactor, target.specular.provider(), specularfactor, target.shininess.get(), shinefactor);
-        return this;
     }
 
-    public FSLightMaterial map(FSLightMaterial target, float factor){
+    public void map(FSLightMaterial target, float factor){
         map(target.ambient.provider(), target.diffuse.provider(), target.specular.provider(), target.shininess.get(), factor);
-        return this;
     }
 
-    public FSLightMaterial sum(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+    public void sum(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
         sumAmbient(ambientfactor);
         sumDiffuse(diffusefactor);
         sumSpecular(specularfactor);
         sumShininess(shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial deduct(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+    public void deduct(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
         deductAmbient(ambientfactor);
         deductDiffuse(diffusefactor);
         deductSpecular(specularfactor);
         sumShininess(-shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial multiply(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+    public void multiply(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
         multiplyAmbient(ambientfactor);
         multiplyDiffuse(diffusefactor);
         multiplySpecular(specularfactor);
         multiplyShininess(shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial divide(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+    public void divide(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
         divideAmbient(ambientfactor);
         divideDiffuse(diffusefactor);
         divideSpecular(specularfactor);
         multiplyShininess(1F / shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial map(float[] ambienttarget, float ambientfactor, float[] diffusetarget, float diffusefactor,
+    public void map(float[] ambienttarget, float ambientfactor, float[] diffusetarget, float diffusefactor,
                                float[] speculartarget, float specularfactor, float shinetarget, float shinefactor){
         mapAmbient(ambienttarget, ambientfactor);
         mapDiffuse(diffusetarget, diffusefactor);
         mapSpecular(speculartarget, specularfactor);
         mapShininess(shinetarget, shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial map(float[] ambienttarget, float[] diffusetarget, float[] speculartarget, float shinetarget, float factor){
+    public void map(float[] ambienttarget, float[] diffusetarget, float[] speculartarget, float shinetarget, float factor){
         mapAmbient(ambienttarget, factor);
         mapDiffuse(diffusetarget, factor);
         mapSpecular(speculartarget, factor);
         mapShininess(shinetarget, factor);
-
-        return this;
     }
 
-    public FSLightMaterial sum(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+    public void sum(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
         multiplyAmbient(ambientfactor);
         multiplyDiffuse(diffusefactor);
         multiplySpecular(specularfactor);
         multiplyShininess(shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial multiply(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+    public void multiply(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
         multiplyAmbient(ambientfactor);
         multiplyDiffuse(diffusefactor);
         multiplySpecular(specularfactor);
         multiplyShininess(shinefactor);
-
-        return this;
     }
 
-    public FSLightMaterial sumAmbient(float factor){
+    public void sumAmbient(float factor){
         sum(ambient.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial sumDiffuse(float factor){
+    public void sumDiffuse(float factor){
         sum(diffuse.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial sumSpecular(float factor){
+    public void sumSpecular(float factor){
         sum(specular.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial sumAmbient(float[] factor){
+    public void sumAmbient(float[] factor){
         sum(ambient.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial sumDiffuse(float[] factor){
+    public void sumDiffuse(float[] factor){
         sum(diffuse.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial sumSpecular(float[] factor){
+    public void sumSpecular(float[] factor){
         sum(specular.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial sumShininess(float factor){
+    public void sumShininess(float factor){
         shininess.set(shininess.get() + factor);
-        return this;
     }
 
-    public FSLightMaterial deductAmbient(float[] factor){
+    public void deductAmbient(float[] factor){
         deduct(ambient.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial deductDiffuse(float[] factor){
+    public void deductDiffuse(float[] factor){
         deduct(diffuse.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial deductSpecular(float[] factor){
+    public void deductSpecular(float[] factor){
         deduct(specular.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial multiplyAmbient(float factor){
+    public void multiplyAmbient(float factor){
         multiply(ambient.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial multiplyDiffuse(float factor){
+    public void multiplyDiffuse(float factor){
         multiply(diffuse.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial multiplySpecular(float factor){
+    public void multiplySpecular(float factor){
         multiply(specular.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial multiplyShininess(float factor){
+    public void multiplyShininess(float factor){
         shininess.set(shininess.get() * factor);
-        return this;
     }
 
-    public FSLightMaterial multiplyAmbient(float[] factor){
+    public void multiplyAmbient(float[] factor){
         divide(ambient.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial multiplyDiffuse(float[] factor){
+    public void multiplyDiffuse(float[] factor){
         multiply(diffuse.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial multiplySpecular(float[] factor){
+    public void multiplySpecular(float[] factor){
         multiply(specular.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial divideAmbient(float[] factor){
+    public void divideAmbient(float[] factor){
         divide(ambient.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial divideDiffuse(float[] factor){
+    public void divideDiffuse(float[] factor){
         divide(diffuse.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial divideSpecular(float[] factor){
+    public void divideSpecular(float[] factor){
         divide(specular.provider(), factor);
-        return this;
     }
 
-    public FSLightMaterial mapAmbient(float target, float factor){
+    public void mapAmbient(float target, float factor){
         map(ambient.provider(), target, factor);
-        return this;
     }
 
-    public FSLightMaterial mapDiffuse(float target, float factor){
+    public void mapDiffuse(float target, float factor){
         map(diffuse.provider(), target, factor);
-        return this;
     }
 
-    public FSLightMaterial mapSpecular(float target, float factor){
+    public void mapSpecular(float target, float factor){
         map(specular.provider(), target, factor);
-        return this;
     }
 
-    public FSLightMaterial mapShininess(float target, float factor){
+    public void mapShininess(float target, float factor){
         shininess.set(shininess.get() + (target - shininess.get()) * factor);
-        return this;
     }
 
-    public FSLightMaterial mapAmbient(float[] target, float factor){
+    public void mapAmbient(float[] target, float factor){
         map(ambient.provider(), target, factor);
-        return this;
     }
 
-    public FSLightMaterial mapDiffuse(float[] target, float factor){
+    public void mapDiffuse(float[] target, float factor){
         map(diffuse.provider(), target, factor);
-        return this;
     }
 
-    public FSLightMaterial mapSpecular(float[] target, float factor){
+    public void mapSpecular(float[] target, float factor){
         map(specular.provider(), target, factor);
-        return this;
     }
 
     private void sum(float[] array, float[] target){
