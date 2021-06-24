@@ -14,10 +14,6 @@ public final class FSCDimensions{
     protected static int realh;
     protected static float realasp;
 
-    protected static int surfacew;
-    protected static int surfaceh;
-    protected static float surfaceasp;
-
     protected static float density;
 
     public static void initialize(Activity act){
@@ -25,18 +21,20 @@ public final class FSCDimensions{
         Point point = new Point();
 
         display.getSize(point);
-        setMainDimensions(point.x, point.y);
+        mainw = point.x;
+        mainh = point.y;
+        mainasp = (float)realw / realh;
 
         display.getRealSize(point);
-        setRealDimensions(point.x, point.y);
+        realw = point.x;
+        realh = point.y;
+        realasp = (float)realw / realh;
 
         density = act.getResources().getDisplayMetrics().density;
     }
 
     protected static void setRealDimensions(int width, int height){
-        realw = width;
-        realh = height;
-        realasp = (float)width / height;
+
     }
 
     protected static void setMainDimensions(int width, int height){
@@ -45,37 +43,15 @@ public final class FSCDimensions{
         mainasp = (float)width / height;
     }
 
-    protected static void setSurfaceDimensions(int width, int height){
-        surfacew = width;
-        surfaceh = height;
-        surfaceasp = (float)width / height;
-    }
-
-    protected static void setDensity(float d){
-        density = d;
-    }
-
-    public static int getSurfaceWidth(){
-        return surfacew;
-    }
-
-    public static int getSurfaceHeight(){
-        return surfaceh;
-    }
-
-    public static float getSurfaceAspectRatio(){
-        return surfaceasp;
-    }
-
-    public static int getMainWidth(){
+    public static int getWidth(){
         return mainw;
     }
 
-    public static int getMainHeight(){
+    public static int getHeight(){
         return mainh;
     }
 
-    public static float getMainAspectRatio(){
+    public static float getAspectRatio(){
         return mainasp;
     }
 
@@ -90,17 +66,22 @@ public final class FSCDimensions{
     public static float getRealAspectRatio(){
         return realasp;
     }
+
+    public static float getDensity(){
+        return density;
+    }
     
     protected static void destroy(boolean destroyonpause){
-        mainw = 0;
-        mainh = 0;
-        mainasp = 0;
-        realw = 0;
-        realh = 0;
-        realasp = 0;
-        surfacew = 0;
-        surfaceh = 0;
-        surfaceasp = 0;
-        density = 0;
+        if(destroyonpause){
+            mainw = -1;
+            mainh = -1;
+            mainasp = -1;
+
+            realw = -1;
+            realh = -1;
+            realasp = -1;
+
+            density = -1;
+        }
     }
 }

@@ -9,7 +9,7 @@ public abstract class FSLight implements VLCopyable<FSLight>{
     protected long id;
 
     public FSLight(){
-        id = FSControl.getNextID();
+        id = FSControl.generateUID();
     }
 
     public VLArrayFloat position(){
@@ -26,7 +26,7 @@ public abstract class FSLight implements VLCopyable<FSLight>{
             id = src.id;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            id = FSControl.getNextID();
+            id = FSControl.generateUID();
 
         }else{
             Helper.throwMissingDefaultFlags();

@@ -37,7 +37,7 @@ public class FSInstance implements FSTypeInstance{
 
         store = new FSElementStore(FSElements.COUNT);
         schematics = new FSSchematics();
-        id = FSControl.getNextID();
+        id = FSControl.generateUID();
     }
 
     public FSInstance(FSInstance src, long flags){
@@ -374,7 +374,7 @@ public class FSInstance implements FSTypeInstance{
             colortexture = target.colortexture;
             lightmap = target.lightmap;
             name = target.name.concat("_duplicate").concat(String.valueOf(id));
-            id = FSControl.getNextID();
+            id = FSControl.generateUID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             colortexture = target.colortexture;
@@ -403,7 +403,7 @@ public class FSInstance implements FSTypeInstance{
             }
 
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
-                id = FSControl.getNextID();
+                id = FSControl.generateUID();
 
             }else{
                 id = target.id;

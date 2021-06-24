@@ -31,7 +31,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
         bindings = new VLListType[FSElements.COUNT];
         entries = new VLListType<>(capacity, resizer);
-        id = FSControl.getNextID();
+        id = FSControl.generateUID();
     }
 
     protected FSMesh(){
@@ -414,7 +414,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             entries = target.entries.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
             name = target.name.concat("_duplicate").concat(String.valueOf(id));
-            id = FSControl.getNextID();
+            id = FSControl.generateUID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_FORCE_DUPLICATE_entryS) == FLAG_FORCE_DUPLICATE_entryS){
@@ -425,7 +425,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             }
 
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
-                id = FSControl.getNextID();
+                id = FSControl.generateUID();
 
             }else{
                 id = target.id;

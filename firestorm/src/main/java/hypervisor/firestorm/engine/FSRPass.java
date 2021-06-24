@@ -45,7 +45,7 @@ public class FSRPass{
 
     private void initialize(int capacity){
         entries = new VLListType<>(capacity, capacity);
-        id = FSControl.getNextID();
+        id = FSControl.generateUID();
 
         if(debug >= FSControl.DEBUG_NORMAL){
             log = new VLLog(new String[]{

@@ -17,6 +17,7 @@ public abstract class FSActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
         BASE = new RelativeLayout(this);
+        FSControl.setActivity(this);
 
         generateSurface();
         modifyUI(BASE);
@@ -45,6 +46,8 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onResume(){
         super.onResume();
 
+        FSControl.setActivity(this);
+
         if(FSControl.getDestroyOnPause() && !FSControl.isAlive()){
             BASE.removeAllViews();
             generateSurface();
@@ -55,7 +58,7 @@ public abstract class FSActivity extends AppCompatActivity{
     protected void onDestroy(){
         super.onDestroy();
 
-        FSControl.setDestroyOnPause(false);
+        FSControl.setDestroyOnPause(true);
 
         if(BASE != null){
             BASE.removeAllViews();

@@ -26,7 +26,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         this.name = name.toLowerCase();
 
         entries = new VLListType<>(capacity, resizer);
-        id = FSControl.getNextID();
+        id = FSControl.generateUID();
     }
 
     public FSMeshGroup(FSMeshGroup<ENTRY> src, long flags){
@@ -380,7 +380,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             entries = target.entries.duplicate(VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
             name = target.name.concat("_duplicate").concat(String.valueOf(id));
-            id = FSControl.getNextID();
+            id = FSControl.generateUID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_FORCE_DUPLICATE_entryS) == FLAG_FORCE_DUPLICATE_entryS){
@@ -391,7 +391,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             }
 
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
-                id = FSControl.getNextID();
+                id = FSControl.generateUID();
 
             }else{
                 id = target.id;

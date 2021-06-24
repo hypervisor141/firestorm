@@ -5,6 +5,7 @@ import android.content.Context;
 public final class FSControl{
 
     public static final String LOGTAG = "FIRESTORM";
+    public static final Object ACTIVITY_ACCESS_LOCK = new Object();
 
     public static final int DEBUG_DISABLED = 0;
     public static final int DEBUG_NORMAL = 1;
@@ -14,23 +15,34 @@ public final class FSControl{
     protected static FSEvents events;
     protected static FSSurface surface;
     protected static Context appcontext;
+    protected static FSActivity activity;
 
     protected static boolean destroyonpause;
     protected static boolean isalive;
 
-    private static long GLOBAL_ID;
-    private static final Object IDLOCK = new Object();
+    private static long GLOBAL_UID;
+    private static final Object UIDLOCK = new Object();
 
-    public static void initialize(Context appcontext, FSSurface surface, FSView view, FSRInterface threadinterface, FSGlobal global, FSElements.CustomElements customelements, boolean destroyonpause, int maxunchangedframes, int maxqueuedframes){
-        FSControl.appcontext = appcontext;
+    protected static void setActivity(FSActivity activity){
+        synchronized(ACTIVITY_ACCESS_LOCK){
+            FSControl.activity = activity;
+
+            if(activity != null){
+                appcontext = activity.getApplicationContext();
+            }
+        }
+    }
+
+    public static void initialize(FSSurface surface, FSView view, FSRInterface threadinterface, FSGlobal global, FSElements.CustomElements customelements, boolean destroyonpause, int maxunchangedframes, int maxqueuedframes){
         FSControl.surface = surface;
         FSControl.events = surface.events();
         FSControl.view = view;
         FSControl.destroyonpause = destroyonpause;
 
         if(!isAlive()){
-            GLOBAL_ID = 1000;
+            GLOBAL_UID = 1000;
 
+            FSCDimensions.initialize(activity);
             FSElements.initialize(customelements);
             FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
@@ -39,9 +51,9 @@ public final class FSControl{
         }
     }
 
-    public static long getNextID(){
-        synchronized(IDLOCK){
-            return GLOBAL_ID++;
+    public static long generateUID(){
+        synchronized(UIDLOCK){
+            return GLOBAL_UID++;
         }
     }
 
@@ -57,6 +69,12 @@ public final class FSControl{
         return destroyonpause;
     }
 
+    public static FSActivity activity(){
+        synchronized(ACTIVITY_ACCESS_LOCK){
+            return activity;
+        }
+    }
+
     public static FSSurface surface(){
         return surface;
     }
@@ -66,7 +84,9 @@ public final class FSControl{
     }
 
     public static Context appContext(){
-        return appcontext;
+        synchronized(ACTIVITY_ACCESS_LOCK){
+            return appcontext;
+        }
     }
 
     protected static FSEvents events(){
@@ -82,6 +102,8 @@ public final class FSControl{
     }
 
     protected static void destroy(){
+        setActivity(null);
+
         FSR.destroy(destroyonpause);
         FSGlobal.destroy(destroyonpause);
         FSCDimensions.destroy(destroyonpause);
@@ -91,7 +113,7 @@ public final class FSControl{
         FSElements.destroy(destroyonpause);
 
         if(destroyonpause){
-            GLOBAL_ID = -1;
+            GLOBAL_UID = -1;
             isalive = false;
 
             appcontext = null;
