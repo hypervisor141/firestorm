@@ -10,6 +10,7 @@ public class FSRThread extends VLThread{
 
     public FSRThread(){
         super(10);
+        setPriority(MAX_PRIORITY);
     }
 
     public static class TaskCreateContext implements VLThreadTaskType{
