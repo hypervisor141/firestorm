@@ -70,8 +70,13 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         return this;
     }
 
-    public FSLightMaterial map(FSLightMaterial factor, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
-        map(factor.ambient.provider(), ambientfactor, factor.diffuse.provider(), diffusefactor, factor.specular.provider(), specularfactor, factor.shininess.get(), shinefactor);
+    public FSLightMaterial map(FSLightMaterial target, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+        map(target.ambient.provider(), ambientfactor, target.diffuse.provider(), diffusefactor, target.specular.provider(), specularfactor, target.shininess.get(), shinefactor);
+        return this;
+    }
+
+    public FSLightMaterial map(FSLightMaterial target, float factor){
+        map(target.ambient.provider(), target.diffuse.provider(), target.specular.provider(), target.shininess.get(), factor);
         return this;
     }
 
@@ -117,6 +122,15 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         mapDiffuse(diffusetarget, diffusefactor);
         mapSpecular(speculartarget, specularfactor);
         mapShininess(shinetarget, shinefactor);
+
+        return this;
+    }
+
+    public FSLightMaterial map(float[] ambienttarget, float[] diffusetarget, float[] speculartarget, float shinetarget, float factor){
+        mapAmbient(ambienttarget, factor);
+        mapDiffuse(diffusetarget, factor);
+        mapSpecular(speculartarget, factor);
+        mapShininess(shinetarget, factor);
 
         return this;
     }
