@@ -49,56 +49,250 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         return shininess;
     }
 
+    public FSLightMaterial sum(FSLightMaterial factor){
+        sum(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+        return this;
+    }
+
+    public FSLightMaterial deduct(FSLightMaterial factor){
+        deduct(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+        return this;
+    }
+
+    public FSLightMaterial multiply(FSLightMaterial factor){
+        multiply(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+        return this;
+    }
+
+    public FSLightMaterial divide(FSLightMaterial factor){
+        divide(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+        return this;
+    }
+
+    public FSLightMaterial sum(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+        multiplyAmbient(ambientfactor);
+        multiplyDiffuse(diffusefactor);
+        multiplySpecular(specularfactor);
+        multiplyShininess(shinefactor);
+
+        return this;
+    }
+
     public FSLightMaterial multiply(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
-        float[] ambientf = ambient.provider();
-        ambientf[0] *= ambientfactor;
-        ambientf[1] *= ambientfactor;
-        ambientf[2] *= ambientfactor;
+        multiplyAmbient(ambientfactor);
+        multiplyDiffuse(diffusefactor);
+        multiplySpecular(specularfactor);
+        multiplyShininess(shinefactor);
 
-        float[] diffusef = diffuse.provider();
-        diffusef[0] *= diffusefactor;
-        diffusef[1] *= diffusefactor;
-        diffusef[2] *= diffusefactor;
+        return this;
+    }
 
-        float[] specularf = specular.provider();
-        specularf[0] *= specularfactor;
-        specularf[1] *= specularfactor;
-        specularf[2] *= specularfactor;
+    public FSLightMaterial sumAmbient(float factor){
+        float[] array = ambient.provider();
+        array[0] += factor;
+        array[1] += factor;
+        array[2] += factor;
 
-        shininess.set(shininess.get() * shinefactor);
+        return this;
+    }
+
+    public FSLightMaterial sumDiffuse(float factor){
+        float[] array = diffuse.provider();
+        array[0] += factor;
+        array[1] += factor;
+        array[2] += factor;
+
+        return this;
+    }
+
+    public FSLightMaterial sumSpecular(float factor){
+        float[] array = specular.provider();
+        array[0] += factor;
+        array[1] += factor;
+        array[2] += factor;
+
+        return this;
+    }
+
+    public FSLightMaterial sumShininess(float factor){
+        shininess.set(shininess.get() + factor);
 
         return this;
     }
 
     public FSLightMaterial multiplyAmbient(float factor){
-        float[] ambientf = ambient.provider();
-        ambientf[0] *= factor;
-        ambientf[1] *= factor;
-        ambientf[2] *= factor;
+        float[] array = ambient.provider();
+        array[0] *= factor;
+        array[1] *= factor;
+        array[2] *= factor;
 
         return this;
     }
 
     public FSLightMaterial multiplyDiffuse(float factor){
-        float[] diffusef = diffuse.provider();
-        diffusef[0] *= factor;
-        diffusef[1] *= factor;
-        diffusef[2] *= factor;
+        float[] array = diffuse.provider();
+        array[0] *= factor;
+        array[1] *= factor;
+        array[2] *= factor;
 
         return this;
     }
 
     public FSLightMaterial multiplySpecular(float factor){
-        float[] specularf = specular.provider();
-        specularf[0] *= factor;
-        specularf[1] *= factor;
-        specularf[2] *= factor;
+        float[] array = specular.provider();
+        array[0] *= factor;
+        array[1] *= factor;
+        array[2] *= factor;
 
         return this;
     }
 
     public FSLightMaterial multiplyShininess(float factor){
         shininess.set(shininess.get() * factor);
+        return this;
+    }
+
+    public FSLightMaterial sum(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+        sumAmbient(ambientfactor);
+        sumDiffuse(diffusefactor);
+        sumSpecular(specularfactor);
+        sumShininess(shinefactor);
+
+        return this;
+    }
+
+    public FSLightMaterial deduct(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+        deductAmbient(ambientfactor);
+        deductDiffuse(diffusefactor);
+        deductSpecular(specularfactor);
+        sumShininess(-shinefactor);
+
+        return this;
+    }
+
+    public FSLightMaterial multiply(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+        multiplyAmbient(ambientfactor);
+        multiplyDiffuse(diffusefactor);
+        multiplySpecular(specularfactor);
+        multiplyShininess(shinefactor);
+
+        return this;
+    }
+
+    public FSLightMaterial divide(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
+        divideAmbient(ambientfactor);
+        divideDiffuse(diffusefactor);
+        divideSpecular(specularfactor);
+        multiplyShininess(1F / shinefactor);
+
+        return this;
+    }
+
+    public FSLightMaterial sumAmbient(float[] factor){
+        float[] array = ambient.provider();
+        array[0] += factor[0];
+        array[1] += factor[1];
+        array[2] += factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial sumDiffuse(float[] factor){
+        float[] array = diffuse.provider();
+        array[0] += factor[0];
+        array[1] += factor[1];
+        array[2] += factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial sumSpecular(float[] factor){
+        float[] array = specular.provider();
+        array[0] += factor[0];
+        array[1] += factor[1];
+        array[2] += factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial deductAmbient(float[] factor){
+        float[] array = ambient.provider();
+        array[0] -= factor[0];
+        array[1] -= factor[1];
+        array[2] -= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial deductDiffuse(float[] factor){
+        float[] array = diffuse.provider();
+        array[0] -= factor[0];
+        array[1] -= factor[1];
+        array[2] -= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial deductSpecular(float[] factor){
+        float[] array = specular.provider();
+        array[0] -= factor[0];
+        array[1] -= factor[1];
+        array[2] -= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial multiplyAmbient(float[] factor){
+        float[] array = ambient.provider();
+        array[0] *= factor[0];
+        array[1] *= factor[1];
+        array[2] *= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial multiplyDiffuse(float[] factor){
+        float[] array = diffuse.provider();
+        array[0] *= factor[0];
+        array[1] *= factor[1];
+        array[2] *= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial multiplySpecular(float[] factor){
+        float[] array = specular.provider();
+        array[0] *= factor[0];
+        array[1] *= factor[1];
+        array[2] *= factor[2];
+        
+        return this;
+    }
+
+    public FSLightMaterial divideAmbient(float[] factor){
+        float[] array = ambient.provider();
+        array[0] /= factor[0];
+        array[1] /= factor[1];
+        array[2] /= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial divideDiffuse(float[] factor){
+        float[] array = diffuse.provider();
+        array[0] /= factor[0];
+        array[1] /= factor[1];
+        array[2] /= factor[2];
+
+        return this;
+    }
+
+    public FSLightMaterial divideSpecular(float[] factor){
+        float[] array = specular.provider();
+        array[0] /= factor[0];
+        array[1] /= factor[1];
+        array[2] /= factor[2];
+
         return this;
     }
 
