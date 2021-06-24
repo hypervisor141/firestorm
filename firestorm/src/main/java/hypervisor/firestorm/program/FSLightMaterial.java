@@ -49,6 +49,59 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         return shininess;
     }
 
+    public FSLightMaterial multiply(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+        float[] ambientf = ambient.provider();
+        ambientf[0] *= ambientfactor;
+        ambientf[1] *= ambientfactor;
+        ambientf[2] *= ambientfactor;
+
+        float[] diffusef = diffuse.provider();
+        diffusef[0] *= diffusefactor;
+        diffusef[1] *= diffusefactor;
+        diffusef[2] *= diffusefactor;
+
+        float[] specularf = specular.provider();
+        specularf[0] *= specularfactor;
+        specularf[1] *= specularfactor;
+        specularf[2] *= specularfactor;
+
+        shininess.set(shininess.get() * shinefactor);
+
+        return this;
+    }
+
+    public FSLightMaterial multiplyAmbient(float factor){
+        float[] ambientf = ambient.provider();
+        ambientf[0] *= factor;
+        ambientf[1] *= factor;
+        ambientf[2] *= factor;
+
+        return this;
+    }
+
+    public FSLightMaterial multiplyDiffuse(float factor){
+        float[] diffusef = diffuse.provider();
+        diffusef[0] *= factor;
+        diffusef[1] *= factor;
+        diffusef[2] *= factor;
+
+        return this;
+    }
+
+    public FSLightMaterial multiplySpecular(float factor){
+        float[] specularf = specular.provider();
+        specularf[0] *= factor;
+        specularf[1] *= factor;
+        specularf[2] *= factor;
+
+        return this;
+    }
+
+    public FSLightMaterial multiplyShininess(float factor){
+        shininess.set(shininess.get() * factor);
+        return this;
+    }
+
     @Override
     public void copy(FSLightMaterial src, long flags){
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
