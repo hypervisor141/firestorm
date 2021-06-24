@@ -280,9 +280,9 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         float g = array[1];
         float b = array[2];
 
-        array[0] = r + (r - target[0]) * factor;
-        array[1] = g + (g - target[1]) * factor;
-        array[2] = b + (b - target[2]) * factor;
+        array[0] = r + (target[0] - r) * factor;
+        array[1] = g + (target[1] - g) * factor;
+        array[2] = b + (target[2] - b) * factor;
     }
 
     private void map(float[] array, float target, float factor){
@@ -290,9 +290,9 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         float g = array[1];
         float b = array[2];
 
-        array[0] = r + (r - target) * factor;
-        array[1] = g + (g - target) * factor;
-        array[2] = b + (b - target) * factor;
+        array[0] = r + (target - r) * factor;
+        array[1] = g + (target - g) * factor;
+        array[2] = b + (target - b) * factor;
     }
 
     @Override
