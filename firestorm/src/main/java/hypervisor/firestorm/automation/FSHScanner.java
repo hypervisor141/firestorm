@@ -152,6 +152,8 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public interface ScanFunction{
 
+        void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data);
+
         ScanFunction SCAN_SINGULAR = new ScanFunction(){
 
             @Override
@@ -186,7 +188,5 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
                 }
             }
         };
-
-        void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data);
     }
 }
