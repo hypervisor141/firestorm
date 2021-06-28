@@ -46,14 +46,14 @@ public class FSHAssembler implements VLLoggable{
     public boolean CONVERT_POSITIONS_TO_MODELARRAYS = false;
     public boolean DRAW_MODE_INDEXED = false;
 
-    protected VLListType<BuildStep> firstInstanceSteps;
-    protected VLListType<BuildStep> otherInstanceSteps;
-    protected VLListType<BuildStep> customInstanceSteps;
+    protected VLListType<BuildStep> firststeps;
+    protected VLListType<BuildStep> instancesteps;
+    protected VLListType<BuildStep> customsteps;
 
     public FSHAssembler(int customstepcapacity){
-        firstInstanceSteps = new VLListType<>(10, 20);
-        otherInstanceSteps = new VLListType<>(10, 20);
-        customInstanceSteps = new VLListType<>(customstepcapacity, customstepcapacity);
+        firststeps = new VLListType<>(10, 20);
+        instancesteps = new VLListType<>(10, 20);
+        customsteps = new VLListType<>(customstepcapacity, customstepcapacity);
 
         setDefaultAll();
     }
@@ -92,9 +92,9 @@ public class FSHAssembler implements VLLoggable{
     }
 
     public void configure(){
-        otherInstanceSteps.clear();
-        firstInstanceSteps.clear();
-        customInstanceSteps.clear();
+        firststeps.clear();
+        instancesteps.clear();
+        customsteps.clear();
 
         configureModels();
         configurePositions();
@@ -107,73 +107,73 @@ public class FSHAssembler implements VLLoggable{
     }
 
     public VLListType<BuildStep> customSteps(){
-        return customInstanceSteps;
+        return customsteps;
     }
 
     private void configureModels(){
         if(LOAD_MODELS){
-            firstInstanceSteps.add(MODEL_INITIALIZE);
-            otherInstanceSteps.add(MODEL_INITIALIZE);
+            firststeps.add(MODEL_INITIALIZE);
+            instancesteps.add(MODEL_INITIALIZE);
         }
     }
 
     private void configurePositions(){
         if(LOAD_POSITIONS){
-            firstInstanceSteps.add(POSITION_SET);
+            firststeps.add(POSITION_SET);
 
             if(FLIP_POSITION_X){
-                firstInstanceSteps.add(POSITION_FLIP_X);
+                firststeps.add(POSITION_FLIP_X);
             }
             if(FLIP_POSITION_Y){
-                firstInstanceSteps.add(POSITION_FLIP_Y);
+                firststeps.add(POSITION_FLIP_Y);
             }
             if(FLIP_POSITION_Z){
-                firstInstanceSteps.add(POSITION_FLIP_Z);
+                firststeps.add(POSITION_FLIP_Z);
             }
             if(!DRAW_MODE_INDEXED){
-                firstInstanceSteps.add(POSITION_UNINDEX);
+                firststeps.add(POSITION_UNINDEX);
             }
 
-            firstInstanceSteps.add(POSITION_INIT_SCHEMATICS);
+            firststeps.add(POSITION_INIT_SCHEMATICS);
 
             if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                firstInstanceSteps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
+                firststeps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
             }
 
             if(INSTANCE_SHARE_POSITIONS){
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                    otherInstanceSteps.add(POSITION_SET);
+                    instancesteps.add(POSITION_SET);
 
                     if(!DRAW_MODE_INDEXED){
-                        otherInstanceSteps.add(POSITION_UNINDEX);
+                        instancesteps.add(POSITION_UNINDEX);
                     }
 
-                    otherInstanceSteps.add(POSITION_INIT_SCHEMATICS);
-                    otherInstanceSteps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
+                    instancesteps.add(POSITION_INIT_SCHEMATICS);
+                    instancesteps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
                 }
 
-                otherInstanceSteps.add(POSITION_SHARED);
+                instancesteps.add(POSITION_SHARED);
 
             }else{
-                otherInstanceSteps.add(POSITION_SET);
+                instancesteps.add(POSITION_SET);
 
                 if(FLIP_POSITION_X){
-                    otherInstanceSteps.add(POSITION_FLIP_X);
+                    instancesteps.add(POSITION_FLIP_X);
                 }
                 if(FLIP_POSITION_Y){
-                    otherInstanceSteps.add(POSITION_FLIP_Y);
+                    instancesteps.add(POSITION_FLIP_Y);
                 }
                 if(FLIP_POSITION_Z){
-                    otherInstanceSteps.add(POSITION_FLIP_Z);
+                    instancesteps.add(POSITION_FLIP_Z);
                 }
                 if(!DRAW_MODE_INDEXED){
-                    otherInstanceSteps.add(POSITION_UNINDEX);
+                    instancesteps.add(POSITION_UNINDEX);
                 }
 
-                otherInstanceSteps.add(POSITION_INIT_SCHEMATICS);
+                instancesteps.add(POSITION_INIT_SCHEMATICS);
 
                 if(CONVERT_POSITIONS_TO_MODELARRAYS){
-                    otherInstanceSteps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
+                    instancesteps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
                 }
             }
         }
@@ -181,20 +181,20 @@ public class FSHAssembler implements VLLoggable{
 
     private void configureColors(){
         if(LOAD_COLORS){
-            firstInstanceSteps.add(COLOR_FILE_SET);
+            firststeps.add(COLOR_FILE_SET);
 
             if(!DRAW_MODE_INDEXED){
-                firstInstanceSteps.add(COLOR_FILE_LOADED_NONE_INDEXED);
+                firststeps.add(COLOR_FILE_LOADED_NONE_INDEXED);
             }
 
             if(INSTANCE_SHARE_COLORS){
-                otherInstanceSteps.add(COLOR_SHARED);
+                instancesteps.add(COLOR_SHARED);
 
             }else{
-                otherInstanceSteps.add(COLOR_FILE_SET);
+                instancesteps.add(COLOR_FILE_SET);
 
                 if(!DRAW_MODE_INDEXED){
-                    otherInstanceSteps.add(COLOR_FILE_LOADED_NONE_INDEXED);
+                    instancesteps.add(COLOR_FILE_LOADED_NONE_INDEXED);
                 }
             }
         }
@@ -202,32 +202,32 @@ public class FSHAssembler implements VLLoggable{
 
     private void configureTexCoords(){
         if(LOAD_TEXCOORDS){
-            firstInstanceSteps.add(TEXTURE_SET);
+            firststeps.add(TEXTURE_SET);
 
             if(FLIP_TEXTURE_U){
-                firstInstanceSteps.add(TEXTURE_FLIP_U);
+                firststeps.add(TEXTURE_FLIP_U);
             }
             if(FLIP_TEXTURE_V){
-                firstInstanceSteps.add(TEXTURE_FLIP_V);
+                firststeps.add(TEXTURE_FLIP_V);
             }
             if(!DRAW_MODE_INDEXED){
-                firstInstanceSteps.add(TEXTURE_UNINDEX);
+                firststeps.add(TEXTURE_UNINDEX);
             }
 
             if(INSTANCE_SHARE_TEXCOORDS){
-                otherInstanceSteps.add(TEXTURE_SHARED);
+                instancesteps.add(TEXTURE_SHARED);
 
             }else{
-                otherInstanceSteps.add(TEXTURE_SET);
+                instancesteps.add(TEXTURE_SET);
 
                 if(FLIP_TEXTURE_U){
-                    otherInstanceSteps.add(TEXTURE_FLIP_U);
+                    instancesteps.add(TEXTURE_FLIP_U);
                 }
                 if(FLIP_TEXTURE_V){
-                    otherInstanceSteps.add(TEXTURE_FLIP_V);
+                    instancesteps.add(TEXTURE_FLIP_V);
                 }
                 if(!DRAW_MODE_INDEXED){
-                    otherInstanceSteps.add(TEXTURE_UNINDEX);
+                    instancesteps.add(TEXTURE_UNINDEX);
                 }
             }
         }
@@ -235,38 +235,38 @@ public class FSHAssembler implements VLLoggable{
 
     private void configureNormals(){
         if(LOAD_NORMALS){
-            firstInstanceSteps.add(NORMAL_SET);
+            firststeps.add(NORMAL_SET);
 
             if(FLIP_NORMAL_X){
-                firstInstanceSteps.add(NORMAL_FLIP_X);
+                firststeps.add(NORMAL_FLIP_X);
             }
             if(FLIP_NORMAL_Y){
-                firstInstanceSteps.add(NORMAL_FLIP_Y);
+                firststeps.add(NORMAL_FLIP_Y);
             }
             if(FLIP_NORMAL_Z){
-                firstInstanceSteps.add(NORMAL_FLIP_Z);
+                firststeps.add(NORMAL_FLIP_Z);
             }
             if(!DRAW_MODE_INDEXED){
-                firstInstanceSteps.add(NORMAL_UNINDEX);
+                firststeps.add(NORMAL_UNINDEX);
             }
 
             if(INSTANCE_SHARE_NORMALS){
-                otherInstanceSteps.add(NORMAL_SHARED);
+                instancesteps.add(NORMAL_SHARED);
 
             }else{
-                otherInstanceSteps.add(NORMAL_SET);
+                instancesteps.add(NORMAL_SET);
 
                 if(FLIP_NORMAL_X){
-                    otherInstanceSteps.add(NORMAL_FLIP_X);
+                    instancesteps.add(NORMAL_FLIP_X);
                 }
                 if(FLIP_NORMAL_Y){
-                    otherInstanceSteps.add(NORMAL_FLIP_Y);
+                    instancesteps.add(NORMAL_FLIP_Y);
                 }
                 if(FLIP_NORMAL_Z){
-                    otherInstanceSteps.add(NORMAL_FLIP_Z);
+                    instancesteps.add(NORMAL_FLIP_Z);
                 }
                 if(!DRAW_MODE_INDEXED){
-                    otherInstanceSteps.add(NORMAL_UNINDEX);
+                    instancesteps.add(NORMAL_UNINDEX);
                 }
             }
         }
@@ -274,26 +274,26 @@ public class FSHAssembler implements VLLoggable{
 
     private void configureIndices(){
         if(LOAD_INDICES){
-            firstInstanceSteps.add(INDICES_SET);
+            firststeps.add(INDICES_SET);
 
             if(FLIP_INDICES_TRIANGLES){
-                firstInstanceSteps.add(INDICES_FLIP_TRIANGLES);
+                firststeps.add(INDICES_FLIP_TRIANGLES);
 
             }else if(FLIP_INDICES_QUADS){
-                firstInstanceSteps.add(INDICES_FLIP_QUADS);
+                firststeps.add(INDICES_FLIP_QUADS);
             }
 
             if(INSTANCE_SHARE_INDICES){
-                otherInstanceSteps.add(INDICES_SHARE);
+                instancesteps.add(INDICES_SHARE);
 
             }else{
-                otherInstanceSteps.add(INDICES_SET);
+                instancesteps.add(INDICES_SET);
 
                 if(FLIP_INDICES_TRIANGLES){
-                    otherInstanceSteps.add(INDICES_FLIP_TRIANGLES);
+                    instancesteps.add(INDICES_FLIP_TRIANGLES);
 
                 }else if(FLIP_INDICES_QUADS){
-                    otherInstanceSteps.add(INDICES_FLIP_QUADS);
+                    instancesteps.add(INDICES_FLIP_QUADS);
                 }
             }
         }
@@ -395,13 +395,13 @@ public class FSHAssembler implements VLLoggable{
     }
 
     final void buildFirst(FSTypeInstance instance, FSTypeMesh<FSTypeInstance> target, FSM.Data data){
-        buildTarget(firstInstanceSteps, instance, target, data);
-        buildTarget(customInstanceSteps, instance, target, data);
+        buildTarget(firststeps, instance, target, data);
+        buildTarget(customsteps, instance, target, data);
     }
 
     final void buildRest(FSTypeInstance instance, FSTypeMesh<FSTypeInstance> target, FSM.Data data){
-        buildTarget(otherInstanceSteps, instance, target, data);
-        buildTarget(customInstanceSteps, instance, target, data);
+        buildTarget(instancesteps, instance, target, data);
+        buildTarget(customsteps, instance, target, data);
     }
 
     final void buildTarget(VLListType<BuildStep> funcs, FSTypeInstance instance, FSTypeMesh<FSTypeInstance> target, FSM.Data data){
@@ -414,7 +414,7 @@ public class FSHAssembler implements VLLoggable{
     }
 
     protected void checkDebug(){
-        if(firstInstanceSteps.size() == 0){
+        if(firststeps.size() == 0){
             throw new RuntimeException("[ERROR] [Assembler not configured]");
         }
     }
@@ -453,7 +453,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_INDEX, 1, 0);
-            store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(data.indices.array())));
+            store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(data.indices.array().clone())));
             store.activate(FSElements.ELEMENT_INDEX, 0);
         }
     };
@@ -516,7 +516,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_POSITION, 1, 0);
-            store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(data.positions.array())));
+            store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(data.positions.array().clone())));
             store.activate(FSElements.ELEMENT_POSITION, 0);
         }
     };
@@ -598,7 +598,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_COLOR, 1, 0);
-            store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(data.colors.array())));
+            store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(data.colors.array().clone())));
             store.activate(FSElements.ELEMENT_COLOR, 0);
         }
     };
@@ -625,7 +625,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.array())));
+            store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.array().clone())));
             store.activate(FSElements.ELEMENT_TEXCOORD, 0);
         }
     };
@@ -678,7 +678,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
-            store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(data.normals.array())));
+            store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(data.normals.array().clone())));
             store.activate(FSElements.ELEMENT_NORMAL, 0);
         }
     };
