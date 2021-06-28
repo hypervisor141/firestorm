@@ -1,7 +1,6 @@
 package hypervisor.firestorm.program;
 
 import hypervisor.vanguard.array.VLArrayFloat;
-import hypervisor.vanguard.array.VLArrayUtils;
 import hypervisor.vanguard.primitive.VLFloat;
 import hypervisor.vanguard.utils.VLCopyable;
 
@@ -50,249 +49,210 @@ public final class FSLightMaterial implements VLCopyable<FSLightMaterial>{
         return shininess;
     }
 
-    public void sum(FSLightMaterial factor){
-        sum(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+    public void sum(FSLightMaterial mat, FSLightMaterial target){
+        sumAmbient(mat.ambient.provider(), target.ambient.provider());
+        sumDiffuse(mat.diffuse.provider(), target.diffuse.provider());
+        sumSpecular(mat.specular.provider(), target.specular.provider());
+        sumShininess(mat.shininess.get(), mat.shininess.get());
     }
 
-    public void deduct(FSLightMaterial factor){
-        deduct(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+    public void deduct(FSLightMaterial mat, FSLightMaterial target){
+        deductAmbient(mat.ambient.provider(), target.ambient.provider());
+        deductDiffuse(mat.diffuse.provider(), target.diffuse.provider());
+        deductSpecular(mat.specular.provider(), target.specular.provider());
+        sumShininess(mat.shininess.get(), -mat.shininess.get());
     }
 
-    public void multiply(FSLightMaterial factor){
-        multiply(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+    public void multiply(FSLightMaterial mat, FSLightMaterial target){
+        multiplyAmbient(mat.ambient.provider(), target.ambient.provider());
+        multiplyDiffuse(mat.diffuse.provider(), target.diffuse.provider());
+        multiplySpecular(mat.specular.provider(), target.specular.provider());
+        multiplyShininess(mat.shininess.get(), mat.shininess.get());
     }
 
-    public void divide(FSLightMaterial factor){
-        divide(factor.ambient.provider(), factor.diffuse.provider(), factor.specular.provider(), factor.shininess.get());
+    public void divide(FSLightMaterial mat, FSLightMaterial target){
+        divideAmbient(mat.ambient.provider(), target.ambient.provider());
+        divideDiffuse(mat.diffuse.provider(), target.diffuse.provider());
+        divideSpecular(mat.specular.provider(), target.specular.provider());
+        multiplyShininess(mat.shininess.get(), 1F / mat.shininess.get());
     }
 
-    public void map(FSLightMaterial target, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
-        map(target.ambient.provider(), ambientfactor, target.diffuse.provider(), diffusefactor, target.specular.provider(), specularfactor, target.shininess.get(), shinefactor);
+    public void map(FSLightMaterial mat, FSLightMaterial target, float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
+        mapAmbient(mat.ambient.provider(), target.ambient.provider(), ambientfactor);
+        mapDiffuse(mat.diffuse.provider(), target.diffuse.provider(), diffusefactor);
+        mapSpecular(mat.specular.provider(), target.specular.provider(), specularfactor);
+        mapShininess(mat.shininess.get(), target.shininess.get(), shinefactor);
     }
 
-    public void map(FSLightMaterial target, float factor){
-        map(target.ambient.provider(), target.diffuse.provider(), target.specular.provider(), target.shininess.get(), factor);
+    public void map(FSLightMaterial mat, FSLightMaterial target, float factor){
+        mapAmbient(mat.ambient.provider(), target.ambient.provider(), factor);
+        mapDiffuse(mat.diffuse.provider(), target.diffuse.provider(), factor);
+        mapSpecular(mat.specular.provider(), target.specular.provider(), factor);
+        mapShininess(mat.shininess.get(), target.shininess.get(), factor);
     }
 
-    public void sum(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
-        sumAmbient(ambientfactor);
-        sumDiffuse(diffusefactor);
-        sumSpecular(specularfactor);
-        sumShininess(shinefactor);
+    public void sumAmbient(float[] array, float target){
+        sumScalar(ambient.provider(), array, target);
     }
 
-    public void deduct(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
-        deductAmbient(ambientfactor);
-        deductDiffuse(diffusefactor);
-        deductSpecular(specularfactor);
-        sumShininess(-shinefactor);
+    public void sumDiffuse(float[] array, float target){
+        sumScalar(diffuse.provider(), array, target);
     }
 
-    public void multiply(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
-        multiplyAmbient(ambientfactor);
-        multiplyDiffuse(diffusefactor);
-        multiplySpecular(specularfactor);
-        multiplyShininess(shinefactor);
+    public void sumSpecular(float[] array, float target){
+        sumScalar(specular.provider(), array, target);
     }
 
-    public void divide(float[] ambientfactor, float[] diffusefactor, float[] specularfactor, float shinefactor){
-        divideAmbient(ambientfactor);
-        divideDiffuse(diffusefactor);
-        divideSpecular(specularfactor);
-        multiplyShininess(1F / shinefactor);
+    public void sumAmbient(float[] array, float[] target){
+        sumArray(ambient.provider(), array, target);
     }
 
-    public void map(float[] ambienttarget, float ambientfactor, float[] diffusetarget, float diffusefactor,
-                               float[] speculartarget, float specularfactor, float shinetarget, float shinefactor){
-        mapAmbient(ambienttarget, ambientfactor);
-        mapDiffuse(diffusetarget, diffusefactor);
-        mapSpecular(speculartarget, specularfactor);
-        mapShininess(shinetarget, shinefactor);
+    public void sumDiffuse(float[] array, float[] target){
+        sumArray(diffuse.provider(), array, target);
     }
 
-    public void map(float[] ambienttarget, float[] diffusetarget, float[] speculartarget, float shinetarget, float factor){
-        mapAmbient(ambienttarget, factor);
-        mapDiffuse(diffusetarget, factor);
-        mapSpecular(speculartarget, factor);
-        mapShininess(shinetarget, factor);
+    public void sumSpecular(float[] array, float[] target){
+        sumArray(specular.provider(), array, target);
     }
 
-    public void sum(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
-        multiplyAmbient(ambientfactor);
-        multiplyDiffuse(diffusefactor);
-        multiplySpecular(specularfactor);
-        multiplyShininess(shinefactor);
+    public void sumShininess(float value, float target){
+        shininess.set(value + target);
     }
 
-    public void multiply(float ambientfactor, float diffusefactor, float specularfactor, float shinefactor){
-        multiplyAmbient(ambientfactor);
-        multiplyDiffuse(diffusefactor);
-        multiplySpecular(specularfactor);
-        multiplyShininess(shinefactor);
+    public void deductAmbient(float[] array, float[] target){
+        deductArray(ambient.provider(), array, target);
     }
 
-    public void sumAmbient(float factor){
-        sum(ambient.provider(), factor);
+    public void deductDiffuse(float[] array, float[] target){
+        deductArray(diffuse.provider(), array, target);
     }
 
-    public void sumDiffuse(float factor){
-        sum(diffuse.provider(), factor);
+    public void deductSpecular(float[] array, float[] target){
+        deductArray(specular.provider(), array, target);
     }
 
-    public void sumSpecular(float factor){
-        sum(specular.provider(), factor);
+    public void multiplyAmbient(float[] array, float target){
+        multiplyScalar(ambient.provider(), array, target);
     }
 
-    public void sumAmbient(float[] factor){
-        sum(ambient.provider(), factor);
+    public void multiplyDiffuse(float[] array, float target){
+        multiplyScalar(diffuse.provider(), array, target);
     }
 
-    public void sumDiffuse(float[] factor){
-        sum(diffuse.provider(), factor);
+    public void multiplySpecular(float[] array, float target){
+        multiplyScalar(specular.provider(), array, target);
     }
 
-    public void sumSpecular(float[] factor){
-        sum(specular.provider(), factor);
+    public void multiplyShininess(float value, float target){
+        shininess.set(value * target);
     }
 
-    public void sumShininess(float factor){
-        shininess.set(shininess.get() + factor);
+    public void multiplyAmbient(float[] array, float[] target){
+        divideArray(ambient.provider(), array, target);
     }
 
-    public void deductAmbient(float[] factor){
-        deduct(ambient.provider(), factor);
+    public void multiplyDiffuse(float[] array, float[] target){
+        multiplyArray(diffuse.provider(), array, target);
     }
 
-    public void deductDiffuse(float[] factor){
-        deduct(diffuse.provider(), factor);
+    public void multiplySpecular(float[] array, float[] target){
+        multiplyArray(specular.provider(), array, target);
     }
 
-    public void deductSpecular(float[] factor){
-        deduct(specular.provider(), factor);
+    public void divideAmbient(float[] array, float[] target){
+        divideArray(ambient.provider(), array, target);
     }
 
-    public void multiplyAmbient(float factor){
-        multiply(ambient.provider(), factor);
+    public void divideDiffuse(float[] array, float[] target){
+        divideArray(diffuse.provider(), array, target);
     }
 
-    public void multiplyDiffuse(float factor){
-        multiply(diffuse.provider(), factor);
+    public void divideSpecular(float[] array, float[] target){
+        divideArray(specular.provider(), array, target);
     }
 
-    public void multiplySpecular(float factor){
-        multiply(specular.provider(), factor);
+    public void mapAmbient(float[] array, float target, float factor){
+        mapScalar(ambient.provider(), array, target, factor);
     }
 
-    public void multiplyShininess(float factor){
-        shininess.set(shininess.get() * factor);
+    public void mapDiffuse(float[] array, float target, float factor){
+        mapScalar(diffuse.provider(), array, target, factor);
     }
 
-    public void multiplyAmbient(float[] factor){
-        divide(ambient.provider(), factor);
+    public void mapSpecular(float[] array, float target, float factor){
+        mapScalar(specular.provider(), array, target, factor);
     }
 
-    public void multiplyDiffuse(float[] factor){
-        multiply(diffuse.provider(), factor);
+    public void mapShininess(float value, float target, float factor){
+        shininess.set(value + (target - shininess.get()) * factor);
     }
 
-    public void multiplySpecular(float[] factor){
-        multiply(specular.provider(), factor);
+    public void mapAmbient(float[] array, float[] target, float factor){
+        mapArray(ambient.provider(), array, target, factor);
     }
 
-    public void divideAmbient(float[] factor){
-        divide(ambient.provider(), factor);
+    public void mapDiffuse(float[] array, float[] target, float factor){
+        mapArray(diffuse.provider(), array, target, factor);
     }
 
-    public void divideDiffuse(float[] factor){
-        divide(diffuse.provider(), factor);
+    public void mapSpecular(float[] array, float[] target, float factor){
+        mapArray(specular.provider(), array, target, factor);
     }
 
-    public void divideSpecular(float[] factor){
-        divide(specular.provider(), factor);
+    private void sumArray(float[] results, float[] array, float[] target){
+        results[0] = array[0] +  target[0];
+        results[1] = array[1] + target[1];
+        results[2] = array[2] + target[2];
     }
 
-    public void mapAmbient(float target, float factor){
-        map(ambient.provider(), target, factor);
+    private void sumScalar(float[] results, float[] array, float target){
+        results[0] = array[0] +  target;
+        results[1] = array[1] + target;
+        results[2] = array[2] + target;
     }
 
-    public void mapDiffuse(float target, float factor){
-        map(diffuse.provider(), target, factor);
+    private void deductArray(float[] results, float[] array, float[] target){
+        results[0] = array[0] - target[0];
+        results[1] = array[1] - target[1];
+        results[2] = array[2] - target[2];
     }
 
-    public void mapSpecular(float target, float factor){
-        map(specular.provider(), target, factor);
+    private void multiplyArray(float[] results, float[] array, float[] target){
+        results[0] = array[0] * target[0];
+        results[1] = array[1] * target[1];
+        results[2] = array[2] * target[2];
     }
 
-    public void mapShininess(float target, float factor){
-        shininess.set(shininess.get() + (target - shininess.get()) * factor);
+    private void multiplyScalar(float[] results, float[] array, float target){
+        results[0] = array[0] * target;
+        results[1] = array[1] * target;
+        results[2] = array[2] * target;
     }
 
-    public void mapAmbient(float[] target, float factor){
-        map(ambient.provider(), target, factor);
+    private void divideArray(float[] results, float[] array, float[] target){
+        results[0] = array[0] / target[0];
+        results[1] = array[1] / target[1];
+        results[2] = array[2] / target[2];
     }
 
-    public void mapDiffuse(float[] target, float factor){
-        map(diffuse.provider(), target, factor);
-    }
-
-    public void mapSpecular(float[] target, float factor){
-        map(specular.provider(), target, factor);
-    }
-
-    private void sum(float[] array, float[] target){
-        array[0] += target[0];
-        array[1] += target[1];
-        array[2] += target[2];
-    }
-
-    private void sum(float[] array, float target){
-        array[0] += target;
-        array[1] += target;
-        array[2] += target;
-    }
-
-    private void deduct(float[] array, float[] target){
-        array[0] -= target[0];
-        array[1] -= target[1];
-        array[2] -= target[2];
-    }
-
-    private void multiply(float[] array, float[] target){
-        array[0] *= target[0];
-        array[1] *= target[1];
-        array[2] *= target[2];
-    }
-
-    private void multiply(float[] array, float target){
-        array[0] *= target;
-        array[1] *= target;
-        array[2] *= target;
-    }
-
-    private void divide(float[] array, float[] target){
-        array[0] /= target[0];
-        array[1] /= target[1];
-        array[2] /= target[2];
-    }
-
-    private void map(float[] array, float[] target, float factor){
+    private void mapArray(float[] results, float[] array, float[] target, float factor){
         float r = array[0];
         float g = array[1];
         float b = array[2];
 
-        array[0] = r + (target[0] - r) * factor;
-        array[1] = g + (target[1] - g) * factor;
-        array[2] = b + (target[2] - b) * factor;
+        results[0] = r + (target[0] - r) * factor;
+        results[1] = g + (target[1] - g) * factor;
+        results[2] = b + (target[2] - b) * factor;
     }
 
-    private void map(float[] array, float target, float factor){
+    private void mapScalar(float[] results, float[] array, float target, float factor){
         float r = array[0];
         float g = array[1];
         float b = array[2];
 
-        array[0] = r + (target - r) * factor;
-        array[1] = g + (target - g) * factor;
-        array[2] = b + (target - b) * factor;
+        results[0] = r + (target - r) * factor;
+        results[1] = g + (target - g) * factor;
+        results[2] = b + (target - b) * factor;
     }
 
     @Override
