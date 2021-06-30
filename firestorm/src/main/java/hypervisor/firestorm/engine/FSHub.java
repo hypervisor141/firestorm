@@ -35,5 +35,11 @@ public abstract class FSHub<GLOBAL extends FSGlobal>{
         }
     }
 
-    protected abstract void destroy();
+    protected void destroy(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).destroy();
+        }
+    }
 }
