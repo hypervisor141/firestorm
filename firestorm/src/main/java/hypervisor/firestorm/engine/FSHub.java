@@ -41,5 +41,7 @@ public abstract class FSHub<GLOBAL extends FSGlobal>{
         for(int i = 0; i < size; i++){
             entries.get(i).destroy();
         }
+
+        entries = null;
     }
 }
