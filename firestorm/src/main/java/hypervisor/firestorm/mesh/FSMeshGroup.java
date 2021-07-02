@@ -415,10 +415,22 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void paused(){}
+    public void paused(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).paused();
+        }
+    }
 
     @Override
-    public void resumed(){}
+    public void resumed(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).resumed();
+        }
+    }
 
     @Override
     public void destroy(){

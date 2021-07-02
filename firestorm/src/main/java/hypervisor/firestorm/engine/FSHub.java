@@ -2,46 +2,33 @@ package hypervisor.firestorm.engine;
 
 import android.content.Context;
 
-import hypervisor.firestorm.mesh.FSTypeRender;
+import hypervisor.firestorm.mesh.FSMeshGroup;
+import hypervisor.firestorm.mesh.FSTypeRenderGroup;
 import hypervisor.vanguard.list.VLListType;
 
 public abstract class FSHub<GLOBAL extends FSGlobal>{
 
-    VLListType<FSTypeRender> entries;
+    public FSMeshGroup<FSTypeRenderGroup<?>> root;
 
-    public FSHub(int size, int resizer){
-        entries = new VLListType<>(size, resizer);
+    public FSHub(String rootname, int capacity, int resizer){
+        root = new FSMeshGroup<>(rootname, capacity, resizer);
     }
 
     public void initialize(Context context){
-        assemble(context, (GLOBAL)FSGlobal.get(), entries);
+        assemble(context, (GLOBAL)FSGlobal.get(), root);
     }
 
-    protected abstract void assemble(Context context, GLOBAL global, VLListType<FSTypeRender> entries);
+    protected abstract void assemble(Context context, GLOBAL global, FSMeshGroup<FSTypeRenderGroup<?>> root);
 
     protected void paused(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).paused();
-        }
+        root.paused();
     }
 
     protected void resumed(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).resumed();
-        }
+        root.resumed();
     }
 
     protected void destroy(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).destroy();
-        }
-
-        entries = null;
+        root.destroy();
     }
 }
