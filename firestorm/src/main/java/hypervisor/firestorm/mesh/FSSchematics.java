@@ -396,7 +396,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float localSpaceDepth(){
-        return localSpaceFront() - localSpaceBack();
+        return localSpaceBack() - localSpaceFront();
     }
 
     public float localSpaceLeft(){
