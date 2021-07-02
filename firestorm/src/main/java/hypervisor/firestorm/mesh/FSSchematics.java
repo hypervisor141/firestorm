@@ -238,7 +238,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return updated;
     }
 
-    public void refillLocalSpaceBounds(){
+    public boolean refillLocalSpaceBounds(){
         float[] positions = instance.positions().provider();
         int size = boundsindices.length;
 
@@ -246,7 +246,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
             boundslocalspace[i] = positions[boundsindices[i]];
         }
 
-        checkFixLocalSpaceFlatness();
+        return checkFixLocalSpaceFlatness();
     }
 
     public void rebuildLocalSpaceCentroid(){
