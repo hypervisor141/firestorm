@@ -444,10 +444,22 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void paused(){}
+    public void paused(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).paused();
+        }
+    }
 
     @Override
-    public void resumed(){}
+    public void resumed(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).resumed();
+        }
+    }
 
     @Override
     public void destroy(){
@@ -456,12 +468,5 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         for(int i = 0; i < size; i++){
             entries.get(i).destroy();
         }
-
-        parent = null;
-        entries = null;
-        bindings = null;
-        name = null;
-
-        id = -1;
     }
 }

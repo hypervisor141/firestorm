@@ -433,16 +433,5 @@ public class FSInstance implements FSTypeInstance{
     public void resumed(){}
 
     @Override
-    public void destroy(){
-        parent = null;
-        schematics = null;
-        modelmatrix = null;
-        colortexture = null;
-        material = null;
-        lightmap = null;
-        store = null;
-        name = null;
-
-        id = -1;
-    }
+    public void destroy(){}
 }
