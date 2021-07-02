@@ -268,18 +268,18 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
+    public void schematicsCheckFixLocalSpaceFlatness(){
+        schematics.checkFixLocalSpaceFlatness();
+    }
+
+    @Override
+    public void schematicsRefillLocalSpaceBounds(){
+        schematics.refillLocalSpaceBounds();
+    }
+
+    @Override
     public void schematicsRebuildLocalSpaceCentroid(){
         schematics.rebuildLocalSpaceCentroid();
-    }
-
-    @Override
-    public void schematicsRequestUpdateModelSpaceBounds(){
-        schematics.requestUpdateModelSpaceBounds();
-    }
-
-    @Override
-    public void schematicsRequestUpdateCentroid(){
-        schematics.requestUpdateModelSpaceCentroid();
     }
 
     @Override
@@ -290,6 +290,21 @@ public class FSInstance implements FSTypeInstance{
     @Override
     public void schematicsCheckSortModelSpaceBounds(){
         schematics.checkSortModelSpaceBounds();
+    }
+
+    @Override
+    public void schematicsRequestFullUpdate(){
+        schematics.requestFullUpdate();
+    }
+
+    @Override
+    public void schematicsRequestUpdateModelSpaceBounds(){
+        schematics.requestUpdateModelSpaceBounds();
+    }
+
+    @Override
+    public void schematicsRequestUpdateCentroid(){
+        schematics.requestUpdateModelSpaceCentroid();
     }
 
     @Override

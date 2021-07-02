@@ -242,11 +242,58 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
+    public void schematicsCheckFixLocalSpaceFlatness(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsCheckFixLocalSpaceFlatness();
+        }
+    }
+
+    @Override
+    public void schematicsRefillLocalSpaceBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsRefillLocalSpaceBounds();
+        }
+    }
+
+    @Override
     public void schematicsRebuildLocalSpaceCentroid(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
             entries.get(i).schematicsRebuildLocalSpaceCentroid();
+        }
+    }
+
+
+
+    @Override
+    public void schematicsCheckSortLocalSpaceBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsCheckSortLocalSpaceBounds();
+        }
+    }
+
+    @Override
+    public void schematicsCheckSortModelSpaceBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsCheckSortModelSpaceBounds();
+        }
+    }
+
+    @Override
+    public void schematicsRequestFullUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsRequestFullUpdate();
         }
     }
 
@@ -265,24 +312,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
         for(int i = 0; i < size; i++){
             entries.get(i).schematicsRequestUpdateCentroid();
-        }
-    }
-
-    @Override
-    public void schematicsCheckSortLocalSpaceBounds(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).schematicsCheckSortLocalSpaceBounds();
-        }
-    }
-
-    @Override
-    public void schematicsCheckSortModelSpaceBounds(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).schematicsCheckSortModelSpaceBounds();
         }
     }
 

@@ -276,29 +276,29 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
+    public void schematicsCheckFixLocalSpaceFlatness(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsCheckFixLocalSpaceFlatness();
+        }
+    }
+
+    @Override
+    public void schematicsRefillLocalSpaceBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsRefillLocalSpaceBounds();
+        }
+    }
+
+    @Override
     public void schematicsRebuildLocalSpaceCentroid(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
             entries.get(i).schematicsRebuildLocalSpaceCentroid();
-        }
-    }
-
-    @Override
-    public void schematicsRequestUpdateModelSpaceBounds(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).schematicsRequestUpdateModelSpaceBounds();
-        }
-    }
-
-    @Override
-    public void schematicsRequestUpdateCentroid(){
-        int size = entries.size();
-
-        for(int i = 0; i < size; i++){
-            entries.get(i).schematicsRequestUpdateCentroid();
         }
     }
 
@@ -317,6 +317,33 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
         for(int i = 0; i < size; i++){
             entries.get(i).schematicsCheckSortModelSpaceBounds();
+        }
+    }
+
+    @Override
+    public void schematicsRequestFullUpdate(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsRequestFullUpdate();
+        }
+    }
+
+    @Override
+    public void schematicsRequestUpdateModelSpaceBounds(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsRequestUpdateModelSpaceBounds();
+        }
+    }
+
+    @Override
+    public void schematicsRequestUpdateCentroid(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).schematicsRequestUpdateCentroid();
         }
     }
 
