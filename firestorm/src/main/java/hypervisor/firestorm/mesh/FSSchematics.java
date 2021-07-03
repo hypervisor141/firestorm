@@ -317,6 +317,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         }
 
         if(reordered){
+            requestUpdateModelSpaceCentroid();
             requestUpdateCollisionBounds();
             requestUpdateInputBounds();
         }
