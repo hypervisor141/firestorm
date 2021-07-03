@@ -43,7 +43,7 @@ public class FSHAssembler implements VLLoggable{
     public boolean FLIP_INDICES_TRIANGLES = false;
     public boolean FLIP_INDICES_QUADS = false;
 
-    public boolean CONVERT_POSITIONS_TO_MODELARRAYS = false;
+    public boolean CONVERT_POSITIONS_TO_MODELMATRIX = false;
     public boolean DRAW_MODE_INDEXED = false;
 
     protected VLListType<BuildStep> firststeps;
@@ -87,7 +87,7 @@ public class FSHAssembler implements VLLoggable{
         FLIP_INDICES_TRIANGLES = false;
         FLIP_INDICES_QUADS = false;
 
-        CONVERT_POSITIONS_TO_MODELARRAYS = true;
+        CONVERT_POSITIONS_TO_MODELMATRIX = true;
         DRAW_MODE_INDEXED = true;
     }
 
@@ -136,12 +136,12 @@ public class FSHAssembler implements VLLoggable{
 
             firststeps.add(POSITION_INIT_SCHEMATICS);
 
-            if(CONVERT_POSITIONS_TO_MODELARRAYS){
+            if(CONVERT_POSITIONS_TO_MODELMATRIX){
                 firststeps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
             }
 
             if(INSTANCE_SHARE_POSITIONS){
-                if(CONVERT_POSITIONS_TO_MODELARRAYS){
+                if(CONVERT_POSITIONS_TO_MODELMATRIX){
                     instancesteps.add(POSITION_SET);
 
                     if(!DRAW_MODE_INDEXED){
@@ -172,7 +172,7 @@ public class FSHAssembler implements VLLoggable{
 
                 instancesteps.add(POSITION_INIT_SCHEMATICS);
 
-                if(CONVERT_POSITIONS_TO_MODELARRAYS){
+                if(CONVERT_POSITIONS_TO_MODELMATRIX){
                     instancesteps.add(POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX);
                 }
             }
@@ -442,7 +442,7 @@ public class FSHAssembler implements VLLoggable{
         log.append("]\nINSTANCE_SHARE_NORMALS[");
         log.append(INSTANCE_SHARE_NORMALS);
         log.append("]\nCONVERT_POSITIONS_TO_MODELARRAYS[");
-        log.append(CONVERT_POSITIONS_TO_MODELARRAYS);
+        log.append(CONVERT_POSITIONS_TO_MODELMATRIX);
         log.append("]\nDRAW_MODE_INDEXED[");
         log.append(DRAW_MODE_INDEXED);
         log.append("]");

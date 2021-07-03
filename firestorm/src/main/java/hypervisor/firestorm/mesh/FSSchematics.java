@@ -295,9 +295,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         }
 
         if(reordered){
-            requestUpdateModelSpaceBounds();
-            requestUpdateCollisionBounds();
-            requestUpdateInputBounds();
+            requestFullUpdate();
         }
 
         return reordered;
@@ -370,9 +368,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         checkFixLocalSpaceFlatness();
 
         if(!checkSortLocalSpaceBounds()){
-            requestUpdateModelSpaceBounds();
-            requestUpdateCollisionBounds();
-            requestUpdateInputBounds();
+            requestFullUpdate();
         }
     }
 
@@ -383,6 +379,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         modelSpace.transformPoint(boundsmodelspace, 4, boundslocalspace, 4);
 
         if(!checkSortModelSpaceBounds()){
+            requestUpdateModelSpaceCentroid();
             requestUpdateCollisionBounds();
             requestUpdateInputBounds();
         }
