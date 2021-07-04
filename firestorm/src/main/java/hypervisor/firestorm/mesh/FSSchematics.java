@@ -418,7 +418,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float localSpaceBoundCenterZ(){
-        return (localSpaceFront() + localSpaceBack()) / 2f;
+        return (localSpaceBack() + localSpaceFront()) / 2f;
     }
 
     public float localSpaceWidth(){
@@ -430,7 +430,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float localSpaceDepth(){
-        return localSpaceBack() - localSpaceFront();
+        return localSpaceFront() - localSpaceBack();
     }
 
     public float localSpaceLeft(){
@@ -492,11 +492,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return centroidlocalspace[2];
     }
 
-    public float[] localSpaceCentroid(){
-        centroidupdater.update(this);
-        return centroidlocalspace;
-    }
-
     public float modelSpaceBoundCenterX(){
         return (modelSpaceLeft() + modelSpaceRight()) / 2f;
     }
@@ -538,7 +533,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public float modelSpaceDepth(){
-        return modelSpaceBack() - modelSpaceFront();
+        return modelSpaceFront() - modelSpaceBack();
     }
 
     public float modelSpaceLeft(){
@@ -656,15 +651,17 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return boundslocalspace;
     }
 
-    public float[] modelSpaceBounds(){
-        return boundsmodelspace;
-    }
-
     public float[] centroidLocalSpace(){
         return centroidlocalspace;
     }
 
+    public float[] modelSpaceBounds(){
+        modelspaceupdate.update(this);
+        return boundsmodelspace;
+    }
+
     public float[] centroidModelSpace(){
+        centroidupdater.update(this);
         return centroidmodelspace;
     }
 
