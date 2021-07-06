@@ -307,7 +307,7 @@ public class FSHAssembler implements VLLoggable{
     }
 
     private void centralizePositions(FSTypeInstance instance){
-        float[] positions = instance.positions().provider();
+        float[] positions = instance.positions().array;
         FSSchematics schematics = instance.schematics();
 
         float x = schematics.localSpaceCentroidX();
@@ -326,8 +326,8 @@ public class FSHAssembler implements VLLoggable{
     }
 
     private void unIndexPositions(FSTypeInstance instance){
-        short[] indices = instance.indices().provider();
-        float[] positions = instance.positions().provider();
+        short[] indices = instance.indices().array;
+        float[] positions = instance.positions().array;
         VLListFloat converted = new VLListFloat(positions.length, positions.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -344,8 +344,8 @@ public class FSHAssembler implements VLLoggable{
     }
 
     private void unIndexColors(FSTypeInstance instance){
-        short[] indices = instance.indices().provider();
-        float[] colors = instance.colors().provider();
+        short[] indices = instance.indices().array;
+        float[] colors = instance.colors().array;
         VLListFloat converted = new VLListFloat(colors.length, colors.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -362,8 +362,8 @@ public class FSHAssembler implements VLLoggable{
     }
 
     private void unIndexTexCoords(FSTypeInstance instance){
-        short[] indices = instance.indices().provider();
-        float[] texcoords = instance.texCoords().provider();
+        short[] indices = instance.indices().array;
+        float[] texcoords = instance.texCoords().array;
         VLListFloat converted = new VLListFloat(texcoords.length, texcoords.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -378,8 +378,8 @@ public class FSHAssembler implements VLLoggable{
     }
 
     private void unIndexNormals(FSTypeInstance instance){
-        short[] indices = instance.indices().provider();
-        float[] normals = instance.normals().provider();
+        short[] indices = instance.indices().array;
+        float[] normals = instance.normals().array;
         VLListFloat converted = new VLListFloat(normals.length, normals.length / 2);
 
         for(int i2 = 0; i2 < indices.length; i2++){
@@ -461,7 +461,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            short[] array = instance.indices().provider();
+            short[] array = instance.indices().array;
             int size = array.length;
 
             for(int i = 0 ; i < size; i += 3){
@@ -475,7 +475,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            short[] array = instance.indices().provider();
+            short[] array = instance.indices().array;
             int size = array.length;
 
             for(int i = 0 ; i < size; i += 4){
@@ -494,7 +494,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_INDEX, 1, 0);
-            store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(mesh.first().indices().provider())));
+            store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(mesh.first().indices().array)));
             store.activate(FSElements.ELEMENT_INDEX, 0);
         }
     };
@@ -524,7 +524,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.positions().provider();
+            float[] array = instance.positions().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
@@ -537,7 +537,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.positions().provider();
+            float[] array = instance.positions().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
@@ -550,7 +550,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.positions().provider();
+            float[] array = instance.positions().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
@@ -564,7 +564,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_POSITION, 1, 0);
-            store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(mesh.first().positions().provider())));
+            store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(mesh.first().positions().array)));
             store.activate(FSElements.ELEMENT_POSITION, 0);
         }
     };
@@ -614,7 +614,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_COLOR, 1, 0);
-            store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(mesh.first().colors().provider())));
+            store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(mesh.first().colors().array)));
             store.activate(FSElements.ELEMENT_COLOR, 0);
         }
     };
@@ -641,7 +641,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(mesh.first().texCoords().provider())));
+            store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(mesh.first().texCoords().array)));
             store.activate(FSElements.ELEMENT_TEXCOORD, 0);
 
         }
@@ -650,7 +650,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.texCoords().provider();
+            float[] array = instance.texCoords().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_TEXCOORD];
 
@@ -663,7 +663,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.texCoords().provider();
+            float[] array = instance.texCoords().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_TEXCOORD];
 
@@ -686,7 +686,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().provider();
+            float[] array = instance.normals().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
 
@@ -699,7 +699,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().provider();
+            float[] array = instance.normals().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
 
@@ -712,7 +712,7 @@ public class FSHAssembler implements VLLoggable{
 
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().provider();
+            float[] array = instance.normals().array;
             int size = array.length;
             int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
 
@@ -733,7 +733,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
-            store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(mesh.first().normals().provider())));
+            store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(mesh.first().normals().array)));
             store.activate(FSElements.ELEMENT_NORMAL, 0);
         }
     };

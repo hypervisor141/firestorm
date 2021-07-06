@@ -27,7 +27,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     protected boolean debuggedsegmentstructure;
 
     public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int capacity){
-        initialize(vbuffer, vbuffer.provider(), interleaved, 0, -1, capacity);
+        initialize(vbuffer, vbuffer.buffer, interleaved, 0, -1, capacity);
     }
 
     public FSBufferSegment(BUFFER buffer, boolean interleaved, int capacity){
@@ -35,7 +35,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     }
 
     public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
-        initialize(vbuffer, vbuffer.provider(), interleaved, instanceoffset, instancecount, capacity);
+        initialize(vbuffer, vbuffer.buffer, interleaved, instanceoffset, instancecount, capacity);
     }
 
     public FSBufferSegment(BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
@@ -119,7 +119,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     }
 
     private void checkInitialize(){
-        if(buffer.provider() == null){
+        if(buffer.buffer == null){
             buffer.initialize(ByteOrder.nativeOrder());
 
             if(vbuffer != null && vbuffer.getBufferID() < 0){

@@ -15,7 +15,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
 
     public static int CURRENT_ACTIVE_BUFFER = 0;
 
-    protected BUFFER buffer;
+    public BUFFER buffer;
 
     protected int target;
     protected int accessmode;
@@ -82,7 +82,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
             bind();
 
             buffer.position(0);
-            GLES32.glBufferData(target, sizebytes, buffer.provider(), accessmode);
+            GLES32.glBufferData(target, sizebytes, buffer.buffer, accessmode);
 
             needsupdate = false;
             uploaded = true;
@@ -95,7 +95,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         int bytes = buffer.getTypeBytes();
 
         buffer.position(offset);
-        GLES32.glBufferSubData(target, offset * bytes, count * bytes, buffer.provider());
+        GLES32.glBufferSubData(target, offset * bytes, count * bytes, buffer.buffer);
 
         needsupdate = false;
         uploaded = true;
@@ -106,7 +106,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         FSTools.checkGLError();
 
         buffer.position(0);
-        GLES32.glBufferSubData(target, 0, sizebytes, buffer.provider());
+        GLES32.glBufferSubData(target, 0, sizebytes, buffer.buffer);
 
         needsupdate = false;
     }
@@ -197,10 +197,6 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
 
     public void setAccessMode(int s){
         accessmode = s;
-    }
-
-    public BUFFER provider(){
-        return buffer;
     }
 
     public int getTarget(){

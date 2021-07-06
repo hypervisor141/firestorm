@@ -26,7 +26,7 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
     protected FSTexture initializeTexture(VLInt texunit, VLInt width, VLInt height){
         FSTexture texture = new FSTexture(new VLInt(GLES32.GL_TEXTURE_2D), texunit);
         texture.bind();
-        texture.storage2D(1, GLES32.GL_DEPTH_COMPONENT32F, width.get(), height.get());
+        texture.storage2D(1, GLES32.GL_DEPTH_COMPONENT32F, width.value, height.value);
         texture.minFilter(GLES32.GL_NEAREST);
         texture.magFilter(GLES32.GL_NEAREST);
         texture.wrapS(GLES32.GL_CLAMP_TO_EDGE);
@@ -43,7 +43,7 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         FSFrameBuffer buffer = new FSFrameBuffer();
         buffer.initialize();
         buffer.bind();
-        buffer.attachTexture2D(GLES32.GL_DEPTH_ATTACHMENT, texture.target().get(), texture.id(), 0);
+        buffer.attachTexture2D(GLES32.GL_DEPTH_ATTACHMENT, texture.target().value, texture.id(), 0);
         buffer.checkStatus();
 
         FSCache.INT1[0] = GLES32.GL_NONE;
@@ -58,8 +58,8 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
 
     public void updateLightProjection(float upX, float upY, float upZ, float left, float right,
                                       float bottom, float top, float znear, float zfar){
-        float[] pos = light.position().provider();
-        float[] cent = light.center().provider();
+        float[] pos = light.position().array;
+        float[] cent = light.center().array;
 
         config.lookAt(pos[0], pos[1], pos[2], cent[0], cent[1], cent[2], upX, upY, upZ);
         config.orthographic(left, right, bottom, top, znear, zfar);

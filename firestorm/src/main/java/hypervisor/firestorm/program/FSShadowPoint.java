@@ -37,7 +37,7 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
     protected FSTexture initializeTexture(VLInt texunit, VLInt width, VLInt height){
         FSTexture texture = new FSTexture(new VLInt(GLES32.GL_TEXTURE_CUBE_MAP), texunit);
         texture.bind();
-        texture.storage2D(1, GLES32.GL_DEPTH_COMPONENT32F, width.get(), height.get());
+        texture.storage2D(1, GLES32.GL_DEPTH_COMPONENT32F, width.value, height.value);
         texture.minFilter(GLES32.GL_NEAREST);
         texture.magFilter(GLES32.GL_NEAREST);
         texture.wrapS(GLES32.GL_CLAMP_TO_EDGE);
@@ -69,26 +69,26 @@ public final class FSShadowPoint extends FSShadow<FSLightPoint>{
     }
 
     public void updateLightVP(){
-        Matrix.perspectiveM(PERSPECTIVECACHE, 0, 90, (float)width.get() / height.get(), znear.get(), zfar.get());
-        float[] pos = light.position().provider();
+        Matrix.perspectiveM(PERSPECTIVECACHE, 0, 90, (float)width.value / height.value, znear.value, zfar.value);
+        float[] pos = light.position().array;
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0], pos[1], pos[2], pos[0] + 1F, pos[1], pos[2], 0, -1F, 0);
-        Matrix.multiplyMM(lightvp[0].provider(), 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
+        Matrix.multiplyMM(lightvp[0].array, 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0], pos[1], pos[2],pos[0] - 1F, pos[1], pos[2], 0, -1F, 0);
-        Matrix.multiplyMM(lightvp[1].provider(), 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
+        Matrix.multiplyMM(lightvp[1].array, 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0], pos[1], pos[2], pos[0], pos[1] + 1F, pos[2], 0, 0, 1F);
-        Matrix.multiplyMM(lightvp[2].provider(), 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
+        Matrix.multiplyMM(lightvp[2].array, 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0], pos[1], pos[2], pos[0], pos[1] - 1F, pos[2], 0, 0, -1F);
-        Matrix.multiplyMM(lightvp[3].provider(), 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
+        Matrix.multiplyMM(lightvp[3].array, 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0] , pos[1], pos[2], pos[0], pos[1], pos[2] + 1F, 0, -1F, 0);
-        Matrix.multiplyMM(lightvp[4].provider(), 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
+        Matrix.multiplyMM(lightvp[4].array, 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
 
         Matrix.setLookAtM(LOOKCACHE, 0, pos[0], pos[1], pos[2], pos[0], pos[1], pos[2] - 1F, 0, -1F, 0);
-        Matrix.multiplyMM(lightvp[5].provider(), 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
+        Matrix.multiplyMM(lightvp[5].array, 0, PERSPECTIVECACHE, 0, LOOKCACHE, 0);
     }
 
     public void zFar(VLFloat z){
