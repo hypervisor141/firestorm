@@ -41,12 +41,12 @@ public class FSCEGL{
                     EGL14.EGL_CONTEXT_CLIENT_VERSION, 3,
                     EGL14.EGL_NONE
             }, 0);
-            FSTools.checkEGLError();
 
         }else{
             EGL14.eglDestroySurface(display, surface);
-            FSTools.checkEGLError();
         }
+
+        FSTools.checkEGLError();
 
         surface = EGL14.eglCreateWindowSurface(display, config, holder, new int[]{ EGL14.EGL_NONE }, 0);
         FSTools.checkEGLError();

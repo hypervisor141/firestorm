@@ -16,10 +16,11 @@ public class FSInstance implements FSTypeInstance{
 
     public static final long FLAG_UNIQUE_ID = 0x10L;
     public static final long FLAG_UNIQUE_NAME = 0x100L;
-    public static final long FLAG_FORCE_DUPLICATE_STORAGE = 0x1000L;
+    public static final long FLAG_DUPLICATE_STORAGE = 0x1000L;
     public static final long FLAG_DUPLICATE_SCHEMATICS = 0x10000L;
     public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
-    public static final long FLAG_DUPLICATE_MODEL_MATRIX = 0x10000000L;
+    public static final long FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES = 0x10000000L;
+    public static final long FLAG_REFERENCE_MODEL_MATRIX_ENTRIES = 0x20000000L;
 
     protected FSTypeRenderGroup<?> parent;
     protected FSElementStore store;
@@ -380,7 +381,7 @@ public class FSInstance implements FSTypeInstance{
             schematics = target.schematics.duplicate(FLAG_DUPLICATE);
 
             if(modelmatrix != null){
-                modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+                modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_DUPLICATE);
             }
             if(material != null){
                 material = target.material.duplicate(FLAG_DUPLICATE);
@@ -395,7 +396,7 @@ public class FSInstance implements FSTypeInstance{
             colortexture = target.colortexture;
             lightmap = target.lightmap;
 
-            if((flags & FLAG_FORCE_DUPLICATE_STORAGE) == FLAG_FORCE_DUPLICATE_STORAGE){
+            if((flags & FLAG_DUPLICATE_STORAGE) == FLAG_DUPLICATE_STORAGE){
                 store = target.store.duplicate(FLAG_DUPLICATE);
 
             }else{
@@ -409,12 +410,25 @@ public class FSInstance implements FSTypeInstance{
                 schematics = target.schematics.duplicate(FLAG_REFERENCE);
             }
 
-            if(target.material != null && (flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
-                material = target.material.duplicate(VLCopyable.FLAG_DUPLICATE);
+            if(target.material != null){
+                if((flags & FLAG_DUPLICATE_MATERIAL) == FLAG_DUPLICATE_MATERIAL){
+                    material = target.material.duplicate(VLCopyable.FLAG_DUPLICATE);
+
+                }else{
+                    material = target.material.duplicate(VLCopyable.FLAG_REFERENCE);
+                }
             }
 
-            if(target.modelmatrix != null && (flags & FLAG_DUPLICATE_MODEL_MATRIX) == FLAG_DUPLICATE_MODEL_MATRIX){
-                modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_FORCE_DUPLICATE_ENTRIES);
+            if(target.modelmatrix != null){
+                if((flags & FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES) == FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES){
+                    modelmatrix = target.modelmatrix.duplicate(VLCopyable.FLAG_CUSTOM | VLVMatrix.FLAG_DUPLICATE_ENTRIES);
+
+                }else if((flags & FLAG_REFERENCE_MODEL_MATRIX_ENTRIES) == FLAG_REFERENCE_MODEL_MATRIX_ENTRIES){
+                    modelmatrix = target.modelmatrix.duplicate(VLCopyable.FLAG_CUSTOM | VLVMatrix.FLAG_REFERENCE_ENTRIES);
+
+                }else{
+                    modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_REFERENCE);
+                }
             }
 
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
