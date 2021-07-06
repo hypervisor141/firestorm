@@ -5,17 +5,17 @@ import hypervisor.vanguard.variable.VLV;
 import hypervisor.vanguard.variable.VLVMatrix;
 import hypervisor.vanguard.variable.VLVTypeVariable;
 
-public class FSMatrixModel extends VLVMatrix{
+public class FSModelMatrix extends VLVMatrix{
 
-    public FSMatrixModel(int initialcapacity, int resizercount){
+    public FSModelMatrix(int initialcapacity, int resizercount){
         super(initialcapacity, resizercount);
     }
 
-    public FSMatrixModel(FSMatrixModel src, long flags){
+    public FSModelMatrix(FSModelMatrix src, long flags){
         super(src, flags);
     }
 
-    protected FSMatrixModel(){
+    protected FSModelMatrix(){
 
     }
 
@@ -136,7 +136,7 @@ public class FSMatrixModel extends VLVMatrix{
     }
 
     @Override
-    public FSMatrixModel duplicate(long flags){
-        return new FSMatrixModel(this, flags);
+    public FSModelMatrix duplicate(long flags){
+        return new FSModelMatrix(this, flags);
     }
 }

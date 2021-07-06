@@ -14,18 +14,18 @@ import hypervisor.vanguard.variable.VLVMatrix;
 
 public class FSInstance implements FSTypeInstance{
 
-    public static final long FLAG_UNIQUE_ID = 0x10L;
-    public static final long FLAG_UNIQUE_NAME = 0x100L;
-    public static final long FLAG_DUPLICATE_STORAGE = 0x1000L;
-    public static final long FLAG_DUPLICATE_SCHEMATICS = 0x10000L;
-    public static final long FLAG_DUPLICATE_MATERIAL = 0x100000L;
-    public static final long FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES = 0x10000000L;
-    public static final long FLAG_REFERENCE_MODEL_MATRIX_ENTRIES = 0x20000000L;
+    public static final long FLAG_UNIQUE_ID = 0x1L;
+    public static final long FLAG_UNIQUE_NAME = 0x2L;
+    public static final long FLAG_DUPLICATE_STORAGE = 0x4L;
+    public static final long FLAG_DUPLICATE_SCHEMATICS = 0x8L;
+    public static final long FLAG_DUPLICATE_MATERIAL = 0x10L;
+    public static final long FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES = 0x20L;
+    public static final long FLAG_REFERENCE_MODEL_MATRIX_ENTRIES = 0x40L;
 
     protected FSTypeRenderGroup<?> parent;
     protected FSElementStore store;
     protected FSSchematics schematics;
-    protected FSMatrixModel modelmatrix;
+    protected FSModelMatrix modelmatrix;
     protected FSTexture colortexture;
     protected FSLightMaterial material;
     protected FSLightMap lightmap;
@@ -60,7 +60,7 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void modelMatrix(FSMatrixModel set){
+    public void modelMatrix(FSModelMatrix set){
         modelmatrix = set;
     }
 
@@ -149,7 +149,7 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public FSMatrixModel modelMatrix(){
+    public FSModelMatrix modelMatrix(){
         return modelmatrix;
     }
 

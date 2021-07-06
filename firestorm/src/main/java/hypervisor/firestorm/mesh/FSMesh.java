@@ -16,9 +16,9 @@ import hypervisor.vanguard.utils.VLCopyable;
 
 public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh<ENTRY>{
 
-    public static final long FLAG_UNIQUE_ID = 0x10L;
-    public static final long FLAG_UNIQUE_NAME = 0x100L;
-    public static final long FLAG_FORCE_DUPLICATE_entryS = 0x1000L;
+    public static final long FLAG_UNIQUE_ID = 0x1L;
+    public static final long FLAG_UNIQUE_NAME = 0x2L;
+    public static final long FLAG_FORCE_DUPLICATE_entryS = 0x4L;
 
     protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;

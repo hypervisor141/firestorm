@@ -111,7 +111,7 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     public void settingsViewPort(int x, int y, int width, int height){
-        int[] viewport = this.settingsviewport.provider();
+        int[] viewport = this.settingsviewport.array;
 
         viewport[0] = x;
         viewport[1] = y;
@@ -120,7 +120,7 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     public void settingsLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
-        float[] settings = settingsview.provider();
+        float[] settings = settingsview.array;
 
         settings[0] = eyeX;
         settings[1] = eyeY;
@@ -134,7 +134,7 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     public void settingsPerspective(float fovy, float aspect, float znear, float zfar){
-        float[] settings = settingsperspective.provider();
+        float[] settings = settingsperspective.array;
 
         settings[0] = fovy;
         settings[1] = aspect;
@@ -143,7 +143,7 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     public void settingsOrthographic(float left, float right, float bottom, float top, float znear, float zfar){
-        float[] settings = settingsorthographic.provider();
+        float[] settings = settingsorthographic.array;
 
         settings[0] = left;
         settings[1] = right;
@@ -154,31 +154,31 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     public void applyLookAt(){
-        float[] settings = settingsview.provider();
-        Matrix.setLookAtM(matview.provider(), 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5], settings[6], settings[7], settings[8]);
+        float[] settings = settingsview.array;
+        Matrix.setLookAtM(matview.array, 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5], settings[6], settings[7], settings[8]);
     }
 
     public void applyOrthographic(){
-        float[] settings = settingsorthographic.provider();
-        Matrix.orthoM(matorthographic.provider(), 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5]);
+        float[] settings = settingsorthographic.array;
+        Matrix.orthoM(matorthographic.array, 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5]);
     }
 
     public void applyPerspective(){
-        float[] settings = settingsperspective.provider();
-        Matrix.perspectiveM(matperspective.provider(), 0, settings[0], settings[1], settings[2], settings[3]);
+        float[] settings = settingsperspective.array;
+        Matrix.perspectiveM(matperspective.array, 0, settings[0], settings[1], settings[2], settings[3]);
     }
 
     public void applyViewPort(){
-        int[] viewport = this.settingsviewport.provider();
+        int[] viewport = this.settingsviewport.array;
         GLES32.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     }
 
     public void applyViewProjection(){
-        Matrix.multiplyMM(matviewprojection.provider(), 0, matprojection.provider(), 0, matview.provider(), 0);
+        Matrix.multiplyMM(matviewprojection.array, 0, matprojection.array, 0, matview.array, 0);
     }
 
     public void multiplyViewPerspective(float[] results, int offset, float[] point, int offset2){
-        Matrix.multiplyMV(results, offset, matviewprojection.provider(), 0, point, offset2);
+        Matrix.multiplyMV(results, offset, matviewprojection.array, 0, point, offset2);
 
         float w = results[offset + 3];
         results[offset] /= w;
@@ -187,14 +187,14 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     public void convertToMVP(float[] results, int offset, float[] model){
-        Matrix.multiplyMM(results, offset, matviewprojection.provider(), 0, model, 0);
+        Matrix.multiplyMM(results, offset, matviewprojection.array, 0, model, 0);
     }
 
     public void unProject2DPoint(float x, float y, float[] resultsnear, int offset1, float[] resultsfar, int offset2){
         y = settingsviewport.get(3) - y;
 
-        GLU.gluUnProject(x, y, 0F, matview.provider(), 0, matprojection.provider(), 0, settingsviewport.provider(), 0, resultsnear, offset1);
-        GLU.gluUnProject(x, y, 1F, matview.provider(), 0, matprojection.provider(), 0, settingsviewport.provider(), 0, resultsfar, offset2);
+        GLU.gluUnProject(x, y, 0F, matview.array, 0, matprojection.array, 0, settingsviewport.array, 0, resultsnear, offset1);
+        GLU.gluUnProject(x, y, 1F, matview.array, 0, matprojection.array, 0, settingsviewport.array, 0, resultsfar, offset2);
 
         y = resultsnear[offset1 + 3];
 

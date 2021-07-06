@@ -6,8 +6,8 @@ import hypervisor.vanguard.utils.VLUpdater;
 
 public abstract class FSBounds implements VLCopyable<FSBounds>{
 
-    public static final long FLAG_FORCE_DUPLICATE_POINTS = 0x1F;
-    public static final long FLAG_FORCE_REFERENCE_POINTS = 0x2F;
+    public static final long FLAG_FORCE_DUPLICATE_POINTS = 0x1L;
+    public static final long FLAG_FORCE_REFERENCE_POINTS = 0x2L;
 
     public static final CalculationMethod MODE_X_VOLUMETRIC = new CalculationMethod(){
 

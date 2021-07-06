@@ -26,9 +26,9 @@ public class FSLightDirect extends FSLight{
     }
 
     public void updateDirection(){
-        float[] dir = direction().provider();
-        float[] pos = position().provider();
-        float[] cent = center().provider();
+        float[] dir = direction().array;
+        float[] pos = position().array;
+        float[] cent = center().array;
 
         dir[0] = cent[0] - pos[0];
         dir[1] = cent[1] - pos[1];

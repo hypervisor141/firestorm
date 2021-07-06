@@ -113,7 +113,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidlocalspace[2] = 0;
 
         int unitsize = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
-        float[] positions = instance.positions().provider();
+        float[] positions = instance.positions().array;
         int size = positions.length;
 
         for(int index = 0; index < size; index += unitsize){
@@ -170,7 +170,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     public boolean checkFixLocalSpaceFlatness(){
         boolean updated = false;
 
-        float[] positions = instance.positions().provider();
+        float[] positions = instance.positions().array;
 
         float width = localSpaceWidth();
         float height = localSpaceHeight();
@@ -239,7 +239,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public boolean refillLocalSpaceBounds(){
-        float[] positions = instance.positions().provider();
+        float[] positions = instance.positions().array;
         int size = boundsindices.length;
 
         for(int i = 0; i < size; i++){
@@ -255,7 +255,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         centroidlocalspace[2] = 0F;
 
         int unitsize = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
-        float[] positions = instance.positions().provider();
+        float[] positions = instance.positions().array;
         int size = positions.length;
 
         for(int index = 0; index < size; index += unitsize){
@@ -357,7 +357,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void directReloadLocalSpaceBounds(){
-        float[] positions = instance.positions().provider();
+        float[] positions = instance.positions().array;
 
         boundslocalspace[0] = positions[boundsindices[0]];
         boundslocalspace[1] = positions[boundsindices[1]];

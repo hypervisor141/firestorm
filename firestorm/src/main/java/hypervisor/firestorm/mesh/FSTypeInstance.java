@@ -10,11 +10,11 @@ public interface FSTypeInstance extends FSTypeRender{
 
     void activateElement(int element, int index);
     void storage(FSElementStore store);
-    void modelMatrix(FSMatrixModel set);
+    void modelMatrix(FSModelMatrix set);
     FSTexture colorTexture();
     FSLightMaterial material();
     FSLightMap lightMap();
-    FSMatrixModel modelMatrix();
+    FSModelMatrix modelMatrix();
     FSSchematics schematics();
     FSElementStore storage();
     int elementUnitsCount(int element);

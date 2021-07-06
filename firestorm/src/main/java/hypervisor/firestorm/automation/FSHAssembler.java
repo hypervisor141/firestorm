@@ -5,7 +5,7 @@ import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSArrayModel;
 import hypervisor.firestorm.mesh.FSElement;
 import hypervisor.firestorm.mesh.FSElementStore;
-import hypervisor.firestorm.mesh.FSMatrixModel;
+import hypervisor.firestorm.mesh.FSModelMatrix;
 import hypervisor.firestorm.mesh.FSSchematics;
 import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
@@ -507,7 +507,7 @@ public class FSHAssembler implements VLLoggable{
             store.add(FSElements.ELEMENT_MODEL, new FSElement.FloatArray(FSElements.ELEMENT_MODEL, new FSArrayModel(FSElements.UNIT_SIZES[FSElements.ELEMENT_MODEL])));
             store.activate(FSElements.ELEMENT_MODEL, 0);
 
-            instance.modelMatrix(new FSMatrixModel(2, 10));
+            instance.modelMatrix(new FSModelMatrix(2, 10));
         }
     };
 
