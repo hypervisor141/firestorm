@@ -6,8 +6,8 @@ import hypervisor.vanguard.utils.VLUpdater;
 
 public abstract class FSBounds implements VLCopyable<FSBounds>{
 
-    public static final long FLAG_FORCE_DUPLICATE_POINTS = 0x1L;
-    public static final long FLAG_FORCE_REFERENCE_POINTS = 0x2L;
+    public static final long FLAG_DUPLICATE_POINTS = 0x1L;
+    public static final long FLAG_REFERENCE_POINTS = 0x2L;
 
     public static final CalculationMethod MODE_X_VOLUMETRIC = new CalculationMethod(){
 
@@ -112,14 +112,14 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             points = src.points.duplicate(VLCopyable.FLAG_DUPLICATE);
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            if((flags & FLAG_FORCE_REFERENCE_POINTS) == FLAG_FORCE_REFERENCE_POINTS){
-                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_REFERENCE_ARRAY);
+            if((flags & FLAG_REFERENCE_POINTS) == FLAG_REFERENCE_POINTS){
+                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
-            }else if((flags & FLAG_FORCE_DUPLICATE_POINTS) == FLAG_FORCE_DUPLICATE_POINTS){
-                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            }else if((flags & FLAG_DUPLICATE_POINTS) == FLAG_DUPLICATE_POINTS){
+                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
             }else{
-                Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_REFERENCE_POINTS", "FLAG_FORCE_DUPLICATE_POINTS");
+                Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_REFERENCE_POINTS", "FLAG_DUPLICATE_POINTS");
             }
 
         }else{

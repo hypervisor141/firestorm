@@ -340,7 +340,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.restrictSize();
-        instance.positions().provider(converted.array());
+        instance.positions().array = converted.array();
     }
 
     private void unIndexColors(FSTypeInstance instance){
@@ -358,7 +358,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.restrictSize();
-        instance.colors().provider(converted.array());
+        instance.colors().array = converted.array();
     }
 
     private void unIndexTexCoords(FSTypeInstance instance){
@@ -374,7 +374,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.restrictSize();
-        instance.texCoords().provider(converted.array());
+        instance.texCoords().array = converted.array();
     }
 
     private void unIndexNormals(FSTypeInstance instance){
@@ -391,7 +391,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.restrictSize();
-        instance.normals().provider(converted.array());
+        instance.normals().array = converted.array();
     }
 
     final void buildFirst(FSTypeInstance instance, FSTypeMesh<FSTypeInstance> target, FSM.Data data){

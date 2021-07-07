@@ -30,6 +30,8 @@ public class FSR{
     private static VLListType<FSRTask> tasks;
     private static VLListType<FSRTask> taskcache;
 
+    public static final Object TASKLOCK = new Object();
+
     protected static boolean isInitialized;
 
     public static int CURRENT_PASS_INDEX;
@@ -122,7 +124,7 @@ public class FSR{
             passes.get(i).draw();
         }
 
-        synchronized(tasks){
+        synchronized(TASKLOCK){
             taskcache.add(tasks);
             tasks.clear();
         }
@@ -149,7 +151,7 @@ public class FSR{
     }
 
     public static void post(FSRTask task){
-        synchronized(tasks){
+        synchronized(TASKLOCK){
             tasks.add(task);
         }
 

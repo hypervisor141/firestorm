@@ -61,8 +61,8 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
             centroidmodelspace = src.centroidmodelspace;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            collisionbounds = src.collisionbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
-            inputbounds = src.inputbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            collisionbounds = src.collisionbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+            inputbounds = src.inputbounds.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
             boundsindices = src.boundsindices.clone();
             boundslocalspace = src.boundslocalspace.clone();
@@ -705,7 +705,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
                 bounds = src.bounds;
 
             }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-                bounds = src.bounds.duplicate(FSBounds.FLAG_FORCE_DUPLICATE_POINTS);
+                bounds = src.bounds.duplicate(FSBounds.FLAG_DUPLICATE_POINTS);
 
             }else{
                 Helper.throwMissingDefaultFlags();

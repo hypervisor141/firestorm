@@ -9,7 +9,7 @@ import hypervisor.vanguard.utils.VLLog;
 
 public class FSConfigGroup extends FSConfig{
 
-    public static final long FLAG_FORCE_DUPLICATE_CONFIGS = 0x1L;
+    public static final long FLAG_DUPLICATE_CONFIGS = 0x1L;
 
     protected VLListType<FSConfig> configs;
 
@@ -90,11 +90,11 @@ public class FSConfigGroup extends FSConfig{
             configs = target.configs.duplicate(FLAG_DUPLICATE);
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            if((flags & FLAG_FORCE_DUPLICATE_CONFIGS) == FLAG_FORCE_DUPLICATE_CONFIGS){
-                configs = target.configs.duplicate(FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            if((flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
+                configs = target.configs.duplicate(FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
             }else{
-                VLCopyable.Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_FORCE_DUPLICATE_CONFIGS");
+                VLCopyable.Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_DUPLICATE_CONFIGS");
             }
 
         }else{

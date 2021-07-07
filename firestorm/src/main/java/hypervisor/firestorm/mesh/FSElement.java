@@ -62,7 +62,7 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             data = (DATA)src.data.duplicate(FLAG_DUPLICATE);
-            bindings = src.bindings.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_FORCE_DUPLICATE_ARRAY);
+            bindings = src.bindings.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
         }else{
             throw new RuntimeException("Invalid flags : " + flags);

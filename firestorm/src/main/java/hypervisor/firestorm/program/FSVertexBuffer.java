@@ -183,10 +183,6 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         buffer.release();
     }
 
-    public void provider(BUFFER buffer){
-        this.buffer = buffer;
-    }
-
     public void setTarget(int s){
         target = s;
     }
