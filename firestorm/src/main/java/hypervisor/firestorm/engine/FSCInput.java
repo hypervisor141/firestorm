@@ -106,7 +106,7 @@ public final class FSCInput{
     }
 
     public static void triggerInput(InputType type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        FSR.post(new TaskProcessInput(type, e1, e2, f1, f2));
+        FSR.post(new TaskProcessInput(type, e1, e2, f1, f2), false);
     }
 
     protected static void destroy(boolean destroyonpause){

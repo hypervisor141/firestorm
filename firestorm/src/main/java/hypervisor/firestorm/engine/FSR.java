@@ -43,6 +43,11 @@ public class FSR{
         choreographer = Choreographer.getInstance();
 
         tasks = new VLListType<>(10, 100);
+
+        synchronized(TASKLOCK){
+            TASKLOCK.notifyAll();
+        }
+
         taskcache = new VLListType<>(10, 100);
 
         isInitialized = true;
@@ -150,8 +155,24 @@ public class FSR{
         return CURRENT_PASS_INDEX;
     }
 
-    public static void post(FSRTask task){
+    public static void post(FSRTask task, boolean waitforinit){
         synchronized(TASKLOCK){
+            if(tasks == null){
+                if(waitforinit){
+                    while(tasks == null){
+                        try{
+                            TASKLOCK.wait();
+
+                        }catch(InterruptedException ex){
+                            //
+                        }
+                    }
+
+                }else{
+                    return;
+                }
+            }
+
             tasks.add(task);
         }
 
