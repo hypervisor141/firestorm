@@ -117,12 +117,12 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
     public abstract int getGLSLSize();
 
     @Override
-    public void run(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){
+    public final void run(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){
         mode.configure(pass, this, program, mesh, meshindex, passindex);
     }
 
     @Override
-    public void runDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public final void runDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         String classname = getClass().getSimpleName();
 
         log.addTag(classname.equals("") ? "Anonymous" : classname);
@@ -134,6 +134,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             FSTools.checkGLError();
             FSTools.checkEGLError();
 
+            log.printInfo();
             log.removeLastTag();
             log.removeLastTag();
 
