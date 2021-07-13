@@ -144,10 +144,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             throw new RuntimeException(ex);
         }
 
-        if(log.get().length() > 0){
-            log.printInfo();
-        }
-
+        log.printInfo();
         log.removeLastTag();
         log.removeLastTag();
     }
