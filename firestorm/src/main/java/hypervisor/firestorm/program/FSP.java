@@ -214,7 +214,6 @@ public abstract class FSP{
 
                 coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                log.printInfo();
                 log.removeLastTag();
             }
             if(coreconfigs.meshconfig != null){
@@ -227,11 +226,9 @@ public abstract class FSP{
                     target.configure(this, pass, i, passindex);
                     coreconfigs.meshconfig.runDebug(pass, this, target, i, passindex, log, debug);
 
-                    log.printInfo();
                     log.removeLastTag();
                 }
 
-                log.printInfo();
                 log.removeLastTag();
             }
             if(coreconfigs.postdrawconfig != null){
@@ -239,7 +236,6 @@ public abstract class FSP{
 
                 coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                log.printInfo();
                 log.removeLastTag();
             }
 
@@ -280,7 +276,6 @@ public abstract class FSP{
 
                 coreconfigs.postframeconfig.runDebug(pass, this, null, -1, passindex, log, debug);
 
-                log.printInfo();
                 log.removeLastTag();
 
             }else{
