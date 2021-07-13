@@ -174,9 +174,10 @@ public class FSRPass{
             if(debug >= FSControl.DEBUG_NORMAL){
                 try{
                     FSTools.checkGLError();
+                    FSTools.checkEGLError();
 
                 }catch(Exception ex){
-                    throw new RuntimeException("Error running draw() for Entry[" + index + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
+                    throw new RuntimeException("GL/EGL error running draw() for Entry[" + index + "] PassIndex[" + FSR.CURRENT_PASS_INDEX + "]", ex);
                 }
             }
         }
