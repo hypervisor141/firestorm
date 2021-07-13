@@ -80,18 +80,15 @@ public class FSConfigSequence extends FSConfigLocated{
         int loc = location;
 
         for(int i = 0; i < size; i++){
-            log.append("[");
-            log.append(i + 1);
-            log.append("/");
-            log.append(size);
-            log.append("] ");
+            log.addTag((i + 1) + "/" + size);
 
             FSConfig config = configs.get(i);
 
             config.location(loc);
             config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
-
             loc += config.getGLSLSize();
+
+            log.removeLastTag();
         }
     }
 

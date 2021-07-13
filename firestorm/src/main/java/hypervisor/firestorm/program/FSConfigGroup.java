@@ -58,13 +58,11 @@ public class FSConfigGroup extends FSConfig{
         int size = configs.size();
 
         for(int i = 0; i < size; i++){
-            log.append("[");
-            log.append(i + 1);
-            log.append("/");
-            log.append(size);
-            log.append("] ");
+            log.addTag((i + 1) + "/" + size);
 
             configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+
+            log.removeLastTag();
         }
     }
 

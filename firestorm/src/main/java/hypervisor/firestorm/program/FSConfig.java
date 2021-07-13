@@ -128,33 +128,29 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         log.addTag(classname.equals("") ? "Anonymous" : classname);
         log.addTag(mode.getModeName());
 
+        attachDebugInfo(pass, program, mesh, log, debug);
+        log.printInfo();
+
         try{
             mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
 
             FSTools.checkGLError();
             FSTools.checkEGLError();
 
-            if(debug >= FSControl.DEBUG_FULL){
-                attachDebugInfo(pass, program, mesh, log, debug);
-            }
-            if(log.get().length() > 0){
-                log.printInfo();
-            }
-
-            log.removeLastTag();
-            log.removeLastTag();
-
         }catch(Exception ex){
-            if(debug >= FSControl.DEBUG_FULL){
-                attachDebugInfo(pass, program, mesh, log, debug);
-            }
-
             log.printError();
             log.removeLastTag();
             log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
+
+        if(log.get().length() > 0){
+            log.printInfo();
+        }
+
+        log.removeLastTag();
+        log.removeLastTag();
     }
 
     protected abstract void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex);
