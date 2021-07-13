@@ -134,30 +134,8 @@ public class FSConfigSequence extends FSConfigLocated{
 
     @Override
     public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
-        StringBuilder data = new StringBuilder();
-        FSConfig c;
-
-        int size = configs.size();
-
-        data.append("sequence[");
-        data.append(size);
-        data.append("]");
-
-        for(int i = 0; i < size; i++){
-            c = configs.get(i);
-
-            data.append("target[");
-            data.append(i);
-            data.append("] [");
-            data.append(c.getClass().getSimpleName());
-
-            if(debug >= FSControl.DEBUG_FULL){
-                data.append("] [");
-                c.attachDebugInfo(pass, program, mesh, log, debug);
-                data.append("]");
-            }
-
-            data.append("] ");
-        }
+        log.append("sequenceSize[");
+        log.append(configs.size());
+        log.append("] ");
     }
 }
