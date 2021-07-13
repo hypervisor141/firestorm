@@ -74,10 +74,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){}
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
-            self.printHeader(log);
-            log.append("\n");
-        }
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){}
 
         @Override
         public String getModeName(){
@@ -126,54 +123,35 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
 
     @Override
     public void runDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
-        mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
-    }
+        String classname = getClass().getSimpleName();
 
-    protected abstract void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex);
+        log.addTag(classname.equals("") ? "Anonymous" : classname);
+        log.addTag(mode.getModeName());
 
-    protected void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         try{
-            printDebugInfo(pass, program, mesh, log, debug);
+            mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
 
-            configure(program, pass, mesh, meshindex, passindex);
             FSTools.checkGLError();
+            FSTools.checkEGLError();
+
+            log.removeLastTag();
+            log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
-            log.printError();
+            log.removeLastTag();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
     }
 
+    protected abstract void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex);
+
+    protected void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+        configure(program, pass, mesh, meshindex, passindex);
+    }
+
     protected void notifyProgramBuilt(FSP program){}
-
-    protected void printHeader(VLLog log){
-        if(log != null){
-            String classname = getClass().getSimpleName();
-
-            log.append("[");
-            log.append(mode.getModeName());
-            log.append("] [");
-            log.append(classname.equals("") ? "Anonymous" : classname);
-            log.append("]");
-        }
-    }
-
-    protected void printDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
-        if(log != null){
-            printHeader(log);
-
-            if(debug >= FSControl.DEBUG_FULL){
-                log.append(" [");
-                debugInfo(pass, program, mesh, log, debug);
-                log.append("]\n");
-
-            }else{
-                log.append("\n");
-            }
-        }
-    }
 
     @Override
     public void copy(FSConfig src, long flags){
@@ -199,7 +177,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
 
     @Override
     public void log(VLLog log, Object data){
-        printDebugInfo(null, null, null, log, (int)data);
+        debugInfo(null, null, null, log, (int)data);
     }
 
     public interface Mode extends VLCopyable<Mode>{

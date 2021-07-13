@@ -79,8 +79,6 @@ public class FSConfigSequence extends FSConfigLocated{
         int size = configs.size();
         int loc = location;
 
-        log.addTag(getClass().getSimpleName());
-
         for(int i = 0; i < size; i++){
             log.append("[");
             log.append(i + 1);
@@ -95,8 +93,6 @@ public class FSConfigSequence extends FSConfigLocated{
 
             loc += config.getGLSLSize();
         }
-
-        log.removeLastTag();
     }
 
     @Override

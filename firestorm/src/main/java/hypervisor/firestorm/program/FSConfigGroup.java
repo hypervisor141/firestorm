@@ -57,8 +57,6 @@ public class FSConfigGroup extends FSConfig{
     public final void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
         int size = configs.size();
 
-        log.addTag(getClass().getSimpleName());
-
         for(int i = 0; i < size; i++){
             log.append("[");
             log.append(i + 1);
@@ -68,8 +66,6 @@ public class FSConfigGroup extends FSConfig{
 
             configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
         }
-
-        log.removeLastTag();
     }
 
     @Override

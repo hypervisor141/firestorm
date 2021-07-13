@@ -24,6 +24,7 @@ import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.utils.VLLoggable;
 
+@SuppressWarnings("unused")
 public abstract class FSP{
 
     private static final int BUFFER_PRINT_LIMIT = 50;
