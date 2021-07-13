@@ -129,17 +129,15 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         log.addTag(mode.getModeName());
 
         try{
-            if(debug >= FSControl.DEBUG_FULL){
-                attachDebugInfo(pass, program, mesh, log, debug);
-                log.printInfo();
-            }
-
             mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
 
             FSTools.checkGLError();
             FSTools.checkEGLError();
 
-            if(log.get().length() != 0){
+            if(debug >= FSControl.DEBUG_FULL){
+                attachDebugInfo(pass, program, mesh, log, debug);
+            }
+            if(log.get().length() > 0){
                 log.printInfo();
             }
 
@@ -147,7 +145,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             log.removeLastTag();
 
         }catch(Exception ex){
-            if(debug == FSControl.DEBUG_NORMAL){
+            if(debug >= FSControl.DEBUG_FULL){
                 attachDebugInfo(pass, program, mesh, log, debug);
             }
 

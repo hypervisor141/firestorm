@@ -158,14 +158,14 @@ public abstract class FSP{
                     coreconfigs.postdrawconfig.notifyProgramBuilt(this);
                 }
 
+                log.printInfo();
+
             }catch(Exception ex){
                 log.append("Failed.\n");
                 log.printError();
 
                 throw new RuntimeException("Error during program configuration setup", ex);
             }
-
-            log.printInfo();
 
         }else{
             if(coreconfigs.setupconfig != null){
