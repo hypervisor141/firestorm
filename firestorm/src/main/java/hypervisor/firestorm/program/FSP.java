@@ -1146,7 +1146,7 @@ public abstract class FSP{
 
             }catch(Exception ex){
                 log.append(" [FAILED]");
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Mesh does not have the necessary binding for this config to use.", ex);
             }
         }
     }
@@ -1224,7 +1224,7 @@ public abstract class FSP{
 
             }catch(Exception ex){
                 log.append(" [FAILED]");
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Mesh does not have the necessary binding for this config to use.", ex);
             }
         }
     }
@@ -2619,7 +2619,7 @@ public abstract class FSP{
 
             }catch(Exception ex){
                 log.append(" [FAILED]");
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Mesh does not have the necessary binding for this config to use.", ex);
             }
         }
     }
@@ -3026,7 +3026,7 @@ public abstract class FSP{
 
             }catch(Exception ex){
                 log.append(" [FAILED]");
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Mesh does not have the necessary binding for this config to use.", ex);
             }
         }
     }
@@ -3114,7 +3114,7 @@ public abstract class FSP{
 
             }catch(Exception ex){
                 log.append(" [FAILED]");
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Mesh does not have the necessary binding for this config to use.", ex);
             }
         }
     }
