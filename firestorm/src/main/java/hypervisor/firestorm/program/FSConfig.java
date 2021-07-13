@@ -139,7 +139,10 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             FSTools.checkGLError();
             FSTools.checkEGLError();
 
-            log.printInfo();
+            if(log.get().length() != 0){
+                log.printInfo();
+            }
+
             log.removeLastTag();
             log.removeLastTag();
 
