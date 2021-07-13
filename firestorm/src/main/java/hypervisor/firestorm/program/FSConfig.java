@@ -23,6 +23,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
             if(debug >= FSControl.DEBUG_VERBOSE){
                 self.attachDebugInfo(pass, program, mesh, log, debug);
+                log.append(" ");
             }
 
             self.configureDebug(program, pass, mesh, meshindex, passindex, log, debug);
@@ -55,6 +56,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
             if(debug >= FSControl.DEBUG_VERBOSE){
                 self.attachDebugInfo(pass, program, mesh, log, debug);
+                log.append(" ");
             }
 
             self.configureDebug(program, pass, mesh, meshindex, passindex, log, debug);
@@ -143,6 +145,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             FSTools.checkEGLError();
 
         }catch(Exception ex){
+            log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
             log.removeLastTag();
@@ -150,6 +153,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             throw new RuntimeException(ex);
         }
 
+        log.append("[SUCCESS]");
         log.printInfo();
         log.removeLastTag();
         log.removeLastTag();
