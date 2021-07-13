@@ -196,9 +196,10 @@ public abstract class FSP{
         if(debug >= FSControl.DEBUG_NORMAL){
             try{
                 FSTools.checkGLError();
+                FSTools.checkGLError();
 
             }catch(Exception ex){
-                throw new RuntimeException("Pre-program-run error (there is an unchecked error somewhere before in the code)", ex);
+                throw new RuntimeException("Pre-program-run error, there is an unchecked EGL/GL error somewhere in your code before this point.", ex);
             }
         }
 
