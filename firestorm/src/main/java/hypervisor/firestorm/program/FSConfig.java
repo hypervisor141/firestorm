@@ -21,7 +21,10 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
 
         @Override
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
-            self.attachDebugInfo(pass, program, mesh, log, debug);
+            if(debug >= FSControl.DEBUG_VERBOSE){
+                self.attachDebugInfo(pass, program, mesh, log, debug);
+            }
+
             self.configureDebug(program, pass, mesh, meshindex, passindex, log, debug);
         }
 
@@ -50,7 +53,10 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
 
         @Override
         public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
-            self.attachDebugInfo(pass, program, mesh, log, debug);
+            if(debug >= FSControl.DEBUG_VERBOSE){
+                self.attachDebugInfo(pass, program, mesh, log, debug);
+            }
+
             self.configureDebug(program, pass, mesh, meshindex, passindex, log, debug);
             self.mode = MODE_DISABLED;
         }

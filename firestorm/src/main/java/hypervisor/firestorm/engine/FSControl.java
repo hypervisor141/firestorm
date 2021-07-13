@@ -9,7 +9,7 @@ public final class FSControl{
 
     public static final int DEBUG_DISABLED = 0;
     public static final int DEBUG_NORMAL = 1;
-    public static final int DEBUG_FULL = 2;
+    public static final int DEBUG_VERBOSE = 2;
 
     protected static FSView view;
     protected static FSEvents events;
