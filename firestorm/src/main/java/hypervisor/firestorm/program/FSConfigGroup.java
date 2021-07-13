@@ -60,7 +60,13 @@ public class FSConfigGroup extends FSConfig{
         for(int i = 0; i < size; i++){
             log.addTag((i + 1) + "/" + size);
 
-            configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+            try{
+                configs.get(i).runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+
+            }catch(Exception ex){
+                log.removeLastTag();
+                throw new RuntimeException(ex);
+            }
 
             log.removeLastTag();
         }

@@ -83,11 +83,17 @@ public class FSConfigSequence extends FSConfigLocated{
             log.addTag((i + 1) + "/" + size);
 
             FSConfig config = configs.get(i);
-
             config.location(loc);
-            config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
-            loc += config.getGLSLSize();
 
+            try{
+                config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
+
+            }catch(Exception ex){
+                log.removeLastTag();
+                throw new RuntimeException(ex);
+            }
+
+            loc += config.getGLSLSize();
             log.removeLastTag();
         }
     }
