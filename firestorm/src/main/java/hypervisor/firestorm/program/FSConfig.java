@@ -1,5 +1,6 @@
 package hypervisor.firestorm.program;
 
+import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.engine.FSTools;
 import hypervisor.firestorm.mesh.FSTypeMesh;
@@ -128,7 +129,11 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         log.addTag(mode.getModeName());
 
         try{
-            attachDebugInfo(pass, program, mesh, log, debug);
+            if(debug >= FSControl.DEBUG_FULL){
+                attachDebugInfo(pass, program, mesh, log, debug);
+                log.printInfo();
+            }
+
             mode.configureDebug(pass, this, program, mesh, meshindex, passindex, log, debug);
 
             FSTools.checkGLError();
@@ -139,6 +144,11 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
             log.removeLastTag();
 
         }catch(Exception ex){
+            if(debug == FSControl.DEBUG_NORMAL){
+                attachDebugInfo(pass, program, mesh, log, debug);
+            }
+
+            log.printError();
             log.removeLastTag();
             log.removeLastTag();
 

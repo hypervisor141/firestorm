@@ -818,7 +818,7 @@ public abstract class FSP{
         public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.attachDebugInfo(pass, program, mesh, log, debug);
 
-            log.append(" config[");
+            log.append(" target[");
             log.append(config.getClass().getSimpleName());
             log.append("] location[");
             log.append(config.location());
@@ -868,7 +868,7 @@ public abstract class FSP{
         public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
             super.attachDebugInfo(pass, program, mesh, log, debug);
 
-            log.append(" config[");
+            log.append(" target[");
             log.append(config.getClass().getSimpleName());
             log.append("] location[");
             log.append(config.location());

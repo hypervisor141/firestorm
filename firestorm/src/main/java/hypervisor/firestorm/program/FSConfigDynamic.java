@@ -89,7 +89,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
         super.attachDebugInfo(pass, program, mesh, log, debug);
 
-        log.append("config[");
+        log.append("target[");
         log.append(config.getClass().getSimpleName());
         log.append("] [ ");
 

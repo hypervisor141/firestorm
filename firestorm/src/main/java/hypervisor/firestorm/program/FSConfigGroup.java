@@ -117,7 +117,7 @@ public class FSConfigGroup extends FSConfig{
         for(int i = 0; i < size; i++){
             c = configs.get(i);
 
-            data.append("config[");
+            data.append("target[");
             data.append(i);
             data.append("] [");
             data.append(c.getClass().getSimpleName());
