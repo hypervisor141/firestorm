@@ -211,7 +211,14 @@ public abstract class FSP{
 
             if(coreconfigs.setupconfig != null){
                 log.addTag("SetupConfig");
-                coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex, log, debug);
+
+                try{
+                    coreconfigs.setupconfig.runDebug(pass, this, null, -1, passindex, log, debug);
+
+                }catch(Exception ex){
+                    log.printError();
+                    throw new RuntimeException(ex);
+                }
 
                 log.printInfo();
                 log.removeLastTag();
@@ -223,8 +230,14 @@ public abstract class FSP{
                     FSTypeMesh<?> target = targets.get(i);
                     log.addTag(target.name());
 
-                    target.configure(this, pass, i, passindex);
-                    coreconfigs.meshconfig.configureDebug(this, pass, target, i, passindex, log, debug);
+                    try{
+                        target.configure(this, pass, i, passindex);
+                        coreconfigs.meshconfig.runDebug(pass, this, target, i, passindex, log, debug);
+
+                    }catch(Exception ex){
+                        log.printError();
+                        throw new RuntimeException(ex);
+                    }
 
                     log.printInfo();
                     log.removeLastTag();
@@ -236,7 +249,13 @@ public abstract class FSP{
             if(coreconfigs.postdrawconfig != null){
                 log.addTag("PostDrawConfig");
 
-                coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex, log, debug);
+                try{
+                    coreconfigs.postdrawconfig.runDebug(pass, this, null, -1, passindex, log, debug);
+
+                }catch(Exception ex){
+                    log.printError();
+                    throw new RuntimeException(ex);
+                }
 
                 log.printInfo();
                 log.removeLastTag();
