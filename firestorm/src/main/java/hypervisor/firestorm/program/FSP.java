@@ -77,8 +77,7 @@ public abstract class FSP{
     public FSP build(){
         program = GLES32.glCreateProgram();
 
-        log.addTag(getClass().getSimpleName());
-        log.setTag(log.tags().size() - 1, String.valueOf(program));
+        log.addTag(getClass().getSimpleName().concat(String.valueOf(program)));
 
         coreconfigs = generateConfigurations(targets, debug);
 
