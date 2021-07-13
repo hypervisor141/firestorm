@@ -86,14 +86,14 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
-        super.debugInfo(pass, program, mesh, log, debug);
+    public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
+        super.attachDebugInfo(pass, program, mesh, log, debug);
 
         log.append("config[");
         log.append(config.getClass().getSimpleName());
         log.append("] [ ");
 
-        config.debugInfo(pass, program, mesh, log, debug);
+        config.attachDebugInfo(pass, program, mesh, log, debug);
 
         log.append(" ] ");
     }

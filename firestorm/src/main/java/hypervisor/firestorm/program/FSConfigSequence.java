@@ -133,7 +133,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public void debugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
+    public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
         StringBuilder data = new StringBuilder();
         FSConfig c;
 
@@ -153,7 +153,7 @@ public class FSConfigSequence extends FSConfigLocated{
 
             if(debug >= FSControl.DEBUG_FULL){
                 data.append("] [");
-                c.debugInfo(pass, program, mesh, log, debug);
+                c.attachDebugInfo(pass, program, mesh, log, debug);
                 data.append("]");
             }
 
