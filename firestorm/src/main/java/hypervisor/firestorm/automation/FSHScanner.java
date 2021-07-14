@@ -160,7 +160,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
             @Override
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(target.size() <= 0 && data.name.contains(target.name())){
+                if(target.size() <= 0 && data.name.startsWith(target.name())){
                     FSTypeInstance instance = target.generateInstance(data.name);
                     target.add(instance);
 
@@ -173,7 +173,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
             @Override
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(data.name.contains(target.name())){
+                if(data.name.startsWith(target.name())){
                     FSTypeInstance instance = target.generateInstance(data.name);
                     target.add(instance);
 
