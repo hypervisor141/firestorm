@@ -1,5 +1,7 @@
 package hypervisor.firestorm.automation;
 
+import android.widget.TableRow;
+
 import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSTypeInstance;
@@ -158,11 +160,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
             @Override
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(data.name.contains(target.name())){
-                    if(target.size() > 0){
-                        throw new RuntimeException("Found more than one instance with a singular scanner [" + target.name() + "]");
-                    }
-
+                if(target.size() <= 0 && data.name.contains(target.name())){
                     FSTypeInstance instance = target.generateInstance(data.name);
                     target.add(instance);
 
