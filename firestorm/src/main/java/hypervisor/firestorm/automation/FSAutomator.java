@@ -227,9 +227,11 @@ public class FSAutomator{
 
                 @Override
                 public void operate(FSM.Data data){
-                    if(!data.locked){
-                        for(int i = 0; i < size; i++){
-                            scanners.get(i).scan(data);
+                    for(int i = 0; i < size; i++){
+                        scanners.get(i).scan(data);
+
+                        if(data.locked){
+                            return;
                         }
                     }
                 }
