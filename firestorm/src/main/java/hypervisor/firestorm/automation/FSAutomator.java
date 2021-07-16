@@ -208,7 +208,6 @@ public class FSAutomator{
         protected InputStream src;
         protected ByteOrder order;
         protected boolean fullsizedposition;
-        protected int scancapacity;
 
         public FileTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
             this.src = src;
@@ -221,24 +220,20 @@ public class FSAutomator{
         }
 
         void scan(FSAutomator automator) throws IOException{
-            FSM fsm = new FSM();
-            fsm.loadFromFile(src, order, fullsizedposition, scancapacity);
+            final VLListType<FSHScanner<?>> scanners = automator.scanners;
+            final int size = scanners.size();
 
-            VLListType<FSM.Data> content = fsm.data;
-            VLListType<FSHScanner<?>> scanners = automator.scanners;
+            FSM.loadFromFile(src, order, fullsizedposition, new FSM.DataOperator(){
 
-            int size = content.size();
-            int size2 = scanners.size();
-
-            for(int i = 0; i < size; i++){
-                FSM.Data data = content.get(i);
-
-                if(!data.locked){
-                    for(int i2 = 0; i2 < size2; i2++){
-                        scanners.get(i2).scan(data);
+                @Override
+                public void operate(FSM.Data data){
+                    if(!data.locked){
+                        for(int i = 0; i < size; i++){
+                            scanners.get(i).scan(data);
+                        }
                     }
                 }
-            }
+            });
         }
     }
 }

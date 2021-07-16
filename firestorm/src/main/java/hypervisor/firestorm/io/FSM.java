@@ -13,15 +13,11 @@ import hypervisor.vanguard.list.VLListType;
 
 public class FSM{
 
-    public VLListType<Data> data;
-
-    public FSM(){
+    private FSM(){
 
     }
 
-    public void loadFromFile(InputStream is, ByteOrder order, boolean fullsizedvertex, int sizeestimate) throws IOException{
-        data = new VLListType<>(sizeestimate, (int)Math.ceil(sizeestimate * 80f / 100f));
-
+    public static void loadFromFile(InputStream is, ByteOrder order, boolean fullsizedvertex, DataOperator operator) throws IOException{
         ByteBuffer buffer = ByteBuffer.allocate(8);
         BufferedInputStream bis = new BufferedInputStream(is);
         byte[] rawbuffer = new byte[1000];
@@ -30,7 +26,6 @@ public class FSM{
         buffer.position(0);
 
         int size = readInt(bis, buffer);
-        data.resize(size);
 
         for(int i = 0; i < size; i++){
             int namesize = readInt(bis, buffer);
@@ -40,65 +35,64 @@ public class FSM{
             int normalsize = readInt(bis, buffer);
             int indexsize = readInt(bis, buffer);
 
-            Data d = new Data(positionsize, colorsize, texcoordssize, normalsize, indexsize);
-
             bis.read(rawbuffer, 0, namesize);
-            d.name = new String(rawbuffer, 0, namesize, StandardCharsets.UTF_8);
 
-            d.positions.resize(positionsize + (fullsizedvertex ? (positionsize / 3) : 0));
+            Data data = new Data(positionsize, colorsize, texcoordssize, normalsize, indexsize);
+            data.name = new String(rawbuffer, 0, namesize, StandardCharsets.UTF_8);
+            data.positions.resize(positionsize + (fullsizedvertex ? (positionsize / 3) : 0));
+
             for(int i2 = 0, counter = 0; i2 < positionsize; i2++){
-                d.positions.add(readFloat(bis, buffer));
+                data.positions.add(readFloat(bis, buffer));
                 counter++;
 
                 if(fullsizedvertex && counter == 3){
-                    d.positions.add(1.0F);
+                    data.positions.add(1.0F);
                     counter = 0;
                 }
             }
 
-            d.colors.resize(colorsize);
+            data.colors.resize(colorsize);
             for(int i2 = 0; i2 < colorsize; i2++){
-                d.colors.add(readFloat(bis, buffer));
+                data.colors.add(readFloat(bis, buffer));
             }
 
-            d.texcoords.resize(texcoordssize);
+            data.texcoords.resize(texcoordssize);
             for(int i2 = 0; i2 < texcoordssize; i2++){
-                d.texcoords.add(readFloat(bis, buffer));
+                data.texcoords.add(readFloat(bis, buffer));
             }
 
-            d.normals.resize(normalsize);
+            data.normals.resize(normalsize);
             for(int i2 = 0; i2 < normalsize; i2++){
-                d.normals.add(readFloat(bis, buffer));
+                data.normals.add(readFloat(bis, buffer));
             }
 
-            d.indices.resize(indexsize);
+            data.indices.resize(indexsize);
             for(int i2 = 0; i2 < indexsize; i2++){
-                d.indices.add(readShort(bis, buffer));
+                data.indices.add(readShort(bis, buffer));
             }
 
-            d.clean();
-            data.add(d);
+            data.clean();
+            operator.operate(data);
         }
 
         bis.close();
-        data.restrictSize();
     }
 
-    private int readInt(BufferedInputStream is, ByteBuffer buffer) throws IOException{
+    private static int readInt(BufferedInputStream is, ByteBuffer buffer) throws IOException{
         is.read(buffer.array(), 0, 4);
         buffer.position(0);
 
         return buffer.getInt();
     }
 
-    private float readFloat(BufferedInputStream is, ByteBuffer buffer) throws IOException{
+    private static float readFloat(BufferedInputStream is, ByteBuffer buffer) throws IOException{
         is.read(buffer.array(), 0, 4);
         buffer.position(0);
 
         return buffer.getFloat();
     }
 
-    private short readShort(BufferedInputStream is, ByteBuffer buffer) throws IOException{
+    private static short readShort(BufferedInputStream is, ByteBuffer buffer) throws IOException{
         is.read(buffer.array(), 0, 2);
         buffer.position(0);
 
@@ -134,5 +128,10 @@ public class FSM{
             normals.restrictSize();
             indices.restrictSize();
         }
+    }
+
+    public interface DataOperator{
+
+        void operate(Data data);
     }
 }
