@@ -108,7 +108,7 @@ public class FSM{
     public static final class Data{
 
         public String name;
-        public boolean locked;
+        public boolean locked = false;
 
         public VLListFloat positions;
         public VLListFloat colors;
@@ -117,6 +117,9 @@ public class FSM{
         public VLListShort indices;
 
         public Data(int positionsize, int colorsize, int texcoordsize, int normalsize, int indexsize){
+            name = "";
+            locked = false;
+
             positions = new VLListFloat(positionsize, 100);
             colors = new VLListFloat(colorsize, 100);
             texcoords = new VLListFloat(texcoordsize, 100);
