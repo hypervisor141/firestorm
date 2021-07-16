@@ -17,7 +17,7 @@ public class FSM{
 
     }
 
-    public static void loadFromFile(InputStream is, ByteOrder order, boolean fullsizedvertex, DataOperator operator) throws IOException{
+    public static void decode(InputStream is, ByteOrder order, boolean fullsizedvertex, DataOperator operator) throws IOException{
         ByteBuffer buffer = ByteBuffer.allocate(8);
         BufferedInputStream bis = new BufferedInputStream(is);
         byte[] rawbuffer = new byte[1000];

@@ -223,7 +223,7 @@ public class FSAutomator{
             final VLListType<FSHScanner<?>> scanners = automator.scanners;
             final int size = scanners.size();
 
-            FSM.loadFromFile(src, order, fullsizedposition, new FSM.DataOperator(){
+            FSM.decode(src, order, fullsizedposition, new FSM.DataOperator(){
 
                 @Override
                 public void operate(FSM.Data data){
