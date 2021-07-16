@@ -108,6 +108,7 @@ public class FSM{
     public static final class Data{
 
         public String name;
+        public boolean locked;
 
         public VLListFloat positions;
         public VLListFloat colors;

@@ -31,13 +31,14 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
     }
 
     protected void scan(FSM.Data data){
-        int size = targets.size();
+        if(!data.locked){
+            int size = targets.size();
+            FSGlobal global = FSGlobal.get();
 
-        FSGlobal global = FSGlobal.get();
-
-        for(int i = 0; i < size; i++){
-            FSTypeMesh<FSTypeInstance> target = targets.get(i);
-            target.getScanFunction(global).scan(target, target.getAssembler(global), data);
+            for(int i = 0; i < size; i++){
+                FSTypeMesh<FSTypeInstance> target = targets.get(i);
+                target.getScanFunction(global).scan(target, target.getAssembler(global), data);
+            }
         }
     }
 
@@ -165,6 +166,20 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
                     target.add(instance);
 
                     assembler.buildFirst(instance, target, data);
+                }
+            }
+        };
+
+        ScanFunction SCAN_SINGULAR_STRICT = new ScanFunction(){
+
+            @Override
+            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
+                if(target.size() <= 0 && data.name.startsWith(target.name())){
+                    FSTypeInstance instance = target.generateInstance(data.name);
+                    target.add(instance);
+
+                    assembler.buildFirst(instance, target, data);
+                    data.locked = true;
                 }
             }
         };
