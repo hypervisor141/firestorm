@@ -46,11 +46,11 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
         int size = targets.size();
 
         for(int i = 0; i < size; i++){
-            FSTypeMesh<FSTypeInstance> entry = targets.get(i);
+            FSTypeMesh<FSTypeInstance> target = targets.get(i);
 
-            if(entry.size() == 0){
+            if(target.size() == 0){
                 log.append("Incomplete scan : found no instance for mesh with keyword[");
-                log.append(entry.name());
+                log.append(target.name());
                 log.append("]\n");
                 log.printError();
 
@@ -163,6 +163,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
                 if(target.size() <= 0 && data.name.startsWith(target.name())){
                     FSTypeInstance instance = target.generateInstance(data.name);
+                    target.name(data.name);
                     target.add(instance);
 
                     assembler.buildFirst(instance, target, data);
@@ -176,6 +177,7 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
             public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
                 if(target.size() <= 0 && data.name.startsWith(target.name())){
                     FSTypeInstance instance = target.generateInstance(data.name);
+                    target.name(data.name);
                     target.add(instance);
 
                     assembler.buildFirst(instance, target, data);
