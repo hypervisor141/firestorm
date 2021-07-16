@@ -1,6 +1,5 @@
 package hypervisor.firestorm.automation;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 
@@ -11,12 +10,12 @@ import hypervisor.vanguard.utils.VLLog;
 
 public class FSAutomator{
 
-    protected VLListType<FileTarget> files;
+    protected VLListType<Target> targets;
     protected VLListType<FSHScanner<?>> scanners;
     protected VLLog log;
 
-    public FSAutomator(int filecapacity, int scancapacity){
-        files = new VLListType<>(filecapacity, filecapacity);
+    public FSAutomator(int targetcapacity, int scancapacity){
+        targets = new VLListType<>(targetcapacity, targetcapacity);
         scanners = new VLListType<>(scancapacity, scancapacity);
     }
 
@@ -24,20 +23,20 @@ public class FSAutomator{
 
     }
 
-    public void register(FileTarget entry){
-        files.add(entry);
+    public void register(Target target){
+        targets.add(target);
     }
 
     public void add(FSHScanner<?> scanner){
         scanners.add(scanner);
     }
 
-    public FileTarget get(int index){
-        return files.get(index);
+    public Target get(int index){
+        return targets.get(index);
     }
 
     public int size(){
-        return files.size();
+        return targets.size();
     }
 
     public void build(int debug){
@@ -49,10 +48,10 @@ public class FSAutomator{
             log.setDebugTagsOffsetHere();
             log.printInfo("[Automated Build Initiated]");
 
-            fileDebugLoop("Scan Stage", log, new LoopOperation<FileTarget>(){
+            targetDebugLoop("Scan Stage", log, new LoopOperation<Target>(){
 
                 @Override
-                public void run(FileTarget target, VLLog log) throws Exception{
+                public void run(Target target, VLLog log) throws Exception{
                     target.scan(FSAutomator.this);
                 }
             });
@@ -109,14 +108,14 @@ public class FSAutomator{
             log.printInfo("[Automated Buffer Procedure Complete]");
 
         }else{
-            int size = files.size();
+            int size = targets.size();
 
             for(int i = 0; i < size; i++){
                 try{
-                    files.get(i).scan(this);
+                    targets.get(i).scan(this);
 
-                }catch(IOException ex){
-                    throw new RuntimeException("IO error when loading file.", ex);
+                }catch(Exception ex){
+                    throw new RuntimeException("Error during target scan.", ex);
                 }
             }
 
@@ -140,13 +139,13 @@ public class FSAutomator{
         }
     }
 
-    private void fileDebugLoop(String title, VLLog log, LoopOperation<FileTarget> task){
+    private void targetDebugLoop(String title, VLLog log, LoopOperation<Target> task){
         log.addTag(title);
 
-        int size = files.size();
+        int size = targets.size();
 
         for(int i = 0; i < size; i++){
-            FileTarget entry = files.get(i);
+            Target entry = targets.get(i);
             log.addTag(String.valueOf(i));
 
             try{
@@ -203,23 +202,29 @@ public class FSAutomator{
         void run(TARGET target, VLLog log) throws Exception;
     }
 
-    public final static class FileTarget{
+    public interface Target{
+
+        void scan(FSAutomator automator) throws Exception;
+    }
+
+    public final static class FSMTarget implements Target{
 
         protected InputStream src;
         protected ByteOrder order;
         protected boolean fullsizedposition;
 
-        public FileTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
+        public FSMTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
         }
 
-        protected FileTarget(){
+        protected FSMTarget(){
 
         }
 
-        void scan(FSAutomator automator) throws IOException{
+        @Override
+        public void scan(FSAutomator automator) throws Exception{
             final VLListType<FSHScanner<?>> scanners = automator.scanners;
             final int size = scanners.size();
 
