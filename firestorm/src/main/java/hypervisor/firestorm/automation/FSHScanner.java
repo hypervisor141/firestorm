@@ -1,7 +1,5 @@
 package hypervisor.firestorm.automation;
 
-import android.widget.TableRow;
-
 import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSTypeInstance;
@@ -31,13 +29,19 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
     }
 
     protected void scan(FSM.Data data){
-        if(!data.locked){
-            int size = targets.size();
-            FSGlobal global = FSGlobal.get();
+        if(data.locked){
+            return;
+        }
 
-            for(int i = 0; i < size; i++){
-                FSTypeMesh<FSTypeInstance> target = targets.get(i);
-                target.getScanFunction(global).scan(target, target.getAssembler(global), data);
+        int size = targets.size();
+        FSGlobal global = FSGlobal.get();
+
+        for(int i = 0; i < size; i++){
+            FSTypeMesh<FSTypeInstance> target = targets.get(i);
+            target.getScanFunction(global).scan(target, target.getAssembler(global), data);
+
+            if(data.locked){
+                return;
             }
         }
     }
