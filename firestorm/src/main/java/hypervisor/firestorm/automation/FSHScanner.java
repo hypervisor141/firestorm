@@ -29,10 +29,6 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
     }
 
     protected void scan(FSM.Data data){
-        if(data.locked){
-            return;
-        }
-
         int size = targets.size();
         FSGlobal global = FSGlobal.get();
 

@@ -233,8 +233,10 @@ public class FSAutomator{
             for(int i = 0; i < size; i++){
                 FSM.Data data = content.get(i);
 
-                for(int i2 = 0; i2 < size2; i2++){
-                    scanners.get(i2).scan(data);
+                if(!data.locked){
+                    for(int i2 = 0; i2 < size2; i2++){
+                        scanners.get(i2).scan(data);
+                    }
                 }
             }
         }
