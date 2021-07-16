@@ -223,6 +223,7 @@ public class FSAutomator{
         void scan(FSAutomator automator) throws IOException{
             FSM fsm = new FSM();
             fsm.loadFromFile(src, order, fullsizedposition, scancapacity);
+
             VLListType<FSM.Data> content = fsm.data;
             VLListType<FSHScanner<?>> scanners = automator.scanners;
 
