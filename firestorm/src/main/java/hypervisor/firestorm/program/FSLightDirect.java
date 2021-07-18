@@ -1,6 +1,7 @@
 package hypervisor.firestorm.program;
 
 import hypervisor.vanguard.array.VLArrayFloat;
+import hypervisor.vanguard.math.VLMath;
 
 public class FSLightDirect extends FSLight{
 
@@ -30,9 +31,11 @@ public class FSLightDirect extends FSLight{
         float[] pos = position().array;
         float[] cent = center().array;
 
-        dir[0] = cent[0] - pos[0];
-        dir[1] = cent[1] - pos[1];
-        dir[2] = cent[2] - pos[2];
+        dir[0] = pos[0] - cent[0];
+        dir[1] = pos[1] - cent[1];
+        dir[2] = pos[2] - cent[2];
+
+        VLMath.normalize(dir, 0, 3);
     }
 
     @Override
