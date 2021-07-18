@@ -18,7 +18,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     public static final long FLAG_UNIQUE_ID = 0x1L;
     public static final long FLAG_UNIQUE_NAME = 0x2L;
-    public static final long FLAG_DUPLICATE_entryS = 0x4L;
+    public static final long FLAG_DUPLICATE_ENTRIES = 0x4L;
 
     protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;
@@ -446,6 +446,8 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void copy(FSTypeRender src, long flags){
         FSMesh<ENTRY> target = (FSMesh<ENTRY>)src;
 
+        enabled = target.enabled;
+
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             entries = target.entries;
             name = target.name;
@@ -457,7 +459,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             id = FSControl.generateUID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            if((flags & FLAG_DUPLICATE_entryS) == FLAG_DUPLICATE_entryS){
+            if((flags & FLAG_DUPLICATE_ENTRIES) == FLAG_DUPLICATE_ENTRIES){
                 entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
             }else{

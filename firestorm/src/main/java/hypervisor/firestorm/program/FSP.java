@@ -1,6 +1,7 @@
 package hypervisor.firestorm.program;
 
 import android.opengl.GLES32;
+import android.util.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

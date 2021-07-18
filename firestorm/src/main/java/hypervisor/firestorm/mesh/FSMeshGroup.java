@@ -15,21 +15,18 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     
     public static final long FLAG_UNIQUE_ID = 0x1L;
     public static final long FLAG_UNIQUE_NAME = 0x2L;
-    public static final long FLAG_DUPLICATE_entryS = 0x4L;
+    public static final long FLAG_DUPLICATE_ENTRIES = 0x4L;
 
     protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;
     protected String name;
     protected long id;
-    protected boolean enabled;
 
     public FSMeshGroup(String name, int capacity, int resizer){
         this.name = name.toLowerCase();
 
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.generateUID();
-
-        enabled = true;
     }
 
     public FSMeshGroup(FSMeshGroup<ENTRY> src, long flags){
@@ -84,11 +81,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void enable(boolean enabled){
-        this.enabled = enabled;
-    }
-
-    @Override
     public ENTRY get(int index){
         return entries.get(index);
     }
@@ -96,11 +88,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public VLListType<ENTRY> get(){
         return entries;
-    }
-
-    @Override
-    public boolean enabled(){
-        return enabled;
     }
 
     @Override
@@ -425,7 +412,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             id = FSControl.generateUID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
-            if((flags & FLAG_DUPLICATE_entryS) == FLAG_DUPLICATE_entryS){
+            if((flags & FLAG_DUPLICATE_ENTRIES) == FLAG_DUPLICATE_ENTRIES){
                 entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
             }else{
