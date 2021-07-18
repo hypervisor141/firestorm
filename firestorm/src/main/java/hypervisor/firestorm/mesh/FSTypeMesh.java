@@ -14,8 +14,6 @@ public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGr
     FSBufferMap getBufferMap(FSGlobal global);
     FSHScanner.ScanFunction getScanFunction(FSGlobal global);
     FSP getProgram(FSGlobal global);
-    void enable(boolean enabled);
-    boolean enabled();
 
     ENTRY generateInstance(String name);
     void addToDefinedProgram();

@@ -74,6 +74,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
+    public void enable(boolean enabled){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).enable(enabled);
+        }
+    }
+
+    @Override
     public void remove(int index){
         ENTRY entry = entries.get(index);
         entries.remove(index);
@@ -88,6 +97,19 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public VLListType<ENTRY> get(){
         return entries;
+    }
+
+    @Override
+    public boolean enabled(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            if(entries.get(i).enabled()){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
