@@ -40,8 +40,6 @@ public class FSLightSpot extends FSLight{
         dir[0] = pos[0] - cent[0];
         dir[1] = pos[1] - cent[1];
         dir[2] = pos[2] - cent[2];
-
-        VLMath.normalize(dir, 0, 3);
     }
 
     @Override
