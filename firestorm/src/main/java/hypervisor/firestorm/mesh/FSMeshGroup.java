@@ -21,12 +21,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     protected VLListType<ENTRY> entries;
     protected String name;
     protected long id;
+    protected boolean enabled;
 
     public FSMeshGroup(String name, int capacity, int resizer){
         this.name = name.toLowerCase();
 
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.generateUID();
+
+        enabled = true;
     }
 
     public FSMeshGroup(FSMeshGroup<ENTRY> src, long flags){
@@ -81,6 +84,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
+    public void enable(boolean enabled){
+        this.enabled = enabled;
+    }
+
+    @Override
     public ENTRY get(int index){
         return entries.get(index);
     }
@@ -88,6 +96,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public VLListType<ENTRY> get(){
         return entries;
+    }
+
+    @Override
+    public boolean enabled(){
+        return enabled;
     }
 
     @Override

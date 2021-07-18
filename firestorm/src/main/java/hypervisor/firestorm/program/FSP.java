@@ -224,8 +224,14 @@ public abstract class FSP{
                     FSTypeMesh<?> target = targets.get(i);
                     log.addTag(target.name());
 
-                    target.configure(this, pass, i, passindex);
-                    coreconfigs.meshconfig.runDebug(pass, this, target, i, passindex, log, debug);
+                    if(target.enabled()){
+                        target.configure(this, pass, i, passindex);
+                        coreconfigs.meshconfig.runDebug(pass, this, target, i, passindex, log, debug);
+
+                    }else{
+                        log.append("[DISABLED]");
+                        log.printInfo();
+                    }
 
                     log.removeLastTag();
                 }
@@ -248,8 +254,10 @@ public abstract class FSP{
                 for(int i = 0; i < meshsize; i++){
                     FSTypeMesh<?> target = targets.get(i);
 
-                    target.configure(this, pass, i, passindex);
-                    coreconfigs.meshconfig.configure(this, pass, target, i, passindex);
+                    if(target.enabled()){
+                        target.configure(this, pass, i, passindex);
+                        coreconfigs.meshconfig.configure(this, pass, target, i, passindex);
+                    }
                 }
             }
             if(coreconfigs.postdrawconfig != null){

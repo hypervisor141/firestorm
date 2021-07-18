@@ -25,6 +25,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     protected VLListType<FSBufferBinding<?>>[] bindings;
     protected String name;
     protected long id;
+    protected boolean enabled;
 
     public FSMesh(String name, int capacity, int resizer){
         this.name = name.toLowerCase();
@@ -32,6 +33,8 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         bindings = new VLListType[FSElements.COUNT];
         entries = new VLListType<>(capacity, resizer);
         id = FSControl.generateUID();
+
+        enabled = true;
     }
 
     protected FSMesh(){
@@ -114,6 +117,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
+    public void enable(boolean enabled){
+        this.enabled = enabled;
+    }
+
+    @Override
     public ENTRY get(int index){
         return entries.get(index);
     }
@@ -121,6 +129,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public VLListType<ENTRY> get(){
         return entries;
+    }
+
+    @Override
+    public boolean enabled(){
+        return enabled;
     }
 
     @Override

@@ -11,9 +11,11 @@ public interface FSTypeRenderGroup<ENTRY extends FSTypeRender> extends FSTypeRen
     void add(ENTRY entry);
     void remove(int index);
     void remove(ENTRY entry);
+    void enable(boolean enabled);
     ENTRY first();
     ENTRY last();
     ENTRY get(int index);
     VLListType<ENTRY> get();
+    boolean enabled();
     int size();
 }
