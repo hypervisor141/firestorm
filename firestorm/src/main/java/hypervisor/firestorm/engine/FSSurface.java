@@ -114,7 +114,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
         gesture.onTouchEvent(e);
 
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_TOUCH, FSCInput.TYPE_TOUCH, e, null, -1, -1);
+            FSCInput.trigger(FSCInput.TYPE_PRE_TOUCH, FSCInput.TYPE_TOUCH, e, null, -1, -1);
         }
 
         return true;
@@ -123,7 +123,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onDown(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_DOWN, FSCInput.TYPE_DOWN, e, null, -1, -1);
+            FSCInput.trigger(FSCInput.TYPE_PRE_DOWN, FSCInput.TYPE_DOWN, e, null, -1, -1);
         }
 
         return true;
@@ -132,7 +132,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onSingleTapUp(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_SINGLETAP, FSCInput.TYPE_SINGLETAP, e, null, -1, -1);
+            FSCInput.trigger(FSCInput.TYPE_PRE_SINGLETAP, FSCInput.TYPE_SINGLETAP, e, null, -1, -1);
         }
 
         return false;
@@ -141,14 +141,14 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public void onLongPress(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_LONGPRESS, FSCInput.TYPE_LONGPRESS, e, null, -1, -1);
+            FSCInput.trigger(FSCInput.TYPE_PRE_LONGPRESS, FSCInput.TYPE_LONGPRESS, e, null, -1, -1);
         }
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, final float distanceY){
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_SCROLL, FSCInput.TYPE_SCROLL, e1, e2, distanceX, distanceY);
+            FSCInput.trigger(FSCInput.TYPE_PRE_SCROLL, FSCInput.TYPE_SCROLL, e1, e2, distanceX, distanceY);
         }
 
         return true;
@@ -157,7 +157,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY){
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_FLING, FSCInput.TYPE_FLING, e1, e2, velocityX, velocityY);
+            FSCInput.trigger(FSCInput.TYPE_PRE_FLING, FSCInput.TYPE_FLING, e1, e2, velocityX, velocityY);
         }
 
         return true;
@@ -166,7 +166,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public void onShowPress(MotionEvent e){
         if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.triggerInput(FSCInput.TYPE_PRE_SHOWPRESS, FSCInput.TYPE_SHOWPRESS, e, null, -1, -1);
+            FSCInput.trigger(FSCInput.TYPE_PRE_SHOWPRESS, FSCInput.TYPE_SHOWPRESS, e, null, -1, -1);
         }
     }
 

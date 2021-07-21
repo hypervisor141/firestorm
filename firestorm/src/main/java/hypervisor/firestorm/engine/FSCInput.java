@@ -26,7 +26,7 @@ public final class FSCInput{
     public static final Object LOCK = new Object();
     private static final TaskProcessInput MAINTASK = new TaskProcessInput();
 
-    public static void triggerInput(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+    public static void trigger(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
         MAINTASK.update(pretype, type, e1, e2, f1, f2);
         FSR.post(MAINTASK, false);
     }
