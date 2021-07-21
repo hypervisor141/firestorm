@@ -24,11 +24,9 @@ public final class FSCInput{
     public static final VLListType<Processor> TYPE_FLING = new VLListType<>(20, 50);
 
     public static final Object LOCK = new Object();
-    private static final TaskProcessInput MAINTASK = new TaskProcessInput();
 
     public static void trigger(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        MAINTASK.update(pretype, type, e1, e2, f1, f2);
-        FSR.post(MAINTASK, false);
+        FSR.post(new TaskProcessInput(pretype, type, e1, e2, f1, f2), false);
     }
 
     protected static void destroy(boolean destroyonpause){
@@ -83,11 +81,7 @@ public final class FSCInput{
         protected float f1;
         protected float f2;
 
-        protected void TaskProcessInput(){
-
-        }
-
-        protected void update(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+        protected TaskProcessInput(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
             this.pretype = pretype;
             this.type = type;
             this.e1 = e1;
