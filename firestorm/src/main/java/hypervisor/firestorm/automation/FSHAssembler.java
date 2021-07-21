@@ -339,7 +339,7 @@ public class FSHAssembler implements VLLoggable{
             converted.add(positions[pindex]);
         }
 
-        converted.restrictSize();
+        converted.fitIntoVirtualSize();
         instance.positions().array = converted.array();
     }
 
@@ -357,7 +357,7 @@ public class FSHAssembler implements VLLoggable{
             converted.add(colors[cindex + 3]);
         }
 
-        converted.restrictSize();
+        converted.fitIntoVirtualSize();
         instance.colors().array = converted.array();
     }
 
@@ -373,7 +373,7 @@ public class FSHAssembler implements VLLoggable{
             converted.add(texcoords[tindex + 1]);
         }
 
-        converted.restrictSize();
+        converted.fitIntoVirtualSize();
         instance.texCoords().array = converted.array();
     }
 
@@ -390,7 +390,7 @@ public class FSHAssembler implements VLLoggable{
             converted.add(normals[nindex + 2]);
         }
 
-        converted.restrictSize();
+        converted.fitIntoVirtualSize();
         instance.normals().array = converted.array();
     }
 

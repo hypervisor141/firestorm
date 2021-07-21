@@ -2,132 +2,53 @@ package hypervisor.firestorm.engine;
 
 import android.view.MotionEvent;
 
-import java.util.ArrayList;
-
 import hypervisor.firestorm.mesh.FSTypeRender;
+import hypervisor.vanguard.list.VLListType;
 
 public final class FSCInput{
 
-    private static ArrayList<Processor> LIST_TOUCH;
-    private static ArrayList<Processor> LIST_DOWN;
-    private static ArrayList<Processor> LIST_SINGLETAP;
-    private static ArrayList<Processor> LIST_LONGPRESS;
-    private static ArrayList<Processor> LIST_SHOWPRESS;
-    private static ArrayList<Processor> LIST_SCROLL;
-    private static ArrayList<Processor> LIST_FLING;
+    public static final VLListType<Processor> TYPE_PRE_TOUCH = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_PRE_DOWN = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_PRE_SINGLETAP = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_PRE_LONGPRESS = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_PRE_SHOWPRESS = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_PRE_SCROLL = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_PRE_FLING = new VLListType<>(20, 50);
 
-    public static final InputType TYPE_TOUCH = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_TOUCH;
-        }
-    };
-    public static final InputType TYPE_DOWN = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_DOWN;
-        }
-    };
-    public static final InputType TYPE_SINGLETAP = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_SINGLETAP;
-        }
-    };
-    public static final InputType TYPE_LONGPRESS = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_LONGPRESS;
-        }
-    };
-    public static final InputType TYPE_SHOWPRESS = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_SHOWPRESS;
-        }
-    };
-    public static final InputType TYPE_SCROLL = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_SCROLL;
-        }
-    };
-    public static final InputType TYPE_FLING = new InputType(){
-        @Override
-        public ArrayList<Processor> get(){
-            return LIST_FLING;
-        }
-    };
+    public static final VLListType<Processor> TYPE_TOUCH = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_DOWN = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_SINGLETAP = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_LONGPRESS = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_SHOWPRESS = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_SCROLL = new VLListType<>(20, 50);
+    public static final VLListType<Processor> TYPE_FLING = new VLListType<>(20, 50);
 
-    protected static void initialize(){
-        LIST_TOUCH = new ArrayList<>();
-        LIST_DOWN = new ArrayList<>();
-        LIST_SINGLETAP = new ArrayList<>();
-        LIST_LONGPRESS = new ArrayList<>();
-        LIST_SHOWPRESS = new ArrayList<>();
-        LIST_SCROLL = new ArrayList<>();
-        LIST_FLING = new ArrayList<>();
-    }
+    public static final Object LOCK = new Object();
+    private static final TaskProcessInput MAINTASK = new TaskProcessInput();
 
-    public static void add(InputType type, Processor processor){
-        synchronized(type){
-            type.get().add(processor);
-        }
-    }
-
-    public static void remove(InputType type, int index){
-        synchronized(type){
-            type.get().remove(index);
-        }
-    }
-
-    public static Processor get(InputType type, int index){
-        synchronized(type){
-            return type.get().get(index);
-        }
-    }
-
-    public static ArrayList<Processor> get(InputType type){
-        synchronized(type){
-            return type.get();
-        }
-    }
-
-    public static int size(InputType type){
-        synchronized(type){
-            return type.get().size();
-        }
-    }
-
-    public static void clear(InputType type){
-        synchronized(type){
-            type.get().clear();
-        }
-    }
-
-    public static void triggerInput(InputType type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        FSR.post(new TaskProcessInput(type, e1, e2, f1, f2), false);
+    public static void triggerInput(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+        MAINTASK.update(pretype, type, e1, e2, f1, f2);
+        FSR.post(MAINTASK, false);
     }
 
     protected static void destroy(boolean destroyonpause){
         if(destroyonpause){
-            LIST_TOUCH = null;
-            LIST_DOWN = null;
-            LIST_SINGLETAP = null;
-            LIST_LONGPRESS = null;
-            LIST_SHOWPRESS = null;
-            LIST_SCROLL = null;
-            LIST_FLING = null;
+            TYPE_PRE_TOUCH.resize(0);
+            TYPE_PRE_DOWN.resize(0);
+            TYPE_PRE_SINGLETAP.resize(0);
+            TYPE_PRE_LONGPRESS.resize(0);
+            TYPE_PRE_SHOWPRESS.resize(0);
+            TYPE_PRE_SCROLL.resize(0);
+            TYPE_PRE_FLING.resize(0);
+
+            TYPE_TOUCH.resize(0);
+            TYPE_DOWN.resize(0);
+            TYPE_SINGLETAP.resize(0);
+            TYPE_LONGPRESS.resize(0);
+            TYPE_SHOWPRESS.resize(0);
+            TYPE_SCROLL.resize(0);
+            TYPE_FLING.resize(0);
         }
-    }
-
-    public static abstract class InputType{
-
-        public InputType(){
-
-        }
-
-        protected abstract ArrayList<Processor> get();
     }
 
     public interface Processor{
@@ -155,13 +76,19 @@ public final class FSCInput{
 
     private static final class TaskProcessInput implements FSRTask{
 
-        protected InputType type;
+        protected VLListType<Processor> pretype;
+        protected VLListType<Processor> type;
         protected MotionEvent e1;
         protected MotionEvent e2;
         protected float f1;
         protected float f2;
 
-        protected TaskProcessInput(InputType type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+        protected void TaskProcessInput(){
+
+        }
+
+        protected void update(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
+            this.pretype = pretype;
             this.type = type;
             this.e1 = e1;
             this.e2 = e2;
@@ -181,17 +108,29 @@ public final class FSCInput{
             FSView config = FSControl.getView();
             config.unProject2DPoint(e1.getX(), e1.getY(), near, 0, far, 0);
 
-            ArrayList<Processor> cache;
+            Processor[] cache;
 
-            synchronized(type){
-                ArrayList<Processor> entries = type.get();
-                cache = new ArrayList<>(entries);
+            synchronized(LOCK){
+                int size = pretype.size();
+                int size2 = type.size();
+
+                cache = new Processor[size + size2];
+
+                Object[] array = pretype.array();
+                Object[] array2 = type.array();
+
+                for(int i = 0; i < size; i++){
+                    cache[i] = (Processor)array[i];
+                }
+                for(int i = 0, i2 = size; i < size2; i++, i2++){
+                    cache[i2] = (Processor)array2[i];
+                }
             }
 
-            int size = cache.size();
+            int size = cache.length;
 
             for(int i = 0; i < size; i++){
-                cache.get(i).process(e1, e2, f1, f2, near, far);
+                cache[i].process(e1, e2, f1, f2, near, far);
             }
         }
     }

@@ -44,7 +44,6 @@ public final class FSControl{
 
             FSCDimensions.initialize(activity);
             FSElements.initialize(customelements);
-            FSCInput.initialize();
             FSCFrames.initialize(maxunchangedframes, maxqueuedframes);
             FSR.initialize(threadinterface);
             FSGlobal.initialize(global);

@@ -122,11 +122,11 @@ public class FSM{
         }
 
         private void clean(){
-            positions.restrictSize();
-            colors.restrictSize();
-            texcoords.restrictSize();
-            normals.restrictSize();
-            indices.restrictSize();
+            positions.fitIntoVirtualSize();
+            colors.fitIntoVirtualSize();
+            texcoords.fitIntoVirtualSize();
+            normals.fitIntoVirtualSize();
+            indices.fitIntoVirtualSize();
         }
     }
 

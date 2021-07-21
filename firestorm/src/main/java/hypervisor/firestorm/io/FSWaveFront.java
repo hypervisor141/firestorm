@@ -221,10 +221,10 @@ public final class FSWaveFront{
             normals = n;
             indices = i;
 
-            positions.restrictSize();
-            texcoords.restrictSize();
-            normals.restrictSize();
-            indices.restrictSize();
+            positions.fitIntoVirtualSize();
+            texcoords.fitIntoVirtualSize();
+            normals.fitIntoVirtualSize();
+            indices.fitIntoVirtualSize();
         }
     }
 
