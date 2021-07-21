@@ -37,8 +37,6 @@ public class FSModelArray extends VLArrayFloat{
 
     @Override
     public void transform(int index, VLVMatrix matrix, boolean replace){
-        new FSModelArray();
-
         if(replace){
             identity();
         }
