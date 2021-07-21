@@ -179,8 +179,8 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public FSArrayModel model(){
-        return (FSArrayModel)elementData(FSElements.ELEMENT_MODEL);
+    public FSModelArray model(){
+        return (FSModelArray)elementData(FSElements.ELEMENT_MODEL);
     }
 
     @Override

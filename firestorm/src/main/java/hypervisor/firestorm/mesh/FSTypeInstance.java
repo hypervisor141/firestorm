@@ -21,7 +21,7 @@ public interface FSTypeInstance extends FSTypeRender{
     Object elementData(int element);
     FSElement<?, ?> element(int element);
     int vertexSize();
-    FSArrayModel model();
+    FSModelArray model();
     VLArrayFloat positions();
     VLArrayFloat colors();
     VLArrayFloat texCoords();

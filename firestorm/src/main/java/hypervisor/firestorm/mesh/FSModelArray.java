@@ -8,7 +8,7 @@ import hypervisor.vanguard.variable.VLV;
 import hypervisor.vanguard.variable.VLVMatrix;
 import hypervisor.vanguard.variable.VLVTypeVariable;
 
-public class FSArrayModel extends VLArrayFloat{
+public class FSModelArray extends VLArrayFloat{
 
     private static final int TRANSLATE = 8941;
     private static final int ROTATE = 8942;
@@ -18,26 +18,26 @@ public class FSArrayModel extends VLArrayFloat{
     public static final VLV FLAG_ROTATE = new VLV(ROTATE);
     public static final VLV FLAG_SCALE = new VLV(SCALE);
 
-    public FSArrayModel(float[] s){
+    public FSModelArray(float[] s){
         super(s);
     }
 
-    public FSArrayModel(int size){
+    public FSModelArray(int size){
         super(size);
         identity();
     }
 
-    public FSArrayModel(FSArrayModel src, long flags){
+    public FSModelArray(FSModelArray src, long flags){
         copy(src, flags);
     }
     
-    protected FSArrayModel(){
+    protected FSModelArray(){
 
     }
 
     @Override
     public void transform(int index, VLVMatrix matrix, boolean replace){
-        new FSArrayModel();
+        new FSModelArray();
 
         if(replace){
             identity();
@@ -102,7 +102,7 @@ public class FSArrayModel extends VLArrayFloat{
     }
 
     @Override
-    public FSArrayModel duplicate(long flags){
-        return new FSArrayModel(this, flags);
+    public FSModelArray duplicate(long flags){
+        return new FSModelArray(this, flags);
     }
 }

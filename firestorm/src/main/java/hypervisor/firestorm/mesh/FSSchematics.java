@@ -374,7 +374,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
     }
 
     public void directUpdateModelSpaceBounds(){
-        FSArrayModel modelSpace = instance.model();
+        FSModelArray modelSpace = instance.model();
 
         modelSpace.transformPoint(boundsmodelspace, 0, boundslocalspace, 0);
         modelSpace.transformPoint(boundsmodelspace, 4, boundslocalspace, 4);

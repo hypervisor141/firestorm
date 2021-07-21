@@ -2,7 +2,7 @@ package hypervisor.firestorm.automation;
 
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.io.FSM;
-import hypervisor.firestorm.mesh.FSArrayModel;
+import hypervisor.firestorm.mesh.FSModelArray;
 import hypervisor.firestorm.mesh.FSElement;
 import hypervisor.firestorm.mesh.FSElementStore;
 import hypervisor.firestorm.mesh.FSModelMatrix;
@@ -504,7 +504,7 @@ public class FSHAssembler implements VLLoggable{
         @Override
         public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
             store.allocateElement(FSElements.ELEMENT_MODEL, 1, 0);
-            store.add(FSElements.ELEMENT_MODEL, new FSElement.FloatArray(FSElements.ELEMENT_MODEL, new FSArrayModel(FSElements.UNIT_SIZES[FSElements.ELEMENT_MODEL])));
+            store.add(FSElements.ELEMENT_MODEL, new FSElement.FloatArray(FSElements.ELEMENT_MODEL, new FSModelArray(FSElements.UNIT_SIZES[FSElements.ELEMENT_MODEL])));
             store.activate(FSElements.ELEMENT_MODEL, 0);
 
             instance.modelMatrix(new FSModelMatrix(2, 10));
