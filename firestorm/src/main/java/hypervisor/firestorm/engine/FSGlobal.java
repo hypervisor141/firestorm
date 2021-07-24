@@ -22,7 +22,7 @@ public abstract class FSGlobal{
     protected VLListType<FSBufferMap> buffermaps;
     protected VLListType<FSP> programs;
     protected VLListType<FSRPass> passes;
-    protected VLListType<FSHub> hubs;
+    protected VLListType<FSHub<?>> hubs;
 
     public FSGlobal(){
 
@@ -57,7 +57,7 @@ public abstract class FSGlobal{
     protected abstract VLListType<FSBufferMap> generateBufferMaps(Context context);
     protected abstract VLListType<FSP> generatePrograms(Context context);
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
-    protected abstract VLListType<FSHub> generateHubs(Context context);
+    protected abstract VLListType<FSHub<?>> generateHubs(Context context);
     protected abstract void postSetup(Context context);
     protected abstract void paused();
     protected abstract void resumed();
@@ -86,7 +86,7 @@ public abstract class FSGlobal{
         return passes.get(index);
     }
 
-    public FSHub hub(int index){
+    public FSHub<?> hub(int index){
         return hubs.get(index);
     }
 
@@ -118,7 +118,7 @@ public abstract class FSGlobal{
         return passes;
     }
 
-    public VLListType<FSHub> hubs(){
+    public VLListType<FSHub<?>> hubs(){
         return hubs;
     }
 
