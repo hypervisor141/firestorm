@@ -26,7 +26,7 @@ public final class FSCInput{
     public static final Object LOCK = new Object();
 
     public static void trigger(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        FSR.post(new TaskProcessInput(pretype, type, e1, e2, f1, f2), false);
+        FSR.post(new TaskProcessInput(pretype, type, e1, e2, f1, f2));
     }
 
     protected static void destroy(boolean destroyonpause){
