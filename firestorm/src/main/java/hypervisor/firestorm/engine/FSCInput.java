@@ -26,7 +26,40 @@ public final class FSCInput{
     public static final Object LOCK = new Object();
 
     public static void trigger(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-        FSR.post(new TaskProcessInput(pretype, type, e1, e2, f1, f2));
+        Processor[] cache;
+
+        synchronized(LOCK){
+            int size = pretype.size();
+            int size2 = type.size();
+
+            cache = new Processor[size + size2];
+
+            Object[] array = pretype.array();
+            Object[] array2 = type.array();
+
+            for(int i = 0; i < size; i++){
+                cache[i] = (Processor)array[i];
+            }
+            for(int i = 0, i2 = size; i < size2; i++, i2++){
+                cache[i2] = (Processor)array2[i];
+            }
+        }
+
+        float[] near = new float[4];
+        float[] far = new float[4];
+
+        int size = cache.length;
+
+        FSR.requestSyncWindow();
+
+        FSView config = FSControl.getView();
+        config.unProject2DPoint(e1.getX(), e1.getY(), near, 0, far, 0);
+
+        for(int i = 0; i < size; i++){
+            cache[i].process(e1, e2, f1, f2, near, far);
+        }
+
+        FSR.notifySyncCompleted();
     }
 
     protected static void destroy(boolean destroyonpause){
@@ -69,63 +102,6 @@ public final class FSCInput{
         @Override
         public void process(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
             target.checkInputs(e1, e2, f1, f2, near, far);
-        }
-    }
-
-    private static final class TaskProcessInput implements FSRTask{
-
-        protected VLListType<Processor> pretype;
-        protected VLListType<Processor> type;
-        protected MotionEvent e1;
-        protected MotionEvent e2;
-        protected float f1;
-        protected float f2;
-
-        protected TaskProcessInput(VLListType<Processor> pretype, VLListType<Processor> type, MotionEvent e1, MotionEvent e2, float f1, float f2){
-            this.pretype = pretype;
-            this.type = type;
-            this.e1 = e1;
-            this.e2 = e2;
-            this.f1 = f1;
-            this.f2 = f2;
-        }
-
-        protected TaskProcessInput(){
-
-        }
-
-        @Override
-        public void run(){
-            float[] near = new float[4];
-            float[] far = new float[4];
-
-            FSView config = FSControl.getView();
-            config.unProject2DPoint(e1.getX(), e1.getY(), near, 0, far, 0);
-
-            Processor[] cache;
-
-            synchronized(LOCK){
-                int size = pretype.size();
-                int size2 = type.size();
-
-                cache = new Processor[size + size2];
-
-                Object[] array = pretype.array();
-                Object[] array2 = type.array();
-
-                for(int i = 0; i < size; i++){
-                    cache[i] = (Processor)array[i];
-                }
-                for(int i = 0, i2 = size; i < size2; i++, i2++){
-                    cache[i2] = (Processor)array2[i];
-                }
-            }
-
-            int size = cache.length;
-
-            for(int i = 0; i < size; i++){
-                cache[i].process(e1, e2, f1, f2, near, far);
-            }
         }
     }
 }
