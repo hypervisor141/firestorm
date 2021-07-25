@@ -17,9 +17,11 @@ public class FSR{
     };
     private static final Choreographer.FrameCallback CHOREOGRAPHER_CALLBACK = new Choreographer.FrameCallback(){
 
+        private final FSRThread.TaskSignalFrameDraw TASK = new FSRThread.TaskSignalFrameDraw();
+
         @Override
         public void doFrame(long frameTimeNanos){
-            postThreadTask(new FSRThread.TaskSignalFrameDraw());
+            postRootTask(TASK);
         }
     };
 
@@ -29,11 +31,9 @@ public class FSR{
 
     protected static boolean isInitialized;
 
-    private static final VLListType<Thread> threadsyncqueue = new VLListType<>(10, 10);;
-    private static final VLListType<Thread> threadsyncqueuecache = new VLListType<>(10, 10);;
-
     private static final VLListType<FSRTask> tasks = new VLListType<>(10, 10);
-    private static final VLListType<FSRTask> taskcache = new VLListType<>(10, 10);;
+    private static final VLListType<FSRTask> taskcache = new VLListType<>(10, 10);
+    private static final VLListType<FSRTask> taskssticky = new VLListType<>(10, 10);
 
     public static int CURRENT_PASS_INDEX;
     public static int CURRENT_PASS_ENTRY_INDEX;
@@ -71,7 +71,7 @@ public class FSR{
         }
     }
 
-    protected static FSRThread postThreadTask(VLThreadTaskType task){
+    protected static FSRThread postRootTask(VLThreadTaskType task){
         if(renderthread != null){
             renderthread.post(task);
         }
@@ -125,13 +125,13 @@ public class FSR{
         finishFrame();
     }
 
+    protected static void finishFrame(){
+        processTasks();
 
-    public static FSRThread renderThread(){
-        return renderthread;
-    }
-
-    public static int currentPassIndex(){
-        return CURRENT_PASS_INDEX;
+        FSCFrames.timeFrameEnded();
+        FSCEGL.swapBuffers();
+        FSGlobal.get().notifyFrameSwap();
+        FSCFrames.finalizeFrame();
     }
 
     protected static void notifyPaused(){
@@ -142,66 +142,17 @@ public class FSR{
         FSGlobal.get().notifyResumed();
     }
 
-    public static void requestSyncWindow(){
-        final Thread current = Thread.currentThread();
-
-        synchronized(threadsyncqueue){
-            threadsyncqueue.add(current);
-        }
-        synchronized(current){
-            try{
-                current.wait();
-
-            }catch(InterruptedException ex){
-                //
-            }
-        }
-    }
-
-    public static void notifySyncCompleted(){
-        final Thread current = Thread.currentThread();
-
-        synchronized(current){
-            current.notifyAll();
-        }
-    }
-
-    private static void processSyncRequests(){
-        int size;
-
-        synchronized(threadsyncqueue){
-            size = threadsyncqueue.size();
-
-            if(size == 0){
-                return;
-
-            }else{
-                threadsyncqueuecache.add(threadsyncqueue);
-                threadsyncqueue.clear();
-            }
-        }
-
-        for(int i = 0; i < size; i++){
-            Thread active = threadsyncqueuecache.get(i);
-
-            synchronized(active){
-                active.notifyAll();
-
-                try{
-                    active.wait();
-
-                }catch(InterruptedException ex){
-                    //
-                }
-            }
-        }
-
-        threadsyncqueuecache.clear();
-    }
-
-    public static void post(FSRTask task){
+    public static void postTask(FSRTask task){
         synchronized(tasks){
             tasks.add(task);
+        }
+
+        requestFrame();
+    }
+
+    public static void postStickyTask(FSRTask task){
+        synchronized(taskssticky){
+            taskssticky.add(task);
         }
 
         requestFrame();
@@ -220,16 +171,22 @@ public class FSR{
         }
 
         taskcache.clear();
+
+        synchronized(taskssticky){
+            size = taskssticky.size();
+
+            for(int i = 0; i < size; i++){
+                taskssticky.get(i).run();
+            }
+        }
     }
 
-    protected static void finishFrame(){
-        processTasks();
-        processSyncRequests();
+    public static FSRThread renderThread(){
+        return renderthread;
+    }
 
-        FSCFrames.timeFrameEnded();
-        FSCEGL.swapBuffers();
-        FSGlobal.get().notifyFrameSwap();
-        FSCFrames.finalizeFrame();
+    public static int currentPassIndex(){
+        return CURRENT_PASS_INDEX;
     }
 
     protected static void destroy(boolean destroyonpause){
@@ -249,6 +206,17 @@ public class FSR{
 
             threadinterface = null;
             choreographer = null;
+        }
+    }
+
+    private static final class SyncQueueEntry{
+
+        protected final Thread thread;
+        protected boolean requestedsync;
+
+        private SyncQueueEntry(Thread thread){
+            this.thread = thread;
+            this.requestedsync = true;
         }
     }
 }

@@ -75,8 +75,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
         events.GLPreSurfaceCreate(this, context, isalive);
 
         FSR.requestStart();
-        FSR.postThreadTask(new FSRThread.TaskCreateContext(getHolder(), eglconfig, isalive));
-        FSR.postThreadTask(new FSRThread.TaskSignalSurfaceCreated(this, context, isalive));
+        FSR.postRootTask(new FSRThread.TaskCreateContext(getHolder(), eglconfig, isalive));
+        FSR.postRootTask(new FSRThread.TaskSignalSurfaceCreated(this, context, isalive));
 
         events.GLPostSurfaceCreate(this, context, isalive);
 
@@ -90,7 +90,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
         events.GLPreSurfaceChange(this, context, format, width, height);
 
-        FSR.postThreadTask(new FSRThread.TaskSignalSurfaceChanged(this, context, format, width, height));
+        FSR.postRootTask(new FSRThread.TaskSignalSurfaceChanged(this, context, format, width, height));
 
         events.GLPostSurfaceChange(this, context, format, width, height);
     }
@@ -113,8 +113,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     public boolean onTouchEvent(MotionEvent e){
         gesture.onTouchEvent(e);
 
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_TOUCH, FSCInput.TYPE_TOUCH, e, null, -1, -1);
+        if(config.getTouchable()){
+            FSCInput.TOUCH.trigger(e, null, -1F,-1F);
         }
 
         return true;
@@ -122,8 +122,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public boolean onDown(MotionEvent e){
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_DOWN, FSCInput.TYPE_DOWN, e, null, -1, -1);
+        if(config.getTouchable()){
+            FSCInput.DOWN.trigger(e, null, -1F,-1F);
         }
 
         return true;
@@ -131,8 +131,8 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public boolean onSingleTapUp(MotionEvent e){
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_SINGLETAP, FSCInput.TYPE_SINGLETAP, e, null, -1, -1);
+        if(config.getTouchable()){
+            FSCInput.SINGLETAP.trigger(e, null, -1F,-1F);
         }
 
         return false;
@@ -140,15 +140,22 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public void onLongPress(MotionEvent e){
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_LONGPRESS, FSCInput.TYPE_LONGPRESS, e, null, -1, -1);
+        if(config.getTouchable()){
+            FSCInput.LONGPRESS.trigger(e, null, -1F,-1F);
+        }
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e){
+        if(config.getTouchable()){
+            FSCInput.SHOWPRESS.trigger(e, null, -1F, -1F);
         }
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, final float distanceY){
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_SCROLL, FSCInput.TYPE_SCROLL, e1, e2, distanceX, distanceY);
+        if(config.getTouchable()){
+            FSCInput.SCROLL.trigger(e1, e2, distanceX, distanceY);
         }
 
         return true;
@@ -156,18 +163,11 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY){
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_FLING, FSCInput.TYPE_FLING, e1, e2, velocityX, velocityY);
+        if(config.getTouchable()){
+            FSCInput.FLING.trigger(e1, e2, velocityX, velocityY);
         }
 
         return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e){
-        if(FSR.isInitialized && config.getTouchable()){
-            FSCInput.trigger(FSCInput.TYPE_PRE_SHOWPRESS, FSCInput.TYPE_SHOWPRESS, e, null, -1, -1);
-        }
     }
 
     private void destroy(){

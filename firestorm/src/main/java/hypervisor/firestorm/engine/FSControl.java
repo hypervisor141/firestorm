@@ -107,7 +107,6 @@ public final class FSControl{
         FSGlobal.destroy(destroyonpause);
         FSCDimensions.destroy(destroyonpause);
         FSCEGL.destroy(destroyonpause);
-        FSCInput.destroy(destroyonpause);
         FSCFrames.destroy(destroyonpause);
         FSElements.destroy(destroyonpause);
 
