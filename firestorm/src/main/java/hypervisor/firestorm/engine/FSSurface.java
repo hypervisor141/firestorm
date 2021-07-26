@@ -112,7 +112,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onTouchEvent(MotionEvent e){
         if(config.getTouchable()){
-            return !gesture.onTouchEvent(e) || !FSCInput.TOUCH.trigger(e, null, -1F,-1F);
+            return !FSCInput.TOUCH.trigger(e, null, -1F,-1F) || !gesture.onTouchEvent(e);
         }
 
         return false;
