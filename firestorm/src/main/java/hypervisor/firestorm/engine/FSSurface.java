@@ -111,13 +111,11 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
-        gesture.onTouchEvent(e);
-
         if(config.getTouchable()){
-            return FSCInput.TOUCH.trigger(e, null, -1F,-1F);
+            return !gesture.onTouchEvent(e) || !FSCInput.TOUCH.trigger(e, null, -1F,-1F);
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -126,7 +124,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
             return FSCInput.DOWN.trigger(e, null, -1F,-1F);
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -158,7 +156,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
             return FSCInput.SCROLL.trigger(e1, e2, distanceX, distanceY);
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -167,7 +165,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
             return FSCInput.FLING.trigger(e1, e2, velocityX, velocityY);
         }
 
-        return true;
+        return false;
     }
 
     private void destroy(){
