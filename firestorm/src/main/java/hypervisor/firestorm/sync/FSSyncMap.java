@@ -6,7 +6,7 @@ import hypervisor.vanguard.sync.VLSyncMap;
 import hypervisor.vanguard.sync.VLSyncType;
 import hypervisor.vanguard.utils.VLCopyable;
 
-public abstract class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSyncMap<SOURCE, TARGET>{
+public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSyncMap<SOURCE, TARGET>{
 
     public Post<SOURCE> post;
 
@@ -29,8 +29,6 @@ public abstract class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> exten
         FSR.postTask(post);
     }
 
-    public abstract void syncPosted(SOURCE source);
-
     @Override
     public void copy(VLSyncType<SOURCE> src, long flags){
         super.copy(src, flags);
@@ -44,6 +42,11 @@ public abstract class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> exten
         }else{
             Helper.throwMissingAllFlags();
         }
+    }
+
+    @Override
+    public FSSyncMap<SOURCE, TARGET> duplicate(long flags){
+        return new FSSyncMap<>(this, flags);
     }
 
     public static class Post<SOURCE> implements FSRTask, VLCopyable<Post<SOURCE>>{
