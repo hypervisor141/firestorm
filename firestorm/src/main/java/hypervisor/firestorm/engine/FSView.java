@@ -122,6 +122,38 @@ public class FSView implements VLCopyable<FSView>{
         return settingsorthographic.array[index];
     }
 
+    public synchronized float[] matrixPerspective(){
+        return matperspective.array.clone();
+    }
+
+    public synchronized float[] matrixOrthographic(){
+        return matorthographic.array.clone();
+    }
+
+    public synchronized float[] matrixView(){
+        return matview.array.clone();
+    }
+
+    public synchronized float[] matrixViewProjection(){
+        return matviewprojection.array.clone();
+    }
+
+    public synchronized int[] settingsViewport(){
+        return settingsviewport.array.clone();
+    }
+
+    public synchronized float[] settingsView(){
+        return settingsview.array.clone();
+    }
+
+    public synchronized float[] settingsPerspective(){
+        return settingsperspective.array.clone();
+    }
+
+    public synchronized float[] settingsOrthographic(){
+        return settingsorthographic.array.clone();
+    }
+
     public synchronized void viewPort(int x, int y, int width, int height){
         settingsViewPort(x, y, width, height);
         applyViewPort();

@@ -1,7 +1,6 @@
 package hypervisor.firestorm.program;
 
 import android.opengl.GLES32;
-import android.util.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -408,6 +407,103 @@ public abstract class FSP{
 
         protected CoreConfig(){
 
+        }
+    }
+
+    public static class ViewProjectionMatrixUniform extends FSConfigLocated{
+
+        public FSView target;
+
+        public ViewProjectionMatrixUniform(Mode mode, FSView target){
+            super(mode);
+            this.target = target;
+        }
+
+        public ViewProjectionMatrixUniform(ViewProjectionMatrixUniform src, long flags){
+            copy(src, flags);
+        }
+
+        protected ViewProjectionMatrixUniform(){
+
+        }
+
+        @Override
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
+            GLES32.glUniformMatrix4fv(location, 1, false, target.matrixViewProjection(), 0);
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            target = ((ViewProjectionMatrixUniform)src).target;
+        }
+
+        @Override
+        public ViewProjectionMatrixUniform duplicate(long flags){
+            return new ViewProjectionMatrixUniform(this, flags);
+        }
+
+        @Override
+        public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
+            super.attachDebugInfo(pass, program, mesh, log, debug);
+
+            log.append(" target[");
+            log.append(Arrays.toString(target.matrixViewProjection()));
+            log.append("]");
+        }
+    }
+
+    public static class ViewPosUniform extends FSConfigLocated{
+
+        public FSView target;
+
+        public ViewPosUniform(Mode mode, FSView target){
+            super(mode);
+            this.target = target;
+        }
+
+        public ViewPosUniform(ViewPosUniform src, long flags){
+            copy(src, flags);
+        }
+
+        protected ViewPosUniform(){
+
+        }
+
+        @Override
+        public void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex){
+            float[] copy = target.settingsView();
+            GLES32.glUniform3fv(location, 1, copy, 0);
+        }
+
+        @Override
+        public int getGLSLSize(){
+            return 1;
+        }
+
+        @Override
+        public void copy(FSConfig src, long flags){
+            super.copy(src, flags);
+            target = ((ViewProjectionMatrixUniform)src).target;
+        }
+
+        @Override
+        public ViewPosUniform duplicate(long flags){
+            return new ViewPosUniform(this, flags);
+        }
+
+        @Override
+        public void attachDebugInfo(FSRPass pass, FSP program, FSTypeMesh<?> mesh, VLLog log, int debug){
+            super.attachDebugInfo(pass, program, mesh, log, debug);
+
+            log.append(" target[");
+            log.append(Arrays.toString(target.settingsView()));
+            log.append("]");
         }
     }
 
