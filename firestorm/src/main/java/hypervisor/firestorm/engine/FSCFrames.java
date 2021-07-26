@@ -222,14 +222,14 @@ public class FSCFrames{
                 LOG.append(AVERAGE_PROCESS_TIME);
                 LOG.append("ms] tasks[");
                 LOG.append(TOTAL_TASKS_PROCESSED + TOTAL_STICKY_TASKS_PROCESSED);
-                LOG.append("] stickyTasks[");
-                LOG.append(TOTAL_STICKY_TASKS_PROCESSED);
-                LOG.append("] normalTasks[");
-                LOG.append(TOTAL_TASKS_PROCESSED);
                 LOG.append("] averageStickyTasks[");
                 LOG.append(TOTAL_STICKY_TASKS_PROCESSED / FPS);
                 LOG.append("] averageNormalTasks[");
                 LOG.append(TOTAL_TASKS_PROCESSED / FPS);
+                LOG.append("] totalStickyTasks[");
+                LOG.append(TOTAL_STICKY_TASKS_PROCESSED);
+                LOG.append("] totalNormalTasks[");
+                LOG.append(TOTAL_TASKS_PROCESSED);
                 LOG.append("]");
                 LOG.printInfo();
 
