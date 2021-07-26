@@ -9,16 +9,16 @@ import hypervisor.vanguard.utils.VLCopyable;
 @SuppressWarnings("unused")
 public class FSView implements VLCopyable<FSView>{
 
-    protected float[] matview;
-    protected float[] matperspective;
-    protected float[] matorthographic;
-    protected float[] matprojection;
-    protected float[] matviewprojection;
+    protected volatile float[] matview;
+    protected volatile float[] matperspective;
+    protected volatile float[] matorthographic;
+    protected volatile float[] matprojection;
+    protected volatile float[] matviewprojection;
 
-    protected int[] settingsviewport;
-    protected float[] settingsview;
-    protected float[] settingsperspective;
-    protected float[] settingsorthographic;
+    protected volatile int[] settingsviewport;
+    protected volatile float[] settingsview;
+    protected volatile float[] settingsperspective;
+    protected volatile float[] settingsorthographic;
 
     public FSView(boolean perspectivemode){
         matprojection = null;
@@ -49,131 +49,79 @@ public class FSView implements VLCopyable<FSView>{
 
     }
 
-    public synchronized void setPerspectiveMode(){
+    public void setPerspectiveMode(){
         matprojection = matperspective;
     }
 
-    public synchronized void setOrthographicMode(){
+    public void setOrthographicMode(){
         matprojection = matorthographic;
     }
 
-    public synchronized void matrixPerspective(int index, float value){
+    public void matrixPerspective(int index, float value){
         matperspective[index] = value;
     }
 
-    public synchronized void matrixOrthographic(int index, float value){
+    public void matrixOrthographic(int index, float value){
         matorthographic[index] = value;
     }
 
-    public synchronized void matrixView(int index, float value){
+    public void matrixView(int index, float value){
         matview[index] = value;
     }
 
-    public synchronized void matrixViewProjection(int index, float value){
-        matviewprojection[index] = value;
+    public float[] matrixPerspective(){
+        return matperspective;
     }
 
-    public synchronized void settingsViewport(int index, int value){
-        settingsviewport[index] = value;
+    public float[] matrixOrthographic(){
+        return matorthographic;
     }
 
-    public synchronized void settingsView(int index, float value){
-        settingsview[index] = value;
+    public float[] matrixView(){
+        return matview;
     }
 
-    public synchronized void settingsPerspective(int index, float value){
-        settingsperspective[index] = value;
+    public float[] matrixViewProjection(){
+        return matviewprojection;
     }
 
-    public synchronized void settingsOrthographic(int index, float value){
-        settingsorthographic[index] = value;
+    public int[] settingsViewport(){
+        return settingsviewport;
     }
 
-    public synchronized float matrixPerspective(int index){
-        return matperspective[index];
+    public float[] settingsView(){
+        return settingsview;
     }
 
-    public synchronized float matrixOrthographic(int index){
-        return matorthographic[index];
+    public float[] settingsPerspective(){
+        return settingsperspective;
     }
 
-    public synchronized float matrixView(int index){
-        return matview[index];
+    public float[] settingsOrthographic(){
+        return settingsorthographic;
     }
 
-    public synchronized float matrixViewProjection(int index){
-        return matviewprojection[index];
-    }
-
-    public synchronized int settingsViewport(int index){
-        return settingsviewport[index];
-    }
-
-    public synchronized float settingsView(int index){
-        return settingsview[index];
-    }
-
-    public synchronized float settingsPerspective(int index){
-        return settingsperspective[index];
-    }
-
-    public synchronized float settingsOrthographic(int index){
-        return settingsorthographic[index];
-    }
-
-    public synchronized float[] matrixPerspective(){
-        return matperspective.clone();
-    }
-
-    public synchronized float[] matrixOrthographic(){
-        return matorthographic.clone();
-    }
-
-    public synchronized float[] matrixView(){
-        return matview.clone();
-    }
-
-    public synchronized float[] matrixViewProjection(){
-        return matviewprojection.clone();
-    }
-
-    public synchronized int[] settingsViewport(){
-        return settingsviewport.clone();
-    }
-
-    public synchronized float[] settingsView(){
-        return settingsview.clone();
-    }
-
-    public synchronized float[] settingsPerspective(){
-        return settingsperspective.clone();
-    }
-
-    public synchronized float[] settingsOrthographic(){
-        return settingsorthographic.clone();
-    }
-
-    public synchronized void viewPort(int x, int y, int width, int height){
+    public void viewPort(int x, int y, int width, int height){
         settingsViewPort(x, y, width, height);
         applyViewPort();
     }
 
-    public synchronized void lookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
+    public void lookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
         settingsLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
         applyLookAt();
     }
 
-    public synchronized void perspective(float fovy, float aspect, float znear, float zfar){
+    public void perspective(float fovy, float aspect, float znear, float zfar){
         settingsPerspective(fovy, aspect, znear, zfar);
         applyPerspective();
     }
 
-    public synchronized void orthographic(float left, float right, float bottom, float top, float znear, float zfar){
+    public void orthographic(float left, float right, float bottom, float top, float znear, float zfar){
         settingsOrthographic(left, right, bottom, top, znear, zfar);
         applyOrthographic();
     }
 
-    public synchronized void settingsViewPort(int x, int y, int width, int height){
+    public void settingsViewPort(int x, int y, int width, int height){
         int[] viewport = this.settingsviewport;
 
         viewport[0] = x;
@@ -182,7 +130,7 @@ public class FSView implements VLCopyable<FSView>{
         viewport[3] = height;
     }
 
-    public synchronized void settingsLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
+    public void settingsLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
         float[] settings = settingsview;
 
         settings[0] = eyeX;
@@ -196,7 +144,7 @@ public class FSView implements VLCopyable<FSView>{
         settings[8] = upZ;
     }
 
-    public synchronized void settingsPerspective(float fovy, float aspect, float znear, float zfar){
+    public void settingsPerspective(float fovy, float aspect, float znear, float zfar){
         float[] settings = settingsperspective;
 
         settings[0] = fovy;
@@ -205,7 +153,7 @@ public class FSView implements VLCopyable<FSView>{
         settings[3] = zfar;
     }
 
-    public synchronized void settingsOrthographic(float left, float right, float bottom, float top, float znear, float zfar){
+    public void settingsOrthographic(float left, float right, float bottom, float top, float znear, float zfar){
         float[] settings = settingsorthographic;
 
         settings[0] = left;
@@ -216,31 +164,31 @@ public class FSView implements VLCopyable<FSView>{
         settings[5] = zfar;
     }
 
-    public synchronized void applyLookAt(){
+    public void applyLookAt(){
         float[] settings = settingsview;
         Matrix.setLookAtM(matview, 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5], settings[6], settings[7], settings[8]);
     }
 
-    public synchronized void applyOrthographic(){
+    public void applyOrthographic(){
         float[] settings = settingsorthographic;
         Matrix.orthoM(matorthographic, 0, settings[0], settings[1], settings[2], settings[3], settings[4], settings[5]);
     }
 
-    public synchronized void applyPerspective(){
+    public void applyPerspective(){
         float[] settings = settingsperspective;
         Matrix.perspectiveM(matperspective, 0, settings[0], settings[1], settings[2], settings[3]);
     }
 
-    public synchronized void applyViewPort(){
+    public void applyViewPort(){
         int[] viewport = this.settingsviewport;
         GLES32.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     }
 
-    public synchronized void applyViewProjection(){
+    public void applyViewProjection(){
         Matrix.multiplyMM(matviewprojection, 0, matprojection, 0, matview, 0);
     }
 
-    public synchronized void multiplyViewPerspective(float[] results, int offset, float[] point, int offset2){
+    public void multiplyViewPerspective(float[] results, int offset, float[] point, int offset2){
         Matrix.multiplyMV(results, offset, matviewprojection, 0, point, offset2);
 
         float w = results[offset + 3];
@@ -249,11 +197,11 @@ public class FSView implements VLCopyable<FSView>{
         results[offset + 2] /= w;
     }
 
-    public synchronized void convertToMVP(float[] results, int offset, float[] model){
+    public void convertToMVP(float[] results, int offset, float[] model){
         Matrix.multiplyMM(results, offset, matviewprojection, 0, model, 0);
     }
 
-    public synchronized void unProject2DPoint(float x, float y, float[] resultsnear, int offset1, float[] resultsfar, int offset2){
+    public void unProject2DPoint(float x, float y, float[] resultsnear, int offset1, float[] resultsfar, int offset2){
         y = settingsviewport[3] - y;
 
         GLU.gluUnProject(x, y, 0F, matview, 0, matprojection, 0, settingsviewport, 0, resultsnear, offset1);
@@ -273,7 +221,7 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     @Override
-    public synchronized void copy(FSView src, long flags){
+    public void copy(FSView src, long flags){
         matprojection = src.matprojection;
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
@@ -302,7 +250,7 @@ public class FSView implements VLCopyable<FSView>{
     }
 
     @Override
-    public synchronized FSView duplicate(long flags){
+    public FSView duplicate(long flags){
         return new FSView(this, flags);
     }
 }
