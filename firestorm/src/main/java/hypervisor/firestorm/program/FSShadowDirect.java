@@ -66,10 +66,6 @@ public final class FSShadowDirect extends FSShadow<FSLightDirect>{
         config.applyViewProjection();
     }
 
-    public VLArrayFloat lightViewProjection(){
-        return config.matrixViewProjection();
-    }
-
     public FSView viewConfig(){
         return config;
     }

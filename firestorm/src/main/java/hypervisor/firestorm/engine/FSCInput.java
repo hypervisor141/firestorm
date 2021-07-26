@@ -21,19 +21,37 @@ public final class FSCInput{
 
         }
 
-        public final VLListType<TypeProcessor> PROCESSORS = new VLListType<>(20, 50);
+        public final VLListType<TypeProcessor> PRE = new VLListType<>(20, 50);
+        public final VLListType<TypeProcessor> POST = new VLListType<>(20, 50);
+        private final VLListType<TypeProcessor> CACHE = new VLListType<>(20, 50);
+        public static final Object LOCK = new Object();
 
         protected boolean trigger(MotionEvent e1, MotionEvent e2, float f1, float f2){
+            synchronized(LOCK){
+                int size = PRE.size();
+                int size2 = POST.size();
+
+                Object[] array = PRE.array();
+                Object[] array2 = POST.array();
+
+                for(int i = 0; i < size; i++){
+                    PRE.add((TypeProcessor)array[i]);
+                }
+                for(int i = 0; i < size2; i++){
+                    POST.add((TypeProcessor)array2[i]);
+                }
+            }
+
             float[] near = new float[4];
             float[] far = new float[4];
 
             FSView config = FSControl.getView();
             config.unProject2DPoint(e1.getX(), e1.getY(), near, 0, far, 0);
 
-            int size = PROCESSORS.size();
+            int size = CACHE.size();
 
             for(int i = 0; i < size; i++){
-                if(PROCESSORS.get(i).process(e1, e2, f1, f2, near, far)){
+                if(CACHE.get(i).process(e1, e2, f1, f2, near, far)){
                     return true;
                 }
             }
