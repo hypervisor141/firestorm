@@ -35,10 +35,10 @@ public final class FSCInput{
                 Object[] array2 = POST.array();
 
                 for(int i = 0; i < size; i++){
-                    PRE.add((TypeProcessor)array[i]);
+                    CACHE.add((TypeProcessor)array[i]);
                 }
                 for(int i = 0; i < size2; i++){
-                    POST.add((TypeProcessor)array2[i]);
+                    CACHE.add((TypeProcessor)array2[i]);
                 }
             }
 
