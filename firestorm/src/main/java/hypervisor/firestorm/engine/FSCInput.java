@@ -21,9 +21,9 @@ public final class FSCInput{
 
         }
 
-        public final VLListType<TypeProcessor> PRE = new VLListType<>(20, 50);
-        public final VLListType<TypeProcessor> POST = new VLListType<>(20, 50);
-        private final VLListType<TypeProcessor> CACHE = new VLListType<>(20, 50);
+        public final VLListType<TypeProcessor> PRE = new VLListType<>(10, 50);
+        public final VLListType<TypeProcessor> POST = new VLListType<>(10, 50);
+        private final VLListType<TypeProcessor> CACHE = new VLListType<>(10, 50);
         public final Object LOCK = new Object();
 
         protected boolean trigger(MotionEvent e1, MotionEvent e2, float f1, float f2){
