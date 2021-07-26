@@ -235,6 +235,7 @@ public class FSCFrames{
 
                 FRAME_SECOND_TRACKER = now;
                 TOTAL_TASKS_PROCESSED = 0;
+                TOTAL_STICKY_TASKS_PROCESSED = 0;
                 FPS = 0;
             }
         }

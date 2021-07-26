@@ -159,22 +159,24 @@ public class FSR{
     }
 
     private static void processTasks(){
+        int size;
+
         synchronized(taskssticky){
-            int size = taskssticky.size();
+            size = taskssticky.size();
 
             for(int i = 0; i < size; i++){
                 taskssticky.get(i).run();
             }
-
-            FSCFrames.addProcessedStickyTaskCount(size);
         }
+
+        FSCFrames.addProcessedStickyTaskCount(size);
 
         synchronized(tasks){
             taskcache.add(tasks);
             tasks.clear();
         }
 
-        int size = taskcache.size();
+        size = taskcache.size();
 
         for(int i = 0; i < size; i++){
             taskcache.get(i).run();
