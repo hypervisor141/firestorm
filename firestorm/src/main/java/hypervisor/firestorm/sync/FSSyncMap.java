@@ -12,7 +12,7 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
 
     public FSSyncMap(TARGET target){
         super(target);
-        post = new Post<>(target);
+        post = new Post<>();
     }
 
     public FSSyncMap(FSSyncMap<SOURCE, TARGET> src, long flags){
@@ -25,7 +25,7 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
 
     @Override
     public void sync(SOURCE source){
-        post.update(source);
+        post.update(source, target);
         FSR.postTask(post);
     }
 
@@ -37,7 +37,7 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
             post = ((FSSyncMap<SOURCE, TARGET>)src).post;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            post = ((FSSyncMap<SOURCE, TARGET>)src).post;
+            post = ((FSSyncMap<SOURCE, TARGET>)src).post.duplicate(VLCopyable.FLAG_DUPLICATE);
 
         }else{
             Helper.throwMissingAllFlags();
@@ -54,20 +54,17 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
         public VLSyncType<SOURCE> target;
         public SOURCE source;
 
-        public Post(VLSyncType<SOURCE> target){
-            this.target = target;
+        public Post(){
+
         }
 
         public Post(Post<SOURCE> src, long flags){
             copy(src, flags);
         }
 
-        protected Post(){
-
-        }
-
-        public void update(SOURCE source){
+        public void update(SOURCE source, VLSyncType<SOURCE> target){
             this.source = source;
+            this.target = target;
         }
 
         @Override
@@ -77,14 +74,13 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
 
         @Override
         public void copy(Post<SOURCE> src, long flags){
-            Post<SOURCE> target = (Post<SOURCE>)src;
-            source = target.source;
+            source = src.source;
 
             if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
-                this.target = target.target;
+                this.target = src.target;
 
             }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-                this.target = target.target.duplicate(FLAG_DUPLICATE);
+                this.target = src.target.duplicate(FLAG_DUPLICATE);
 
             }else{
                 Helper.throwMissingAllFlags();
