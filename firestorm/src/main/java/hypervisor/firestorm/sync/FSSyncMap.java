@@ -12,7 +12,7 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
 
     public FSSyncMap(TARGET target){
         super(target);
-        post = new Post<>();
+        post = new Post<>(target);
     }
 
     public FSSyncMap(FSSyncMap<SOURCE, TARGET> src, long flags){
@@ -54,12 +54,16 @@ public class FSSyncMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends VLSync
         public VLSyncType<SOURCE> target;
         public SOURCE source;
 
-        public Post(){
-
+        public Post(VLSyncType<SOURCE> target){
+            this.target = target;
         }
 
         public Post(Post<SOURCE> src, long flags){
             copy(src, flags);
+        }
+
+        protected Post(){
+
         }
 
         public void update(SOURCE source, VLSyncType<SOURCE> target){
