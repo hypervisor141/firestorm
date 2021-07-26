@@ -20,11 +20,12 @@ public final class FSCInput{
         public InputHandler(){
 
         }
+
         public final VLListType<TypeProcessor> PRE = new VLListType<>(20, 50);
         public final VLListType<TypeProcessor> POST = new VLListType<>(20, 50);
         private final VLListType<TypeProcessor> CACHE = new VLListType<>(20, 50);
         public final PostTask TASK = new PostTask();
-        public static final Object LOCK = new Object();
+        public final Object LOCK = new Object();
 
         protected void trigger(MotionEvent e1, MotionEvent e2, float f1, float f2){
             synchronized(LOCK){
