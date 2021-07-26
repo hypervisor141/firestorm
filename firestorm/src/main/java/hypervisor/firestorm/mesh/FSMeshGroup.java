@@ -411,12 +411,16 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+    public boolean checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).checkInputs(e1, e2, f1, f2, near, far);
+            if(entries.get(i).checkInputs(e1, e2, f1, f2, near, far)){
+                return true;
+            }
         }
+
+        return false;
     }
 
     @Override

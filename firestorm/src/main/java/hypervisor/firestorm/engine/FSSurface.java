@@ -114,7 +114,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
         gesture.onTouchEvent(e);
 
         if(config.getTouchable()){
-            FSCInput.TOUCH.trigger(e, null, -1F,-1F);
+            return FSCInput.TOUCH.trigger(e, null, -1F,-1F);
         }
 
         return true;
@@ -123,7 +123,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onDown(MotionEvent e){
         if(config.getTouchable()){
-            FSCInput.DOWN.trigger(e, null, -1F,-1F);
+            return FSCInput.DOWN.trigger(e, null, -1F,-1F);
         }
 
         return true;
@@ -132,7 +132,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onSingleTapUp(MotionEvent e){
         if(config.getTouchable()){
-            FSCInput.SINGLETAP.trigger(e, null, -1F,-1F);
+            return FSCInput.SINGLETAP.trigger(e, null, -1F,-1F);
         }
 
         return false;
@@ -155,7 +155,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, final float distanceY){
         if(config.getTouchable()){
-            FSCInput.SCROLL.trigger(e1, e2, distanceX, distanceY);
+            return FSCInput.SCROLL.trigger(e1, e2, distanceX, distanceY);
         }
 
         return true;
@@ -164,7 +164,7 @@ public class FSSurface extends SurfaceView implements SurfaceHolder.Callback, Ge
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY){
         if(config.getTouchable()){
-            FSCInput.FLING.trigger(e1, e2, velocityX, velocityY);
+            return FSCInput.FLING.trigger(e1, e2, velocityX, velocityY);
         }
 
         return true;

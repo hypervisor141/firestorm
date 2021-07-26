@@ -629,14 +629,19 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
         return -1;
     }
 
-    public void checkInputCollision(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+    public boolean checkInputCollision(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
         int size = inputbounds.size();
         FSBounds.Collision results = new FSBounds.Collision();
 
         for(int i = 0; i < size; i++){
             results.initiatorboundsindex = i;
-            inputbounds.get(i).check(results, e1, e2, f1, f2, near, far);
+
+            if(inputbounds.get(i).check(results, e1, e2, f1, f2, near, far)){
+                return true;
+            }
         }
+
+        return false;
     }
 
     public FSTypeInstance instance(){
@@ -691,12 +696,14 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
         }
 
-        public void check(FSBounds.Collision results, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+        public boolean check(FSBounds.Collision results, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
             bounds.checkInput(results, near, far);
 
             if(results.collided){
-                processor.activated(results, e1, e2, f1, f2, near, far);
+                return processor.activated(results, e1, e2, f1, f2, near, far);
             }
+
+            return false;
         }
 
         @Override
@@ -722,6 +729,6 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
 
     public interface InputProcessor{
 
-        void activated(FSBounds.Collision results, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
+        boolean activated(FSBounds.Collision results, MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     }
 }

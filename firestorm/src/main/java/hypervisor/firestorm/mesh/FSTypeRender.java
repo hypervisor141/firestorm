@@ -22,7 +22,7 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void lightMap(FSLightMap map);
     void colorTexture(FSTexture texture);
     void dispatch(Dispatch<FSTypeRender> dispatch);
-    void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
+    boolean checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far);
     void updateBuffer(int element);
     void applyModelMatrix();
     void schematicsRebuild();

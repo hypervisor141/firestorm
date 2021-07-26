@@ -349,8 +349,8 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
-        schematics.checkInputCollision(e1, e2, f1, f2, near, far);
+    public boolean checkInputs(MotionEvent e1, MotionEvent e2, float f1, float f2, float[] near, float[] far){
+        return schematics.checkInputCollision(e1, e2, f1, f2, near, far);
     }
 
     @Override
