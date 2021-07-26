@@ -159,6 +159,16 @@ public class FSR{
     }
 
     private static void processTasks(){
+        synchronized(taskssticky){
+            int size = taskssticky.size();
+
+            for(int i = 0; i < size; i++){
+                taskssticky.get(i).run();
+            }
+
+            FSCFrames.addProcessedStickyTaskCount(size);
+        }
+
         synchronized(tasks){
             taskcache.add(tasks);
             tasks.clear();
@@ -170,15 +180,8 @@ public class FSR{
             taskcache.get(i).run();
         }
 
+        FSCFrames.addProcessedTaskCount(size);
         taskcache.clear();
-
-        synchronized(taskssticky){
-            size = taskssticky.size();
-
-            for(int i = 0; i < size; i++){
-                taskssticky.get(i).run();
-            }
-        }
     }
 
     public static FSRThread renderThread(){
@@ -206,17 +209,6 @@ public class FSR{
 
             threadinterface = null;
             choreographer = null;
-        }
-    }
-
-    private static final class SyncQueueEntry{
-
-        protected final Thread thread;
-        protected boolean requestedsync;
-
-        private SyncQueueEntry(Thread thread){
-            this.thread = thread;
-            this.requestedsync = true;
         }
     }
 }

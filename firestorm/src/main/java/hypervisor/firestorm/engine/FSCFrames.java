@@ -6,6 +6,8 @@ public class FSCFrames{
 
     private static long TOTAL_FRAMES;
     private static long FRAME_TIME;
+    private static long TOTAL_TASKS_PROCESSED;
+    private static long TOTAL_STICKY_TASKS_PROCESSED;
     private static long AVERAGE_FRAMESWAP_TIME;
     private static long AVERAGE_PROCESS_TIME;
     private static long FRAME_SECOND_TRACKER;
@@ -40,6 +42,14 @@ public class FSCFrames{
             QUEUED_FRAMES_COUNT = 0;
             EXTERNAL_CHANGES = 1;
         }
+    }
+
+    protected static void addProcessedTaskCount(int count){
+        TOTAL_TASKS_PROCESSED += count;
+    }
+
+    protected static void addProcessedStickyTaskCount(int count){
+        TOTAL_STICKY_TASKS_PROCESSED += count;
     }
 
     public static void addExternalChangesForFrame(int changes){
@@ -210,10 +220,21 @@ public class FSCFrames{
                 LOG.append(AVERAGE_FRAMESWAP_TIME);
                 LOG.append("ms] avgFullFrame[");
                 LOG.append(AVERAGE_PROCESS_TIME);
-                LOG.append("ms]");
+                LOG.append("ms] tasks[");
+                LOG.append(TOTAL_TASKS_PROCESSED + TOTAL_STICKY_TASKS_PROCESSED);
+                LOG.append("] stickyTasks[");
+                LOG.append(TOTAL_STICKY_TASKS_PROCESSED);
+                LOG.append("] normalTasks[");
+                LOG.append(TOTAL_TASKS_PROCESSED);
+                LOG.append("] averageStickyTasks[");
+                LOG.append(TOTAL_STICKY_TASKS_PROCESSED / FPS);
+                LOG.append("] averageNormalTasks[");
+                LOG.append(TOTAL_TASKS_PROCESSED / FPS);
+                LOG.append("]");
                 LOG.printInfo();
 
                 FRAME_SECOND_TRACKER = now;
+                TOTAL_TASKS_PROCESSED = 0;
                 FPS = 0;
             }
         }
@@ -223,6 +244,7 @@ public class FSCFrames{
         if(destroyonpause){
             synchronized(LOCK){
                 TOTAL_FRAMES = 0;
+                TOTAL_TASKS_PROCESSED = 0;
                 AVERAGE_FRAMESWAP_TIME = 0;
                 AVERAGE_PROCESS_TIME = 0;
                 FRAME_SECOND_TRACKER = 0;
