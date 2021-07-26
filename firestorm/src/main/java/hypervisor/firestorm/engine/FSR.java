@@ -146,16 +146,12 @@ public class FSR{
         synchronized(tasks){
             tasks.add(task);
         }
-
-        requestFrame();
     }
 
     public static void postStickyTask(FSRTask task){
         synchronized(taskssticky){
             taskssticky.add(task);
         }
-
-        requestFrame();
     }
 
     private static void processTasks(){
