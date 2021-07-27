@@ -154,6 +154,18 @@ public class FSR{
         }
     }
 
+    public static void removeStickyTask(int index){
+        synchronized(taskssticky){
+            taskssticky.remove(index);
+        }
+    }
+
+    public static void removeStickyTask(FSRTask task){
+        synchronized(taskssticky){
+            taskssticky.remove(task);
+        }
+    }
+
     private static void processTasks(){
         int size;
 
