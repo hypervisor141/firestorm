@@ -106,6 +106,7 @@ public class FSR{
 
     protected static void drawFrame(){
         FSCFrames.timeFrameStarted();
+        processTasks();
 
         FSEvents events = FSControl.events();
         events.GLPreDraw();
@@ -126,8 +127,6 @@ public class FSR{
     }
 
     protected static void finishFrame(){
-        processTasks();
-
         FSCFrames.timeFrameEnded();
         FSCEGL.swapBuffers();
         FSGlobal.get().notifyFrameSwap();
