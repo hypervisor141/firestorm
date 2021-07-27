@@ -2,13 +2,13 @@ package hypervisor.firestorm.sync;
 
 import hypervisor.vanguard.sync.VLSyncType;
 
-public abstract class FSSyncPostConditionalMap<SOURCE, TARGET extends VLSyncType<SOURCE>> extends FSSyncPostMap<SOURCE, TARGET>{
+public abstract class FSSyncPostConditionalMap<SOURCE> extends FSSyncPostMap<SOURCE>{
 
-    public FSSyncPostConditionalMap(TARGET target){
+    public FSSyncPostConditionalMap(VLSyncType<SOURCE> target){
         super(target);
     }
 
-    public FSSyncPostConditionalMap(FSSyncPostConditionalMap<SOURCE, TARGET> src, long flags){
+    public FSSyncPostConditionalMap(FSSyncPostConditionalMap<SOURCE> src, long flags){
         copy(src, flags);
     }
 
