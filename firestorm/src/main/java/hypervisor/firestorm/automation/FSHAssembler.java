@@ -302,17 +302,17 @@ public class FSHAssembler implements VLLoggable{
     private void buildModelMatrixFromSchematics(FSTypeInstance instance){
         FSSchematics schematics = instance.schematics();
 
-        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.localSpaceCentroidX()), new VLV(schematics.localSpaceCentroidY()), new VLV(schematics.localSpaceCentroidZ()));
-        instance.model().transform(0, instance.modelMatrix(), true);
+        instance.modelMatrix().addRowTranslation(0, new VLV(schematics.localSpaceBoundCenterX()), new VLV(schematics.localSpaceBoundCenterY()), new VLV(schematics.localSpaceBoundCenterZ()));
+        instance.applyModelMatrix();
     }
 
     private void centralizePositions(FSTypeInstance instance){
         float[] positions = instance.positions().array;
         FSSchematics schematics = instance.schematics();
 
-        float x = schematics.localSpaceCentroidX();
-        float y = schematics.localSpaceCentroidY();
-        float z = schematics.localSpaceCentroidZ();
+        float x = schematics.localSpaceBoundCenterX();
+        float y = schematics.localSpaceBoundCenterY();
+        float z = schematics.localSpaceBoundCenterZ();
 
         int size = positions.length;
 
