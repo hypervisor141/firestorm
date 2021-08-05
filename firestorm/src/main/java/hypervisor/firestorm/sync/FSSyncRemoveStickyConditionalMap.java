@@ -4,8 +4,8 @@ import hypervisor.vanguard.sync.VLSyncType;
 
 public abstract class FSSyncRemoveStickyConditionalMap<SOURCE> extends FSSyncRemoveStickyMap<SOURCE>{
 
-    public FSSyncRemoveStickyConditionalMap(VLSyncType<SOURCE> target){
-        super(target);
+    public FSSyncRemoveStickyConditionalMap(FSRTaskSyncWrapper<SOURCE> task){
+        super(task);
     }
 
     public FSSyncRemoveStickyConditionalMap(FSSyncRemoveStickyConditionalMap<SOURCE> src, long flags){

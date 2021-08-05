@@ -1,16 +1,15 @@
 package hypervisor.firestorm.sync;
 
 import hypervisor.firestorm.engine.FSR;
-import hypervisor.firestorm.engine.FSRTask;
 import hypervisor.vanguard.sync.VLSyncType;
 import hypervisor.vanguard.utils.VLCopyable;
 
 public class FSSyncRemoveStickyMap<SOURCE> implements VLSyncType<SOURCE>{
 
-    public FSRTask.SyncWrapper<SOURCE> task;
+    public FSRTaskSyncWrapper<SOURCE> task;
 
-    public FSSyncRemoveStickyMap(VLSyncType<SOURCE> target){
-        task = new FSRTask.SyncWrapper<>(target);
+    public FSSyncRemoveStickyMap(FSRTaskSyncWrapper<SOURCE> task){
+        this.task = task;
     }
 
     public FSSyncRemoveStickyMap(FSSyncRemoveStickyMap<SOURCE> src, long flags){

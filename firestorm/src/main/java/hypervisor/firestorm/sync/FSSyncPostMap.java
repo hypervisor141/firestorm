@@ -1,16 +1,15 @@
 package hypervisor.firestorm.sync;
 
 import hypervisor.firestorm.engine.FSR;
-import hypervisor.firestorm.engine.FSRTask;
 import hypervisor.vanguard.sync.VLSyncType;
 import hypervisor.vanguard.utils.VLCopyable;
 
 public class FSSyncPostMap<SOURCE> implements VLSyncType<SOURCE>{
 
-    public FSRTask.SyncWrapper<SOURCE> task;
+    public FSRTaskSyncWrapper<SOURCE> task;
 
     public FSSyncPostMap(VLSyncType<SOURCE> target){
-        task = new FSRTask.SyncWrapper<>(target);
+        task = new FSRTaskSyncWrapper<>(target);
     }
 
     public FSSyncPostMap(FSSyncPostMap<SOURCE> src, long flags){

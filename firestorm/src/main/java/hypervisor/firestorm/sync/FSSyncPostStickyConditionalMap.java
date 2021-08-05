@@ -4,8 +4,8 @@ import hypervisor.vanguard.sync.VLSyncType;
 
 public abstract class FSSyncPostStickyConditionalMap<SOURCE> extends FSSyncPostStickyMap<SOURCE>{
 
-    public FSSyncPostStickyConditionalMap(VLSyncType<SOURCE> target){
-        super(target);
+    public FSSyncPostStickyConditionalMap(FSRTaskSyncWrapper<SOURCE> task){
+        super(task);
     }
 
     public FSSyncPostStickyConditionalMap(FSSyncPostStickyConditionalMap<SOURCE> src, long flags){
