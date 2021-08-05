@@ -272,6 +272,8 @@ public class FSCFrames{
                 LOG.append(AVERAGE_PROCESS_TIME);
                 LOG.append("ms] totalMeshesProcessed[");
                 LOG.append(TOTAL_MESHES_PROCESSED);
+                LOG.append("] averageMeshesProcessed[");
+                LOG.append(TOTAL_MESHES_PROCESSED / FPS);
                 LOG.append("] tasks[");
                 LOG.append(TOTAL_TASKS_PROCESSED + TOTAL_STICKY_TASKS_PROCESSED);
                 LOG.append("] averageStickyTasks[");
@@ -286,6 +288,8 @@ public class FSCFrames{
                 LOG.printInfo();
 
                 FRAME_SECOND_TRACKER = now;
+
+                TOTAL_MESHES_PROCESSED = 0;
                 TOTAL_TASKS_PROCESSED = 0;
                 TOTAL_STICKY_TASKS_PROCESSED = 0;
                 FPS = 0;
