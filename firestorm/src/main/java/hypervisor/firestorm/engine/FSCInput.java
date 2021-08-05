@@ -34,6 +34,8 @@ public final class FSCInput{
                 Object[] array = PRE.array();
                 Object[] array2 = POST.array();
 
+                CACHE.clear();
+
                 for(int i = 0; i < size; i++){
                     CACHE.add((TypeProcessor)array[i]);
                 }
