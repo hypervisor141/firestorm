@@ -16,6 +16,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
             target.directUpdateModelSpaceCentroid();
         }
     };
+
     protected static final VLUpdater<FSSchematics> UPDATE_MODEL = new VLUpdater<FSSchematics>(){
 
         @Override

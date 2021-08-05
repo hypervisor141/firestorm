@@ -11,6 +11,7 @@ public class FSCFrames{
     private static long AVERAGE_FRAMESWAP_TIME;
     private static long AVERAGE_PROCESS_TIME;
     private static long FRAME_SECOND_TRACKER;
+    private static long TOTAL_MESHES_PROCESSED;
     private static int FPS;
 
     private static int MAX_UNCHANGED_FRAMES;
@@ -33,6 +34,7 @@ public class FSCFrames{
             AVERAGE_FRAMESWAP_TIME = 0;
             AVERAGE_PROCESS_TIME = 0;
             FRAME_SECOND_TRACKER = 0;
+            TOTAL_MESHES_PROCESSED = 0;
             FPS = 0;
 
             MAX_UNCHANGED_FRAMES = maxunchangedframes;
@@ -45,19 +47,45 @@ public class FSCFrames{
     }
 
     protected static void addProcessedTaskCount(int count){
-        TOTAL_TASKS_PROCESSED += count;
+        if(count < 0){
+            throw new RuntimeException("Invalid count");
+        }
+
+        synchronized(LOCK){
+            TOTAL_TASKS_PROCESSED += count;
+        }
     }
 
     protected static void addProcessedStickyTaskCount(int count){
-        TOTAL_STICKY_TASKS_PROCESSED += count;
-    }
-
-    public static void addExternalChangesForFrame(int changes){
-        synchronized(LOCK){
-            EXTERNAL_CHANGES += changes;
+        if(count < 0){
+            throw new RuntimeException("Invalid count");
         }
 
-        if(changes > 0){
+        synchronized(LOCK){
+            TOTAL_STICKY_TASKS_PROCESSED += count;
+        }
+    }
+
+    public static void addTotalMeshesProcessed(int count){
+        if(count < 0){
+            throw new RuntimeException("Invalid count");
+        }
+
+        synchronized(LOCK){
+            TOTAL_MESHES_PROCESSED += count;
+        }
+    }
+
+    public static void addExternalChangesForFrame(int count){
+        if(count < 0){
+            throw new RuntimeException("Invalid count");
+        }
+
+        synchronized(LOCK){
+            EXTERNAL_CHANGES += count;
+        }
+
+        if(count > 0){
             requestFrame();
         }
     }
@@ -69,6 +97,10 @@ public class FSCFrames{
     }
 
     public static void setEfficientModeUnChangedFramesThreshold(int threshold){
+        if(threshold <= 0){
+            throw new RuntimeException("Invalid threshold");
+        }
+
         synchronized(LOCK){
             MAX_UNCHANGED_FRAMES = threshold;
         }
@@ -101,6 +133,24 @@ public class FSCFrames{
     public static long getAverageFrameProcessTime(){
         synchronized(LOCK){
             return AVERAGE_PROCESS_TIME;
+        }
+    }
+
+    public static long getTotalTasksProcessed(){
+        synchronized(LOCK){
+            return TOTAL_TASKS_PROCESSED;
+        }
+    }
+
+    public static long getTotalStickyTasksProcessed(){
+        synchronized(LOCK){
+            return TOTAL_STICKY_TASKS_PROCESSED;
+        }
+    }
+
+    public static long getTotalMeshesProcessed(){
+        synchronized(LOCK){
+            return TOTAL_MESHES_PROCESSED;
         }
     }
 
@@ -220,7 +270,9 @@ public class FSCFrames{
                 LOG.append(AVERAGE_FRAMESWAP_TIME);
                 LOG.append("ms] avgFullFrame[");
                 LOG.append(AVERAGE_PROCESS_TIME);
-                LOG.append("ms] tasks[");
+                LOG.append("ms] totalMeshesProcessed[");
+                LOG.append(TOTAL_MESHES_PROCESSED);
+                LOG.append("] tasks[");
                 LOG.append(TOTAL_TASKS_PROCESSED + TOTAL_STICKY_TASKS_PROCESSED);
                 LOG.append("] averageStickyTasks[");
                 LOG.append(TOTAL_STICKY_TASKS_PROCESSED / FPS);

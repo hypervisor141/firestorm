@@ -5,6 +5,8 @@ import android.opengl.GLES32;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import hypervisor.firestorm.engine.FSCFrames;
+import hypervisor.firestorm.engine.FSCInput;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.engine.FSRPass;
@@ -206,6 +208,7 @@ public abstract class FSP{
         use();
 
         int meshsize = targets.size();
+        int processedcount = 0;
 
         if(debug > FSControl.DEBUG_DISABLED){
             log.reset();
@@ -227,6 +230,8 @@ public abstract class FSP{
                     if(target.enabled()){
                         target.configure(this, pass, i, passindex);
                         coreconfigs.meshconfig.runDebug(pass, this, target, i, passindex, log, debug);
+
+                        processedcount++;
 
                     }else{
                         log.append("[DISABLED]");
@@ -255,6 +260,8 @@ public abstract class FSP{
                     FSTypeMesh<?> target = targets.get(i);
 
                     if(target.enabled()){
+                        processedcount++;
+
                         target.configure(this, pass, i, passindex);
                         coreconfigs.meshconfig.configure(this, pass, target, i, passindex);
                     }
@@ -264,6 +271,8 @@ public abstract class FSP{
                 coreconfigs.postdrawconfig.run(pass, this, null, -1, passindex);
             }
         }
+
+        FSCFrames.addTotalMeshesProcessed(processedcount);
     }
 
     public void postFrame(FSRPass pass, int passindex){
