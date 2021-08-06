@@ -27,11 +27,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     protected long id;
     protected boolean enabled;
 
-    public FSMesh(String name, int capacity, int resizer){
+    public FSMesh(String name, int capacity, int resizeoverhead){
         this.name = name.toLowerCase();
 
         bindings = new VLListType[FSElements.COUNT];
-        entries = new VLListType<>(capacity, resizer);
+        entries = new VLListType<>(capacity, resizeoverhead);
         id = FSControl.generateUID();
 
         enabled = true;
@@ -57,9 +57,9 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void allocateBinding(int element, int capacity, int resizer){
+    public void allocateBinding(int element, int capacity, int resizeoverhead){
         if(bindings[element] == null){
-            bindings[element] = new VLListType<>(capacity, resizer);
+            bindings[element] = new VLListType<>(capacity, resizeoverhead);
         }
     }
 
@@ -199,11 +199,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void allocateElement(int element, int capacity, int resizer){
+    public void allocateElement(int element, int capacity, int resizeoverhead){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).allocateElement(element, capacity, resizer);
+            entries.get(i).allocateElement(element, capacity, resizeoverhead);
         }
     }
 

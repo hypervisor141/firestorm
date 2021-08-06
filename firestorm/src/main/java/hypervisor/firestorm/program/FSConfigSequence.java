@@ -14,9 +14,9 @@ public class FSConfigSequence extends FSConfigLocated{
     protected VLListType<FSConfig> configs;
     protected int glslsize;
 
-    public FSConfigSequence(Mode mode, int capacity, int resizer){
+    public FSConfigSequence(Mode mode, int capacity, int resizeoverhead){
         super(mode);
-        configs = new VLListType<>(capacity, resizer);
+        configs = new VLListType<>(capacity, resizeoverhead);
     }
 
     public FSConfigSequence(Mode mode){

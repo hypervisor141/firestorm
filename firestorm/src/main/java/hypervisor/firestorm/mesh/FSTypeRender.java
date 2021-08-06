@@ -12,7 +12,7 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     void scanComplete();
     void bufferComplete();
     void buildComplete();
-    void allocateElement(int element, int capacity, int resizer);
+    void allocateElement(int element, int capacity, int resizeoverhead);
     void storeElement(int element, FSElement<?, ?> data);
     void activateFirstElement(int element);
     void activateLastElement(int element);

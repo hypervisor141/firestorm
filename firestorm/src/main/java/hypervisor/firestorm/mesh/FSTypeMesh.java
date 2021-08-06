@@ -18,7 +18,7 @@ public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGr
     ENTRY generateInstance(String name);
     void addToDefinedProgram();
     void configure(FSP program, FSRPass pass, int targetindex, int passindex);
-    void allocateBinding(int element, int capacity, int resizer);
+    void allocateBinding(int element, int capacity, int resizeoverhead);
     void bindManual(int element, FSBufferBinding<?> binding);
     FSBufferBinding<?> binding(int element, int index);
     void unbind(int element, int index);

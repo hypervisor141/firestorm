@@ -7,8 +7,8 @@ import hypervisor.vanguard.variable.VLVTypeVariable;
 
 public class FSModelMatrix extends VLVMatrix{
 
-    public FSModelMatrix(int initialcapacity, int resizercount){
-        super(initialcapacity, resizercount);
+    public FSModelMatrix(int capacity, int resizeoverhead){
+        super(capacity, resizeoverhead);
     }
 
     public FSModelMatrix(FSModelMatrix src, long flags){

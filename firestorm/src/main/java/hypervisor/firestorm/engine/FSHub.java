@@ -10,8 +10,8 @@ public abstract class FSHub<GLOBAL extends FSGlobal>{
 
     public FSMeshGroup<FSTypeRenderGroup<?>> root;
 
-    public FSHub(String rootname, int capacity, int resizer){
-        root = new FSMeshGroup<>(rootname, capacity, resizer);
+    public FSHub(String rootname, int capacity, int resizeoverhead){
+        root = new FSMeshGroup<>(rootname, capacity, resizeoverhead);
     }
 
     public void initialize(Context context){

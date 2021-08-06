@@ -22,10 +22,10 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     protected String name;
     protected long id;
 
-    public FSMeshGroup(String name, int capacity, int resizer){
+    public FSMeshGroup(String name, int capacity, int resizeoverhead){
         this.name = name.toLowerCase();
 
-        entries = new VLListType<>(capacity, resizer);
+        entries = new VLListType<>(capacity, resizeoverhead);
         id = FSControl.generateUID();
     }
 
@@ -174,11 +174,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void allocateElement(int element, int capacity, int resizer){
+    public void allocateElement(int element, int capacity, int resizeoverhead){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).allocateElement(element, capacity, resizer);
+            entries.get(i).allocateElement(element, capacity, resizeoverhead);
         }
     }
 

@@ -13,9 +13,9 @@ public class FSConfigGroup extends FSConfig{
 
     protected VLListType<FSConfig> configs;
 
-    public FSConfigGroup(Mode mode, int capacity, int resizer){
+    public FSConfigGroup(Mode mode, int capacity, int resizeoverhead){
         super(mode);
-        configs = new VLListType<>(capacity, resizer);
+        configs = new VLListType<>(capacity, resizeoverhead);
     }
 
     public FSConfigGroup(FSConfigGroup src, long flags){

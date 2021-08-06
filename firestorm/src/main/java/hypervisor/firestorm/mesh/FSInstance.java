@@ -85,8 +85,8 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void allocateElement(int element, int capacity, int resizer){
-        store.allocateElement(element, capacity, resizer);
+    public void allocateElement(int element, int capacity, int resizeoverhead){
+        store.allocateElement(element, capacity, resizeoverhead);
     }
 
     @Override

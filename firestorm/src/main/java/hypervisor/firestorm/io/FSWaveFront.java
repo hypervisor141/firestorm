@@ -13,16 +13,16 @@ public final class FSWaveFront{
 
     public VLListType<Data> data;
 
-    protected int dataresizer;
+    protected int dataresizeoverhead;
     protected int pdivider;
 
     protected int positioncount;
     protected int uvcount;
     protected int normalcount;
 
-    public FSWaveFront(int objcapacity, int subdataresizer){
+    public FSWaveFront(int objcapacity, int subdataresizeoverhead){
         data = new VLListType<>(objcapacity, objcapacity);
-        this.dataresizer = subdataresizer;
+        this.dataresizeoverhead = subdataresizeoverhead;
     }
 
     protected FSWaveFront(){
@@ -49,7 +49,7 @@ public final class FSWaveFront{
                     current.resolve(fullsizedposition);
                 }
 
-                current = new Data(dataresizer);
+                current = new Data(dataresizeoverhead);
                 data.add(current);
 
                 readNameLine(current, line);
@@ -155,12 +155,12 @@ public final class FSWaveFront{
         public VLListShort indices;
         public VLListType<VertexData> faces;
 
-        protected Data(int resizer){
-            positions = new VLListFloat(10, resizer);
-            texcoords = new VLListFloat(10, resizer);
-            normals = new VLListFloat(10, resizer);
-            indices = new VLListShort(10, resizer);
-            faces = new VLListType<>(10, resizer);
+        protected Data(int resizeoverhead){
+            positions = new VLListFloat(10, resizeoverhead);
+            texcoords = new VLListFloat(10, resizeoverhead);
+            normals = new VLListFloat(10, resizeoverhead);
+            indices = new VLListShort(10, resizeoverhead);
+            faces = new VLListType<>(10, resizeoverhead);
         }
 
         protected void resolve(boolean fullsizedposition){

@@ -21,8 +21,8 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
 
     }
 
-    public void allocateElement(int element, int capacity, int resizer){
-        vault[element] = new VLListType<>(capacity, resizer);
+    public void allocateElement(int element, int capacity, int resizeoverhead){
+        vault[element] = new VLListType<>(capacity, resizeoverhead);
     }
 
     public void activate(int element, int index){
