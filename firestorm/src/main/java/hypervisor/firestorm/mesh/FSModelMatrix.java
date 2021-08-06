@@ -63,76 +63,32 @@ public class FSModelMatrix extends VLVMatrix{
         matrix.add(rowindex, row);
     }
 
-    public void addRowRotate(VLV x, VLV y, VLV z, VLV a){
+    public void addRowRotate(VLV a, VLV x, VLV y, VLV z){
         VLListType<VLVTypeVariable> row = new VLListType<>(5, 0);
 
         row.add(FSModelArray.FLAG_ROTATE);
+        row.add(a);
         row.add(x);
         row.add(y);
         row.add(z);
-        row.add(a);
 
         matrix.add(row);
     }
 
-    public void addRowRotate(int rowindex, VLV x, VLV y, VLV z, VLV a){
+    public void addRowRotate(int rowindex, VLV a, VLV x, VLV y, VLV z){
         VLListType<VLVTypeVariable> row = new VLListType<>(5, 0);
 
         row.add(FSModelArray.FLAG_ROTATE);
+        row.add(a);
         row.add(x);
         row.add(y);
         row.add(z);
-        row.add(a);
 
         matrix.add(rowindex, row);
     }
 
-    public void setTranslateType(int rowindex){
-        matrix.get(rowindex).set(0, FSModelArray.FLAG_TRANSLATE);
-    }
-
-    public void setScaleType(int rowindex){
-        matrix.get(rowindex).set(0, FSModelArray.FLAG_SCALE);
-    }
-
-    public void setRotateType(int rowindex){
-        matrix.get(rowindex).set(0, FSModelArray.FLAG_ROTATE);
-    }
-
-    public void setX(int rowindex, VLV x){
-        matrix.get(rowindex).set(1, x);
-    }
-
-    public void setY(int rowindex, VLV y){
-        matrix.get(rowindex).set(2, y);
-    }
-
-    public void setZ(int rowindex, VLV z){
-        matrix.get(rowindex).set(3, z);
-    }
-
-    public void setAngle(int rowindex, VLV a){
-        matrix.get(rowindex).set(4, a);
-    }
-
-    public VLVTypeVariable getX(int rowindex){
-        return matrix.get(rowindex).get(1);
-    }
-
-    public VLVTypeVariable getY(int rowindex){
-        return matrix.get(rowindex).get(2);
-    }
-
-    public VLVTypeVariable getZ(int rowindex){
-        return matrix.get(rowindex).get(3);
-    }
-
-    public VLVTypeVariable getAngle(int rowindex){
-        return matrix.get(rowindex).get(4);
-    }
-
-    public int getTransformType(int rowindex){
-        return (int) matrix.get(rowindex).get(0).get();
+    public VLVTypeVariable getTransformType(int rowindex){
+        return matrix.get(rowindex).get(0);
     }
 
     @Override
