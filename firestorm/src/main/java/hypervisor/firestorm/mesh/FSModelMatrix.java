@@ -63,7 +63,7 @@ public class FSModelMatrix extends VLVMatrix{
         matrix.add(rowindex, row);
     }
 
-    public void addRowRotate(VLV a, VLV x, VLV y, VLV z){
+    public void addRowRotate(VLV x, VLV y, VLV z, VLV a){
         VLListType<VLVTypeVariable> row = new VLListType<>(5, 0);
 
         row.add(FSModelArray.FLAG_ROTATE);
@@ -75,7 +75,7 @@ public class FSModelMatrix extends VLVMatrix{
         matrix.add(row);
     }
 
-    public void addRowRotate(int rowindex, VLV a, VLV x, VLV y, VLV z){
+    public void addRowRotate(int rowindex, VLV x, VLV y, VLV z, VLV a){
         VLListType<VLVTypeVariable> row = new VLListType<>(5, 0);
 
         row.add(FSModelArray.FLAG_ROTATE);

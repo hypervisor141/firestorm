@@ -81,7 +81,7 @@ public class FSModelArray extends VLArrayFloat{
         Matrix.translateM(array, 0, x, y ,z);
     }
 
-    public void rotate(float x, float y, float z, float a){
+    public void rotate(float a, float x, float y, float z){
         Matrix.rotateM(array, 0, a, x, y, z);
     }
 
