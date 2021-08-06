@@ -2,6 +2,7 @@ package hypervisor.firestorm.mesh;
 
 import android.view.MotionEvent;
 
+import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSTexture;
@@ -9,6 +10,7 @@ import hypervisor.vanguard.utils.VLCopyable;
 
 public interface FSTypeRender extends VLCopyable<FSTypeRender>{
 
+    void build(FSGlobal global);
     void scanComplete();
     void bufferComplete();
     void buildComplete();

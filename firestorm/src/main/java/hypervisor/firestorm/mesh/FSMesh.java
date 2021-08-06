@@ -42,6 +42,15 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
+    public void build(FSGlobal global){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).build(global);
+        }
+    }
+
+    @Override
     public void name(String name){
         this.name = name;
     }

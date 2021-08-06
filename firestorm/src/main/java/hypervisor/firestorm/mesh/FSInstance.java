@@ -4,6 +4,7 @@ import android.view.MotionEvent;
 
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
+import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSTexture;
@@ -48,6 +49,9 @@ public class FSInstance implements FSTypeInstance{
     protected FSInstance(){
 
     }
+
+    @Override
+    public void build(FSGlobal global){}
 
     @Override
     public void name(String name){
