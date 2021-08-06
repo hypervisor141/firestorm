@@ -44,13 +44,13 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void assemble(FSGlobal global){
+        construct(global);
+
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
             entries.get(i).assemble(global);
         }
-
-        construct(global);
     }
 
     @Override
