@@ -42,12 +42,14 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void build(FSGlobal global){
+    public void assemble(FSGlobal global){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).build(global);
+            entries.get(i).assemble(global);
         }
+
+        construct(global);
     }
 
     @Override

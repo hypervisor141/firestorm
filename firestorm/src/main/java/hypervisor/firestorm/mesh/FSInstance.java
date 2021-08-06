@@ -51,7 +51,12 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
-    public void build(FSGlobal global){}
+    public void construct(FSGlobal global){}
+
+    @Override
+    public void assemble(FSGlobal global){
+        construct(global);
+    }
 
     @Override
     public void name(String name){

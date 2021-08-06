@@ -38,12 +38,19 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void build(FSGlobal global){
+    public void construct(FSGlobal global){
+
+    }
+
+    @Override
+    public void assemble(FSGlobal global){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).build(global);
+            entries.get(i).assemble(global);
         }
+
+        construct(global);
     }
 
     @Override

@@ -10,7 +10,8 @@ import hypervisor.vanguard.utils.VLCopyable;
 
 public interface FSTypeRender extends VLCopyable<FSTypeRender>{
 
-    void build(FSGlobal global);
+    void construct(FSGlobal global);
+    void assemble(FSGlobal global);
     void scanComplete();
     void bufferComplete();
     void buildComplete();
