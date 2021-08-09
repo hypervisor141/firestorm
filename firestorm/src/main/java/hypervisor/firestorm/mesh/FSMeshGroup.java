@@ -21,12 +21,14 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     protected VLListType<ENTRY> entries;
     protected String name;
     protected long id;
+    protected boolean assembled;
 
     public FSMeshGroup(String name, int capacity, int resizeoverhead){
         this.name = name.toLowerCase();
 
         entries = new VLListType<>(capacity, resizeoverhead);
         id = FSControl.generateUID();
+        assembled = false;
     }
 
     public FSMeshGroup(FSMeshGroup<ENTRY> src, long flags){
@@ -44,12 +46,16 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void assemble(FSGlobal global){
-        construct(global);
+        if(!assembled){
+            construct(global);
 
-        int size = entries.size();
+            int size = entries.size();
 
-        for(int i = 0; i < size; i++){
-            entries.get(i).assemble(global);
+            for(int i = 0; i < size; i++){
+                entries.get(i).assemble(global);
+            }
+
+            assembled = true;
         }
     }
 
@@ -141,6 +147,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public long id(){
         return id;
+    }
+
+    @Override
+    public boolean assembled(){
+        return assembled;
     }
 
     @Override

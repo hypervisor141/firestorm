@@ -52,6 +52,7 @@ public interface FSTypeRender extends VLCopyable<FSTypeRender>{
     FSTypeRenderGroup<?> parentRoot();
     String name();
     long id();
+    boolean assembled();
 
     interface Dispatch<TYPE extends FSTypeRender>{
         void process(TYPE target);

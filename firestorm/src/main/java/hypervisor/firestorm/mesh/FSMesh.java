@@ -26,6 +26,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     protected String name;
     protected long id;
     protected boolean enabled;
+    protected boolean assembled;
 
     public FSMesh(String name, int capacity, int resizeoverhead){
         this.name = name.toLowerCase();
@@ -35,6 +36,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         id = FSControl.generateUID();
 
         enabled = true;
+        assembled = false;
     }
 
     protected FSMesh(){
@@ -43,12 +45,16 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void assemble(FSGlobal global){
-        construct(global);
+        if(!assembled){
+            construct(global);
 
-        int size = entries.size();
+            int size = entries.size();
 
-        for(int i = 0; i < size; i++){
-            entries.get(i).assemble(global);
+            for(int i = 0; i < size; i++){
+                entries.get(i).assemble(global);
+            }
+
+            assembled = true;
         }
     }
 
@@ -165,6 +171,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public long id(){
         return id;
+    }
+
+    @Override
+    public boolean assembled(){
+        return assembled;
     }
 
     @Override

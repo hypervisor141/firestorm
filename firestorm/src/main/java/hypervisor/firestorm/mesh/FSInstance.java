@@ -33,6 +33,7 @@ public class FSInstance implements FSTypeInstance{
 
     protected String name;
     protected long id;
+    protected boolean assembled;
 
     public FSInstance(String name){
         this.name = name.toLowerCase();
@@ -40,6 +41,8 @@ public class FSInstance implements FSTypeInstance{
         store = new FSElementStore(FSElements.COUNT);
         schematics = new FSSchematics();
         id = FSControl.generateUID();
+
+        assembled = false;
     }
 
     public FSInstance(FSInstance src, long flags){
@@ -55,7 +58,10 @@ public class FSInstance implements FSTypeInstance{
 
     @Override
     public void assemble(FSGlobal global){
-        construct(global);
+        if(!assembled){
+            construct(global);
+            assembled = true;
+        }
     }
 
     @Override
@@ -135,6 +141,11 @@ public class FSInstance implements FSTypeInstance{
     @Override
     public long id(){
         return id;
+    }
+
+    @Override
+    public boolean assembled(){
+        return assembled;
     }
 
     @Override
