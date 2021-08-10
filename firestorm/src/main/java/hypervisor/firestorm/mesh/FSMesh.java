@@ -221,6 +221,12 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void allowReassmbly(){
         assembled = false;
+
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).allowReassmbly();
+        }
     }
 
     @Override

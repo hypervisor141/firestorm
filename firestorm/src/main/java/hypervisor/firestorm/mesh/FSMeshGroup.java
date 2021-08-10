@@ -198,6 +198,12 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public void allowReassmbly(){
         assembled = false;
+
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).allowReassmbly();
+        }
     }
 
     @Override
