@@ -92,6 +92,7 @@ public class FSAutomator{
         }
 
         scanners.clear();
+        targets.clear();
     }
 
     private void targetDebugLoop(String title, VLLog log, LoopOperation<Target> task){
