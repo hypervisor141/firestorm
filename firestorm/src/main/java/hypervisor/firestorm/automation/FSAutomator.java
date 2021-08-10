@@ -43,69 +43,22 @@ public class FSAutomator{
         if(debug > FSControl.DEBUG_DISABLED){
             log = new VLLog(new String[]{
                     FSControl.LOGTAG, getClass().getSimpleName()
-            }, 50);
+            }, 10);
 
             log.setDebugTagsOffsetHere();
             log.printInfo("[Automated Build Initiated]");
 
-            targetDebugLoop("Scan Stage", log, new LoopOperation<Target>(){
-
-                @Override
-                public void run(Target target, VLLog log) throws Exception{
-                    target.scan(FSAutomator.this);
-                }
-            });
-            scannerDebugLoop("Results Check Stage", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.checkResults(log);
-                }
-            });
-            scannerDebugLoop("Signal Scan Complete", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.signalScanComplete();
-                }
-            });
-            scannerDebugLoop("Measurement Stage", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.accountForTargetSizeDebug(log);
-                }
-            });
-            scannerDebugLoop("Buffer Build Stage", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.bufferDebug(log);
-                }
-            });
-            scannerDebugLoop("Buffer Upload Stage", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.uploadBuffer();
-                }
-            });
-            scannerDebugLoop("Signal Buffer Complete", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.signalBufferComplete();
-                }
-            });
-            scannerDebugLoop("Signal Build Complete Stage", log, new LoopOperation<FSHScanner<?>>(){
-
-                @Override
-                public void run(FSHScanner<?> target, VLLog log){
-                    target.finalizeBuild();
-                }
-            });
+            targetDebugLoop("Scan Stage", log, (target, log) -> target.scan(FSAutomator.this));
+            scannerDebugLoop("Results Check Stage", log, FSHScanner::checkResults);
+            scannerDebugLoop("Signal Scan Complete", log, (target, log) -> target.signalScanComplete());
+            scannerDebugLoop("Measurement Stage", log, FSHScanner::accountForTargetSizeDebug);
+            scannerDebugLoop("Buffer Build Stage", log, FSHScanner::bufferDebug);
+            scannerDebugLoop("Buffer Upload Stage", log, (target, log) -> target.uploadBuffer());
+            scannerDebugLoop("Signal Buffer Complete", log, (target, log) -> target.signalBufferComplete());
+            scannerDebugLoop("Signal Build Complete Stage", log, (target, log) -> target.finalizeBuild());
 
             log.printInfo("[Automated Buffer Procedure Complete]");
+            log = null;
 
         }else{
             int size = targets.size();
@@ -137,6 +90,8 @@ public class FSAutomator{
                 scanners.get(i).finalizeBuild();
             }
         }
+
+        scanners.clear();
     }
 
     private void targetDebugLoop(String title, VLLog log, LoopOperation<Target> task){
@@ -228,16 +183,12 @@ public class FSAutomator{
             final VLListType<FSHScanner<?>> scanners = automator.scanners;
             final int size = scanners.size();
 
-            FSM.decode(src, order, fullsizedposition, new FSM.DataOperator(){
+            FSM.decode(src, order, fullsizedposition, data -> {
+                for(int i = 0; i < size; i++){
+                    scanners.get(i).scan(data);
 
-                @Override
-                public void operate(FSM.Data data){
-                    for(int i = 0; i < size; i++){
-                        scanners.get(i).scan(data);
-
-                        if(data.locked){
-                            return;
-                        }
+                    if(data.locked){
+                        return;
                     }
                 }
             });
