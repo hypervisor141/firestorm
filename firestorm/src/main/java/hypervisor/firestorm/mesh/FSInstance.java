@@ -100,6 +100,11 @@ public class FSInstance implements FSTypeInstance{
     }
 
     @Override
+    public void allowReassmbly(){
+        assembled = false;
+    }
+
+    @Override
     public void allocateElement(int element, int capacity, int resizeoverhead){
         store.allocateElement(element, capacity, resizeoverhead);
     }

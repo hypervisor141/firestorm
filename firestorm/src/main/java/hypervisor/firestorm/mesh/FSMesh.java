@@ -216,8 +216,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void configure(FSP program, FSRPass pass, int targetindex, int passindex){
+    public void configure(FSP program, FSRPass pass, int targetindex, int passindex){}
 
+    @Override
+    public void allowReassmbly(){
+        assembled = false;
     }
 
     @Override
