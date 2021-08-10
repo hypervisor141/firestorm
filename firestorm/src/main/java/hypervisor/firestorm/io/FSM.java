@@ -17,7 +17,7 @@ public class FSM{
 
     }
 
-    public static void decode(InputStream is, ByteOrder order, boolean fullsizedvertex, DataOperator operator) throws IOException{
+    public static VLListType<Data> decode(InputStream is, ByteOrder order, boolean fullsizedvertex, DataOperator operator, boolean cache) throws IOException{
         ByteBuffer buffer = ByteBuffer.allocate(8);
         BufferedInputStream bis = new BufferedInputStream(is);
         byte[] rawbuffer = new byte[1000];
@@ -26,6 +26,12 @@ public class FSM{
         buffer.position(0);
 
         int size = readInt(bis, buffer);
+
+        VLListType<Data> datacache = null;
+
+        if(cache){
+            datacache = new VLListType<>(size, 0);
+        }
 
         for(int i = 0; i < size; i++){
             int namesize = readInt(bis, buffer);
@@ -73,9 +79,14 @@ public class FSM{
 
             data.clean();
             operator.operate(data);
+
+            if(cache){
+                datacache.add(data);
+            }
         }
 
         bis.close();
+        return datacache;
     }
 
     private static int readInt(BufferedInputStream is, ByteBuffer buffer) throws IOException{

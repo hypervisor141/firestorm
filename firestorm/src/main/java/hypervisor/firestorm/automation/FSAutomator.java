@@ -27,6 +27,10 @@ public class FSAutomator{
         targets.add(target);
     }
 
+    public void clearTargets(){
+        targets.clear();
+    }
+
     public void add(FSHScanner<?> scanner){
         scanners.add(scanner);
     }
@@ -92,7 +96,15 @@ public class FSAutomator{
         }
 
         scanners.clear();
-        targets.clear();
+
+        int size = targets.size();
+
+        for(int i = 0; i < size; i++){
+            if(!targets.get(i).keepInCache()){
+                targets.remove(i);
+                i--;
+            }
+        }
     }
 
     private void targetDebugLoop(String title, VLLog log, LoopOperation<Target> task){
@@ -161,6 +173,7 @@ public class FSAutomator{
     public interface Target{
 
         void scan(FSAutomator automator) throws Exception;
+        boolean keepInCache();
     }
 
     public final static class FSMTarget implements Target{
@@ -168,11 +181,14 @@ public class FSAutomator{
         protected InputStream src;
         protected ByteOrder order;
         protected boolean fullsizedposition;
+        protected boolean enablecache;
+        protected VLListType<FSM.Data> cache;
 
-        public FSMTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
+        public FSMTarget(InputStream src, ByteOrder order, boolean fullsizedposition, boolean enablecache){
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
+            this.enablecache = enablecache;
         }
 
         protected FSMTarget(){
@@ -184,15 +200,38 @@ public class FSAutomator{
             final VLListType<FSHScanner<?>> scanners = automator.scanners;
             final int size = scanners.size();
 
-            FSM.decode(src, order, fullsizedposition, data -> {
-                for(int i = 0; i < size; i++){
-                    scanners.get(i).scan(data);
+            if(cache == null){
+                cache = FSM.decode(src, order, fullsizedposition, data -> {
+                    for(int i = 0; i < size; i++){
+                        scanners.get(i).scan(data);
 
-                    if(data.locked){
-                        return;
+                        if(data.locked){
+                            return;
+                        }
+                    }
+
+                }, enablecache);
+
+            }else{
+                int size2 = cache.size();
+
+                for(int i = 0; i < size2; i++){
+                    FSM.Data data = cache.get(i);
+
+                    for(int i2 = 0; i2 < size; i2++){
+                        scanners.get(i2).scan(data);
+
+                        if(data.locked){
+                            return;
+                        }
                     }
                 }
-            });
+            }
+        }
+
+        @Override
+        public boolean keepInCache(){
+            return enablecache;
         }
     }
 }
