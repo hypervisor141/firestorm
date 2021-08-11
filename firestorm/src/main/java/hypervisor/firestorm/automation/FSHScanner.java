@@ -49,9 +49,9 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
             FSTypeMesh<FSTypeInstance> target = targets.get(i);
 
             if(target.size() == 0){
-                log.append("Incomplete scan : found no instance for mesh with keyword[");
+                log.append("Incomplete scan : found no instance for mesh target with keyword[");
                 log.append(target.name());
-                log.append("] on mesh target[");
+                log.append("] at [");
                 log.append(i);
                 log.append("/");
                 log.append(size);
