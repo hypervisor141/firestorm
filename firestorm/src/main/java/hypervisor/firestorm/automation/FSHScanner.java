@@ -161,49 +161,37 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
         void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data);
 
-        ScanFunction SCAN_SINGULAR = new ScanFunction(){
+        ScanFunction SCAN_SINGULAR = (target, assembler, data) -> {
+            if(target.size() <= 0 && data.name.startsWith(target.name())){
+                FSTypeInstance instance = target.generateInstance(data.name);
+                target.name(data.name);
+                target.add(instance);
 
-            @Override
-            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(target.size() <= 0 && data.name.startsWith(target.name())){
-                    FSTypeInstance instance = target.generateInstance(data.name);
-                    target.name(data.name);
-                    target.add(instance);
-
-                    assembler.buildFirst(instance, target, data);
-                }
+                assembler.buildFirst(instance, target, data);
             }
         };
 
-        ScanFunction SCAN_SINGULAR_STRICT = new ScanFunction(){
+        ScanFunction SCAN_SINGULAR_STRICT = (target, assembler, data) -> {
+            if(target.size() <= 0 && data.name.startsWith(target.name())){
+                FSTypeInstance instance = target.generateInstance(data.name);
+                target.name(data.name);
+                target.add(instance);
 
-            @Override
-            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(target.size() <= 0 && data.name.startsWith(target.name())){
-                    FSTypeInstance instance = target.generateInstance(data.name);
-                    target.name(data.name);
-                    target.add(instance);
-
-                    assembler.buildFirst(instance, target, data);
-                    data.locked = true;
-                }
+                assembler.buildFirst(instance, target, data);
+                data.locked = true;
             }
         };
 
-        ScanFunction SCAN_INSTANCED = new ScanFunction(){
+        ScanFunction SCAN_INSTANCED = (target, assembler, data) -> {
+            if(data.name.startsWith(target.name())){
+                FSTypeInstance instance = target.generateInstance(data.name);
+                target.add(instance);
 
-            @Override
-            public void scan(FSTypeMesh<FSTypeInstance> target, FSHAssembler assembler, FSM.Data data){
-                if(data.name.startsWith(target.name())){
-                    FSTypeInstance instance = target.generateInstance(data.name);
-                    target.add(instance);
+                if(target.size() == 1){
+                    assembler.buildFirst(instance, target, data);
 
-                    if(target.size() == 1){
-                        assembler.buildFirst(instance, target, data);
-
-                    }else{
-                        assembler.buildRest(instance, target, data);
-                    }
+                }else{
+                    assembler.buildRest(instance, target, data);
                 }
             }
         };
