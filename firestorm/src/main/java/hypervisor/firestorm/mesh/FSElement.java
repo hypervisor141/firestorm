@@ -29,6 +29,7 @@ import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.utils.VLLoggable;
 
+@SuppressWarnings("unused")
 public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> implements VLCopyable<FSElement<DATA, BUFFER>>, VLLoggable{
 
     public int element;
@@ -52,23 +53,6 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
 
     public FSElement(FSElement<DATA, BUFFER> src, long flags){
         copy(src, flags);
-    }
-
-    @Override
-    public void copy(FSElement<DATA, BUFFER> src, long flags){
-        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
-            data = src.data;
-            bindings = src.bindings;
-
-        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            data = (DATA)src.data.duplicate(FLAG_DUPLICATE);
-            bindings = src.bindings.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_BUT_REFERENCE_ELEMENTS);
-
-        }else{
-            throw new RuntimeException("Invalid flags : " + flags);
-        }
-
-        element = src.element;
     }
 
     @Override
@@ -105,6 +89,23 @@ public abstract class FSElement<DATA extends VLCopyable<?>, BUFFER extends VLBuf
         for(int i = 0; i < size; i++){
             updateBuffer(i);
         }
+    }
+
+    @Override
+    public void copy(FSElement<DATA, BUFFER> src, long flags){
+        if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
+            data = src.data;
+            bindings = src.bindings;
+
+        }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
+            data = (DATA)src.data.duplicate(FLAG_DUPLICATE);
+            bindings = new VLListType<>(1, 5);
+
+        }else{
+            throw new RuntimeException("Invalid flags : " + flags);
+        }
+
+        element = src.element;
     }
 
     private static abstract class PrimitiveType<DATA extends VLCopyable<?>, BUFFER extends VLBuffer<?, ?>> extends FSElement<DATA, BUFFER>{

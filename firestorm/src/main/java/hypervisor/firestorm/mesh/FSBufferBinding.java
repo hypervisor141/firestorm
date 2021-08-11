@@ -45,7 +45,8 @@ public class FSBufferBinding<BUFFER extends VLBuffer<?, ?>> implements VLCopyabl
             tracker = src.tracker;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            VLCopyable.Helper.throwUnsupportedFlag("FLAG_DUPLICATE");
+            tracker = new VLBufferTracker();
+            buffer = src.buffer;
 
         }else{
             VLCopyable.Helper.throwMissingDefaultFlags();
