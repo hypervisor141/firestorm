@@ -1,7 +1,7 @@
 package hypervisor.firestorm.mesh;
 
 import hypervisor.firestorm.automation.FSHScanner;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public interface FSTypeRenderGroup<ENTRY extends FSTypeRender> extends FSTypeRender{
 

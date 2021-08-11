@@ -3,7 +3,7 @@ package hypervisor.firestorm.mesh;
 import android.view.MotionEvent;
 
 import hypervisor.firestorm.engine.FSElements;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLUpdater;
 

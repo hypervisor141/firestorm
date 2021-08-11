@@ -8,7 +8,7 @@ import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.firestorm.program.FSVertexBuffer;
 import hypervisor.vanguard.buffer.VLBuffer;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.utils.VLLoggable;
 
@@ -22,36 +22,38 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     protected int totalstride;
     protected int instanceoffset;
     protected int instancecount;
+    protected int backendresizeoverhead;
 
     protected boolean interleaved;
     protected boolean debuggedsegmentstructure;
 
-    public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int capacity){
-        initialize(vbuffer, vbuffer.buffer, interleaved, 0, -1, capacity);
+    public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int capacity, int backendresizeoverhead){
+        initialize(vbuffer, vbuffer.buffer, interleaved, 0, -1, capacity, backendresizeoverhead);
     }
 
-    public FSBufferSegment(BUFFER buffer, boolean interleaved, int capacity){
-        initialize(null, buffer, interleaved, 0, -1, capacity);
+    public FSBufferSegment(BUFFER buffer, boolean interleaved, int capacity, int backendresizeoverhead){
+        initialize(null, buffer, interleaved, 0, -1, capacity, backendresizeoverhead);
     }
 
-    public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
-        initialize(vbuffer, vbuffer.buffer, interleaved, instanceoffset, instancecount, capacity);
+    public FSBufferSegment(FSVertexBuffer<BUFFER> vbuffer, boolean interleaved, int instanceoffset, int instancecount, int capacity, int backendresizeoverhead){
+        initialize(vbuffer, vbuffer.buffer, interleaved, instanceoffset, instancecount, capacity, backendresizeoverhead);
     }
 
-    public FSBufferSegment(BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
-        initialize(null, buffer, interleaved, instanceoffset, instancecount, capacity);
+    public FSBufferSegment(BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity, int backendresizeoverhead){
+        initialize(null, buffer, interleaved, instanceoffset, instancecount, capacity, backendresizeoverhead);
     }
 
     protected FSBufferSegment(){
         
     }
 
-    private void initialize(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity){
+    private void initialize(FSVertexBuffer<BUFFER> vbuffer, BUFFER buffer, boolean interleaved, int instanceoffset, int instancecount, int capacity, int backendresizeoverhead){
         this.interleaved = interleaved;
         this.vbuffer = vbuffer;
         this.buffer = buffer;
         this.instanceoffset = instanceoffset;
         this.instancecount = instancecount;
+        this.backendresizeoverhead = backendresizeoverhead;
 
         entries = new VLListType<>(capacity, capacity / 2);
         debuggedsegmentstructure = false;
@@ -120,7 +122,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
     private void checkInitialize(){
         if(buffer.buffer == null){
-            buffer.initialize(ByteOrder.nativeOrder());
+            buffer.initialize(ByteOrder.nativeOrder(), backendresizeoverhead);
 
             if(vbuffer != null && vbuffer.getBufferID() < 0){
                 vbuffer.initialize();

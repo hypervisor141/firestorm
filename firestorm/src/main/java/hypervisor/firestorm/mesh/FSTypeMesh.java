@@ -6,7 +6,7 @@ import hypervisor.firestorm.automation.FSHScanner;
 import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSP;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGroup<ENTRY>{
 

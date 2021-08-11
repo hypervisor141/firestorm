@@ -5,7 +5,7 @@ import hypervisor.firestorm.io.FSM;
 import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.firestorm.mesh.FSTypeRenderGroup;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
 public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{

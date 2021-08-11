@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import hypervisor.vanguard.list.VLListFloat;
-import hypervisor.vanguard.list.VLListShort;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListFloat;
+import hypervisor.vanguard.list.arraybacked.VLListShort;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public final class FSWaveFront{
 

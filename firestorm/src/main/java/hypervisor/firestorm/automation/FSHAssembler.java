@@ -11,8 +11,8 @@ import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.vanguard.array.VLArrayFloat;
 import hypervisor.vanguard.array.VLArrayShort;
-import hypervisor.vanguard.list.VLListFloat;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListFloat;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.utils.VLLoggable;
 import hypervisor.vanguard.variable.VLV;
@@ -340,7 +340,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.fitIntoVirtualSize();
-        instance.positions().array = converted.array();
+        instance.positions().array = converted.backend();
     }
 
     private void unIndexColors(FSTypeInstance instance){
@@ -358,7 +358,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.fitIntoVirtualSize();
-        instance.colors().array = converted.array();
+        instance.colors().array = converted.backend();
     }
 
     private void unIndexTexCoords(FSTypeInstance instance){
@@ -374,7 +374,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.fitIntoVirtualSize();
-        instance.texCoords().array = converted.array();
+        instance.texCoords().array = converted.backend();
     }
 
     private void unIndexNormals(FSTypeInstance instance){
@@ -391,7 +391,7 @@ public class FSHAssembler implements VLLoggable{
         }
 
         converted.fitIntoVirtualSize();
-        instance.normals().array = converted.array();
+        instance.normals().array = converted.backend();
     }
 
     final void buildFirst(FSTypeInstance instance, FSTypeMesh<FSTypeInstance> target, FSM.Data data){
@@ -448,294 +448,198 @@ public class FSHAssembler implements VLLoggable{
         log.append("]");
     }
 
-    private static final BuildStep INDICES_SET = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_INDEX, 1, 0);
-            store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(data.indices.array().clone())));
-            store.activate(FSElements.ELEMENT_INDEX, 0);
-        }
+    private static final BuildStep INDICES_SET = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_INDEX, 1, 0);
+        store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(data.indices.backend().clone())));
+        store.activate(FSElements.ELEMENT_INDEX, 0);
     };
-    private static final BuildStep INDICES_FLIP_TRIANGLES = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            short[] array = instance.indices().array;
-            int size = array.length;
+    private static final BuildStep INDICES_FLIP_TRIANGLES = (assembler, mesh, instance, store, data) -> {
+        short[] array = instance.indices().array;
+        int size = array.length;
 
-            for(int i = 0 ; i < size; i += 3){
-                short cache = array[i + 2];
-                array[i + 2] = array[i];
-                array[i] = cache;
-            }
-        }
-    };
-    private static final BuildStep INDICES_FLIP_QUADS = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            short[] array = instance.indices().array;
-            int size = array.length;
-
-            for(int i = 0 ; i < size; i += 4){
-                short cache = array[i + 3];
-                array[i + 3] = array[i];
-                array[i] = cache;
-
-                cache = array[i + 2];
-                array[i + 2] = array[i + 1];
-                array[i + 1] = cache;
-            }
-        }
-    };
-    private static final BuildStep INDICES_SHARE = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_INDEX, 1, 0);
-            store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(mesh.first().indices().array)));
-            store.activate(FSElements.ELEMENT_INDEX, 0);
+        for(int i = 0 ; i < size; i += 3){
+            short cache = array[i + 2];
+            array[i + 2] = array[i];
+            array[i] = cache;
         }
     };
 
-    private static final BuildStep MODEL_INITIALIZE = new BuildStep(){
+    private static final BuildStep INDICES_FLIP_QUADS = (assembler, mesh, instance, store, data) -> {
+        short[] array = instance.indices().array;
+        int size = array.length;
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_MODEL, 1, 0);
-            store.add(FSElements.ELEMENT_MODEL, new FSElement.FloatArray(FSElements.ELEMENT_MODEL, new FSModelArray(FSElements.UNIT_SIZES[FSElements.ELEMENT_MODEL])));
-            store.activate(FSElements.ELEMENT_MODEL, 0);
+        for(int i = 0 ; i < size; i += 4){
+            short cache = array[i + 3];
+            array[i + 3] = array[i];
+            array[i] = cache;
 
-            instance.modelMatrix(new FSModelMatrix(2, 10));
+            cache = array[i + 2];
+            array[i + 2] = array[i + 1];
+            array[i + 1] = cache;
         }
     };
 
-    private static final BuildStep POSITION_SET = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_POSITION, 1, 0);
-            store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(data.positions.array().clone())));
-            store.activate(FSElements.ELEMENT_POSITION, 0);
-        }
+    private static final BuildStep INDICES_SHARE = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_INDEX, 1, 0);
+        store.add(FSElements.ELEMENT_INDEX, new FSElement.ShortArray(FSElements.ELEMENT_INDEX, new VLArrayShort(mesh.first().indices().array)));
+        store.activate(FSElements.ELEMENT_INDEX, 0);
     };
-    private static final BuildStep POSITION_FLIP_X = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.positions().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+    private static final BuildStep MODEL_INITIALIZE = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_MODEL, 1, 0);
+        store.add(FSElements.ELEMENT_MODEL, new FSElement.FloatArray(FSElements.ELEMENT_MODEL, new FSModelArray(FSElements.UNIT_SIZES[FSElements.ELEMENT_MODEL])));
+        store.activate(FSElements.ELEMENT_MODEL, 0);
 
-            for(int i = 0; i < size; i += jumps){
-                array[i] = -array[i];
-            }
-        }
+        instance.modelMatrix(new FSModelMatrix(2, 10));
     };
-    private static final BuildStep POSITION_FLIP_Y = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.positions().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
-
-            for(int i = 1; i < size; i += jumps){
-                array[i] = -array[i];
-            }
-        }
+    private static final BuildStep POSITION_SET = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_POSITION, 1, 0);
+        store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(data.positions.backend().clone())));
+        store.activate(FSElements.ELEMENT_POSITION, 0);
     };
-    private static final BuildStep POSITION_FLIP_Z = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.positions().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
+    private static final BuildStep POSITION_FLIP_X = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.positions().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
-            for(int i = 2; i < size; i += jumps){
-                array[i] = -array[i];
-            }
-        }
-    };
-    private static final BuildStep POSITION_SHARED = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_POSITION, 1, 0);
-            store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(mesh.first().positions().array)));
-            store.activate(FSElements.ELEMENT_POSITION, 0);
-        }
-    };
-    private static final BuildStep POSITION_UNINDEX = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            assembler.unIndexPositions(instance);
-        }
-    };
-    private static final BuildStep POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            assembler.buildModelMatrixFromSchematics(instance);
-            assembler.centralizePositions(instance);
-        }
-    };
-    private static final BuildStep POSITION_INIT_SCHEMATICS = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            FSSchematics schematics = instance.schematics();
-            schematics.initialize(instance);
-            schematics.rebuild();
+        for(int i = 0; i < size; i += jumps){
+            array[i] = -array[i];
         }
     };
 
-    private static final BuildStep COLOR_FILE_SET = new BuildStep(){
+    private static final BuildStep POSITION_FLIP_Y = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.positions().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_COLOR, 1, 0);
-            store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(data.colors.array().clone())));
-            store.activate(FSElements.ELEMENT_COLOR, 0);
-        }
-    };
-    private static final BuildStep COLOR_FILE_LOADED_NONE_INDEXED = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            assembler.unIndexColors(instance);
-        }
-    };
-    private static final BuildStep COLOR_SHARED = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_COLOR, 1, 0);
-            store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(mesh.first().colors().array)));
-            store.activate(FSElements.ELEMENT_COLOR, 0);
+        for(int i = 1; i < size; i += jumps){
+            array[i] = -array[i];
         }
     };
 
+    private static final BuildStep POSITION_FLIP_Z = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.positions().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_POSITION];
 
-    private static final BuildStep TEXTURE_SET = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.array().clone())));
-            store.activate(FSElements.ELEMENT_TEXCOORD, 0);
-        }
-    };
-    private static final BuildStep TEXTURE_UNINDEX = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            assembler.unIndexTexCoords(instance);
-        }
-    };
-    private static final BuildStep TEXTURE_SHARED = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_TEXCOORD, 1, 0);
-            store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(mesh.first().texCoords().array)));
-            store.activate(FSElements.ELEMENT_TEXCOORD, 0);
-
-        }
-    };
-    private static final BuildStep TEXTURE_FLIP_U = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.texCoords().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_TEXCOORD];
-
-            for(int i = 0; i < size; i += jumps){
-                array[i] = 1F - array[i];
-            }
-        }
-    };
-    private static final BuildStep TEXTURE_FLIP_V = new BuildStep(){
-
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.texCoords().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_TEXCOORD];
-
-            for(int i = 1; i < size; i += jumps){
-                array[i] = 1F - array[i];
-            }
+        for(int i = 2; i < size; i += jumps){
+            array[i] = -array[i];
         }
     };
 
-    private static final BuildStep NORMAL_SET = new BuildStep(){
+    private static final BuildStep POSITION_SHARED = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_POSITION, 1, 0);
+        store.add(FSElements.ELEMENT_POSITION, new FSElement.FloatArray(FSElements.ELEMENT_POSITION, new VLArrayFloat(mesh.first().positions().array)));
+        store.activate(FSElements.ELEMENT_POSITION, 0);
+    };
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
-            store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(data.normals.array().clone())));
-            store.activate(FSElements.ELEMENT_NORMAL, 0);
+    private static final BuildStep POSITION_UNINDEX = (assembler, mesh, instance, store, data) -> assembler.unIndexPositions(instance);
+
+    private static final BuildStep POSITION_CONVERT_POSITIONS_TO_MODEL_MATRIX = (assembler, mesh, instance, store, data) -> {
+        assembler.buildModelMatrixFromSchematics(instance);
+        assembler.centralizePositions(instance);
+    };
+
+    private static final BuildStep POSITION_INIT_SCHEMATICS = (assembler, mesh, instance, store, data) -> {
+        FSSchematics schematics = instance.schematics();
+        schematics.initialize(instance);
+        schematics.rebuild();
+    };
+
+    private static final BuildStep COLOR_FILE_SET = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_COLOR, 1, 0);
+        store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(data.colors.backend().clone())));
+        store.activate(FSElements.ELEMENT_COLOR, 0);
+    };
+
+    private static final BuildStep COLOR_FILE_LOADED_NONE_INDEXED = (assembler, mesh, instance, store, data) -> assembler.unIndexColors(instance);
+
+    private static final BuildStep COLOR_SHARED = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_COLOR, 1, 0);
+        store.add(FSElements.ELEMENT_COLOR, new FSElement.FloatArray(FSElements.ELEMENT_COLOR, new VLArrayFloat(mesh.first().colors().array)));
+        store.activate(FSElements.ELEMENT_COLOR, 0);
+    };
+
+    private static final BuildStep TEXTURE_SET = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_TEXCOORD, 1, 0);
+        store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(data.texcoords.backend().clone())));
+        store.activate(FSElements.ELEMENT_TEXCOORD, 0);
+    };
+
+    private static final BuildStep TEXTURE_UNINDEX = (assembler, mesh, instance, store, data) -> assembler.unIndexTexCoords(instance);
+
+    private static final BuildStep TEXTURE_SHARED = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_TEXCOORD, 1, 0);
+        store.add(FSElements.ELEMENT_TEXCOORD, new FSElement.FloatArray(FSElements.ELEMENT_TEXCOORD, new VLArrayFloat(mesh.first().texCoords().array)));
+        store.activate(FSElements.ELEMENT_TEXCOORD, 0);
+
+    };
+
+    private static final BuildStep TEXTURE_FLIP_U = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.texCoords().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_TEXCOORD];
+
+        for(int i = 0; i < size; i += jumps){
+            array[i] = 1F - array[i];
         }
     };
-    private static final BuildStep NORMAL_FLIP_X = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+    private static final BuildStep TEXTURE_FLIP_V = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.texCoords().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_TEXCOORD];
 
-            for(int i = 0; i < size; i += jumps){
-                array[i] = -array[i];
-            }
+        for(int i = 1; i < size; i += jumps){
+            array[i] = 1F - array[i];
         }
     };
-    private static final BuildStep NORMAL_FLIP_Y = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+    private static final BuildStep NORMAL_SET = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
+        store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(data.normals.backend().clone())));
+        store.activate(FSElements.ELEMENT_NORMAL, 0);
+    };
 
-            for(int i = 1; i < size; i += jumps){
-                array[i] = -array[i];
-            }
+    private static final BuildStep NORMAL_FLIP_X = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.normals().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+
+        for(int i = 0; i < size; i += jumps){
+            array[i] = -array[i];
         }
     };
-    private static final BuildStep NORMAL_FLIP_Z = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            float[] array = instance.normals().array;
-            int size = array.length;
-            int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+    private static final BuildStep NORMAL_FLIP_Y = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.normals().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
 
-            for(int i = 2; i < size; i += jumps){
-                array[i] = -array[i];
-            }
+        for(int i = 1; i < size; i += jumps){
+            array[i] = -array[i];
         }
     };
-    private static final BuildStep NORMAL_UNINDEX = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            assembler.unIndexNormals(instance);
+    private static final BuildStep NORMAL_FLIP_Z = (assembler, mesh, instance, store, data) -> {
+        float[] array = instance.normals().array;
+        int size = array.length;
+        int jumps = FSElements.UNIT_SIZES[FSElements.ELEMENT_NORMAL];
+
+        for(int i = 2; i < size; i += jumps){
+            array[i] = -array[i];
         }
     };
-    private static final BuildStep NORMAL_SHARED = new BuildStep(){
 
-        @Override
-        public void process(FSHAssembler assembler, FSTypeMesh<FSTypeInstance> mesh, FSTypeInstance instance, FSElementStore store, FSM.Data data){
-            store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
-            store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(mesh.first().normals().array)));
-            store.activate(FSElements.ELEMENT_NORMAL, 0);
-        }
+    private static final BuildStep NORMAL_UNINDEX = (assembler, mesh, instance, store, data) -> assembler.unIndexNormals(instance);
+
+    private static final BuildStep NORMAL_SHARED = (assembler, mesh, instance, store, data) -> {
+        store.allocateElement(FSElements.ELEMENT_NORMAL, 1, 0);
+        store.add(FSElements.ELEMENT_NORMAL, new FSElement.FloatArray(FSElements.ELEMENT_NORMAL, new VLArrayFloat(mesh.first().normals().array)));
+        store.activate(FSElements.ELEMENT_NORMAL, 0);
     };
 
     public interface BuildStep{

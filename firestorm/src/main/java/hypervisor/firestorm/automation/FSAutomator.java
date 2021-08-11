@@ -5,7 +5,7 @@ import java.nio.ByteOrder;
 
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.io.FSM;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
 public class FSAutomator{

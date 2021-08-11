@@ -4,7 +4,7 @@ import android.opengl.GLES32;
 
 import hypervisor.firestorm.program.FSConfigGroup;
 import hypervisor.firestorm.program.FSP;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLLog;
 
 public class FSRPass{

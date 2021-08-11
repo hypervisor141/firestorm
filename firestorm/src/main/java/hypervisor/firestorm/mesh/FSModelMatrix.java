@@ -1,6 +1,6 @@
 package hypervisor.firestorm.mesh;
 
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.variable.VLV;
 import hypervisor.vanguard.variable.VLVMatrix;
 import hypervisor.vanguard.variable.VLVTypeVariable;

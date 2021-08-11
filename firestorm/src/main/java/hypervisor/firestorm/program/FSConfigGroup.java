@@ -3,7 +3,7 @@ package hypervisor.firestorm.program;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.mesh.FSTypeMesh;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
 

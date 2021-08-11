@@ -4,7 +4,7 @@ import android.content.Context;
 
 import hypervisor.firestorm.mesh.FSMeshGroup;
 import hypervisor.firestorm.mesh.FSTypeRenderGroup;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public abstract class FSHub<GLOBAL extends FSGlobal>{
 

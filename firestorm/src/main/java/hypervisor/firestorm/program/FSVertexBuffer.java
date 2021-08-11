@@ -122,10 +122,10 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
 
         bind();
 
-        ByteBuffer b = (ByteBuffer)GLES32.glMapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT);
-        b.order(ByteOrder.nativeOrder());
+        ByteBuffer mapping = (ByteBuffer)GLES32.glMapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT);
+        mapping.order(ByteOrder.nativeOrder());
 
-        buffer.initialize(b);
+        buffer.initializeDirect(mapping, 0);
 
         needsupdate = false;
         uploaded = true;
@@ -179,8 +179,8 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         bindpoint = newbindpoint;
     }
 
-    public void releaseClientBuffer(){
-        buffer.release();
+    public void destroyBackend(){
+        buffer.destroy();
     }
 
     public void setTarget(int s){

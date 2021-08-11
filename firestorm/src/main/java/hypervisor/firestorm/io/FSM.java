@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
-import hypervisor.vanguard.list.VLListFloat;
-import hypervisor.vanguard.list.VLListShort;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListShort;
+import hypervisor.vanguard.list.arraybacked.VLListFloat;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public class FSM{
 

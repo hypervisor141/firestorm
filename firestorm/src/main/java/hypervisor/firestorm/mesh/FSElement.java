@@ -18,7 +18,7 @@ import hypervisor.vanguard.buffer.VLBufferInt;
 import hypervisor.vanguard.buffer.VLBufferLong;
 import hypervisor.vanguard.buffer.VLBufferShort;
 import hypervisor.vanguard.buffer.VLBufferTracker;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.primitive.VLByte;
 import hypervisor.vanguard.primitive.VLDouble;
 import hypervisor.vanguard.primitive.VLFloat;

@@ -3,7 +3,7 @@ package hypervisor.firestorm.engine;
 import android.view.MotionEvent;
 
 import hypervisor.firestorm.mesh.FSTypeRender;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public final class FSCInput{
 
@@ -31,8 +31,8 @@ public final class FSCInput{
                 int size = PRE.size();
                 int size2 = POST.size();
 
-                Object[] array = PRE.array();
-                Object[] array2 = POST.array();
+                Object[] array = PRE.backend();
+                Object[] array2 = POST.backend();
 
                 CACHE.clear();
 

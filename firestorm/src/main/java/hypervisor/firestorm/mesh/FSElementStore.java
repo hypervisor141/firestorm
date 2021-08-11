@@ -1,6 +1,6 @@
 package hypervisor.firestorm.mesh;
 
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
 public final class FSElementStore implements VLCopyable<FSElementStore>{

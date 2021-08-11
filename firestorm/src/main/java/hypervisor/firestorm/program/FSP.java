@@ -19,7 +19,7 @@ import hypervisor.vanguard.array.VLArrayFloat;
 import hypervisor.vanguard.array.VLArrayInt;
 import hypervisor.vanguard.array.VLArrayUtils;
 import hypervisor.vanguard.buffer.VLBufferTracker;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.primitive.VLFloat;
 import hypervisor.vanguard.primitive.VLInt;
 import hypervisor.vanguard.utils.VLCopyable;

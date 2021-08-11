@@ -9,7 +9,7 @@ import hypervisor.firestorm.program.FSVertexBuffer;
 import hypervisor.vanguard.buffer.VLBuffer;
 import hypervisor.vanguard.concurrency.VLThread;
 import hypervisor.vanguard.concurrency.VLThreadManager;
-import hypervisor.vanguard.list.VLListType;
+import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public abstract class FSGlobal{
 
