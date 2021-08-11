@@ -466,7 +466,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             id = target.id;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            entries = target.entries.duplicate(VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+            entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
             name = target.name.concat("_duplicate").concat(String.valueOf(id));
             id = FSControl.generateUID();
 
