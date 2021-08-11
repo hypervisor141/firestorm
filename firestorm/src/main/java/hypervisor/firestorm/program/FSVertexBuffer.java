@@ -125,7 +125,7 @@ public class FSVertexBuffer<BUFFER extends VLBuffer<?, ?>> implements VLLoggable
         ByteBuffer mapping = (ByteBuffer)GLES32.glMapBufferRange(target, offset * bytes, size * bytes, GLES32.GL_MAP_READ_BIT | GLES32.GL_MAP_WRITE_BIT);
         mapping.order(ByteOrder.nativeOrder());
 
-        buffer.initializeDirect(mapping, 0);
+        buffer.initialize(mapping);
 
         needsupdate = false;
         uploaded = true;
