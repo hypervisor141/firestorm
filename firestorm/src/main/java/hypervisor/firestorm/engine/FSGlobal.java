@@ -38,6 +38,7 @@ public abstract class FSGlobal{
         passes = generateRenderPasses(context);
         hubs = generateHubs(context);
 
+        initializeHubs(context);
         buildPrograms();
         postSetup(context);
     }
@@ -136,6 +137,14 @@ public abstract class FSGlobal{
 
     public void releaseBufferMaps(){
         buffermaps = null;
+    }
+
+    final void initializeHubs(Context context){
+        int size = hubs.size();
+
+        for(int i = 0; i < size; i++){
+            hubs.get(i).initialize(context);
+        }
     }
 
     final void buildPrograms(){
