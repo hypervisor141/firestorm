@@ -208,7 +208,7 @@ public class FSAutomator{
                         scanners.get(i).scan(data);
 
                         if(data.locked){
-                            return;
+                            break;
                         }
                     }
 
@@ -224,7 +224,7 @@ public class FSAutomator{
                         scanners.get(i2).scan(data);
 
                         if(data.locked){
-                            return;
+                            break;
                         }
                     }
                 }
