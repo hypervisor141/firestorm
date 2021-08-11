@@ -1,5 +1,7 @@
 package hypervisor.firestorm.automation;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.nio.ByteOrder;
 

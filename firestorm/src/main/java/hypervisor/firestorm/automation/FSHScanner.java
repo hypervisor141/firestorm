@@ -51,7 +51,12 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
             if(target.size() == 0){
                 log.append("Incomplete scan : found no instance for mesh with keyword[");
                 log.append(target.name());
-                log.append("]\n");
+                log.append("] on mesh target[");
+                log.append(i);
+                log.append("/");
+                log.append(size);
+                log.append("]");
+
                 log.printError();
 
                 throw new RuntimeException();
@@ -69,7 +74,6 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void finalizeBuild(){
         int size = targets.size();
-        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
             targets.get(i).addToDefinedProgram();
