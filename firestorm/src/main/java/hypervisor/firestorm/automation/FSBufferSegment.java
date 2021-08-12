@@ -126,6 +126,8 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 vbuffer.initialize();
             }
         }
+
+        buffer.positionToEndPoint();
     }
 
     public void buffer(FSTypeMesh<FSTypeInstance> target){
