@@ -109,11 +109,11 @@ public abstract class FSBounds implements VLCopyable<FSBounds>{
             points = src.points;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            points = src.points.duplicate(VLCopyable.FLAG_DUPLICATE);
+            points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_REFERENCE_POINTS) == FLAG_REFERENCE_POINTS){
-                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+                points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_BUT_REFERENCE_ELEMENTS);
 
             }else if((flags & FLAG_DUPLICATE_POINTS) == FLAG_DUPLICATE_POINTS){
                 points = src.points.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);

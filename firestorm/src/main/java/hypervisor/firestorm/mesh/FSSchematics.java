@@ -713,7 +713,7 @@ public class FSSchematics implements VLCopyable<FSSchematics>{
                 bounds = src.bounds;
 
             }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-                bounds = src.bounds.duplicate(FSBounds.FLAG_DUPLICATE_POINTS);
+                bounds = src.bounds.duplicate(FLAG_CUSTOM | FSBounds.FLAG_DUPLICATE_POINTS);
 
             }else{
                 Helper.throwMissingDefaultFlags();
