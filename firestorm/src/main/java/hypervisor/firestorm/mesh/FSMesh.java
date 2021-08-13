@@ -497,7 +497,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             bindings = new VLListType[size];
 
             for(int i = 0; i < size; i++){
-                bindings[i] = target.bindings[i].duplicate(VLCopyable.FLAG_DUPLICATE);
+                VLListType<FSBufferBinding<?>> binding = target.bindings[i];
+
+                if(binding != null){
+                    bindings[i] = binding.duplicate(VLCopyable.FLAG_DUPLICATE);
+                }
             }
 
             id = FSControl.generateUID();
@@ -516,7 +520,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
                 bindings = new VLListType[size];
 
                 for(int i = 0; i < size; i++){
-                    bindings[i] = target.bindings[i].duplicate(VLCopyable.FLAG_DUPLICATE);
+                    VLListType<FSBufferBinding<?>> binding = target.bindings[i];
+
+                    if(binding != null){
+                        bindings[i] = binding.duplicate(VLCopyable.FLAG_DUPLICATE);
+                    }
                 }
 
             }else{
