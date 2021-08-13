@@ -462,13 +462,13 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             entries = target.entries;
-            name = target.name;
             id = target.id;
+            name = target.name;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
-            name = target.name.concat("_duplicate").concat(String.valueOf(id));
             id = FSControl.generateUID();
+            name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_DUPLICATE_ENTRIES) == FLAG_DUPLICATE_ENTRIES){

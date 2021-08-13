@@ -398,8 +398,8 @@ public class FSInstance implements FSTypeInstance{
             colortexture = target.colortexture;
             material = target.material;
             lightmap = target.lightmap;
-            name = target.name;
             id = target.id;
+            name = target.name;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             store = target.store.duplicate(FLAG_DUPLICATE);
@@ -414,8 +414,8 @@ public class FSInstance implements FSTypeInstance{
 
             colortexture = target.colortexture;
             lightmap = target.lightmap;
-            name = target.name.concat("_duplicate").concat(String.valueOf(id));
             id = FSControl.generateUID();
+            name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             colortexture = target.colortexture;
