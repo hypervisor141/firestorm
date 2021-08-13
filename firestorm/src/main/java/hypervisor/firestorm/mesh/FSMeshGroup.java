@@ -14,8 +14,7 @@ import hypervisor.vanguard.utils.VLCopyable;
 public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMeshGroup<ENTRY>{
     
     public static final long FLAG_UNIQUE_ID = 0x1L;
-    public static final long FLAG_UNIQUE_NAME = 0x2L;
-    public static final long FLAG_DUPLICATE_ENTRIES = 0x4L;
+    public static final long FLAG_DUPLICATE_ENTRIES = 0x2L;
 
     protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;
@@ -460,15 +459,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void copy(FSTypeRender src, long flags){
         FSMeshGroup<ENTRY> target = (FSMeshGroup<ENTRY>)src;
 
+        name = target.name;
+
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             entries = target.entries;
             id = target.id;
-            name = target.name;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             entries = target.entries.duplicate(VLCopyable.FLAG_DUPLICATE);
             id = FSControl.generateUID();
-            name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_DUPLICATE_ENTRIES) == FLAG_DUPLICATE_ENTRIES){
@@ -483,13 +482,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
             }else{
                 id = target.id;
-            }
-
-            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
-                name = target.name.concat("_duplicate").concat(String.valueOf(id));
-
-            }else{
-                name = target.name;
             }
 
         }else{

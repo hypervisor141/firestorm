@@ -16,12 +16,11 @@ import hypervisor.vanguard.variable.VLVMatrix;
 public class FSInstance implements FSTypeInstance{
 
     public static final long FLAG_UNIQUE_ID = 0x1L;
-    public static final long FLAG_UNIQUE_NAME = 0x2L;
-    public static final long FLAG_DUPLICATE_STORAGE = 0x4L;
-    public static final long FLAG_DUPLICATE_SCHEMATICS = 0x8L;
-    public static final long FLAG_DUPLICATE_MATERIAL = 0x10L;
-    public static final long FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES = 0x20L;
-    public static final long FLAG_REFERENCE_MODEL_MATRIX_ENTRIES = 0x40L;
+    public static final long FLAG_DUPLICATE_STORAGE = 0x2L;
+    public static final long FLAG_DUPLICATE_SCHEMATICS = 0x4L;
+    public static final long FLAG_DUPLICATE_MATERIAL = 0x8L;
+    public static final long FLAG_DUPLICATE_MODEL_MATRIX_ENTRIES = 0x10L;
+    public static final long FLAG_REFERENCE_MODEL_MATRIX_ENTRIES = 0x20L;
 
     protected FSTypeRenderGroup<?> parent;
     protected FSElementStore store;
@@ -391,6 +390,8 @@ public class FSInstance implements FSTypeInstance{
     public void copy(FSTypeRender src, long flags){
         FSInstance target = (FSInstance)src;
 
+        name = target.name;
+
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             store = target.store;
             schematics = target.schematics;
@@ -399,7 +400,6 @@ public class FSInstance implements FSTypeInstance{
             material = target.material;
             lightmap = target.lightmap;
             id = target.id;
-            name = target.name;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             store = target.store.duplicate(FLAG_DUPLICATE);
@@ -415,7 +415,6 @@ public class FSInstance implements FSTypeInstance{
             colortexture = target.colortexture;
             lightmap = target.lightmap;
             id = FSControl.generateUID();
-            name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             colortexture = target.colortexture;
@@ -461,13 +460,6 @@ public class FSInstance implements FSTypeInstance{
 
             }else{
                 id = target.id;
-            }
-
-            if((flags & FLAG_UNIQUE_NAME) == FLAG_UNIQUE_NAME){
-                name = target.name.concat("_duplicate").concat(String.valueOf(id));
-
-            }else{
-                name = target.name;
             }
 
         }else{
