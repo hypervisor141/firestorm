@@ -405,10 +405,10 @@ public class FSInstance implements FSTypeInstance{
             store = target.store.duplicate(FLAG_DUPLICATE);
             schematics = target.schematics.duplicate(FLAG_DUPLICATE);
 
-            if(modelmatrix != null){
-                modelmatrix = target.modelmatrix.duplicate(VLVMatrix.FLAG_DUPLICATE);
+            if(target.modelmatrix != null){
+                modelmatrix = target.modelmatrix.duplicate(FLAG_DUPLICATE);
             }
-            if(material != null){
+            if(target.material != null){
                 material = target.material.duplicate(FLAG_DUPLICATE);
             }
 
