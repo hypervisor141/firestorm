@@ -91,7 +91,7 @@ public class FSConfigGroup extends FSConfig{
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_DUPLICATE_CONFIGS) == FLAG_DUPLICATE_CONFIGS){
-                configs = target.configs.duplicate(FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+                configs = target.configs.duplicate(VLCopyable.FLAG_DUPLICATE);
 
             }else{
                 VLCopyable.Helper.throwMissingSubFlags("FLAG_CUSTOM", "FLAG_DUPLICATE_CONFIGS");

@@ -489,13 +489,13 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             name = target.name;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
-            entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+            entries = target.entries.duplicate(VLCopyable.FLAG_DUPLICATE);
             id = FSControl.generateUID();
             name = target.name.concat("_duplicate").concat(String.valueOf(id));
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
             if((flags & FLAG_DUPLICATE_ENTRIES) == FLAG_DUPLICATE_ENTRIES){
-                entries = target.entries.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+                entries = target.entries.duplicate(VLCopyable.FLAG_DUPLICATE);
 
             }else{
                 entries = target.entries.duplicate(VLListType.FLAG_REFERENCE);

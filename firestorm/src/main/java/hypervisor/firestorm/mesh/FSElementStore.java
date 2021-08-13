@@ -77,7 +77,7 @@ public final class FSElementStore implements VLCopyable<FSElementStore>{
                 VLListType<FSElement<?, ?>> list = srcvault[i];
 
                 if(list != null){
-                    vault[i] = list.duplicate(VLCopyable.FLAG_CUSTOM | VLListType.FLAG_DUPLICATE_ARRAY_FULLY);
+                    vault[i] = list.duplicate(VLCopyable.FLAG_DUPLICATE);
                 }
             }
 
