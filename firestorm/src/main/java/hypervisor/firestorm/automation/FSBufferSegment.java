@@ -121,10 +121,9 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     private void checkInitialize(){
         if(buffer.buffer == null){
             buffer.initialize(ByteOrder.nativeOrder());
-
-            if(vbuffer != null && vbuffer.getBufferID() < 0){
-                vbuffer.initialize();
-            }
+        }
+        if(vbuffer != null && vbuffer.getBufferID() < 0){
+            vbuffer.initialize();
         }
     }
 
