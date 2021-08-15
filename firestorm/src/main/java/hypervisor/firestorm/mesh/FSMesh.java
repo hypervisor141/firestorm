@@ -504,7 +504,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
                 VLListType<FSBufferBinding<?>> binding = target.bindings[i];
 
                 if(binding != null){
-                    bindings[i] = binding.duplicate(VLCopyable.FLAG_DUPLICATE);
+                    allocateBinding(i, binding.size(), binding.resizeOverhead());
                 }
             }
 
@@ -526,7 +526,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
                     VLListType<FSBufferBinding<?>> binding = target.bindings[i];
 
                     if(binding != null){
-                        bindings[i] = binding.duplicate(VLCopyable.FLAG_DUPLICATE);
+                        allocateBinding(i, binding.size(), binding.resizeOverhead());
                     }
                 }
 
