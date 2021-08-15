@@ -60,7 +60,7 @@ public abstract class FSP{
 
     protected abstract CoreConfig generateConfigurations(VLListType<FSTypeMesh<?>> targets, int debug);
 
-    public VLListType<FSTypeMesh<?>> targets(){
+    public VLListType<FSTypeMesh<?>> meshes(){
         return targets;
     }
 

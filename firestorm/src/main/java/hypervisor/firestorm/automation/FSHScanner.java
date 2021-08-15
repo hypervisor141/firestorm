@@ -74,9 +74,10 @@ public class FSHScanner<TYPE extends FSTypeRenderGroup<?>>{
 
     public void finalizeBuild(){
         int size = targets.size();
+        FSGlobal global = FSGlobal.get();
 
         for(int i = 0; i < size; i++){
-            targets.get(i).addToDefinedProgram();
+            targets.get(i).registerWithPrograms(global);
         }
 
         target.buildComplete();

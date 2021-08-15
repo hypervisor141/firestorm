@@ -69,11 +69,6 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void addToDefinedProgram(){
-        getProgram(FSGlobal.get()).targets().add(this);
-    }
-
-    @Override
     public void allocateBinding(int element, int capacity, int resizeoverhead){
         if(bindings[element] == null){
             bindings[element] = new VLListType<>(capacity, resizeoverhead);
@@ -213,6 +208,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void register(FSHScanner<?> scanner){
         scanner.register((FSTypeMesh<FSTypeInstance>)this);
+    }
+
+    @Override
+    public void registerWithPrograms(FSGlobal global){
+        getProgram(global).meshes().add(this);
     }
 
     @Override
