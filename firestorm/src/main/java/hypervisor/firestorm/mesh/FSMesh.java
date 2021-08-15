@@ -19,6 +19,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public static final long FLAG_UNIQUE_ID = 0x1L;
     public static final long FLAG_DUPLICATE_ENTRIES = 0x2L;
     public static final long FLAG_DUPLICATE_BINDINGS = 0x4L;
+    public static final long FLAG_DUPLICATE_REFERENCE_BINDINGS = 0x8L;
 
     protected FSTypeRenderGroup<?> parent;
     protected VLListType<ENTRY> entries;
@@ -491,23 +492,12 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             entries = target.entries;
-            bindings = target.bindings;
+            bindings = new VLListType[FSElements.COUNT];
             id = target.id;
 
         }else if((flags & FLAG_DUPLICATE) == FLAG_DUPLICATE){
             entries = target.entries.duplicate(VLCopyable.FLAG_DUPLICATE);
-
-            int size = target.bindings.length;
-            bindings = new VLListType[size];
-
-            for(int i = 0; i < size; i++){
-                VLListType<FSBufferBinding<?>> binding = target.bindings[i];
-
-                if(binding != null){
-                    allocateBinding(i, binding.size(), binding.resizeOverhead());
-                }
-            }
-
+            bindings = new VLListType[FSElements.COUNT];
             id = FSControl.generateUID();
 
         }else if((flags & FLAG_CUSTOM) == FLAG_CUSTOM){
@@ -518,20 +508,25 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
                 entries = target.entries.duplicate(VLListType.FLAG_REFERENCE);
             }
 
-            if((flags & FLAG_DUPLICATE_BINDINGS) == FLAG_DUPLICATE_BINDINGS){
-                int size = target.bindings.length;
-                bindings = new VLListType[size];
+            if(target.bindings != null){
+                if((flags & FLAG_DUPLICATE_BINDINGS) == FLAG_DUPLICATE_BINDINGS){
+                    int size = target.bindings.length;
+                    bindings = new VLListType[size];
 
-                for(int i = 0; i < size; i++){
-                    VLListType<FSBufferBinding<?>> binding = target.bindings[i];
+                    for(int i = 0; i < size; i++){
+                        VLListType<FSBufferBinding<?>> binding = target.bindings[i];
 
-                    if(binding != null){
-                        allocateBinding(i, binding.size(), binding.resizeOverhead());
+                        if(binding != null){
+                            bindings[i] = binding.duplicate(VLCopyable.FLAG_DUPLICATE);
+                        }
                     }
-                }
 
-            }else{
-                bindings = target.bindings.clone();
+                }else if((flags & FLAG_DUPLICATE_REFERENCE_BINDINGS) == FLAG_DUPLICATE_REFERENCE_BINDINGS){
+                    bindings = target.bindings.clone();
+
+                }else{
+                    bindings = new VLListType[FSElements.COUNT];
+                }
             }
 
             if((flags & FLAG_UNIQUE_ID) == FLAG_UNIQUE_ID){
@@ -566,6 +561,8 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void destroy(){
+        unregisterFromPrograms(FSGlobal.get());
+
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
