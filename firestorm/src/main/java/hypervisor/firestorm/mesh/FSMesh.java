@@ -216,6 +216,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
+    public void unregisterFromPrograms(FSGlobal global){
+        getProgram(global).meshes().remove(this);
+    }
+
+    @Override
     public void configure(FSP program, FSRPass pass, int targetindex, int passindex){}
 
     @Override

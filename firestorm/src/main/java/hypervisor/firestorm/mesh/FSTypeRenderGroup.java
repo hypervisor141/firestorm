@@ -8,6 +8,7 @@ public interface FSTypeRenderGroup<ENTRY extends FSTypeRender> extends FSTypeRen
 
     void register(FSHScanner<?> scanner);
     void registerWithPrograms(FSGlobal global);
+    void unregisterFromPrograms(FSGlobal global);
     void add(ENTRY entry);
     void remove(int index);
     void remove(ENTRY entry);
