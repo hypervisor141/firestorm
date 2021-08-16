@@ -233,6 +233,21 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
+    public void autoScanDebug(FSScanTarget target, FSLog log){
+        try{
+            autoScan(target);
+
+        }catch(Exception ex){
+            log.append("Scan Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public void autoAccountForBufferCapacity(){
         int size = entries.size();
 
@@ -245,8 +260,18 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoAccountForBufferCapacityDebug(FSLog log){
         int size = entries.size();
 
-        for(int i = 0; i < size; i++){
-            entries.get(i).autoAccountForBufferCapacityDebug(log);
+        try{
+            for(int i = 0; i < size; i++){
+                entries.get(i).autoAccountForBufferCapacityDebug(log);
+            }
+
+        }catch(Exception ex){
+            log.append("Buffer Capacity Accounting Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
         }
     }
 
@@ -263,8 +288,18 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoBuildBufferDebug(FSLog log){
         int size = entries.size();
 
-        for(int i = 0; i < size; i++){
-            entries.get(i).autoBuildBufferDebug(log);
+        try{
+            for(int i = 0; i < size; i++){
+                entries.get(i).autoBuildBufferDebug(log);
+            }
+
+        }catch(Exception ex){
+            log.append("Buffer Build Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
         }
     }
 
@@ -290,13 +325,23 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void autoBuildDebug(FSLog log){
-        autoAccountForBufferCapacityDebug(log);
-        autoBuildBufferDebug(log);
-        autoUploadBuffer();
-        bufferComplete();
+        try{
+            autoAccountForBufferCapacityDebug(log);
+            autoBuildBufferDebug(log);
+            autoUploadBuffer();
+            bufferComplete();
 
-        registerWithPrograms();
-        buildComplete();
+            registerWithPrograms();
+            buildComplete();
+
+        }catch(Exception ex){
+            log.append("Build Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -307,8 +352,18 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void autoScanBuildDebug(FSScanTarget target, FSLog log){
-        autoScan(target);
-        autoBuildDebug(log);
+        try{
+            autoScanDebug(target, log);
+            autoBuildDebug(log);
+
+        }catch(Exception ex){
+            log.append("ScanBuild Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

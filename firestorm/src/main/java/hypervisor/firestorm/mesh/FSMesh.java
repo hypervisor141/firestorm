@@ -271,7 +271,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             target.scan((FSTypeMesh<FSTypeInstance>)this);
 
         }catch(Exception ex){
-            throw new RuntimeException(ex);
+            //
         }
 
         scanComplete();
@@ -284,7 +284,17 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoAccountForBufferCapacityDebug(FSLog log){
-        bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
+        try{
+            bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
+
+        }catch(Exception ex){
+            log.append("Buffer Capacity Accounting Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -294,7 +304,17 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoBuildBufferDebug(FSLog log){
-        bufferMap().bufferDebug((FSTypeMesh<FSTypeInstance>)this, log);
+        try{
+            bufferMap().bufferDebug((FSTypeMesh<FSTypeInstance>)this, log);
+
+        }catch(Exception ex){
+            log.append("Buffer Build Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -315,13 +335,23 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoBuildDebug(FSLog log){
-        autoAccountForBufferCapacityDebug(log);
-        autoBuildBufferDebug(log);
-        autoUploadBuffer();
-        bufferComplete();
+        try{
+            autoAccountForBufferCapacityDebug(log);
+            autoBuildBufferDebug(log);
+            autoUploadBuffer();
+            bufferComplete();
 
-        registerWithPrograms();
-        buildComplete();
+            registerWithPrograms();
+            buildComplete();
+
+        }catch(Exception ex){
+            log.append("Build Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -332,8 +362,18 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoScanBuildDebug(FSScanTarget target, FSLog log){
-        autoScan(target);
-        autoBuildDebug(log);
+        try{
+            autoScanDebug(target, log);
+            autoBuildDebug(log);
+
+        }catch(Exception ex){
+            log.append("ScanBuild Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

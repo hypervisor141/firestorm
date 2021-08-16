@@ -12,6 +12,7 @@ public interface FSTypeRenderGroup<ENTRY extends FSTypeRender> extends FSTypeRen
     void scanFunction(FSScanFunction function);
     void program(int globalindex);
     void autoScan(FSScanTarget target);
+    void autoScanDebug(FSScanTarget target, FSLog log);
     void autoAccountForBufferCapacity();
     void autoAccountForBufferCapacityDebug(FSLog log);
     void autoBuildBuffer();
