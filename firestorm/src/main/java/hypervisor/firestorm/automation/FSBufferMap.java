@@ -2,8 +2,8 @@ package hypervisor.firestorm.automation;
 
 import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.list.arraybacked.VLListType;
-import hypervisor.vanguard.utils.VLLog;
 
 public class FSBufferMap{
 
@@ -30,7 +30,7 @@ public class FSBufferMap{
         }
     }
 
-    public void accountForDebug(FSTypeMesh<FSTypeInstance> target, VLLog log){
+    public void accountForDebug(FSTypeMesh<FSTypeInstance> target, FSLog log){
         int size = map.size();
         log.addTag(getClass().getSimpleName());
 
@@ -53,7 +53,7 @@ public class FSBufferMap{
         }
     }
 
-    public void bufferDebug(FSTypeMesh<FSTypeInstance> target, VLLog log){
+    public void bufferDebug(FSTypeMesh<FSTypeInstance> target, FSLog log){
         int size = map.size();
         log.addTag(getClass().getSimpleName());
 

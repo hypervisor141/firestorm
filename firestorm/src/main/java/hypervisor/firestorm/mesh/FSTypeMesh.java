@@ -2,18 +2,21 @@ package hypervisor.firestorm.mesh;
 
 import hypervisor.firestorm.automation.FSBufferMap;
 import hypervisor.firestorm.automation.FSHAssembler;
-import hypervisor.firestorm.automation.FSHScanner;
-import hypervisor.firestorm.engine.FSGlobal;
+import hypervisor.firestorm.automation.FSScanFunction;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.program.FSP;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGroup<ENTRY>{
 
-    FSHAssembler getAssembler(FSGlobal global);
-    FSBufferMap getBufferMap(FSGlobal global);
-    FSHScanner.ScanFunction getScanFunction(FSGlobal global);
-    FSP getProgram(FSGlobal global);
+    void assembler(int globalindex);
+    void bufferMap(int globalindex);
+    void scanFunction(FSScanFunction function);
+    void program(int globalindex);
+    FSHAssembler assembler();
+    FSBufferMap bufferMap();
+    FSScanFunction scanFunction();
+    FSP program();
 
     ENTRY generateInstance(String name);
     void configure(FSP program, FSRPass pass, int targetindex, int passindex);

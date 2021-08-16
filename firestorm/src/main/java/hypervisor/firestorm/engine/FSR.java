@@ -85,7 +85,7 @@ public class FSR{
         events.GLPreCreated(surface, context, continuing);
 
         if(!continuing){
-            FSGlobal.get().initialize(context);
+            FSGlobal.GLOBAL.initialize(context);
         }
 
         events.GLPostCreated(surface, context, continuing);
@@ -111,7 +111,7 @@ public class FSR{
         FSEvents events = FSControl.events();
         events.GLPreDraw();
 
-        VLListType<FSRPass> passes = FSGlobal.get().passes;
+        VLListType<FSRPass> passes = FSGlobal.GLOBAL.passes;
 
         int size = passes.size();
 
@@ -129,16 +129,16 @@ public class FSR{
     protected static void finishFrame(){
         FSCFrames.timeFrameEnded();
         FSCEGL.swapBuffers();
-        FSGlobal.get().notifyFrameSwap();
+        FSGlobal.GLOBAL.notifyFrameSwap();
         FSCFrames.finalizeFrame();
     }
 
     protected static void notifyPaused(){
-        FSGlobal.get().notifyPaused();
+        FSGlobal.GLOBAL.notifyPaused();
     }
 
     protected static void notifyResumed(){
-        FSGlobal.get().notifyResumed();
+        FSGlobal.GLOBAL.notifyResumed();
     }
 
     public static void postTask(FSRTask task){

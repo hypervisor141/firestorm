@@ -7,6 +7,7 @@ import hypervisor.firestorm.mesh.FSElement;
 import hypervisor.firestorm.mesh.FSTypeInstance;
 import hypervisor.firestorm.mesh.FSTypeMesh;
 import hypervisor.firestorm.program.FSVertexBuffer;
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.buffer.VLBuffer;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLLog;
@@ -72,7 +73,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    public void accountForDebug(FSTypeMesh<FSTypeInstance> target, VLLog log){
+    public void accountForDebug(FSTypeMesh<FSTypeInstance> target, FSLog log){
         int size = instanceoffset + (instancecount < 0 ? target.size() - instanceoffset : instancecount);
         int size2 = entries.size();
 
@@ -162,7 +163,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
     }
 
-    public void bufferDebug(FSTypeMesh<FSTypeInstance> target, VLLog log){
+    public void bufferDebug(FSTypeMesh<FSTypeInstance> target, FSLog log){
         int entrysize = entries.size();
 
         log.append("stride[");
@@ -370,7 +371,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         int calculateInterleaveDebugUnitCount(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance);
         void bufferSequential(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride);
         void bufferInterleaved(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride);
-        void checkForInterleavingErrors(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, int unitcountrequired, VLLog log);
+        void checkForInterleavingErrors(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, int unitcountrequired, FSLog log);
     }
 
     public static abstract class ElementType<BUFFER extends VLBuffer<?, ?>> implements EntryType<BUFFER>{
@@ -460,7 +461,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public void checkForInterleavingErrors(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, int unitcountrequired, VLLog log){
+        public void checkForInterleavingErrors(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, int unitcountrequired, FSLog log){
             int size2 = instance.storage().get(element).get(storeindex).size() / unitsize;
 
             if(size2 != unitcountrequired){
@@ -528,7 +529,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
-        public void checkForInterleavingErrors(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, int unitcountrequired, VLLog log){
+        public void checkForInterleavingErrors(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, int unitcountrequired, FSLog log){
             int size = instance.element(element).size() / unitsize;
 
             if(size != unitcountrequired){

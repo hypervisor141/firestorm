@@ -8,6 +8,8 @@ import android.opengl.EGLSurface;
 import android.opengl.GLES32;
 import android.view.SurfaceHolder;
 
+import hypervisor.firestorm.tools.FSTools;
+
 public class FSCEGL{
 
     private static EGLDisplay display;

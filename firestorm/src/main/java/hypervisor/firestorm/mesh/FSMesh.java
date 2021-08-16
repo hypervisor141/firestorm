@@ -2,7 +2,10 @@ package hypervisor.firestorm.mesh;
 
 import android.view.MotionEvent;
 
-import hypervisor.firestorm.automation.FSHScanner;
+import hypervisor.firestorm.automation.FSBufferMap;
+import hypervisor.firestorm.automation.FSHAssembler;
+import hypervisor.firestorm.automation.FSScanFunction;
+import hypervisor.firestorm.automation.FSScanTarget;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.engine.FSGlobal;
@@ -11,6 +14,7 @@ import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSTexture;
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
@@ -29,8 +33,19 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     protected boolean enabled;
     protected boolean assembled;
 
-    public FSMesh(String name, int capacity, int resizeoverhead){
+    protected int globalbuffermapindex;
+    protected int globalassemblerindex;
+    protected int globalprogramindex;
+    protected FSScanFunction scanfunction;
+
+    public FSMesh(String name, int globalbuffermapindex, int globalassemblerindex, FSScanFunction scanfunction,
+                  int globalprogramindex, int capacity, int resizeoverhead){
+
         this.name = name.toLowerCase();
+        this.globalbuffermapindex = globalbuffermapindex;
+        this.globalassemblerindex = globalassemblerindex;
+        this.scanfunction = scanfunction;
+        this.globalprogramindex = globalprogramindex;
 
         bindings = new VLListType[FSElements.COUNT];
         entries = new VLListType<>(capacity, resizeoverhead);
@@ -67,6 +82,30 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void parent(FSTypeRenderGroup<?> parent){
         this.parent = parent;
+    }
+
+    @Override
+    public void bufferMap(int globalindex){
+        this.globalbuffermapindex = globalindex;
+    }
+
+    @Override
+    public void assembler(int globalindex){
+        this.globalassemblerindex = globalindex;
+    }
+
+    @Override
+    public void scanFunction(FSScanFunction function){
+        this.scanfunction = function;
+    }
+
+    @Override
+    public void program(int globalindex){
+        if(globalprogramindex != -1){
+            unregisterFromProgram();
+        }
+
+        this.globalprogramindex = globalindex;
     }
 
     @Override
@@ -145,6 +184,26 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
+    public FSHAssembler assembler(){
+        return globalassemblerindex < 0 ? null : FSGlobal.GLOBAL.assembler(globalassemblerindex);
+    }
+
+    @Override
+    public FSBufferMap bufferMap(){
+        return globalbuffermapindex < 0 ? null : FSGlobal.GLOBAL.bufferMap(globalbuffermapindex);
+    }
+
+    @Override
+    public FSScanFunction scanFunction(){
+        return scanfunction;
+    }
+
+    @Override
+    public FSP program(){
+        return globalprogramindex < 0 ? null : FSGlobal.GLOBAL.program(globalprogramindex);
+    }
+
+    @Override
     public boolean enabled(){
         return enabled;
     }
@@ -207,18 +266,84 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     }
 
     @Override
-    public void register(FSHScanner<?> scanner){
-        scanner.register((FSTypeMesh<FSTypeInstance>)this);
+    public void autoScan(FSScanTarget target){
+        try{
+            target.scan((FSTypeMesh<FSTypeInstance>)this);
+
+        }catch(Exception ex){
+            throw new RuntimeException(ex);
+        }
+
+        scanComplete();
     }
 
     @Override
-    public void registerWithPrograms(FSGlobal global){
-        getProgram(global).meshes().add(this);
+    public void autoAccountForBufferCapacity(){
+        bufferMap().accountFor((FSTypeMesh<FSTypeInstance>)this);
     }
 
     @Override
-    public void unregisterFromPrograms(FSGlobal global){
-        getProgram(global).meshes().remove(this);
+    public void autoAccountForBufferCapacityDebug(FSLog log){
+        bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
+    }
+
+    @Override
+    public void autoBuildBuffer(){
+        bufferMap().buffer((FSTypeMesh<FSTypeInstance>)this);
+    }
+
+    @Override
+    public void autoBuildBufferDebug(FSLog log){
+        bufferMap().bufferDebug((FSTypeMesh<FSTypeInstance>)this, log);
+    }
+
+    @Override
+    public void autoUploadBuffer(){
+        bufferMap().upload();
+    }
+
+    @Override
+    public void autoBuild(){
+        autoAccountForBufferCapacity();
+        autoBuildBuffer();
+        autoUploadBuffer();
+        bufferComplete();
+
+        registerWithPrograms();
+        buildComplete();
+    }
+
+    @Override
+    public void autoBuildDebug(FSLog log){
+        autoAccountForBufferCapacityDebug(log);
+        autoBuildBufferDebug(log);
+        autoUploadBuffer();
+        bufferComplete();
+
+        registerWithPrograms();
+        buildComplete();
+    }
+
+    @Override
+    public void autoScanBuild(FSScanTarget target){
+        autoScan(target);
+        autoBuild();
+    }
+
+    @Override
+    public void autoScanBuildDebug(FSScanTarget target, FSLog log){
+        autoScan(target);
+        autoBuildDebug(log);
+    }
+
+    @Override
+    public void registerWithPrograms(){
+        program().meshes().add(this);
+    }
+
+    @Override
+    public void unregisterFromProgram(){
+        program().meshes().remove(this);
     }
 
     @Override
@@ -489,6 +614,10 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
         enabled = target.enabled;
         name = target.name;
+        globalbuffermapindex = target.globalbuffermapindex;
+        globalassemblerindex = target.globalassemblerindex;
+        scanfunction = target.scanfunction;
+        globalprogramindex = target.globalprogramindex;
 
         if((flags & FLAG_REFERENCE) == FLAG_REFERENCE){
             entries = target.entries;
@@ -561,7 +690,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void destroy(){
-        unregisterFromPrograms(FSGlobal.get());
+        unregisterFromProgram();
 
         int size = entries.size();
 

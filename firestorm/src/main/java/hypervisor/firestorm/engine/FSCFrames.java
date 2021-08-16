@@ -1,5 +1,6 @@
 package hypervisor.firestorm.engine;
 
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.utils.VLLog;
 
 public class FSCFrames{
@@ -21,13 +22,10 @@ public class FSCFrames{
     private static int QUEUED_FRAMES_COUNT;
     private static int EXTERNAL_CHANGES;
     
-    private static VLLog LOG;
+    private static FSLog LOG;
     private final static Object LOCK = new Object();
 
     protected static void initialize(int maxunchangedframes, int maxqueuedframes){
-        LOG = new VLLog(1);
-        LOG.addTag(FSControl.LOGTAG);
-
         synchronized(LOCK){
             TOTAL_FRAMES = 0;
             FRAME_TIME = 0;

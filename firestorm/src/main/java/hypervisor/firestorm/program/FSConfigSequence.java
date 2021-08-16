@@ -1,8 +1,8 @@
 package hypervisor.firestorm.program;
 
-import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.mesh.FSTypeMesh;
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
@@ -75,7 +75,7 @@ public class FSConfigSequence extends FSConfigLocated{
     }
 
     @Override
-    public final void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public final void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){
         int size = configs.size();
         int loc = location;
 

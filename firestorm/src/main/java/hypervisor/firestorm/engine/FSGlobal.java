@@ -4,6 +4,7 @@ import android.content.Context;
 
 import hypervisor.firestorm.automation.FSBufferMap;
 import hypervisor.firestorm.automation.FSHAssembler;
+import hypervisor.firestorm.automation.FSScanTarget;
 import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSVertexBuffer;
 import hypervisor.vanguard.buffer.VLBuffer;
@@ -13,7 +14,7 @@ import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public abstract class FSGlobal{
 
-    private static FSGlobal GLOBAL;
+    public static FSGlobal GLOBAL;
 
     protected VLThreadManager threadmanager;
     protected VLListType<FSHAssembler> assemblers;
@@ -22,6 +23,7 @@ public abstract class FSGlobal{
     protected VLListType<FSBufferMap> buffermaps;
     protected VLListType<FSP> programs;
     protected VLListType<FSRPass> passes;
+    protected VLListType<FSScanTarget> scantargets;
     protected VLListType<FSHub<?>> hubs;
 
     public FSGlobal(){
@@ -36,6 +38,7 @@ public abstract class FSGlobal{
         buffermaps = generateBufferMaps(context);
         programs = generatePrograms(context);
         passes = generateRenderPasses(context);
+        scantargets = generateScanTargets(context);
         hubs = generateHubs(context);
 
         initializeHubs(context);
@@ -43,12 +46,8 @@ public abstract class FSGlobal{
         postSetup(context);
     }
 
-    public static void initialize(FSGlobal global){
+    protected static void initialize(FSGlobal global){
         GLOBAL = global;
-    }
-
-    public static FSGlobal get(){
-        return GLOBAL;
     }
 
     protected abstract VLThreadManager generateThreads(Context context);
@@ -58,6 +57,7 @@ public abstract class FSGlobal{
     protected abstract VLListType<FSBufferMap> generateBufferMaps(Context context);
     protected abstract VLListType<FSP> generatePrograms(Context context);
     protected abstract VLListType<FSRPass> generateRenderPasses(Context context);
+    protected abstract VLListType<FSScanTarget> generateScanTargets(Context context);
     protected abstract VLListType<FSHub<?>> generateHubs(Context context);
     protected abstract void postSetup(Context context);
     protected abstract void paused();
@@ -139,6 +139,16 @@ public abstract class FSGlobal{
         buffermaps = null;
     }
 
+    public void releaseScanTargets(){
+        int size = scantargets.size();
+
+        for(int i = 0; i < size; i++){
+            scantargets.get(i).release();
+        }
+
+        scantargets = null;
+    }
+
     final void initializeHubs(Context context){
         int size = hubs.size();
 
@@ -204,14 +214,15 @@ public abstract class FSGlobal{
 
         threadmanager.destroy();
 
+        threadmanager = null;
         assemblers = null;
         buffers = null;
         vbuffers = null;
         buffermaps = null;
         programs = null;
         passes = null;
+        scantargets = null;
         hubs = null;
-        threadmanager = null;
     }
 
     protected static void destroy(boolean destroyonpause){

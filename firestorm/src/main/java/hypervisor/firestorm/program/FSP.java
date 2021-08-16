@@ -6,11 +6,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import hypervisor.firestorm.engine.FSCFrames;
-import hypervisor.firestorm.engine.FSCInput;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSElements;
 import hypervisor.firestorm.engine.FSRPass;
-import hypervisor.firestorm.engine.FSTools;
+import hypervisor.firestorm.tools.FSLog;
+import hypervisor.firestorm.tools.FSTools;
 import hypervisor.firestorm.engine.FSView;
 import hypervisor.firestorm.mesh.FSBufferBinding;
 import hypervisor.firestorm.mesh.FSTypeMesh;
@@ -36,7 +36,7 @@ public abstract class FSP{
 
     protected CoreConfig coreconfigs;
 
-    protected VLLog log;
+    protected FSLog log;
     protected int program;
     protected int debug;
     protected int uniformlocation;
@@ -49,9 +49,7 @@ public abstract class FSP{
         targets = new VLListType<>(targetcapacity, targetcapacity);
 
         uniformlocation = 0;
-
-        log = new VLLog(10);
-        log.addTag(FSControl.LOGTAG);
+        log = new FSLog(10);
     }
 
     protected FSP(){
@@ -68,7 +66,7 @@ public abstract class FSP{
         return coreconfigs;
     }
 
-    public VLLog log(){
+    public FSLog log(){
         return log;
     }
 

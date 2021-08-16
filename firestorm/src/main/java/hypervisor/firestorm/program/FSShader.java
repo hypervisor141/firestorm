@@ -4,7 +4,8 @@ import android.opengl.GLES32;
 
 import androidx.annotation.NonNull;
 
-import hypervisor.firestorm.engine.FSTools;
+import hypervisor.firestorm.tools.FSLog;
+import hypervisor.firestorm.tools.FSTools;
 import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.utils.VLLoggable;
 
@@ -360,7 +361,7 @@ public final class FSShader implements VLLoggable{
         FSTools.checkGLError();
     }
 
-    public void debugInfo(FSP program, VLLog log, int debug){
+    public void debugInfo(FSP program, FSLog log, int debug){
         String info = GLES32.glGetShaderInfoLog(shaderid);
         
         log.append("shaderID[");

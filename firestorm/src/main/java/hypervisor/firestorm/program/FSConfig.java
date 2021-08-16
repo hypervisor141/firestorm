@@ -2,8 +2,9 @@ package hypervisor.firestorm.program;
 
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSRPass;
-import hypervisor.firestorm.engine.FSTools;
 import hypervisor.firestorm.mesh.FSTypeMesh;
+import hypervisor.firestorm.tools.FSLog;
+import hypervisor.firestorm.tools.FSTools;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
 import hypervisor.vanguard.utils.VLLoggable;
@@ -20,7 +21,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         }
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){
             if(debug >= FSControl.DEBUG_VERBOSE){
                 self.attachDebugInfo(pass, program, mesh, log, debug);
                 log.append(" ");
@@ -53,7 +54,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         }
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){
             if(debug >= FSControl.DEBUG_VERBOSE){
                 self.attachDebugInfo(pass, program, mesh, log, debug);
                 log.append(" ");
@@ -84,7 +85,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
         public void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex){}
 
         @Override
-        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){}
+        public void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){}
 
         @Override
         public String getModeName(){
@@ -132,7 +133,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
     }
 
     @Override
-    public final void runDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public final void runDebug(FSRPass pass, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){
         String classname = getClass().getSimpleName();
 
         log.addTag(classname.equals("") ? "Anonymous" : classname);
@@ -161,7 +162,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
 
     protected abstract void configure(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex);
 
-    protected void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    protected void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){
         configure(program, pass, mesh, meshindex, passindex);
     }
 
@@ -197,7 +198,7 @@ public abstract class FSConfig implements VLCopyable<FSConfig>, VLLoggable, FSTy
     public interface Mode extends VLCopyable<Mode>{
 
         void configure(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex);
-        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug);
+        void configureDebug(FSRPass pass, FSConfig self, FSP program, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug);
         String getModeName();
     }
 }

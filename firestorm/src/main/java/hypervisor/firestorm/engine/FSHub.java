@@ -15,7 +15,7 @@ public abstract class FSHub<GLOBAL extends FSGlobal>{
     }
 
     public void initialize(Context context){
-        assemble(context, (GLOBAL)FSGlobal.get(), root);
+        assemble(context, (GLOBAL)FSGlobal.GLOBAL, root);
     }
 
     protected abstract void assemble(Context context, GLOBAL global, FSMeshGroup<FSTypeRenderGroup<?>> root);

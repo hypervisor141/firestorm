@@ -2,12 +2,13 @@ package hypervisor.firestorm.mesh;
 
 import android.view.MotionEvent;
 
-import hypervisor.firestorm.automation.FSHScanner;
+import hypervisor.firestorm.automation.FSScanTarget;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSGlobal;
 import hypervisor.firestorm.program.FSLightMap;
 import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSTexture;
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
@@ -186,29 +187,108 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     }
 
     @Override
-    public void register(FSHScanner<?> scanner){
+    public void autoScan(FSScanTarget target){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).register(scanner);
+            entries.get(i).autoScan(target);
         }
     }
 
     @Override
-    public void registerWithPrograms(FSGlobal global){
+    public void autoAccountForBufferCapacity(){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).registerWithPrograms(global);
+            entries.get(i).autoAccountForBufferCapacity();
         }
     }
 
     @Override
-    public void unregisterFromPrograms(FSGlobal global){
+    public void autoAccountForBufferCapacityDebug(FSLog log){
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).unregisterFromPrograms(global);
+            entries.get(i).autoAccountForBufferCapacityDebug(log);
+        }
+    }
+
+    @Override
+    public void autoBuildBuffer(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).autoAccountForBufferCapacity();
+        }
+    }
+
+    @Override
+    public void autoBuildBufferDebug(FSLog log){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).autoBuildBufferDebug(log);
+        }
+    }
+
+    @Override
+    public void autoUploadBuffer(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).autoAccountForBufferCapacity();
+        }
+    }
+
+    @Override
+    public void autoBuild(){
+        autoAccountForBufferCapacity();
+        autoBuildBuffer();
+        autoUploadBuffer();
+        bufferComplete();
+
+        registerWithPrograms();
+        buildComplete();
+    }
+
+    @Override
+    public void autoBuildDebug(FSLog log){
+        autoAccountForBufferCapacityDebug(log);
+        autoBuildBufferDebug(log);
+        autoUploadBuffer();
+        bufferComplete();
+
+        registerWithPrograms();
+        buildComplete();
+    }
+
+    @Override
+    public void autoScanBuild(FSScanTarget target){
+        autoScan(target);
+        autoBuild();
+    }
+
+    @Override
+    public void autoScanBuildDebug(FSScanTarget target, FSLog log){
+        autoScan(target);
+        autoBuildDebug(log);
+    }
+
+    @Override
+    public void registerWithPrograms(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).registerWithPrograms();
+        }
+    }
+
+    @Override
+    public void unregisterFromProgram(){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).unregisterFromProgram();
         }
     }
 

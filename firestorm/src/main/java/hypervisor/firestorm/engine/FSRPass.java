@@ -4,8 +4,9 @@ import android.opengl.GLES32;
 
 import hypervisor.firestorm.program.FSConfigGroup;
 import hypervisor.firestorm.program.FSP;
+import hypervisor.firestorm.tools.FSLog;
+import hypervisor.firestorm.tools.FSTools;
 import hypervisor.vanguard.list.arraybacked.VLListType;
-import hypervisor.vanguard.utils.VLLog;
 
 public class FSRPass{
 
@@ -19,7 +20,7 @@ public class FSRPass{
 
     protected FSConfigGroup preconfig;
     protected FSConfigGroup postconfig;
-    protected VLLog log;
+    protected FSLog log;
     
     public FSRPass(float[] clearcolor, int clearbits, FSConfigGroup preconfig, FSConfigGroup postconfig, int capacity, int debug){
         this.clearcolor = clearcolor;
@@ -48,9 +49,8 @@ public class FSRPass{
         id = FSControl.generateUID();
 
         if(debug >= FSControl.DEBUG_NORMAL){
-            log = new VLLog(new String[]{
-                    FSControl.LOGTAG, getClass().getSimpleName() + "-" + id
-            }, 20);
+            log = new FSLog(20);
+            log.addTag(getClass().getSimpleName() + "-" + id);
         }
     }
 

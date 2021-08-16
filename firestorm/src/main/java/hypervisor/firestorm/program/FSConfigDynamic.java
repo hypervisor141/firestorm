@@ -2,6 +2,7 @@ package hypervisor.firestorm.program;
 
 import hypervisor.firestorm.engine.FSRPass;
 import hypervisor.firestorm.mesh.FSTypeMesh;
+import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.utils.VLCopyable;
 import hypervisor.vanguard.utils.VLLog;
 
@@ -43,7 +44,7 @@ public class FSConfigDynamic<TYPE extends FSConfig> extends FSConfigLocated{
     }
 
     @Override
-    public void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, VLLog log, int debug){
+    public void configureDebug(FSP program, FSRPass pass, FSTypeMesh<?> mesh, int meshindex, int passindex, FSLog log, int debug){
         config.location(location);
         config.runDebug(pass, program, mesh, meshindex, passindex, log, debug);
     }
