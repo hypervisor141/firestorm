@@ -243,7 +243,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             log.append("]");
             log.printError();
 
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -271,7 +271,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             log.append("]");
             log.printError();
 
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -299,7 +299,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             log.append("]");
             log.printError();
 
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -340,7 +340,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             log.append("]");
             log.printError();
 
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -362,7 +362,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             log.append("]");
             log.printError();
 
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
