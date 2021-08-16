@@ -63,6 +63,14 @@ public abstract class FSGlobal{
     protected abstract void paused();
     protected abstract void resumed();
 
+    public VLThreadManager threadManager(){
+        return threadmanager;
+    }
+
+    public VLThread worker(int index){
+        return threadmanager.workers().get(index);
+    }
+
     public FSHAssembler assembler(int index){
         return assemblers.get(index);
     }
@@ -87,12 +95,16 @@ public abstract class FSGlobal{
         return passes.get(index);
     }
 
+    public FSScanTarget scanTarget(int index){
+        return scantargets.get(index);
+    }
+
     public FSHub<?> hub(int index){
         return hubs.get(index);
     }
 
-    public VLThread worker(int index){
-        return threadmanager.workers().get(index);
+    public VLListType<VLThread> workers(){
+        return threadmanager.workers();
     }
 
     public VLListType<FSHAssembler> assemblers(){
@@ -119,16 +131,12 @@ public abstract class FSGlobal{
         return passes;
     }
 
+    public VLListType<FSScanTarget> scanTargets(){
+        return scantargets;
+    }
+
     public VLListType<FSHub<?>> hubs(){
         return hubs;
-    }
-
-    public VLThreadManager threadManager(){
-        return threadmanager;
-    }
-
-    public VLListType<VLThread> workers(){
-        return threadmanager.workers();
     }
 
     public void releaseAssemblers(){
