@@ -267,14 +267,35 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoScan(FSScanTarget target){
+        target.scan((FSTypeMesh<FSTypeInstance>)this);
+        scanComplete();
+    }
+
+    @Override
+    public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
-            target.scan((FSTypeMesh<FSTypeInstance>)this);
+            autoScan(target);
 
         }catch(Exception ex){
-            //
+            log.append("Scan Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
         }
 
-        scanComplete();
+        try{
+            scanComplete();
+
+        }catch(Exception ex){
+            log.append("Scan Completion Signal Failure [");
+            log.append(name);
+            log.append("]");
+            log.printError();
+
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

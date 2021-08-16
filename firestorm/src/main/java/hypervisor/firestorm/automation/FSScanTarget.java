@@ -11,30 +11,35 @@ import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public interface FSScanTarget{
 
-    void scan(FSTypeMesh<FSTypeInstance> target) throws Exception;
+    void scan(FSTypeMesh<FSTypeInstance> target);
     void release();
 
-    final class FSM implements FSScanTarget{
+    final class FSMTarget implements FSScanTarget{
 
         protected InputStream src;
         protected ByteOrder order;
         protected boolean fullsizedposition;
         protected VLListType<hypervisor.firestorm.io.FSM.Data> cache;
 
-        public FSM(InputStream src, ByteOrder order, boolean fullsizedposition){
+        public FSMTarget(InputStream src, ByteOrder order, boolean fullsizedposition){
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
         }
 
-        protected FSM(){
+        protected FSMTarget(){
 
         }
 
         @Override
-        public void scan(FSTypeMesh<FSTypeInstance> target) throws Exception{
+        public void scan(FSTypeMesh<FSTypeInstance> target){
             if(cache == null){
-                cache = hypervisor.firestorm.io.FSM.decode(src, order, fullsizedposition);
+                try{
+                    cache = FSM.decode(src, order, fullsizedposition);
+
+                }catch(Exception ex){
+                    throw new RuntimeException(ex);
+                }
             }
 
             FSScanFunction scanner = target.scanFunction();
