@@ -2,6 +2,7 @@ package hypervisor.firestorm.mesh;
 
 import android.view.MotionEvent;
 
+import hypervisor.firestorm.automation.FSScanFunction;
 import hypervisor.firestorm.automation.FSScanTarget;
 import hypervisor.firestorm.engine.FSControl;
 import hypervisor.firestorm.engine.FSGlobal;
@@ -67,6 +68,42 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public void parent(FSTypeRenderGroup<?> parent){
         this.parent = parent;
+    }
+
+    @Override
+    public void bufferMap(int globalindex){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).bufferMap(globalindex);
+        }
+    }
+
+    @Override
+    public void assembler(int globalindex){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).assembler(globalindex);
+        }
+    }
+
+    @Override
+    public void scanFunction(FSScanFunction function){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).scanFunction(function);
+        }
+    }
+
+    @Override
+    public void program(int globalindex){
+        int size = entries.size();
+
+        for(int i = 0; i < size; i++){
+            entries.get(i).program(globalindex);
+        }
     }
 
     @Override

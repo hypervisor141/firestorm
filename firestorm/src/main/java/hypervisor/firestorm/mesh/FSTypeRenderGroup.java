@@ -1,11 +1,16 @@
 package hypervisor.firestorm.mesh;
 
+import hypervisor.firestorm.automation.FSScanFunction;
 import hypervisor.firestorm.automation.FSScanTarget;
 import hypervisor.firestorm.tools.FSLog;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public interface FSTypeRenderGroup<ENTRY extends FSTypeRender> extends FSTypeRender{
 
+    void assembler(int globalindex);
+    void bufferMap(int globalindex);
+    void scanFunction(FSScanFunction function);
+    void program(int globalindex);
     void autoScan(FSScanTarget target);
     void autoAccountForBufferCapacity();
     void autoAccountForBufferCapacityDebug(FSLog log);

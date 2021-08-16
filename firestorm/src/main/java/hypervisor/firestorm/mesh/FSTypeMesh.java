@@ -9,10 +9,6 @@ import hypervisor.vanguard.list.arraybacked.VLListType;
 
 public interface FSTypeMesh<ENTRY extends FSTypeInstance> extends FSTypeRenderGroup<ENTRY>{
 
-    void assembler(int globalindex);
-    void bufferMap(int globalindex);
-    void scanFunction(FSScanFunction function);
-    void program(int globalindex);
     FSHAssembler assembler();
     FSBufferMap bufferMap();
     FSScanFunction scanFunction();
