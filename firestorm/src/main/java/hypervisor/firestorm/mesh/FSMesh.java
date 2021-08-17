@@ -318,7 +318,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append(" [FAILED]");
+            log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
 
@@ -344,7 +344,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append(" [FAILED]");
+            log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
 
@@ -372,7 +372,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append(" [FAILED]");
+            log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
 
@@ -422,7 +422,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append(" [FAILED]");
+            log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
 
