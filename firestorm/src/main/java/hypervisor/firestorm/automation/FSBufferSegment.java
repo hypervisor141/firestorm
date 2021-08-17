@@ -90,12 +90,9 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 log.addTag(String.valueOf(i2));
 
                 try{
-                    buffer.adjustPreInitCapacity(entries.get(i2).calculateNeededSize(instance));
-                    log.append("[SUCCESS]\n");
-                    log.printInfo();
+                    buffer.adjustPreInitCapacity(entries.get(i2).calculateNeededSizeDebug(instance, log));
 
                 }catch(Exception ex){
-                    log.append("[FAILED]\n");
                     log.printError();
                     log.removeLastTag();
                     log.removeLastTag();
@@ -232,16 +229,16 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
             for(int i = 0; i < entrysize; i++){
                 EntryType<BUFFER> entry = entries.get(i);
-                int unitcountrequired = entry.calculateInterleaveDebugUnitCount(target, target.first());
+                try{
+                    int unitcountrequired = entry.calculateInterleaveDebugUnitCount(target, target.first());
 
-                for(int i2 = 0; i2 < size; i2++){
-                    try{
+                    for(int i2 = 0; i2 < size; i2++){
                         entry.checkForInterleavingErrors(target, target.get(i2), unitcountrequired, log);
-
-                    }catch(Exception ex){
-                        log.removeLastTag();
-                        throw new RuntimeException(ex);
                     }
+
+                }catch(Exception ex){
+                    log.removeLastTag();
+                    throw new RuntimeException(ex);
                 }
             }
         }
@@ -405,6 +402,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
 
         int unitSizeOnBuffer();
         int calculateNeededSize(FSTypeInstance instance);
+        int calculateNeededSizeDebug(FSTypeInstance instance, FSLog log);
         int calculateInterleaveDebugUnitCount(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance);
         void bufferSequential(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride);
         void bufferInterleaved(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride);
@@ -480,6 +478,36 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         }
 
         @Override
+        public int calculateNeededSizeDebug(FSTypeInstance instance, FSLog log){
+            try{
+                log.addTag(getClass().getSimpleName());
+                log.append("element[");
+                log.append(element);
+                log.append("] storeIndex[");
+                log.append(storeindex);
+                log.append("] unitSize[");
+                log.append(unitsize);
+                log.append("] unitSubCount[");
+                log.append(unitsubcount);
+                log.append("]");
+
+                int size = (instance.storage().get(element).get(storeindex).size() / unitsize) * unitsubcount;
+
+                log.append(" [SUCCESS]");
+                log.printInfo();
+                log.removeLastTag();
+
+                return size;
+            }catch(Exception ex){
+                log.append(" [FAILED]");
+                log.printError();
+                log.removeLastTag();
+
+                throw new RuntimeException(ex);
+            }
+        }
+
+        @Override
         public void bufferSequential(FSTypeMesh<FSTypeInstance> target, FSTypeInstance instance, BUFFER buffer, FSVertexBuffer<BUFFER> vbuffer, int stride){
             target.allocateBinding(element, 1, 5);
 
@@ -543,6 +571,34 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
         @Override
         public int calculateNeededSize(FSTypeInstance instance){
             return (instance.element(element).size() / unitsize) * unitsubcount;
+        }
+
+        @Override
+        public int calculateNeededSizeDebug(FSTypeInstance instance, FSLog log){
+            try{
+                log.addTag(getClass().getSimpleName());
+                log.append("element[");
+                log.append(element);
+                log.append("] unitSize[");
+                log.append(unitsize);
+                log.append("] unitSubCount[");
+                log.append(unitsubcount);
+                log.append("]");
+
+                int size = (instance.element(element).size() / unitsize) * unitsubcount;
+
+                log.append(" [SUCCESS]");
+                log.printInfo();
+                log.removeLastTag();
+
+                return size;
+            }catch(Exception ex){
+                log.append(" [FAILED]");
+                log.printError();
+                log.removeLastTag();
+
+                throw new RuntimeException(ex);
+            }
         }
 
         @Override

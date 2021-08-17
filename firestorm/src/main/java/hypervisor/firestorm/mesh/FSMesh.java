@@ -285,7 +285,6 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoScan(FSScanTarget target){
-        destroy();
         entries.clear();
         target.scan((FSTypeMesh<FSTypeInstance>)this);
 
@@ -296,9 +295,8 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
             log.addTag(name);
-            log.addTag("[Scanning For Instances]");
+            log.addTag("Scanning For Instances");
 
-            destroy();
             entries.clear();
             target.scan((FSTypeMesh<FSTypeInstance>)this);
 
@@ -369,7 +367,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoBuildBufferDebug(FSLog log){
         try{
             log.addTag(name);
-            log.addTag("[Building Buffers]");
+            log.addTag("Building Buffers");
 
             clearBindings();
             bufferMap().bufferDebug((FSTypeMesh<FSTypeInstance>)this, log);
@@ -413,7 +411,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(name);
 
-            log.addTag("[Uploading Buffers]");
+            log.append("[Uploading Buffers]");
             autoUploadBuffer();
 
             log.append(" [Signaling BufferComplete]");
