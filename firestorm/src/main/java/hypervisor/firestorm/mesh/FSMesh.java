@@ -295,9 +295,18 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Scanning For Instances");
+            log.append("[Scanning For Instances]\n");
 
             autoScan(target);
+
+            log.append("[Checking Scan Results]\n");
+
+            if(entries.size() <= 0){
+                log.append("[SCAN INCOMPLETE] [FOUND NO INSTANCE FOR TARGET MESH] [FAILED]\n");
+                log.printError();
+
+                throw new RuntimeException();
+            }
 
             log.append(" [SUCCESS]");
             log.printInfo();
@@ -314,7 +323,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Signaling ScanComplete");
+            log.append("[Signaling ScanComplete]\n");
 
             scanComplete();
 
@@ -341,7 +350,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Accounting For Buffer Capacity");
+            log.append("[Accounting For Buffer Capacity]\n");
 
             bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
 
@@ -411,7 +420,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Uploading Buffers");
+            log.append("[Uploading Buffers]\n");
 
             autoUploadBuffer();
 
@@ -430,7 +439,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Signaling BufferComplete");
+            log.append("[Signaling BufferComplete]\n");
 
             bufferComplete();
 
@@ -449,7 +458,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Registering With Programs");
+            log.append("[Registering With Programs]\n");
 
             registerWithPrograms();
 
@@ -468,7 +477,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("Signaling BuildComplete");
+            log.append("[Signaling BuildComplete]\n");
 
             buildComplete();
 
