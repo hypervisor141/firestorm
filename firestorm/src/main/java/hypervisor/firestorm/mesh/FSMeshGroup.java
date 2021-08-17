@@ -261,21 +261,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void autoScanDebug(FSScanTarget target, FSLog log){
-        try{
-            log.addTag(name);
+        log.addTag(name);
 
-            int size = entries.size();
+        int size = entries.size();
 
-            for(int i = 0; i < size; i++){
-                entries.get(i).autoScanDebug(target, log);
-            }
-
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.removeLastTag();
-            throw new RuntimeException(ex);
+        for(int i = 0; i < size; i++){
+            entries.get(i).autoScanDebug(target, log);
         }
+
+        log.removeLastTag();
     }
 
     @Override
@@ -289,21 +283,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void autoAccountForBufferCapacityDebug(FSLog log){
-        try{
-            log.addTag(name);
+        log.addTag(name);
 
-            int size = entries.size();
+        int size = entries.size();
 
-            for(int i = 0; i < size; i++){
-                entries.get(i).autoAccountForBufferCapacityDebug(log);
-            }
-
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.removeLastTag();
-            throw new RuntimeException(ex);
+        for(int i = 0; i < size; i++){
+            entries.get(i).autoAccountForBufferCapacityDebug(log);
         }
+
+        log.removeLastTag();
     }
 
     @Override
@@ -317,21 +305,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void autoBuildBufferDebug(FSLog log){
-        try{
-            log.addTag(name);
+        log.addTag(name);
 
-            int size = entries.size();
+        int size = entries.size();
 
-            for(int i = 0; i < size; i++){
-                entries.get(i).autoBuildBufferDebug(log);
-            }
-
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.removeLastTag();
-            throw new RuntimeException(ex);
+        for(int i = 0; i < size; i++){
+            entries.get(i).autoBuildBufferDebug(log);
         }
+
+        log.removeLastTag();
     }
 
     @Override
@@ -358,20 +340,14 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         autoAccountForBufferCapacityDebug(log);
         autoBuildBufferDebug(log);
 
-        try{
-            log.addTag(name);
+        log.addTag(name);
 
-            autoUploadBuffer();
-            bufferComplete();
-            registerWithPrograms();
-            buildComplete();
+        autoUploadBuffer();
+        bufferComplete();
+        registerWithPrograms();
+        buildComplete();
 
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.removeLastTag();
-            throw new RuntimeException(ex);
-        }
+        log.removeLastTag();
     }
 
     @Override
@@ -382,13 +358,8 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
 
     @Override
     public void autoScanBuildDebug(FSScanTarget target, FSLog log){
-        try{
-            autoScanDebug(target, log);
-            autoBuildDebug(log);
-
-        }catch(Exception ex){
-            throw new RuntimeException(ex);
-        }
+        autoScanDebug(target, log);
+        autoBuildDebug(log);
     }
 
     @Override

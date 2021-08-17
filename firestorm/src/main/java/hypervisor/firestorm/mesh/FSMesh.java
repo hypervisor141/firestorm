@@ -287,8 +287,8 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoScan(FSScanTarget target){
         destroy();
         entries.clear();
-
         target.scan((FSTypeMesh<FSTypeInstance>)this);
+
         scanComplete();
     }
 
@@ -298,10 +298,12 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.addTag(name);
             log.addTag("[Scanning For Instances]");
 
-            autoScan(target);
+            destroy();
+            entries.clear();
+            target.scan((FSTypeMesh<FSTypeInstance>)this);
 
             log.removeLastTag();
-            log.append(" [Checking Scan Results]");
+            log.append("[Checking Scan Results]");
 
             if(entries.size() <= 0){
                 log.append(" [SCAN INCOMPLETE] [FOUND NO INSTANCE FOR TARGET MESH] [FAILED]\n");
@@ -319,14 +321,12 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
-            log.removeLastTag();
 
         }catch(Exception ex){
             log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
-            log.removeLastTag();
-
+            
             throw new RuntimeException(ex);
         }
     }
@@ -340,17 +340,17 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoAccountForBufferCapacityDebug(FSLog log){
         try{
             log.addTag(name);
-            log.addTag("[Accounting For Buffer Capacity]");
+            log.addTag("Accounting For Buffer Capacity");
 
             bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append(" [FAILED]");
+            log.append("[FAILED]");
             log.printError();
             log.removeLastTag();
             log.removeLastTag();
