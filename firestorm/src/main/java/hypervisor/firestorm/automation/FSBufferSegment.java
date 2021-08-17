@@ -328,6 +328,8 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                     log.removeLastTag();
                     log.removeLastTag();
                     log.removeLastTag();
+                    log.removeLastTag();
+                    log.removeLastTag();
 
                     throw new RuntimeException(ex);
                 }
@@ -372,6 +374,8 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                         entry.log(log, null);
 
                         log.printError();
+                        log.removeLastTag();
+                        log.removeLastTag();
                         log.removeLastTag();
                         log.removeLastTag();
                         log.removeLastTag();

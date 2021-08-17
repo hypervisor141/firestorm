@@ -263,7 +263,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
             log.addTag(name);
-            log.append("[AutoScanDebug]");
+            log.append("[AutoScanDebug]\n");
 
             int size = entries.size();
 
@@ -297,7 +297,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoAccountForBufferCapacityDebug(FSLog log){
         try{
             log.addTag(name);
-            log.append("[Accounting For Buffer Capacities]");
+            log.append("[Accounting For Buffer Capacity]\n");
 
             int size = entries.size();
 
