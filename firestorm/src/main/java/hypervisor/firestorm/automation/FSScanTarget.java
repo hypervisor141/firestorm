@@ -79,11 +79,10 @@ public interface FSScanTarget{
             for(int i = 0; i < size; i++){
                 hypervisor.firestorm.io.FSM.Data data = cache.get(i);
 
-                if(scanner.scan(target, assembler, data)){
-                    break;
-
-                }else if(data.locked){
-                    break;
+                if(!data.locked){
+                    if(scanner.scan(target, assembler, data)){
+                        break;
+                    }
                 }
             }
         }

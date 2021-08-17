@@ -37,7 +37,15 @@ public class FSBufferMap{
         for(int i = 0; i < size; i++){
             log.addTag(String.valueOf(i));
 
-            map.get(i).accountForDebug(target, log);
+            try{
+                map.get(i).accountForDebug(target, log);
+
+            }catch(Exception ex){
+                log.removeLastTag();
+                log.removeLastTag();
+
+                throw new RuntimeException(ex);
+            }
 
             log.removeLastTag();
         }
@@ -60,7 +68,15 @@ public class FSBufferMap{
         for(int i = 0; i < size; i++){
             log.addTag(String.valueOf(i));
 
-            map.get(i).bufferDebug(target, log);
+            try{
+                map.get(i).bufferDebug(target, log);
+
+            }catch(Exception ex){
+                log.removeLastTag();
+                log.removeLastTag();
+
+                throw new RuntimeException(ex);
+            }
 
             log.removeLastTag();
         }

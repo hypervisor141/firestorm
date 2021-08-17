@@ -293,48 +293,34 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("[Scanning For Instances]\n");
+            log.append("[Scanning For Instances]");
 
             autoScan(target);
 
-            log.append("[Checking Scan Results]");
+            log.append(" [Checking Scan Results]");
 
             if(entries.size() <= 0){
                 log.append(" [SCAN INCOMPLETE] [FOUND NO INSTANCE FOR TARGET MESH] [FAILED]\n");
                 log.printError();
+                log.removeLastTag();
+                log.removeLastTag();
 
                 throw new RuntimeException();
             }
 
-            log.append(" [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append(" [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Signaling ScanComplete]\n");
+            log.append(" [Signaling ScanComplete]");
 
             scanComplete();
 
             log.append(" [SUCCESS]");
             log.printInfo();
             log.removeLastTag();
-            log.removeLastTag();
 
         }catch(Exception ex){
             log.append(" [FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -348,7 +334,6 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void autoAccountForBufferCapacityDebug(FSLog log){
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
             log.append("[Accounting For Buffer Capacity]\n");
 
@@ -357,11 +342,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.append(" [SUCCESS]");
             log.printInfo();
             log.removeLastTag();
-            log.removeLastTag();
 
         }catch(Exception ex){
             log.append(" [FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -376,7 +361,6 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void autoBuildBufferDebug(FSLog log){
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
             log.append("Building Buffers");
 
@@ -386,11 +370,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.append(" [SUCCESS]");
             log.printInfo();
             log.removeLastTag();
-            log.removeLastTag();
 
         }catch(Exception ex){
             log.append(" [FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -418,77 +402,29 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         autoBuildBufferDebug(log);
 
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("[Uploading Buffers]\n");
 
+            log.append("[Uploading Buffers]");
             autoUploadBuffer();
 
-            log.append(" [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append(" [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Signaling BufferComplete]\n");
-
+            log.append(" [Signaling BufferComplete]");
             bufferComplete();
 
-            log.append(" [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append(" [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Registering With Programs]\n");
-
+            log.append(" [Registering With Programs]");
             registerWithPrograms();
 
-            log.append(" [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append(" [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Signaling BuildComplete]\n");
-
+            log.append(" [Signaling BuildComplete]");
             buildComplete();
 
             log.append(" [SUCCESS]");
             log.printInfo();
-            log.removeLastTag();
+
             log.removeLastTag();
 
         }catch(Exception ex){
             log.append(" [FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }

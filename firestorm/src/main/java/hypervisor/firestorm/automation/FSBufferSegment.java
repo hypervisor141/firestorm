@@ -97,6 +97,11 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 }catch(Exception ex){
                     log.append("[FAILED]\n");
                     log.printError();
+                    log.removeLastTag();
+                    log.removeLastTag();
+                    log.removeLastTag();
+                    log.removeLastTag();
+                    log.removeLastTag();
 
                     throw new RuntimeException(ex);
                 }
@@ -166,6 +171,8 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
     public void bufferDebug(FSTypeMesh<FSTypeInstance> target, FSLog log){
         int entrysize = entries.size();
 
+        log.addTag(getClass().getSimpleName());
+
         log.append("stride[");
         log.append(totalstride);
         log.append("] entrySize[");
@@ -183,6 +190,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 log.append(totalstride);
                 log.append("]");
                 log.printError();
+                log.removeLastTag();
 
                 throw new RuntimeException();
             }
@@ -191,6 +199,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 log.append(instanceoffset);
                 log.append("]");
                 log.printError();
+                log.removeLastTag();
 
                 throw new RuntimeException();
             }
@@ -201,6 +210,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 log.append(target.size());
                 log.append("]");
                 log.printError();
+                log.removeLastTag();
 
                 throw new RuntimeException();
             }
@@ -208,6 +218,7 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 if(entrysize <= 1){
                     log.append("[Segment is set to interleaved mode but there is less than 1 entry]");
                     log.printError();
+                    log.removeLastTag();
 
                     throw new RuntimeException();
                 }
@@ -224,7 +235,13 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 int unitcountrequired = entry.calculateInterleaveDebugUnitCount(target, target.first());
 
                 for(int i2 = 0; i2 < size; i2++){
-                    entry.checkForInterleavingErrors(target, target.get(i2), unitcountrequired, log);
+                    try{
+                        entry.checkForInterleavingErrors(target, target.get(i2), unitcountrequired, log);
+
+                    }catch(Exception ex){
+                        log.removeLastTag();
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         }
@@ -268,7 +285,13 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                         log.append("[FAILED]\n");
 
                         entry.log(log, null);
+
                         log.printError();
+                        log.removeLastTag();
+                        log.removeLastTag();
+                        log.removeLastTag();
+                        log.removeLastTag();
+                        log.removeLastTag();
 
                         throw new RuntimeException("Buffering failed.", ex);
                     }
@@ -300,7 +323,11 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                     log.append(" [FAILED]\n");
 
                     entry.log(log, null);
+
                     log.printError();
+                    log.removeLastTag();
+                    log.removeLastTag();
+                    log.removeLastTag();
 
                     throw new RuntimeException(ex);
                 }
@@ -343,7 +370,11 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                     }catch(Exception ex){
                         log.append(" [FAILED]\n");
                         entry.log(log, null);
+
                         log.printError();
+                        log.removeLastTag();
+                        log.removeLastTag();
+                        log.removeLastTag();
 
                         throw new RuntimeException(ex);
                     }
@@ -356,6 +387,8 @@ public class FSBufferSegment<BUFFER extends VLBuffer<?, ?>>{
                 log.removeLastTag();
             }
         }
+
+        log.removeLastTag();
     }
 
     public void upload(){

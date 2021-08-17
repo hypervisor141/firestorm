@@ -262,9 +262,8 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("[AutoScanDebug]\n");
+            log.append("[AutoScanDebug]");
 
             int size = entries.size();
 
@@ -272,14 +271,14 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoScanDebug(target, log);
             }
 
-            log.append("[AutoScanDebug] [SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
-            log.removeLastTag();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[AutoScanDebug] [FAILED]");
+            log.append("[FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -297,9 +296,8 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public void autoAccountForBufferCapacityDebug(FSLog log){
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("[Accounting For Buffer Capacities]\n");
+            log.append("[Accounting For Buffer Capacities]");
 
             int size = entries.size();
 
@@ -307,14 +305,14 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoAccountForBufferCapacityDebug(log);
             }
 
-            log.append("[Accounting For Buffer Capacities] [SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
-            log.removeLastTag();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[Accounting For Buffer Capacities] [FAILED]");
+            log.append("[FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -332,9 +330,8 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public void autoBuildBufferDebug(FSLog log){
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("[Building Buffers]\n");
+            log.append("[Building Buffers]");
 
             int size = entries.size();
 
@@ -342,14 +339,14 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoBuildBufferDebug(log);
             }
 
-            log.append("[Building Buffers] [SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
-            log.removeLastTag();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[Building Buffers] [FAILED]");
+            log.append("[FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -381,77 +378,29 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         autoBuildBufferDebug(log);
 
         try{
-            log.addTag(getClass().getSimpleName());
             log.addTag(name);
-            log.append("[Uploading Buffers]\n");
 
+            log.append("[Uploading Buffers]");
             autoUploadBuffer();
 
-            log.append("[Uploading Buffers] [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append("[Uploading Buffers] [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Signaling BufferComplete]\n");
-
+            log.append(" [Signaling BufferComplete]");
             bufferComplete();
 
-            log.append("[Signaling BufferComplete] [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append("[Signaling BufferComplete] [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Registering With Programs]\n");
-
+            log.append(" [Registering With Programs]");
             registerWithPrograms();
 
-            log.append("[Registering With Programs] [SUCCESS]");
-            log.printInfo();
-            log.removeLastTag();
-            log.removeLastTag();
-
-        }catch(Exception ex){
-            log.append("[Registering With Programs] [FAILED]");
-            log.printError();
-
-            throw new RuntimeException(ex);
-        }
-
-        try{
-            log.addTag(getClass().getSimpleName());
-            log.addTag(name);
-            log.append("[Signaling BuildComplete]\n");
-
+            log.append(" [Signaling BuildComplete]");
             buildComplete();
 
-            log.append("[Signaling BuildComplete] [SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
-            log.removeLastTag();
+
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[Signaling BuildComplete] [FAILED]");
+            log.append("[FAILED]");
             log.printError();
+            log.removeLastTag();
 
             throw new RuntimeException(ex);
         }
@@ -471,11 +420,11 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             autoScanDebug(target, log);
             autoBuildDebug(log);
 
-            log.append("[AutoScanBuild] [SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
 
         }catch(Exception ex){
-            log.append("[AutoScanBuild] [FAILED]");
+            log.append("[FAILED]");
             log.printError();
 
             throw new RuntimeException(ex);
