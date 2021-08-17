@@ -28,6 +28,9 @@ public interface FSTypeRenderGroup<ENTRY extends FSTypeRender> extends FSTypeRen
     void remove(int index);
     void remove(ENTRY entry);
     void enable(boolean enabled);
+    void allocateBinding(int element, int capacity, int resizeoverhead);
+    void clearBindings(int element);
+    void clearBindings();
     ENTRY first();
     ENTRY last();
     ENTRY get(int index);

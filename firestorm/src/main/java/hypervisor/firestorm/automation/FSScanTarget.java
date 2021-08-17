@@ -14,7 +14,40 @@ public interface FSScanTarget{
     void scan(FSTypeMesh<FSTypeInstance> target);
     void release();
 
-    final class FSMTarget implements FSScanTarget{
+    class FSMGroupTarget implements FSScanTarget{
+
+        private VLListType<FSMTarget> targets;
+
+        public FSMGroupTarget(int capacity, int resizeoverhead){
+            targets = new VLListType<>(capacity, resizeoverhead);
+        }
+
+        protected FSMGroupTarget(){
+
+        }
+
+        @Override
+        public void scan(FSTypeMesh<FSTypeInstance> target){
+            int size = targets.size();
+
+            for(int i = 0; i < size; i++){
+                targets.get(i).scan(target);
+            }
+        }
+
+        @Override
+        public void release(){
+            int size = targets.size();
+
+            for(int i = 0; i < size; i++){
+                targets.get(i).release();
+            }
+
+            targets = null;
+        }
+    }
+
+    class FSMTarget implements FSScanTarget{
 
         protected InputStream src;
         protected ByteOrder order;
@@ -25,10 +58,6 @@ public interface FSScanTarget{
             this.src = src;
             this.order = order;
             this.fullsizedposition = fullsizedposition;
-        }
-
-        protected FSMTarget(){
-
         }
 
         @Override
