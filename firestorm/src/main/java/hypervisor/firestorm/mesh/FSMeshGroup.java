@@ -271,7 +271,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoScanDebug(target, log);
             }
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
 
@@ -305,7 +305,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoAccountForBufferCapacityDebug(log);
             }
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
 
@@ -339,7 +339,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoBuildBufferDebug(log);
             }
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
 
@@ -392,7 +392,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             log.append(" [Signaling BuildComplete]");
             buildComplete();
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
 
             log.removeLastTag();
@@ -420,7 +420,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
             autoScanDebug(target, log);
             autoBuildDebug(log);
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
 
         }catch(Exception ex){

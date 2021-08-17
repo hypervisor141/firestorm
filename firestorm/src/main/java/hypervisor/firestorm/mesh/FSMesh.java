@@ -313,7 +313,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
             scanComplete();
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
 
@@ -339,7 +339,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
             bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
 
@@ -367,7 +367,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             clearBindings();
             bufferMap().bufferDebug((FSTypeMesh<FSTypeInstance>)this, log);
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
 
@@ -416,7 +416,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
             log.append(" [Signaling BuildComplete]");
             buildComplete();
 
-            log.append(" [SUCCESS]");
+            log.append("[SUCCESS]");
             log.printInfo();
 
             log.removeLastTag();
