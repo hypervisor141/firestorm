@@ -285,7 +285,9 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
     @Override
     public void autoScan(FSScanTarget target){
+        destroy();
         entries.clear();
+
         target.scan((FSTypeMesh<FSTypeInstance>)this);
         scanComplete();
     }
@@ -294,10 +296,11 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
             log.addTag(name);
-            log.append("[Scanning For Instances]");
+            log.addTag("[Scanning For Instances]");
 
             autoScan(target);
 
+            log.removeLastTag();
             log.append(" [Checking Scan Results]");
 
             if(entries.size() <= 0){
@@ -309,17 +312,19 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
                 throw new RuntimeException();
             }
 
-            log.append(" [Signaling ScanComplete]");
+            log.append(" [Signaling ScanComplete] ");
 
             scanComplete();
 
             log.append("[SUCCESS]");
             log.printInfo();
             log.removeLastTag();
+            log.removeLastTag();
 
         }catch(Exception ex){
             log.append("[FAILED]");
             log.printError();
+            log.removeLastTag();
             log.removeLastTag();
 
             throw new RuntimeException(ex);
@@ -335,17 +340,19 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoAccountForBufferCapacityDebug(FSLog log){
         try{
             log.addTag(name);
-            log.append("[Accounting For Buffer Capacity]\n");
+            log.addTag("[Accounting For Buffer Capacity]");
 
             bufferMap().accountForDebug((FSTypeMesh<FSTypeInstance>)this, log);
 
-            log.append("[SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
+            log.removeLastTag();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
+            log.append(" [FAILED]");
             log.printError();
+            log.removeLastTag();
             log.removeLastTag();
 
             throw new RuntimeException(ex);
@@ -362,17 +369,18 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     public void autoBuildBufferDebug(FSLog log){
         try{
             log.addTag(name);
-            log.append("Building Buffers");
+            log.addTag("[Building Buffers]");
 
             clearBindings();
             bufferMap().bufferDebug((FSTypeMesh<FSTypeInstance>)this, log);
 
-            log.append("[SUCCESS]");
+            log.append(" [SUCCESS]");
             log.printInfo();
+            log.removeLastTag();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
+            log.append(" [FAILED]");
             log.printError();
             log.removeLastTag();
 
@@ -392,6 +400,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         autoUploadBuffer();
         bufferComplete();
 
+        unregisterFromProgram();
         registerWithPrograms();
         buildComplete();
     }
@@ -404,11 +413,14 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
         try{
             log.addTag(name);
 
-            log.append("[Uploading Buffers]");
+            log.addTag("[Uploading Buffers]");
             autoUploadBuffer();
 
             log.append(" [Signaling BufferComplete]");
             bufferComplete();
+
+            log.append(" [UnRegistering Previous Programs If Any]");
+            unregisterFromProgram();
 
             log.append(" [Registering With Programs]");
             registerWithPrograms();

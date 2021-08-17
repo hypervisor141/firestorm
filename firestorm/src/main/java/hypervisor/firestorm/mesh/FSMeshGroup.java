@@ -263,7 +263,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoScanDebug(FSScanTarget target, FSLog log){
         try{
             log.addTag(name);
-            log.append("[AutoScanDebug]\n");
 
             int size = entries.size();
 
@@ -271,15 +270,10 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoScanDebug(target, log);
             }
 
-            log.append("[SUCCESS]");
-            log.printInfo();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
-            log.printError();
             log.removeLastTag();
-
             throw new RuntimeException(ex);
         }
     }
@@ -297,7 +291,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoAccountForBufferCapacityDebug(FSLog log){
         try{
             log.addTag(name);
-            log.append("[Accounting For Buffer Capacity]\n");
 
             int size = entries.size();
 
@@ -305,15 +298,10 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoAccountForBufferCapacityDebug(log);
             }
 
-            log.append("[SUCCESS]");
-            log.printInfo();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
-            log.printError();
             log.removeLastTag();
-
             throw new RuntimeException(ex);
         }
     }
@@ -331,7 +319,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     public void autoBuildBufferDebug(FSLog log){
         try{
             log.addTag(name);
-            log.append("[Building Buffers]");
 
             int size = entries.size();
 
@@ -339,15 +326,10 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
                 entries.get(i).autoBuildBufferDebug(log);
             }
 
-            log.append("[SUCCESS]");
-            log.printInfo();
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
-            log.printError();
             log.removeLastTag();
-
             throw new RuntimeException(ex);
         }
     }
@@ -367,7 +349,6 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         autoBuildBuffer();
         autoUploadBuffer();
         bufferComplete();
-
         registerWithPrograms();
         buildComplete();
     }
@@ -380,28 +361,15 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         try{
             log.addTag(name);
 
-            log.append("[Uploading Buffers]");
             autoUploadBuffer();
-
-            log.append(" [Signaling BufferComplete]");
             bufferComplete();
-
-            log.append(" [Registering With Programs]");
             registerWithPrograms();
-
-            log.append(" [Signaling BuildComplete]");
             buildComplete();
-
-            log.append("[SUCCESS]");
-            log.printInfo();
 
             log.removeLastTag();
 
         }catch(Exception ex){
-            log.append("[FAILED]");
-            log.printError();
             log.removeLastTag();
-
             throw new RuntimeException(ex);
         }
     }
@@ -415,18 +383,10 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
     @Override
     public void autoScanBuildDebug(FSScanTarget target, FSLog log){
         try{
-            log.append("[AutoScanBuild]\n");
-
             autoScanDebug(target, log);
             autoBuildDebug(log);
 
-            log.append("[SUCCESS]");
-            log.printInfo();
-
         }catch(Exception ex){
-            log.append("[FAILED]");
-            log.printError();
-
             throw new RuntimeException(ex);
         }
     }
