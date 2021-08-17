@@ -299,10 +299,10 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
 
             autoScan(target);
 
-            log.append("[Checking Scan Results]\n");
+            log.append("[Checking Scan Results]");
 
             if(entries.size() <= 0){
-                log.append("[SCAN INCOMPLETE] [FOUND NO INSTANCE FOR TARGET MESH] [FAILED]\n");
+                log.append(" [SCAN INCOMPLETE] [FOUND NO INSTANCE FOR TARGET MESH] [FAILED]\n");
                 log.printError();
 
                 throw new RuntimeException();
