@@ -15,6 +15,7 @@ import hypervisor.firestorm.program.FSLightMaterial;
 import hypervisor.firestorm.program.FSP;
 import hypervisor.firestorm.program.FSTexture;
 import hypervisor.firestorm.tools.FSLog;
+import hypervisor.firestorm.tools.FSTools;
 import hypervisor.vanguard.list.arraybacked.VLListType;
 import hypervisor.vanguard.utils.VLCopyable;
 
@@ -389,6 +390,7 @@ public abstract class FSMesh<ENTRY extends FSTypeInstance> implements FSTypeMesh
     @Override
     public void autoUploadBuffer(){
         bufferMap().upload();
+        FSTools.checkGLError();
     }
 
     @Override

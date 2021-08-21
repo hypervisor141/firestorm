@@ -193,16 +193,6 @@ public abstract class FSP{
     }
 
     public void draw(FSRPass pass, int passindex){
-        if(debug >= FSControl.DEBUG_NORMAL){
-            try{
-                FSTools.checkGLError();
-                FSTools.checkGLError();
-
-            }catch(Exception ex){
-                throw new RuntimeException("Pre-program-run error, there is an unchecked EGL/GL error somewhere in your code before this point.", ex);
-            }
-        }
-
         use();
 
         int meshsize = targets.size();

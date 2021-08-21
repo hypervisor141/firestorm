@@ -151,6 +151,16 @@ public class FSRPass{
     }
 
     protected void draw(){
+        if(debug >= FSControl.DEBUG_NORMAL){
+            try{
+                FSTools.checkGLError();
+                FSTools.checkGLError();
+
+            }catch(Exception ex){
+                throw new RuntimeException("Pre-program-run error, there is an unchecked EGL/GL error somewhere in your code before this point.", ex);
+            }
+        }
+
         GLES32.glClear(clearbits);
         GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
 
