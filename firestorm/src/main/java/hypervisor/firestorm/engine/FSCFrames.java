@@ -26,6 +26,8 @@ public class FSCFrames{
     private final static Object LOCK = new Object();
 
     protected static void initialize(int maxunchangedframes, int maxqueuedframes){
+        LOG = new FSLog(10);
+
         synchronized(LOCK){
             TOTAL_FRAMES = 0;
             FRAME_TIME = 0;

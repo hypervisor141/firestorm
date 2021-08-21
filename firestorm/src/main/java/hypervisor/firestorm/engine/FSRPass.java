@@ -157,20 +157,27 @@ public class FSRPass{
                 FSTools.checkGLError();
 
             }catch(Exception ex){
-                throw new RuntimeException("Pre-program-run error, there is an unchecked EGL/GL error somewhere in your code before this point.", ex);
+                throw new RuntimeException("Pre-pass-draw error, there is an unchecked EGL/GL error somewhere in your code before this point.", ex);
             }
         }
 
         GLES32.glClear(clearbits);
         GLES32.glClearColor(clearcolor[0], clearcolor[1], clearcolor[2], clearcolor[3]);
 
-        if(preconfig != null){
-            if(debug >= FSControl.DEBUG_NORMAL){
-                preconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX, log, debug);
+        try{
+            FSTools.checkGLError();
+            FSTools.checkGLError();
 
-            }else{
-                preconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
-            }
+        }catch(Exception ex){
+            throw new RuntimeException("two.", ex);
+        }
+
+        try{
+            FSTools.checkGLError();
+            FSTools.checkGLError();
+
+        }catch(Exception ex){
+            throw new RuntimeException("three.", ex);
         }
 
         int size = entries.size();
