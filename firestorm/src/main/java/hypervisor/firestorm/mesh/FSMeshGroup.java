@@ -321,7 +321,7 @@ public class FSMeshGroup<ENTRY extends FSTypeRenderGroup<?>> implements FSTypeMe
         int size = entries.size();
 
         for(int i = 0; i < size; i++){
-            entries.get(i).autoAccountForBufferCapacity();
+            entries.get(i).autoUploadBuffer();
         }
     }
 
