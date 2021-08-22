@@ -160,13 +160,13 @@ public class FSRPass{
                 throw new RuntimeException("Pre-pass-draw error, there is an unchecked EGL/GL error somewhere in your code before this point.", ex);
             }
 
-            if(postconfig != null){
-                postconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX, log, debug);
+            if(preconfig != null){
+                preconfig.runDebug(this, null, null, -1, FSR.CURRENT_PASS_INDEX, log, debug);
             }
 
         }else{
-            if(postconfig != null){
-                postconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
+            if(preconfig != null){
+                preconfig.run(this, null, null, -1, FSR.CURRENT_PASS_INDEX);
             }
         }
 
